@@ -54,13 +54,17 @@ export default function App() {
   const [enDetail, setEnDetail] = useState<string | null>(null)
   const [enEdition, setEnEdition] = useState<Recipe | null>(null)
 
-  const [basket, setBasket] = useState<BasketEntry[]>([])
   const [historique, setHistorique] = useState<Historique>({ derniereFois: {}, verdicts: {} })
   const [foyer, setFoyer] = useState<string | null>(null)
   const [codeFoyer, setCodeFoyer] = useState<string | null>(null)
   const [foyerCharge, setFoyerCharge] = useState(false)
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
+
+  // Le panier n'a pas d'état à lui : il fait partie de la liste du foyer.
+  // Une seule source de vérité, une seule écriture réseau — impossible que
+  // le panier et les cases cochées partent chacun de leur côté.
+  const basket = etatListe.panier ?? []
 
   // Amorçage : local d'abord, réseau ensuite. L'app est utilisable
   // avant que Supabase ait répondu. Sans foyer connu (premier
@@ -72,7 +76,8 @@ export default function App() {
   // pour ne pas flasher Bienvenue le temps que IndexedDB réponde.
   useEffect(() => {
     void (async () => {
-      setBasket(await lireBasket())
+      const panier = await lireBasket()
+      setEtatListe((prec) => ({ ...prec, panier }))
       setHistorique(await lireHistorique())
       setFoyer(await lireFoyer())
       setCodeFoyer(await lireCodeFoyer())
@@ -101,6 +106,10 @@ export default function App() {
     setFoyer(null)
     setCodeFoyer(null)
     setRecipes([])
+    // Sans ça, la liste et le panier de l'ancien foyer restent en mémoire
+    // et seraient réécrits dans le prochain foyer rejoint.
+    setEtatListe(ETAT_VIDE)
+    setHistorique({ derniereFois: {}, verdicts: {} })
     setEnReglages(false)
   }, [])
 
@@ -113,11 +122,24 @@ export default function App() {
     [rejoindre],
   )
 
+  // Le panier arrive avec la liste. Tant que le foyer n'en a pas publié
+  // un (ligne `listes` créée avant que le panier ne soit partagé), on
+  // garde celui d'ici : sinon rejoindre un foyer viderait le panier en
+  // cours de constitution.
   useEffect(() => {
     if (!foyer) return
-    void lireListe(foyer).then(setEtatListe)
-    return suivreListe(foyer, setEtatListe)
+    const appliquer = (distant: ListState) =>
+      setEtatListe((local) => ({ ...distant, panier: distant.panier ?? local.panier }))
+    void lireListe(foyer).then(appliquer)
+    return suivreListe(foyer, appliquer)
   }, [foyer])
+
+  // Copie hors ligne du panier : au rayon sans réseau, la liste doit
+  // quand même pouvoir se calculer. On n'écrit qu'une fois le local
+  // relu, sinon le premier rendu (panier vide) l'effacerait.
+  useEffect(() => {
+    if (foyerCharge) void ecrireBasket(basket)
+  }, [foyerCharge, basket])
 
   // Le catalogue vit entièrement dans Supabase. Un foyer tout neuf
   // (aucune ligne dans `recettes`) est peuplé une fois avec le corpus
@@ -148,6 +170,19 @@ export default function App() {
     return suivreHistorique(foyer, setHistorique)
   }, [foyer])
 
+  const majListe = useCallback(
+    (suivant: ListState) => {
+      setEtatListe(suivant)
+      if (foyer) void ecrireListe(foyer, suivant)
+    },
+    [foyer],
+  )
+
+  const majBasket = useCallback(
+    (suivant: BasketEntry[]) => majListe({ ...etatListe, panier: suivant }),
+    [etatListe, majListe],
+  )
+
   const ajouter = useCallback(
     async (recette: Recipe) => {
       if (!foyer) throw new Error('Foyer non initialisé, réessayez dans un instant.')
@@ -171,23 +206,10 @@ export default function App() {
       if (!foyer) return
       await supprimerRecette(foyer, recipeId)
       setRecipes((prec) => prec.filter((r) => r.id !== recipeId))
-      setBasket((prec) => prec.filter((e) => e.recipeId !== recipeId))
+      majBasket(basket.filter((e) => e.recipeId !== recipeId))
       setEnDetail(null)
     },
-    [foyer],
-  )
-
-  const majBasket = useCallback((suivant: BasketEntry[]) => {
-    setBasket(suivant)
-    void ecrireBasket(suivant)
-  }, [])
-
-  const majListe = useCallback(
-    (suivant: ListState) => {
-      setEtatListe(suivant)
-      if (foyer) void ecrireListe(foyer, suivant)
-    },
-    [foyer],
+    [foyer, basket, majBasket],
   )
 
   const verdict = useCallback(

@@ -18,8 +18,20 @@ const VIDE: ListState = { coche: {}, dejaPossede: {} }
 const journaliserStatut = (nom: string) => (statut: string) => {
   if (statut === 'CHANNEL_ERROR' || statut === 'TIMED_OUT') {
     console.warn(`Realtime « ${nom} » : ${statut} — la synchro entre appareils ne remontera pas.`)
+  } else if (statut === 'SUBSCRIBED') {
+    console.info(`Realtime « ${nom} » : abonné.`)
   }
 }
+
+/**
+ * Un topic ne peut être joint qu'une fois par connexion. StrictMode
+ * monte, démonte et remonte chaque effet en dev : le second abonnement
+ * réclamerait un topic que le premier n'a pas encore fini de libérer
+ * (removeChannel est asynchrone), et il meurt sans bruit. Un suffixe
+ * unique par abonnement rend la collision impossible — le topic ne sert
+ * qu'à nommer le canal, le filtrage réel se fait dans `filter`.
+ */
+const topic = (prefixe: string) => `${prefixe}:${crypto.randomUUID().slice(0, 8)}`
 
 /**
  * La seule donnée synchronisée : l'état de la liste du foyer.
@@ -42,7 +54,7 @@ export async function ecrireListe(foyer: string, etat: ListState): Promise<void>
 export function suivreListe(foyer: string, onChange: (etat: ListState) => void): () => void {
   if (!supabase) return () => {}
   const canal = supabase
-    .channel(`liste:${foyer}`)
+    .channel(topic(`liste:${foyer}`))
     .on(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'listes', filter: `foyer=eq.${foyer}` },
@@ -146,7 +158,7 @@ export async function ecrireHistoriqueFoyer(foyer: string, historique: Historiqu
 export function suivreHistorique(foyer: string, onChange: (h: Historique) => void): () => void {
   if (!supabase) return () => {}
   const canal = supabase
-    .channel(`historique:${foyer}`)
+    .channel(topic(`historique:${foyer}`))
     .on(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'historiques', filter: `foyer=eq.${foyer}` },
@@ -165,7 +177,7 @@ export function suivreHistorique(foyer: string, onChange: (h: Historique) => voi
 export function suivreRecettes(foyer: string, onChangement: (recettes: Recipe[]) => void): () => void {
   if (!supabase) return () => {}
   const canal = supabase
-    .channel(`recettes:${foyer}`)
+    .channel(topic(`recettes:${foyer}`))
     .on(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'recettes', filter: `foyer=eq.${foyer}` },

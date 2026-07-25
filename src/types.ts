@@ -87,6 +87,14 @@ export interface ListState {
   dejaPossede: Record<string, boolean>
   /** Items ajoutés à la main, en plus de ceux dérivés des recettes. */
   items?: ItemLibre[]
+  /**
+   * Les recettes retenues pour la semaine. Elles voyagent avec la liste
+   * plutôt que dans une table à elles : c'est la même décision de foyer
+   * (« on mange ça cette semaine » produit « il faut acheter ça »), et
+   * les garder dans la même ligne évite qu'une écriture de panier et une
+   * case cochée s'écrasent l'une l'autre.
+   */
+  panier?: BasketEntry[]
 }
 
 export type Verdict = 'refaire' | 'jamais'
