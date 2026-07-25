@@ -11,27 +11,33 @@ import {
   lireHistorique,
   marquerCuisine,
 } from './lib/local'
-import { ecrireListe, lireListe, suivreListe } from './lib/sync'
+import { ajouterRecette, ecrireListe, lireListe, lireRecettes, suivreListe, suivreRecettes } from './lib/sync'
 import Propose from './screens/Propose'
 import Panier from './screens/Panier'
 import Liste from './screens/Liste'
 import Cuisson from './screens/Cuisson'
+import CuissonListe from './screens/CuissonListe'
+import AjouterRecette from './screens/AjouterRecette'
 import Icone from './components/Icone'
 
-const recipes = corpus as Recipe[]
+const CORPUS: Recipe[] = corpus as Recipe[]
 
-type Onglet = 'propose' | 'panier' | 'liste'
+type Onglet = 'propose' | 'panier' | 'liste' | 'cuisson'
 
 const ETAT_VIDE: ListState = { coche: {}, dejaPossede: {} }
 
 export default function App() {
   const [onglet, setOnglet] = useState<Onglet>('propose')
   const [enCuisson, setEnCuisson] = useState<string | null>(null)
+  const [enAjout, setEnAjout] = useState(false)
 
   const [basket, setBasket] = useState<BasketEntry[]>([])
   const [historique, setHistorique] = useState<Historique>({ derniereFois: {}, verdicts: {} })
   const [foyer, setFoyer] = useState<string | null>(null)
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
+  const [recettesAjoutees, setRecettesAjoutees] = useState<Recipe[]>([])
+
+  const recipes = useMemo(() => [...CORPUS, ...recettesAjoutees], [recettesAjoutees])
 
   // Amorçage : local d'abord, réseau ensuite. L'app est utilisable
   // avant que Supabase ait répondu.
@@ -48,6 +54,21 @@ export default function App() {
     void lireListe(foyer).then(setEtatListe)
     return suivreListe(foyer, setEtatListe)
   }, [foyer])
+
+  useEffect(() => {
+    if (!foyer) return
+    void lireRecettes(foyer).then(setRecettesAjoutees)
+    return suivreRecettes(foyer, (r) => setRecettesAjoutees((prec) => [...prec, r]))
+  }, [foyer])
+
+  const ajouter = useCallback(
+    async (recette: Recipe) => {
+      if (!foyer) throw new Error('Foyer non initialisé, réessayez dans un instant.')
+      await ajouterRecette(foyer, recette)
+      setRecettesAjoutees((prec) => [...prec, recette])
+    },
+    [foyer],
+  )
 
   const majBasket = useCallback((suivant: BasketEntry[]) => {
     setBasket(suivant)
@@ -68,9 +89,10 @@ export default function App() {
 
   const propositions = useMemo(
     () => proposer(recipes, historique, { nombre: 8 }),
-    // Une nouvelle sélection à chaque changement d'historique, pas à
-    // chaque rendu — sinon les cartes dansent sous le doigt.
-    [historique],
+    // Une nouvelle sélection à chaque changement d'historique ou de
+    // catalogue, pas à chaque rendu — sinon les cartes dansent sous
+    // le doigt.
+    [recipes, historique],
   )
 
   const items = useMemo(() => buildList(basket, recipes), [basket])
@@ -89,6 +111,10 @@ export default function App() {
         />
       )
     }
+  }
+
+  if (enAjout) {
+    return <AjouterRecette onAjouter={ajouter} onQuitter={() => setEnAjout(false)} />
   }
 
   return (
@@ -110,11 +136,16 @@ export default function App() {
           onBasket={majBasket}
           onCuisiner={setEnCuisson}
           onVersListe={() => setOnglet('liste')}
+          onAjouterRecette={() => setEnAjout(true)}
         />
       )}
 
       {onglet === 'liste' && (
         <Liste items={items} etat={etatListe} onEtat={majListe} foyer={foyer} />
+      )}
+
+      {onglet === 'cuisson' && (
+        <CuissonListe recipes={recipes} basket={basket} onCuisiner={setEnCuisson} />
       )}
 
       <nav className="onglets">
@@ -123,6 +154,7 @@ export default function App() {
             ['propose', 'etoile', 'Proposer'],
             ['panier', 'panier', `Panier${basket.length ? ` (${basket.length})` : ''}`],
             ['liste', 'liste', 'Liste'],
+            ['cuisson', 'grill', 'Cuisson'],
           ] as const
         ).map(([cle, icone, label]) => (
           <button

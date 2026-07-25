@@ -1,7 +1,14 @@
-/** Un magasin. Ajouter une entrée ici suffit à en créer un nouveau. */
+import type { Nom as IconeNom } from './components/Icone'
+
+/**
+ * Un magasin. Ajouter une entrée ici suffit à en créer un nouveau.
+ * `autre` est réservé aux items ajoutés à la main sur la liste — une
+ * recette n'y range jamais un ingrédient.
+ */
 export const STORES = {
-  intermarche: { label: 'Intermarché', order: 1 },
-  primeur: { label: 'Primeur & asiat', order: 2 },
+  intermarche: { label: 'Intermarché', order: 1, icone: 'boite' as IconeNom },
+  primeur: { label: 'Primeur & asiat', order: 2, icone: 'feuille' as IconeNom },
+  autre: { label: 'Ajouté à la main', order: 3, icone: 'alerte' as IconeNom },
 } as const
 
 export type StoreId = keyof typeof STORES
@@ -62,12 +69,20 @@ export interface ListItem {
   origines: string[]
 }
 
+/** Un item ajouté à la main sur la liste, hors recette (ex: papier toilette). */
+export interface ItemLibre {
+  id: string
+  nom: string
+}
+
 /** État partagé entre les deux téléphones. */
 export interface ListState {
   /** Coché en magasin. */
   coche: Record<string, boolean>
   /** Écarté à la passe « j'ai déjà ». */
   dejaPossede: Record<string, boolean>
+  /** Items ajoutés à la main, en plus de ceux dérivés des recettes. */
+  items?: ItemLibre[]
 }
 
 export type Verdict = 'refaire' | 'jamais'

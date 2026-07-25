@@ -3,7 +3,7 @@
  * maquettes (traits 2px, coins arrondis) — sans dépendre d'une police
  * d'icônes chargée en ligne, l'app doit marcher hors connexion.
  */
-type Nom =
+export type Nom =
   | 'menu'
   | 'etoile'
   | 'panier'

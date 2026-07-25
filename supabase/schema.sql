@@ -23,3 +23,26 @@ create policy "acces par uuid" on listes
 -- À activer dans le tableau de bord Supabase :
 -- Database → Replication → cocher `listes`, pour que la synchro
 -- temps réel remonte les cases cochées sur l'autre téléphone.
+
+-- Catalogue de recettes ajoutées depuis l'app (en plus des 16 de
+-- src/data/recipes.json, qui restent statiques). Une ligne par
+-- recette : deux ajouts simultanés sur les deux téléphones ne
+-- s'écrasent pas, contrairement à un unique blob JSON par foyer.
+create table if not exists recettes (
+  id      uuid primary key default gen_random_uuid(),
+  foyer   uuid not null,
+  recette jsonb not null,
+  cree_le timestamptz not null default now()
+);
+
+create index if not exists recettes_foyer_idx on recettes (foyer);
+
+alter table recettes enable row level security;
+
+create policy "acces par uuid de foyer" on recettes
+  for all
+  using (true)
+  with check (true);
+
+-- À activer aussi dans Database → Replication → cocher `recettes`,
+-- pour que la recette ajoutée sur un téléphone apparaisse sur l'autre.

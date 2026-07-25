@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import type { ListState } from '../types'
+import type { ListState, Recipe } from '../types'
 
 const url = import.meta.env.VITE_SUPABASE_URL
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -36,6 +36,41 @@ export function suivreListe(foyer: string, onChange: (etat: ListState) => void):
       (payload) => {
         const etat = (payload.new as { etat?: ListState })?.etat
         if (etat) onChange(etat)
+      },
+    )
+    .subscribe()
+
+  return () => {
+    void supabase.removeChannel(canal)
+  }
+}
+
+/**
+ * Recettes ajoutées depuis l'app, en plus du corpus statique
+ * (src/data/recipes.json). Une ligne par recette dans Supabase :
+ * pas de fusion à faire, juste les accumuler.
+ */
+export async function lireRecettes(foyer: string): Promise<Recipe[]> {
+  if (!supabase) return []
+  const { data } = await supabase.from('recettes').select('recette').eq('foyer', foyer)
+  return (data ?? []).map((ligne) => ligne.recette as Recipe)
+}
+
+export async function ajouterRecette(foyer: string, recette: Recipe): Promise<void> {
+  if (!supabase) throw new Error('Supabase non configuré : impossible de partager la recette entre téléphones.')
+  await supabase.from('recettes').insert({ foyer, recette })
+}
+
+export function suivreRecettes(foyer: string, onAjout: (recette: Recipe) => void): () => void {
+  if (!supabase) return () => {}
+  const canal = supabase
+    .channel(`recettes:${foyer}`)
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'recettes', filter: `foyer=eq.${foyer}` },
+      (payload) => {
+        const recette = (payload.new as { recette?: Recipe })?.recette
+        if (recette) onAjout(recette)
       },
     )
     .subscribe()

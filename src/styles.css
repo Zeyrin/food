@@ -179,6 +179,25 @@ p.aide {
 
 /* --- Barre d'onglets ----------------------------------------------------- */
 
+.espaceur-action-flottante {
+  height: 80px;
+}
+
+.action-flottante {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+  z-index: 9;
+  padding: 20px 20px 12px;
+  background: linear-gradient(to top, var(--papier) 55%, transparent);
+}
+
+.action-flottante .principal {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 nav.onglets {
   position: fixed;
   left: 0;
@@ -309,13 +328,6 @@ button.carte:active {
   padding: 20px;
 }
 
-.carte-recette-ligne {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
 .bouton-ajout {
   flex: 0 0 44px;
   width: 44px;
@@ -336,6 +348,16 @@ button.carte:active {
 
 .bouton-ajout[aria-pressed='true'] {
   background: var(--terracotta);
+}
+
+.bouton-ajout-flottant {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 52px;
+  height: 52px;
+  flex: none;
+  box-shadow: var(--ombre-nette);
 }
 
 .puces-info {
@@ -428,32 +450,31 @@ button.carte:active {
   transform: scale(1.05);
 }
 
-/* --- Étiquettes et boutons ----------------------------------------------- */
+/* --- Boutons et sections --------------------------------------------------- */
 
-.etiquette {
-  display: inline-flex;
+.entete-section {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  gap: 10px;
 }
 
-.etiquette::before {
-  content: '';
-  width: 9px;
-  height: 9px;
-  border-radius: 3px;
-  background: currentColor;
+.badge-section {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 14px;
 }
 
-.etiquette[data-magasin='intermarche'] {
+.badge-section[data-magasin='intermarche'] {
   color: var(--intermarche);
+  background: color-mix(in srgb, var(--intermarche) 16%, transparent);
 }
 
-.etiquette[data-magasin='primeur'] {
+.badge-section[data-magasin='primeur'] {
   color: var(--primeur);
+  background: color-mix(in srgb, var(--primeur) 16%, transparent);
 }
 
 .puces {
@@ -525,6 +546,10 @@ button.carte {
 button.discret {
   min-height: 48px;
   padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   border: 2px solid var(--trait);
   border-radius: 999px;
   background: transparent;
@@ -607,6 +632,18 @@ button.discret:disabled {
   align-items: center;
 }
 
+button.carte-panier-bouton {
+  width: 100%;
+  border: 0;
+  cursor: pointer;
+  color: var(--terracotta);
+  text-align: left;
+}
+
+button.carte-panier-bouton .carte-panier-corps {
+  color: var(--encre);
+}
+
 .vignette-mini {
   position: relative;
   flex: 0 0 72px;
@@ -642,6 +679,36 @@ button.discret:disabled {
 .carte-panier-corps {
   flex: 1;
   min-width: 0;
+}
+
+.carte-bento {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  height: 120px;
+  padding: 20px;
+  border: 0;
+  border-radius: var(--rayon);
+  background: var(--accent-doux);
+  color: var(--accent);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+  margin-bottom: 12px;
+}
+
+.carte-bento:active {
+  transform: scale(0.98);
+}
+
+.carte-bento p {
+  margin: 0;
+  text-align: left;
+  font-family: var(--affichage);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 .ligne-panier {
@@ -775,11 +842,27 @@ button.discret:disabled {
   background: #a6d47e;
 }
 
+.badge-etape {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  height: 56px;
+  margin-top: 24px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--terracotta, #bc4749);
+  color: #fff8ef;
+  font-family: var(--affichage);
+  font-size: 24px;
+  font-weight: 800;
+}
+
 .puces-ingredients {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin: 28px 0;
+  margin: 20px 0 28px;
 }
 
 .puce-ingredient {
@@ -817,6 +900,10 @@ button.discret:disabled {
 .bouton-cuisson {
   flex: 1;
   min-height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   border: 0;
   border-radius: 999px;
   font: inherit;
@@ -889,6 +976,11 @@ button.discret:disabled {
   font: inherit;
   font-weight: 600;
   cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.choix-verdict:active {
+  transform: scale(0.96);
 }
 
 .cuisson-focus .discret.suite {
@@ -903,6 +995,47 @@ button.discret:disabled {
   color: var(--encre-douce);
   padding: 40px 0;
   text-align: center;
+}
+
+/* --- Saisie automatique --------------------------------------------------- */
+
+.champ-texte {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid var(--trait);
+  border-radius: var(--rayon);
+  background: var(--carte);
+  color: var(--encre);
+  font: inherit;
+  font-size: 15px;
+  resize: vertical;
+}
+
+.champ-texte:focus-visible {
+  border-color: var(--accent);
+}
+
+.champ-texte-code {
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.bloc-erreurs {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: var(--rayon);
+  background: var(--terracotta-doux);
+  color: var(--primeur);
+}
+
+.bloc-erreurs p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.bloc-erreurs p + p {
+  margin-top: 6px;
 }
 
 /* --- Utilitaires de mise en page ----------------------------------------- */

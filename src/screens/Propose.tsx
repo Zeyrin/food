@@ -97,19 +97,17 @@ export default function Propose({ recipes, propositions, historique, basket, onB
                 <Icone nom="minuteur" taille={14} /> {r.temps} min
               </span>
               {!r.image && r.titre.charAt(0)}
+              <button
+                className="bouton-ajout bouton-ajout-flottant"
+                onClick={() => basculer(r)}
+                aria-pressed={dansPanier(r.id)}
+                aria-label={dansPanier(r.id) ? `Retirer ${r.titre} du panier` : `Ajouter ${r.titre} au panier`}
+              >
+                <Icone nom={dansPanier(r.id) ? 'coche' : 'plus'} taille={22} />
+              </button>
             </div>
             <div className="carte-recette-corps">
-              <div className="carte-recette-ligne">
-                <h3>{r.titre}</h3>
-                <button
-                  className="bouton-ajout"
-                  onClick={() => basculer(r)}
-                  aria-pressed={dansPanier(r.id)}
-                  aria-label={dansPanier(r.id) ? `Retirer ${r.titre} du panier` : `Ajouter ${r.titre} au panier`}
-                >
-                  <Icone nom={dansPanier(r.id) ? 'coche' : 'plus'} taille={20} />
-                </button>
-              </div>
+              <h3>{r.titre}</h3>
               <div className="puces-info">
                 <span className="puce-info">{r.portions} parts</span>
                 {r.tags.map((t) => (

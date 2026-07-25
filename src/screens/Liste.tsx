@@ -112,10 +112,11 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
 
       {groupByStore(aAcheter).map(({ magasin, items: lignes }) => (
         <section key={magasin}>
-          <h2>
-            <span className="etiquette" data-magasin={magasin}>
-              {STORES[magasin].label}
+          <h2 className="entete-section">
+            <span className="badge-section" data-magasin={magasin}>
+              <Icone nom={STORES[magasin].icone} taille={20} />
             </span>
+            {STORES[magasin].label}
           </h2>
           {lignes.map((item) => {
             const coche = etat.coche[item.key] === true

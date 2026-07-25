@@ -8,9 +8,17 @@ interface Props {
   onBasket: (basket: BasketEntry[]) => void
   onCuisiner: (recipeId: string) => void
   onVersListe: () => void
+  onAjouterRecette: () => void
 }
 
-export default function Panier({ recipes, basket, onBasket, onCuisiner, onVersListe }: Props) {
+export default function Panier({
+  recipes,
+  basket,
+  onBasket,
+  onCuisiner,
+  onVersListe,
+  onAjouterRecette,
+}: Props) {
   const byId = new Map(recipes.map((r) => [r.id, r]))
 
   const setPortions = (recipeId: string, portions: number) =>
@@ -28,6 +36,10 @@ export default function Panier({ recipes, basket, onBasket, onCuisiner, onVersLi
           </div>
         </header>
         <p className="vide">Rien pour l'instant. Choisissez des recettes dans « Proposer ».</p>
+        <button className="carte-bento" onClick={onAjouterRecette}>
+          <Icone nom="etoile" taille={28} />
+          <p>Saisie automatique</p>
+        </button>
       </>
     )
   }
@@ -92,9 +104,19 @@ export default function Panier({ recipes, basket, onBasket, onCuisiner, onVersLi
         )
       })}
 
-      <button className="principal" onClick={onVersListe}>
-        <Icone nom="panier-plein" taille={20} /> Voir la liste
+      <h2>Compléter ma semaine</h2>
+      <button className="carte-bento" onClick={onAjouterRecette}>
+        <Icone nom="etoile" taille={28} />
+        <p>Saisie automatique</p>
       </button>
+
+      <div className="espaceur-action-flottante" aria-hidden="true" />
+
+      <div className="action-flottante">
+        <button className="principal" onClick={onVersListe}>
+          <Icone nom="panier-plein" taille={20} /> Voir la liste
+        </button>
+      </div>
     </>
   )
 }

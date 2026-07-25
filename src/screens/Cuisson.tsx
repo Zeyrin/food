@@ -91,6 +91,10 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
         <div className="cuisson-rond" aria-hidden="true" />
       </header>
 
+      <div className="badge-etape" aria-hidden="true">
+        {String(index + 1).padStart(2, '0')}
+      </div>
+
       <div className="puces-ingredients">
         {recette.ingredients.map((ing) => (
           <span className="puce-ingredient" key={ing.nom}>
