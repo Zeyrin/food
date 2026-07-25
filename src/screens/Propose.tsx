@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import type { BasketEntry, Recipe } from '../types'
 import { type Historique, proposer, tousLesTags } from '../lib/propose'
+import { teinteRecette } from '../lib/identite'
 
 interface Props {
   recipes: Recipe[]
@@ -81,23 +82,37 @@ export default function Propose({ recipes, propositions, historique, basket, onB
         affichees.map((r) => (
           <button
             key={r.id}
-            className="carte"
-            style={{ display: 'block', width: '100%', textAlign: 'left', cursor: 'pointer' }}
+            className="carte carte-recette"
             onClick={() => basculer(r)}
             aria-pressed={dansPanier(r.id)}
           >
-            <h3>
-              {dansPanier(r.id) ? '✓ ' : ''}
-              {r.titre}
-            </h3>
-            <div className="meta">
-              {r.temps} min · {r.portions} parts · {r.tags.join(', ')}
+            <div
+              className="vignette"
+              aria-hidden="true"
+              style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
+            >
+              {r.titre.charAt(0)}
+            </div>
+            <div className="carte-recette-corps">
+              <h3>
+                {dansPanier(r.id) ? '✓ ' : ''}
+                {r.titre}
+              </h3>
+              <div className="puces-info">
+                <span className="puce-info">{r.temps} min</span>
+                <span className="puce-info">{r.portions} parts</span>
+                {r.tags.map((t) => (
+                  <span className="puce-info" key={t}>
+                    {t}
+                  </span>
+                ))}
+              </div>
             </div>
           </button>
         ))
       )}
 
-      <button className="discret" onClick={() => setGraine((g) => g + 1)} style={{ marginTop: 12 }}>
+      <button className="discret suite" onClick={() => setGraine((g) => g + 1)}>
         Autres idées
       </button>
     </>

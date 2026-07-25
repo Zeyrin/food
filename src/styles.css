@@ -74,9 +74,10 @@ body {
 }
 
 h1 {
-  font-size: 26px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
   margin: 24px 0 4px;
 }
 
@@ -163,6 +164,57 @@ button.carte:active {
   font-weight: 600;
 }
 
+/* --- Carte recette (écran Proposer) --------------------------------------- */
+
+button.carte-recette {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px;
+}
+
+.vignette {
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--sur-accent);
+  background: hsl(var(--teinte) 45% 42%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .vignette {
+    background: hsl(var(--teinte) 35% 32%);
+  }
+}
+
+.carte-recette-corps {
+  min-width: 0;
+  flex: 1;
+}
+
+.puces-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.puce-info {
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--papier);
+  color: var(--encre-douce);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .meta {
   color: var(--encre-douce);
   font-size: 14px;
@@ -187,6 +239,10 @@ button.carte:active {
 
 .rangee:active {
   background: var(--accent-doux);
+}
+
+.rangee-lecture {
+  cursor: default;
 }
 
 .rangee[data-coche='true'] .nom {
@@ -311,6 +367,14 @@ button.principal:disabled {
   box-shadow: none;
 }
 
+/* Bouton "carte" cliquable en bloc (`button.carte`, reset natif). */
+button.carte {
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
 button.discret {
   min-height: 44px;
   padding: 0 14px;
@@ -330,6 +394,14 @@ button.discret:active:not(:disabled) {
 button.discret:disabled {
   opacity: 0.4;
   cursor: default;
+}
+
+.ligne-panier {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .compteur {
@@ -362,6 +434,10 @@ button.discret:disabled {
 }
 
 /* --- Mode cuisson -------------------------------------------------------- */
+
+.cuisson button.discret:first-child {
+  margin-top: 20px;
+}
 
 .etape {
   font-size: 22px;
@@ -419,6 +495,30 @@ button.discret:disabled {
   color: var(--encre-douce);
   padding: 40px 0;
   text-align: center;
+}
+
+/* --- Utilitaires de mise en page ----------------------------------------- */
+
+.rangee-boutons {
+  display: flex;
+  gap: 8px;
+}
+
+.rangee-boutons > * {
+  flex: 1;
+}
+
+.espace-haut {
+  margin-top: 20px;
+}
+
+/* Bouton secondaire sous un `.principal` ou en tout début d'écran. */
+button.discret.suite {
+  margin-top: 10px;
+}
+
+button.discret.pleine-largeur {
+  width: 100%;
 }
 
 :focus-visible {

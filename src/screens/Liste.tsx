@@ -104,7 +104,7 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
         </section>
       ))}
 
-      <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
+      <div className="rangee-boutons espace-haut">
         <button className="discret" onClick={() => setMode('tri')}>
           Revoir le tri
         </button>

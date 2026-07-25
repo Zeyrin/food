@@ -37,15 +37,7 @@ export default function Panier({ recipes, basket, onBasket, onCuisiner, onVersLi
           <div className="carte" key={entree.recipeId}>
             <h3>{r.titre}</h3>
             <div className="meta">{r.temps} min</div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginTop: 12,
-                gap: 10,
-              }}
-            >
+            <div className="ligne-panier">
               <div className="compteur">
                 <button
                   onClick={() => setPortions(entree.recipeId, Math.max(1, entree.portions - 1))}
@@ -61,7 +53,7 @@ export default function Panier({ recipes, basket, onBasket, onCuisiner, onVersLi
                   +
                 </button>
               </div>
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div className="rangee-boutons">
                 <button className="discret" onClick={() => onCuisiner(r.id)}>
                   Cuisiner
                 </button>

@@ -16,8 +16,8 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
   const fini = index >= recette.etapes.length
 
   return (
-    <>
-      <button className="discret" onClick={onQuitter} style={{ marginTop: 20 }}>
+    <div className="cuisson">
+      <button className="discret" onClick={onQuitter}>
         ← Quitter
       </button>
 
@@ -33,7 +33,7 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
         <>
           <h2>Ce qu'il faut</h2>
           {recette.ingredients.map((ing) => (
-            <div className="rangee" key={ing.nom} style={{ cursor: 'default' }}>
+            <div className="rangee rangee-lecture" key={ing.nom}>
               <span className="nom">{ing.nom}</span>
               <span className="qte">{formatQuantite(ing)}</span>
             </div>
@@ -66,7 +66,7 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
           <details className="ingredients-rappel">
             <summary>Ingrédients</summary>
             {recette.ingredients.map((ing) => (
-              <div className="rangee" key={ing.nom} style={{ cursor: 'default' }}>
+              <div className="rangee rangee-lecture" key={ing.nom}>
                 <span className="nom">{ing.nom}</span>
                 <span className="qte">{formatQuantite(ing)}</span>
               </div>
@@ -76,7 +76,7 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
             {index + 1 === recette.etapes.length ? 'Terminé' : 'Suivant'}
           </button>
           {index > 0 && (
-            <button className="discret" onClick={() => setIndex(index - 1)} style={{ marginTop: 10 }}>
+            <button className="discret suite" onClick={() => setIndex(index - 1)}>
               Étape précédente
             </button>
           )}
@@ -89,15 +89,11 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
           <button className="principal" onClick={() => onVerdict('refaire')}>
             À refaire
           </button>
-          <button
-            className="discret"
-            onClick={() => onVerdict('jamais')}
-            style={{ marginTop: 10, width: '100%' }}
-          >
+          <button className="discret suite pleine-largeur" onClick={() => onVerdict('jamais')}>
             Ne plus me la proposer
           </button>
         </>
       )}
-    </>
+    </div>
   )
 }
