@@ -199,7 +199,10 @@ export default function App() {
     [foyer],
   )
 
-  const items = useMemo(() => buildList(basket, recipes), [basket])
+  // `recipes` compte autant que `basket` : le catalogue arrive après coup
+  // (lecture Supabase, puis temps réel). Sans lui dans les dépendances, la
+  // liste reste celle calculée sur un catalogue vide au premier rendu.
+  const items = useMemo(() => buildList(basket, recipes), [basket, recipes])
 
   if (!foyerCharge) return null
 

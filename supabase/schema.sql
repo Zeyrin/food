@@ -89,3 +89,15 @@ create policy "acces par uuid de foyer" on historiques
   with check (true);
 
 -- À cocher aussi dans Database → Replication → `historiques`.
+
+-- Équivalent en SQL des trois cases à cocher ci-dessus, si le tableau de
+-- bord n'a pas pris. Sans appartenance à cette publication, Postgres
+-- n'émet rien et l'abonnement côté client reste muet pour toujours.
+-- « relation is already member of publication » = c'était déjà bon,
+-- passer à la ligne suivante.
+alter publication supabase_realtime add table listes;
+alter publication supabase_realtime add table recettes;
+alter publication supabase_realtime add table historiques;
+
+-- Vérification : doit renvoyer les trois tables.
+-- select tablename from pg_publication_tables where pubname = 'supabase_realtime';

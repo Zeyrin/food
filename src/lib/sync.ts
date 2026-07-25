@@ -10,6 +10,18 @@ export const supabase = url && key ? createClient(url, key) : null
 const VIDE: ListState = { coche: {}, dejaPossede: {} }
 
 /**
+ * Sans ça, un abonnement qui échoue (table absente de la publication
+ * `supabase_realtime`, policy manquante, réseau coupé) ne dit rien du
+ * tout : l'app a l'air de marcher, elle ne reçoit simplement jamais
+ * rien. On ignore CLOSED, qui est le statut normal au démontage.
+ */
+const journaliserStatut = (nom: string) => (statut: string) => {
+  if (statut === 'CHANNEL_ERROR' || statut === 'TIMED_OUT') {
+    console.warn(`Realtime « ${nom} » : ${statut} — la synchro entre appareils ne remontera pas.`)
+  }
+}
+
+/**
  * La seule donnée synchronisée : l'état de la liste du foyer.
  * Une ligne, un JSON, dernier écrivain gagne. Deux personnes qui
  * cochent des produits différents ne se marchent pas dessus ;
@@ -39,7 +51,7 @@ export function suivreListe(foyer: string, onChange: (etat: ListState) => void):
         if (etat) onChange(etat)
       },
     )
-    .subscribe()
+    .subscribe(journaliserStatut('liste'))
 
   return () => {
     void supabase.removeChannel(canal)
@@ -143,7 +155,7 @@ export function suivreHistorique(foyer: string, onChange: (h: Historique) => voi
         if (h) onChange(h)
       },
     )
-    .subscribe()
+    .subscribe(journaliserStatut('historique'))
 
   return () => {
     void supabase.removeChannel(canal)
@@ -159,7 +171,7 @@ export function suivreRecettes(foyer: string, onChangement: (recettes: Recipe[])
       { event: '*', schema: 'public', table: 'recettes', filter: `foyer=eq.${foyer}` },
       () => void lireRecettes(foyer).then(onChangement),
     )
-    .subscribe()
+    .subscribe(journaliserStatut('recettes'))
 
   return () => {
     void supabase.removeChannel(canal)
