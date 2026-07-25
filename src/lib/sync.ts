@@ -61,6 +61,26 @@ export async function ajouterRecette(foyer: string, recette: Recipe): Promise<vo
   await supabase.from('recettes').insert({ foyer, recette })
 }
 
+export async function modifierRecette(foyer: string, recette: Recipe): Promise<void> {
+  if (!supabase) throw new Error('Supabase non configuré.')
+  const { error } = await supabase
+    .from('recettes')
+    .update({ recette })
+    .eq('foyer', foyer)
+    .eq('recette->>id', recette.id)
+  if (error) throw new Error(error.message)
+}
+
+export async function supprimerRecette(foyer: string, recipeId: string): Promise<void> {
+  if (!supabase) throw new Error('Supabase non configuré.')
+  const { error } = await supabase
+    .from('recettes')
+    .delete()
+    .eq('foyer', foyer)
+    .eq('recette->>id', recipeId)
+  if (error) throw new Error(error.message)
+}
+
 /**
  * Peuple un foyer tout neuf avec le corpus de départ (src/data/recipes.json).
  * On garde les ids d'origine (« mapo-tofu », etc.) : l'historique local
@@ -76,7 +96,8 @@ export async function semerCorpusInitial(foyer: string, corpus: Recipe[]): Promi
     .eq('foyer', foyer)
   if (count && count > 0) return []
 
-  await supabase.from('recettes').insert(corpus.map((recette) => ({ foyer, recette })))
+  const { error } = await supabase.from('recettes').insert(corpus.map((recette) => ({ foyer, recette })))
+  if (error) throw new Error(`Échec du seed initial : ${error.message}`)
   return corpus
 }
 

@@ -2,31 +2,39 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import corpus from './data/recipes.json'
 import type { BasketEntry, ListState, Recipe, Verdict } from './types'
 import { buildList } from './lib/aggregate'
-import { type Historique, proposer } from './lib/propose'
+import { type Historique } from './lib/propose'
 import {
-  creerFoyer,
   ecrireBasket,
   lireBasket,
+  lireCodeFoyer,
   lireFoyer,
   lireHistorique,
   marquerCuisine,
+  quitterFoyer,
+  rejoindreFoyer,
 } from './lib/local'
 import {
   ajouterRecette,
   ecrireListe,
   lireListe,
   lireRecettes,
+  modifierRecette,
   semerCorpusInitial,
   supabase,
+  supprimerRecette,
   suivreListe,
   suivreRecettes,
 } from './lib/sync'
+import { creerFoyerAvecCode, resoudreCode } from './lib/foyer'
+import DetailRecette from './screens/DetailRecette'
 import Propose from './screens/Propose'
 import Panier from './screens/Panier'
 import Liste from './screens/Liste'
 import Cuisson from './screens/Cuisson'
 import CuissonListe from './screens/CuissonListe'
 import AjouterRecette from './screens/AjouterRecette'
+import Bienvenue from './screens/Bienvenue'
+import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
 
 const CORPUS: Recipe[] = corpus as Recipe[]
@@ -39,22 +47,68 @@ export default function App() {
   const [onglet, setOnglet] = useState<Onglet>('propose')
   const [enCuisson, setEnCuisson] = useState<string | null>(null)
   const [enAjout, setEnAjout] = useState(false)
+  const [enReglages, setEnReglages] = useState(false)
+  const [enDetail, setEnDetail] = useState<string | null>(null)
+  const [enEdition, setEnEdition] = useState<Recipe | null>(null)
 
   const [basket, setBasket] = useState<BasketEntry[]>([])
   const [historique, setHistorique] = useState<Historique>({ derniereFois: {}, verdicts: {} })
   const [foyer, setFoyer] = useState<string | null>(null)
+  const [codeFoyer, setCodeFoyer] = useState<string | null>(null)
+  const [foyerCharge, setFoyerCharge] = useState(false)
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
 
   // Amorçage : local d'abord, réseau ensuite. L'app est utilisable
-  // avant que Supabase ait répondu.
+  // avant que Supabase ait répondu. Sans foyer connu (premier
+  // lancement sur cet appareil, ni lien ni stockage local), on ne
+  // crée plus de foyer en douce — l'écran Bienvenue le demande
+  // explicitement, pour éviter les foyers orphelins créés par
+  // inadvertance (un par appareil/navigateur ouvert sans lien).
+  // `foyerCharge` distingue « pas encore lu » de « vraiment absent »,
+  // pour ne pas flasher Bienvenue le temps que IndexedDB réponde.
   useEffect(() => {
     void (async () => {
       setBasket(await lireBasket())
       setHistorique(await lireHistorique())
-      setFoyer((await lireFoyer()) ?? (await creerFoyer()))
+      setFoyer(await lireFoyer())
+      setCodeFoyer(await lireCodeFoyer())
+      setFoyerCharge(true)
     })()
   }, [])
+
+  const creer = useCallback(async () => {
+    const { id, code } = await creerFoyerAvecCode()
+    await rejoindreFoyer(id, code)
+    setFoyer(id)
+    setCodeFoyer(code)
+  }, [])
+
+  const rejoindre = useCallback(async (code: string) => {
+    const id = await resoudreCode(code)
+    if (!id) return false
+    await rejoindreFoyer(id, code)
+    setFoyer(id)
+    setCodeFoyer(code)
+    return true
+  }, [])
+
+  const quitter = useCallback(async () => {
+    await quitterFoyer()
+    setFoyer(null)
+    setCodeFoyer(null)
+    setRecipes([])
+    setEnReglages(false)
+  }, [])
+
+  const rejoindreDepuisReglages = useCallback(
+    async (code: string) => {
+      const ok = await rejoindre(code)
+      if (ok) setEnReglages(false)
+      return ok
+    },
+    [rejoindre],
+  )
 
   useEffect(() => {
     if (!foyer) return
@@ -89,6 +143,26 @@ export default function App() {
     [foyer],
   )
 
+  const modifier = useCallback(
+    async (recette: Recipe) => {
+      if (!foyer) throw new Error('Foyer non initialisé.')
+      await modifierRecette(foyer, recette)
+      setRecipes((prec) => prec.map((r) => (r.id === recette.id ? recette : r)))
+    },
+    [foyer],
+  )
+
+  const supprimer = useCallback(
+    async (recipeId: string) => {
+      if (!foyer) return
+      await supprimerRecette(foyer, recipeId)
+      setRecipes((prec) => prec.filter((r) => r.id !== recipeId))
+      setBasket((prec) => prec.filter((e) => e.recipeId !== recipeId))
+      setEnDetail(null)
+    },
+    [foyer],
+  )
+
   const majBasket = useCallback((suivant: BasketEntry[]) => {
     setBasket(suivant)
     void ecrireBasket(suivant)
@@ -106,15 +180,13 @@ export default function App() {
     setHistorique(await marquerCuisine(recipeId, v))
   }, [])
 
-  const propositions = useMemo(
-    () => proposer(recipes, historique, { nombre: 8 }),
-    // Une nouvelle sélection à chaque changement d'historique ou de
-    // catalogue, pas à chaque rendu — sinon les cartes dansent sous
-    // le doigt.
-    [recipes, historique],
-  )
-
   const items = useMemo(() => buildList(basket, recipes), [basket])
+
+  if (!foyerCharge) return null
+
+  if (!foyer) {
+    return <Bienvenue onCreer={creer} onRejoindre={rejoindre} />
+  }
 
   if (enCuisson) {
     const recette = recipes.find((r) => r.id === enCuisson)
@@ -132,19 +204,71 @@ export default function App() {
     }
   }
 
+  if (enEdition) {
+    return (
+      <AjouterRecette
+        recetteInitiale={enEdition}
+        onAjouter={(r) => modifier({ ...r, id: enEdition.id })}
+        onQuitter={() => setEnEdition(null)}
+      />
+    )
+  }
+
   if (enAjout) {
     return <AjouterRecette onAjouter={ajouter} onQuitter={() => setEnAjout(false)} />
   }
 
+  if (enDetail) {
+    const recette = recipes.find((r) => r.id === enDetail)
+    if (recette) {
+      return (
+        <DetailRecette
+          recette={recette}
+          dansPanier={basket.some((e) => e.recipeId === recette.id)}
+          onBasculerPanier={() =>
+            majBasket(
+              basket.some((e) => e.recipeId === recette.id)
+                ? basket.filter((e) => e.recipeId !== recette.id)
+                : [...basket, { recipeId: recette.id, portions: recette.portions }],
+            )
+          }
+          onCuisiner={() => setEnCuisson(recette.id)}
+          onModifier={() => setEnEdition(recette)}
+          onSupprimer={() => void supprimer(recette.id)}
+          onFermer={() => setEnDetail(null)}
+        />
+      )
+    }
+  }
+
+  if (enReglages) {
+    return (
+      <Reglages
+        codeFoyer={codeFoyer}
+        onRejoindre={rejoindreDepuisReglages}
+        onQuitter={quitter}
+        onFermer={() => setEnReglages(false)}
+      />
+    )
+  }
+
   return (
     <>
+      <button
+        className="bouton-rond-discret bouton-reglages-global"
+        onClick={() => setEnReglages(true)}
+        aria-label="Réglages"
+      >
+        <Icone nom="menu" taille={20} />
+      </button>
+
       {onglet === 'propose' && (
         <Propose
           recipes={recipes}
-          propositions={propositions}
           historique={historique}
           basket={basket}
           onBasket={majBasket}
+          onDetail={setEnDetail}
         />
       )}
 

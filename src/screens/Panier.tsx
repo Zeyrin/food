@@ -114,7 +114,7 @@ export default function Panier({
 
       <div className="action-flottante">
         <button className="principal" onClick={onVersListe}>
-          <Icone nom="panier-plein" taille={20} /> Voir la liste
+          <Icone nom="panier" taille={20} /> Voir la liste
         </button>
       </div>
     </>

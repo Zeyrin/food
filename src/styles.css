@@ -177,6 +177,31 @@ p.aide {
   color: var(--accent);
 }
 
+.bouton-rond-discret {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--carte-haute);
+  color: var(--encre-douce);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.bouton-rond-discret:active {
+  transform: scale(0.92);
+}
+
+.bouton-reglages-global {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: 16px;
+  z-index: 11;
+}
+
 /* --- Barre d'onglets ----------------------------------------------------- */
 
 .espaceur-action-flottante {
@@ -326,6 +351,62 @@ button.carte:active {
 
 .carte-recette-corps {
   padding: 20px;
+}
+
+/* Grille compacte : tout le catalogue visible d'un coup, deux
+   colonnes, vignette carrée, titre seul — le reste vit sur la fiche. */
+.grille-recettes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.grille-recettes .carte-recette {
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.grille-recettes .vignette {
+  aspect-ratio: 1;
+  font-size: 40px;
+}
+
+.grille-recettes .badge-temps {
+  top: 8px;
+  left: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.grille-recettes .bouton-ajout-flottant {
+  width: 44px;
+  height: 44px;
+  bottom: 8px;
+  right: 8px;
+}
+
+.grille-recettes .carte-recette-corps {
+  padding: 12px 14px 14px;
+}
+
+.grille-recettes .carte-recette h3 {
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.champ-recherche {
+  margin: 12px 0 4px;
+}
+
+.detail-vignette {
+  border-radius: var(--rayon-grand);
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+button.discret.danger {
+  color: var(--terracotta);
+  border-color: color-mix(in srgb, var(--terracotta) 40%, transparent);
 }
 
 .bouton-ajout {
@@ -596,6 +677,23 @@ button.discret:disabled {
   font-size: 20px;
   font-weight: 400;
   color: var(--encre-douce);
+}
+
+.carte-code-foyer {
+  text-align: center;
+  background: var(--carte-basse);
+  border-radius: var(--rayon);
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.carte-code-foyer-valeur {
+  margin: 4px 0 0;
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--accent);
 }
 
 .bento-deux-colonnes {
@@ -1118,6 +1216,15 @@ button.carte-panier-bouton .carte-panier-corps {
   font-family: ui-monospace, 'SF Mono', Consolas, monospace;
   font-size: 13px;
   margin-top: 12px;
+}
+
+.champ-texte-code-court {
+  text-align: center;
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
 }
 
 .bloc-erreurs {

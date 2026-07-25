@@ -6,30 +6,42 @@ import Icone from '../components/Icone'
 
 interface Props {
   recipes: Recipe[]
-  propositions: Recipe[]
   historique: Historique
   basket: BasketEntry[]
   onBasket: (basket: BasketEntry[]) => void
+  onDetail: (recipeId: string) => void
 }
 
 const TEMPS = [20, 30, 45] as const
 
-export default function Propose({ recipes, propositions, historique, basket, onBasket }: Props) {
+const normaliser = (s: string) =>
+  s
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+
+export default function Propose({ recipes, historique, basket, onBasket, onDetail }: Props) {
+  const [recherche, setRecherche] = useState('')
   const [tempsMax, setTempsMax] = useState<number | null>(null)
+  const [aRefaire, setARefaire] = useState(false)
   const [tags, setTags] = useState<string[]>([])
-  const [graine, setGraine] = useState(0)
 
-  const filtre = tempsMax !== null || tags.length > 0
-
-  const affichees = useMemo(
-    () =>
-      filtre || graine
-        ? proposer(recipes, historique, { tempsMax: tempsMax ?? undefined, tags, nombre: 8 })
-        : propositions,
-    // `graine` sert uniquement à relancer un tirage.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [recipes, historique, tempsMax, tags, graine, propositions],
-  )
+  // Tout le catalogue d'un coup (pas de limite à 8) : `proposer` sert
+  // encore pour l'ordre — le rejeté disparaît, le récent descend, le
+  // « à refaire » remonte.
+  const affichees = useMemo(() => {
+    let liste = proposer(recipes, historique, {
+      tempsMax: tempsMax ?? undefined,
+      tags,
+      nombre: recipes.length,
+    })
+    if (aRefaire) liste = liste.filter((r) => historique.verdicts[r.id] === 'refaire')
+    if (recherche.trim()) {
+      const q = normaliser(recherche)
+      liste = liste.filter((r) => normaliser(r.titre).includes(q))
+    }
+    return liste
+  }, [recipes, historique, tempsMax, tags, aRefaire, recherche])
 
   const dansPanier = (id: string) => basket.some((e) => e.recipeId === id)
 
@@ -52,9 +64,14 @@ export default function Propose({ recipes, propositions, historique, basket, onB
           <h1>Proposer</h1>
         </div>
       </header>
-      <p className="aide">
-        Ce qui a été cuisiné dans le mois est écarté. Touchez une recette pour l'ajouter au panier.
-      </p>
+
+      <input
+        className="champ-texte champ-recherche"
+        type="search"
+        placeholder="Chercher une recette…"
+        value={recherche}
+        onChange={(e) => setRecherche(e.target.value)}
+      />
 
       <div className="puces">
         {TEMPS.map((t) => (
@@ -67,9 +84,9 @@ export default function Propose({ recipes, propositions, historique, basket, onB
             ≤ {t} min
           </button>
         ))}
-      </div>
-
-      <div className="puces">
+        <button className="puce" aria-pressed={aRefaire} onClick={() => setARefaire(!aRefaire)}>
+          À refaire
+        </button>
         {tousLesTags(recipes).map((t) => (
           <button
             key={t}
@@ -83,47 +100,44 @@ export default function Propose({ recipes, propositions, historique, basket, onB
       </div>
 
       {affichees.length === 0 ? (
-        <p className="vide">Aucune recette ne passe ces filtres.</p>
+        <p className="vide">Aucune recette ne correspond.</p>
       ) : (
-        affichees.map((r) => (
-          <div
-            key={r.id}
-            className="carte carte-recette"
-            style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
-          >
-            <div className="vignette" aria-hidden="true">
-              {r.image && <img src={r.image} alt="" />}
-              <span className="badge-temps">
-                <Icone nom="minuteur" taille={14} /> {r.temps} min
-              </span>
-              {!r.image && r.titre.charAt(0)}
-              <button
-                className="bouton-ajout bouton-ajout-flottant"
-                onClick={() => basculer(r)}
-                aria-pressed={dansPanier(r.id)}
-                aria-label={dansPanier(r.id) ? `Retirer ${r.titre} du panier` : `Ajouter ${r.titre} au panier`}
-              >
-                <Icone nom={dansPanier(r.id) ? 'coche' : 'plus'} taille={22} />
-              </button>
-            </div>
-            <div className="carte-recette-corps">
-              <h3>{r.titre}</h3>
-              <div className="puces-info">
-                <span className="puce-info">{r.portions} parts</span>
-                {r.tags.map((t) => (
-                  <span className="puce-info" key={t}>
-                    {t}
-                  </span>
-                ))}
+        <div className="grille-recettes">
+          {affichees.map((r) => (
+            <div
+              key={r.id}
+              className="carte carte-recette"
+              role="button"
+              tabIndex={0}
+              onClick={() => onDetail(r.id)}
+              onKeyDown={(e) => e.key === 'Enter' && onDetail(r.id)}
+              style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
+            >
+              <div className="vignette" aria-hidden="true">
+                {r.image && <img src={r.image} alt="" />}
+                <span className="badge-temps">
+                  <Icone nom="minuteur" taille={12} /> {r.temps} min
+                </span>
+                {!r.image && r.titre.charAt(0)}
+                <button
+                  className="bouton-ajout bouton-ajout-flottant"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    basculer(r)
+                  }}
+                  aria-pressed={dansPanier(r.id)}
+                  aria-label={dansPanier(r.id) ? `Retirer ${r.titre} du panier` : `Ajouter ${r.titre} au panier`}
+                >
+                  <Icone nom={dansPanier(r.id) ? 'coche' : 'plus'} taille={20} />
+                </button>
+              </div>
+              <div className="carte-recette-corps">
+                <h3>{r.titre}</h3>
               </div>
             </div>
-          </div>
-        ))
+          ))}
+        </div>
       )}
-
-      <button className="discret suite" onClick={() => setGraine((g) => g + 1)}>
-        Autres idées
-      </button>
     </>
   )
 }

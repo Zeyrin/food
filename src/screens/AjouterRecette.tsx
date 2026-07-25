@@ -7,11 +7,29 @@ import Icone from '../components/Icone'
 interface Props {
   onAjouter: (recette: Recipe) => Promise<void>
   onQuitter: () => void
+  /** En mode édition : la recette existante, préremplie en JSON. */
+  recetteInitiale?: Recipe
 }
 
-export default function AjouterRecette({ onAjouter, onQuitter }: Props) {
+export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }: Props) {
   const [demande, setDemande] = useState('')
-  const [texte, setTexte] = useState('')
+  const [texte, setTexte] = useState(() =>
+    recetteInitiale
+      ? JSON.stringify(
+          {
+            titre: recetteInitiale.titre,
+            temps: recetteInitiale.temps,
+            portions: recetteInitiale.portions,
+            tags: recetteInitiale.tags,
+            ingredients: recetteInitiale.ingredients,
+            etapes: recetteInitiale.etapes,
+            ...(recetteInitiale.image ? { image: recetteInitiale.image } : {}),
+          },
+          null,
+          2,
+        )
+      : '',
+  )
   const [erreurs, setErreurs] = useState<string[]>([])
   const [enCours, setEnCours] = useState(false)
   const [copie, setCopie] = useState(false)
@@ -54,7 +72,7 @@ export default function AjouterRecette({ onAjouter, onQuitter }: Props) {
       <header className="entete-app">
         <div className="entete-app-titre">
           <Icone nom="etoile" />
-          <h1>Saisie automatique</h1>
+          <h1>{recetteInitiale ? 'Modifier la recette' : 'Saisie automatique'}</h1>
         </div>
       </header>
       <p className="aide">

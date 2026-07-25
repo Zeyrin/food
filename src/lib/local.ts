@@ -1,4 +1,4 @@
-import { get, set } from 'idb-keyval'
+import { del, get, set } from 'idb-keyval'
 import type { BasketEntry, Verdict } from '../types'
 import type { Historique } from './propose'
 
@@ -10,6 +10,7 @@ import type { Historique } from './propose'
 const K_BASKET = 'basket'
 const K_HISTORIQUE = 'historique'
 const K_FOYER = 'foyer'
+const K_CODE_FOYER = 'codeFoyer'
 
 const HISTORIQUE_VIDE: Historique = { derniereFois: {}, verdicts: {} }
 
@@ -36,9 +37,11 @@ export async function marquerCuisine(recipeId: string, verdict: Verdict): Promis
 }
 
 /**
- * L'identifiant du foyer est le secret de partage : il arrive par
- * l'URL (#/f/<uuid>) la première fois, puis on le garde. Qui a le
- * lien a la liste — c'est tout le modèle d'accès.
+ * L'identifiant du foyer est le secret de partage. Il arrive par
+ * l'URL (#/f/<uuid>), ou a déjà été choisi sur cet appareil ; sinon
+ * `null` — à l'appelant de proposer explicitement d'en créer un ou
+ * d'en rejoindre un par code (voir écran Bienvenue), plutôt que
+ * d'en générer un en douce à chaque nouvel appareil.
  */
 export async function lireFoyer(): Promise<string | null> {
   const depuisUrl = location.hash.match(/\/f\/([0-9a-f-]{36})/i)?.[1]
@@ -49,8 +52,16 @@ export async function lireFoyer(): Promise<string | null> {
   return (await get<string>(K_FOYER)) ?? null
 }
 
-export async function creerFoyer(): Promise<string> {
-  const id = crypto.randomUUID()
+export async function rejoindreFoyer(id: string, code?: string): Promise<void> {
   await set(K_FOYER, id)
-  return id
+  if (code) await set(K_CODE_FOYER, code)
+}
+
+export async function lireCodeFoyer(): Promise<string | null> {
+  return (await get<string>(K_CODE_FOYER)) ?? null
+}
+
+export async function quitterFoyer(): Promise<void> {
+  await del(K_FOYER)
+  await del(K_CODE_FOYER)
 }

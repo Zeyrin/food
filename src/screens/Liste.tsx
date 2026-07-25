@@ -135,7 +135,7 @@ export default function Liste({ items, etat, onEtat, foyer, prochaineCuisson }: 
 
       <div className="bento-deux-colonnes">
         <div className="carte-resume carte-resume-bento">
-          <Icone nom="panier-plein" taille={96} />
+          <Icone nom="panier" taille={96} />
           <p className="carte-resume-label">Progression</p>
           <h2 className="carte-resume-nombre">
             {aAcheter.length - restants} <span>/ {aAcheter.length}</span>

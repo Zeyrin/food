@@ -46,3 +46,27 @@ create policy "acces par uuid de foyer" on recettes
 
 -- À activer aussi dans Database → Replication → cocher `recettes`,
 -- pour que la recette ajoutée sur un téléphone apparaisse sur l'autre.
+
+-- Code court (6 caractères) pour rejoindre un foyer sans avoir à
+-- copier/coller l'UUID complet. Sert uniquement à résoudre
+-- code → foyer une fois, à la saisie : toutes les opérations
+-- suivantes (recettes, liste) continuent de passer par l'UUID, qui
+-- reste la vraie clé d'accès. Un code à 6 caractères est bien plus
+-- court à deviner qu'un UUID — la policy ci-dessous n'autorise que
+-- la lecture du foyer correspondant à un code exact, jamais
+-- l'énumération de tous les codes.
+create table if not exists foyers (
+  foyer uuid primary key,
+  code  text not null unique,
+  cree_le timestamptz not null default now()
+);
+
+alter table foyers enable row level security;
+
+create policy "resoudre un code precis" on foyers
+  for select
+  using (true);
+
+create policy "creer son propre foyer" on foyers
+  for insert
+  with check (true);
