@@ -977,15 +977,18 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .cuisson-entete {
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgb(255 248 239 / 0.1);
 }
 
 .cuisson-rond {
-  flex: 0 0 48px;
-  width: 48px;
-  height: 48px;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
   border: 0;
   border-radius: 50%;
   background: rgb(255 248 239 / 0.08);
@@ -1033,64 +1036,131 @@ button.carte-panier-bouton .carte-panier-corps {
   background: #a6d47e;
 }
 
-.badge-etape {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 56px;
-  height: 56px;
-  margin-top: 24px;
-  padding: 0 18px;
-  border-radius: 999px;
-  background: var(--terracotta, #bc4749);
-  color: #fff8ef;
-  font-family: var(--affichage);
-  font-size: 24px;
-  font-weight: 800;
+/* Tiroir des doses. Replié : une ligne. Déplié : la liste entière, qui
+   défile pour son propre compte sans jamais dépasser 40 % de la hauteur
+   — l'étape en cours doit rester lisible derrière. */
+.tiroir-ingredients {
+  flex: none;
+  margin-top: 14px;
+  border-radius: var(--rayon);
+  background: rgb(255 248 239 / 0.06);
+  border: 1px solid rgb(255 248 239 / 0.12);
 }
 
-.puces-ingredients {
+.tiroir-ingredients summary {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
-  margin: 20px 0 28px;
-}
-
-.puce-ingredient {
-  padding: 10px 16px;
-  border-radius: 999px;
-  background: rgb(255 248 239 / 0.08);
-  border: 1px solid rgb(255 248 239 / 0.14);
-  color: #fff8ef;
+  min-height: 46px;
+  padding: 0 16px;
+  cursor: pointer;
+  list-style: none;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
+  color: rgb(255 248 239 / 0.85);
 }
 
-.etape-titre {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  font-family: var(--affichage);
-  font-size: 34px;
-  font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+/* Safari dessine encore son propre triangle sans ça. */
+.tiroir-ingredients summary::-webkit-details-marker {
+  display: none;
+}
+
+.tiroir-ingredients summary em {
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgb(255 248 239 / 0.12);
+  color: rgb(255 248 239 / 0.7);
+}
+
+/* Le chevron pointe à droite replié, vers le bas déplié. */
+.tiroir-ingredients summary svg {
+  margin-left: auto;
+  transition: transform 0.18s ease;
+}
+
+.tiroir-ingredients[open] summary svg {
+  transform: rotate(90deg);
+}
+
+.liste-ingredients {
+  max-height: 40vh;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
   margin: 0;
+  padding: 0 16px 12px;
+  list-style: none;
+}
+
+.liste-ingredients li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid rgb(255 248 239 / 0.08);
+  font-size: 15px;
+  color: rgb(255 248 239 / 0.75);
+}
+
+/* La dose est ce qu'on vient chercher : elle est alignée à droite et
+   plus lisible que le nom. */
+.liste-ingredients li b {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: #fff8ef;
+}
+
+/* `min-height: 0` est indispensable : sans lui un enfant flex refuse de
+   descendre sous sa hauteur de contenu, déborde au lieu de défiler, et
+   pousse les boutons hors de l'écran. */
+.cuisson-corps {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+/* Marges automatiques plutôt que `justify-content: center` : ça centre
+   l'étape courte tout en laissant l'étape longue défiler sans que son
+   début soit rogné en haut. */
+.etape-titre {
+  margin: auto 0;
+  font-family: var(--affichage);
+  font-size: clamp(21px, 5.4vw, 32px);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+}
+
+.cuisson-corps .bloc-astuce {
+  flex: none;
+  margin: 20px 0 0;
 }
 
 .cuisson-focus .dose {
   color: #ffb3b0;
 }
 
+/* Filet de séparation : sans lui, le texte qui défile vient toucher les
+   boutons et on ne voit plus qu'il reste de l'étape à lire. */
 .cuisson-actions {
   display: flex;
+  flex: none;
   gap: 12px;
   padding-top: 16px;
+  border-top: 1px solid rgb(255 248 239 / 0.1);
 }
 
 .bouton-cuisson {
   flex: 1;
-  min-height: 68px;
+  min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;

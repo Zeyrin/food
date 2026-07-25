@@ -20,7 +20,7 @@ Format exact attendu :
   "ingredients": [
     { "nom": "string (nom canonique, sans quantité dedans)", "quantite": nombre, "unite": "une valeur parmi ${UNITS.join(', ')}", "magasin": "intermarche ou primeur (primeur = fruits/légumes/produits asiatiques frais, intermarche = le reste)" }
   ],
-  "etapes": ["une string par étape, dans l'ordre, texte clair et complet"],
+  "etapes": ["une string par étape, dans l'ordre, texte clair et complet, avec les ingrédients entre accolades : \\"Cuire les {pâtes} dans l'eau salée\\""],
   "description": "une phrase courte qui donne envie (optionnel)",
   "astuces": ["un tour de main par étape, même ordre que etapes, chaîne vide si rien à dire (optionnel)"]
 }
@@ -30,5 +30,7 @@ Contraintes :
 - "magasin" doit être exactement "intermarche" ou "primeur".
 - Les quantités sont des nombres (pas de fractions texte comme "1/2", utilise 0.5).
 - Le sel, poivre, huile courants peuvent avoir "placard": true en plus des autres champs (optionnel).
-- Les étapes citent les ingrédients par leur nom exact tel qu'écrit dans "ingredients", pour que l'app puisse y accrocher les quantités automatiquement.`
+- Dans les étapes, entoure d'accolades chaque mention d'un ingrédient de la liste : l'app affiche la dose juste après. Écris le mot tel qu'il doit se lire — les accolades disparaissent à l'affichage, et le texte à l'intérieur peut différer du "nom" canonique : { "nom": "pâtes longues" } se cite « les {pâtes} », { "nom": "oignon nouveau" } se cite « les {oignons nouveaux} ».
+- N'entoure pas une mention partielle ou indirecte : « la moitié du reblochon », « le reste des herbes », « la sauce » quand il s'agit de celle qu'on est en train de faire. Sans accolades, aucune dose n'est affichée — c'est le comportement voulu dans ces cas.
+- N'entoure pas non plus les ingrédients de placard (sel, poivre, huile courante) : leur dose n'intéresse personne en cours de cuisson.`
 }

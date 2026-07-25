@@ -76,7 +76,9 @@ export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }
         </div>
       </header>
       <p className="aide">
-        Demandez une recette à une IA avec le prompt ci-dessous, puis collez sa réponse JSON.
+        Demandez une recette à une IA avec le prompt ci-dessous, puis collez sa réponse JSON. Dans
+        les étapes, un ingrédient entre accolades — « cuire les {'{pâtes}'} » — s'affiche avec sa
+        dose en mode cuisson.
       </p>
 
       <h2>1. Le prompt à copier</h2>

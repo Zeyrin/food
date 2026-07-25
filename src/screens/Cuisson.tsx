@@ -112,33 +112,44 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
         </button>
       </header>
 
-      <div className="badge-etape" aria-hidden="true">
-        {String(index + 1).padStart(2, '0')}
+      {/* `details` natif : replié il ne coûte qu'une ligne, déplié il
+          montre tout d'un coup. Aucun état à gérer, et il s'ouvre même
+          si le rendu React est occupé ailleurs. */}
+      <details className="tiroir-ingredients">
+        <summary>
+          <span>Ingrédients</span>
+          <em>{recette.ingredients.length}</em>
+          <Icone nom="suivant" taille={18} />
+        </summary>
+        <ul className="liste-ingredients">
+          {recette.ingredients.map((ing) => (
+            <li key={ing.nom}>
+              <span>{ing.nom}</span>
+              <b>{formatQuantite(ing)}</b>
+            </li>
+          ))}
+        </ul>
+      </details>
+
+      {/* Seule zone qui défile : une étape longue ne pousse plus les
+          boutons hors de l'écran. */}
+      <div className="cuisson-corps" key={index}>
+        <p className="etape-titre">
+          {annoterEtape(recette.etapes[index] ?? '', recette.ingredients).map((seg, i) => (
+            <span key={i}>
+              {seg.texte}
+              {seg.quantite && <b className="dose"> {seg.quantite}</b>}
+            </span>
+          ))}
+        </p>
+
+        {recette.astuces?.[index] && (
+          <div className="bloc-astuce">
+            <Icone nom="etoile" taille={20} />
+            <p>{recette.astuces[index]}</p>
+          </div>
+        )}
       </div>
-
-      <div className="puces-ingredients">
-        {recette.ingredients.map((ing) => (
-          <span className="puce-ingredient" key={ing.nom}>
-            {formatQuantite(ing)} {ing.nom}
-          </span>
-        ))}
-      </div>
-
-      <p className="etape-titre">
-        {annoterEtape(recette.etapes[index] ?? '', recette.ingredients).map((seg, i) => (
-          <span key={i}>
-            {seg.texte}
-            {seg.quantite && <b className="dose"> {seg.quantite}</b>}
-          </span>
-        ))}
-      </p>
-
-      {recette.astuces?.[index] && (
-        <div className="bloc-astuce">
-          <Icone nom="etoile" taille={20} />
-          <p>{recette.astuces[index]}</p>
-        </div>
-      )}
 
       <div className="cuisson-actions">
         {index > 0 && (

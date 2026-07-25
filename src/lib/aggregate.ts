@@ -89,53 +89,178 @@ export function groupByStore(items: ListItem[]): Array<{ magasin: StoreId; items
     .filter((g) => g.items.length > 0)
 }
 
-const AFFICHAGE: Partial<Record<Unit, string>> = {
-  piece: '',
-  pincee: ' pincée(s)',
-  botte: ' botte(s)',
-  cs: ' c. à s.',
-  cc: ' c. à c.',
+/** Suffixes lisibles. Les unités qui s'accordent reçoivent leur vraie
+ *  forme plutôt qu'un « (s) » : « 1 botte », « 2 bottes ». */
+const AFFICHAGE: Partial<Record<Unit, (n: number) => string>> = {
+  piece: () => '',
+  pincee: (n) => (n > 1 ? ' pincées' : ' pincée'),
+  botte: (n) => (n > 1 ? ' bottes' : ' botte'),
+  cs: () => ' c. à s.',
+  cc: () => ' c. à c.',
 }
 
 export function formatQuantite(item: Pick<ListItem, 'quantite' | 'unite'>): string {
-  const suffixe = AFFICHAGE[item.unite] ?? ` ${item.unite}`
+  const suffixe = AFFICHAGE[item.unite]?.(item.quantite) ?? ` ${item.unite}`
   return `${item.quantite}${suffixe}`.trim()
 }
 
+/**
+ * « le reblochon 1 » n'apprend rien : un nom au singulier dit déjà qu'il
+ * y en a un. On ne colle une quantité que si elle porte une information
+ * — « les carottes 2 », « les tortillas 6 ».
+ */
+const quantiteMuette = (ing: Pick<ListItem, 'quantite' | 'unite'>) =>
+  ing.unite === 'piece' && ing.quantite <= 1
+
 const sansAccents = (s: string) => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
+
+/** Mots de liaison : ni porteurs de sens dans un nom d'ingrédient, ni
+ *  obstacle quand ils séparent deux de ses mots (« huile d'olive »). */
+const LIAISONS = new Set(['de', 'du', 'des', 'd', 'la', 'le', 'les', 'l', 'au', 'aux', 'a', 'en'])
+
+/** « huile d'olive » → ["huile","olive"] ; « chou-fleur » → ["chou","fleur"]. */
+const motsDuNom = (nom: string) =>
+  sansAccents(nom)
+    .split(/[^\p{L}]+/u)
+    .filter((m) => m.length > 0 && !LIAISONS.has(m))
+
+/**
+ * Ces deux-là désignent aussi bien un ingrédient que ce qu'on est en
+ * train de fabriquer : « la sauce nappe » ne parle pas de la sauce soja
+ * de la liste, « la pâte doit rougir » pas de la pâte de miso. Ils
+ * n'annotent donc que si le texte les qualifie. Au singulier seulement —
+ * « pâtes » nomme le plat, et « cuire les pâtes » doit rester annoté.
+ *
+ * Volontairement court : les autres têtes soi-disant ambiguës (huile,
+ * lait, cœur, galette) ne posaient problème que par l'annotation au
+ * milieu du groupe nominal, réglée par consommerSuite. « Un filet
+ * d'huile » désigne bien l'huile d'olive de la liste.
+ */
+const TETES_GENERIQUES = new Set(['sauce', 'pate'])
+
+const pluriels = (mot: string) => (/(?:eau|eu)$/.test(mot) ? [mot + 'x'] : [mot + 's'])
+
+const correspond = (brut: string, cible: string) =>
+  brut === cible || pluriels(cible).includes(brut) || pluriels(brut).includes(cible)
+
+/**
+ * Depuis la fin d'un mot déjà reconnu, avale la suite du groupe nominal
+ * tant qu'elle continue de nommer l'ingrédient : après « huile », les
+ * mots « de » puis « sésame ». S'arrête à la première rupture — un mot
+ * étranger, ou de la ponctuation entre les deux, signe la fin du groupe.
+ */
+function consommerSuite(
+  texte: string,
+  depuis: number,
+  restants: string[],
+): { fin: number; consommes: number } {
+  const suite = /[\p{L}\p{M}]+/gu
+  suite.lastIndex = depuis
+  let fin = depuis
+  let bord = depuis
+  let i = 0
+  let prochain: RegExpExecArray | null
+
+  while (i < restants.length && (prochain = suite.exec(texte)) !== null) {
+    if (!/^[\s'’-]*$/.test(texte.slice(bord, prochain.index))) break
+    bord = prochain.index + prochain[0].length
+    const mot = sansAccents(prochain[0])
+    if (LIAISONS.has(mot)) continue
+    if (!correspond(mot, restants[i]!)) break
+    i += 1
+    fin = bord
+  }
+
+  return { fin, consommes: i }
+}
+
+/**
+ * Marqueur d'ingrédient dans une étape : « cuire les {pâtes} ». Même
+ * idée que le `@ingrédient{}` de Cooklang — c'est l'auteur de la
+ * recette qui désigne l'ingrédient, le logiciel n'a plus à le deviner.
+ * Le texte entre accolades s'affiche tel quel, les accolades non.
+ */
+const MARQUEUR = /\{([^{}]+)\}/
+const MARQUEURS = new RegExp(MARQUEUR, 'g')
+
+/** Retrouve l'ingrédient désigné par un marqueur : d'abord au nom
+ *  exact, sinon sur son premier mot (« {pâtes} » → « pâtes longues »). */
+function ingredientDesigne<T extends Pick<ListItem, 'nom'>>(
+  libelle: string,
+  ingredients: T[],
+): T | undefined {
+  const cible = sansAccents(libelle).trim()
+  return (
+    ingredients.find((ing) => sansAccents(ing.nom) === cible) ??
+    ingredients.find((ing) => {
+      const tete = motsDuNom(ing.nom)[0]
+      const premier = motsDuNom(libelle)[0]
+      return tete !== undefined && premier !== undefined && correspond(premier, tete)
+    })
+  )
+}
+
+/**
+ * Étape marquée par son auteur : aucune devinette, on lit ce qui est
+ * écrit. Un marqueur dont le nom ne correspond à rien s'affiche quand
+ * même en texte normal — une faute de frappe ne doit pas faire
+ * disparaître un morceau de la recette.
+ */
+function annoterMarqueurs(
+  texte: string,
+  ingredients: Array<Pick<ListItem, 'nom' | 'quantite' | 'unite'>>,
+): Array<{ texte: string; quantite?: string }> {
+  const segments: Array<{ texte: string; quantite?: string }> = []
+  let curseur = 0
+
+  for (const m of texte.matchAll(MARQUEURS)) {
+    const libelle = m[1]!
+    const debut = m.index ?? 0
+    const ing = ingredientDesigne(libelle, ingredients)
+    segments.push({
+      texte: texte.slice(curseur, debut) + libelle,
+      ...(ing && !quantiteMuette(ing) ? { quantite: formatQuantite(ing) } : {}),
+    })
+    curseur = debut + m[0].length
+  }
+
+  if (curseur < texte.length) segments.push({ texte: texte.slice(curseur) })
+  return segments
+}
 
 /**
  * Repère les ingrédients cités dans le texte d'une étape et découpe
  * celui-ci en segments, en annotant chaque mention de sa quantité.
  *
- * On matche sur le premier mot assez long du nom ("pâtes" pour « pâtes
- * longues ») : c'est le nom, ce qui suit n'est qu'un qualificatif que
- * la recette omet — elle écrit « cuire les pâtes ». Singulier et
- * pluriel sont acceptés. Les mots courts sont ignorés, « ail » ou
- * « sel » se retrouvent partout et annoter chaque occurrence rendrait
- * l'étape illisible.
+ * Deux régimes. Si l'étape porte des marqueurs `{…}`, ils font foi :
+ * c'est la voie fiable, celle que remplit le prompt de génération. Sans
+ * marqueur — les recettes écrites à la main, le corpus d'origine — on
+ * retombe sur la reconnaissance heuristique décrite ci-dessous, qui
+ * marche bien mais ne pourra jamais couvrir « la moitié du reblochon ».
+ *
+ * L'accroche se fait sur le premier mot du nom — le nom véritable, ce
+ * qui suit n'étant qu'un qualificatif que la recette omet souvent
+ * (« pâtes longues » citées comme « les pâtes »). La quantité se pose
+ * après le groupe nominal entier, pas après ce premier mot : « l'huile
+ * de sésame [1 c. à s.] », jamais « l'huile [1 c. à s.] de sésame ».
+ * Singulier et pluriel sont acceptés. Les mots de moins de 4 lettres
+ * sont ignorés — « ail », « sel », « riz » se retrouvent partout et
+ * annoter chaque occurrence rendrait l'étape illisible.
  */
 export function annoterEtape(
   texte: string,
   ingredients: Array<Pick<ListItem, 'nom' | 'quantite' | 'unite'>>,
 ): Array<{ texte: string; quantite?: string }> {
-  const mots = ingredients
-    .map((ing) => {
-      const [mot, motSuivant] = sansAccents(ing.nom)
-        .split(/\s+/)
-        .filter((m) => m.length >= 4)
-      return mot ? { mot, motSuivant, quantite: formatQuantite(ing) } : null
-    })
-    .filter((x): x is { mot: string; motSuivant: string | undefined; quantite: string } => x !== null)
+  if (MARQUEUR.test(texte)) return annoterMarqueurs(texte, ingredients)
 
-  if (mots.length === 0) return [{ texte }]
+  const cibles = ingredients
+    .filter((ing) => !quantiteMuette(ing))
+    .map((ing) => ({ nom: ing.nom, mots: motsDuNom(ing.nom), quantite: formatQuantite(ing) }))
+    .filter((c) => (c.mots[0]?.length ?? 0) >= 4)
 
-  const pluriels = (mot: string) => (/(?:eau|eu)$/.test(mot) ? [mot + 'x'] : [mot + 's'])
-  const correspond = (brut: string, cible: string) =>
-    brut === cible || pluriels(cible).includes(brut) || pluriels(brut).includes(cible)
+  if (cibles.length === 0) return [{ texte }]
 
-  // Un seul passage sur le texte : on avance mot à mot, la première
-  // correspondance gagne et n'est annotée qu'une fois par étape.
+  // Un seul passage sur le texte, chaque ingrédient annoté une fois.
   const segments: Array<{ texte: string; quantite?: string }> = []
   const vus = new Set<string>()
   const regex = /[\p{L}\p{M}]+/gu
@@ -144,27 +269,28 @@ export function annoterEtape(
 
   while ((m = regex.exec(texte)) !== null) {
     const brut = sansAccents(m[0])
-    const trouve = mots.find((x) => !vus.has(x.mot) && correspond(brut, x.mot))
+    const depuis = m.index + m[0].length
+
+    // Plusieurs ingrédients peuvent partager la même tête (« huile
+    // d'olive », « huile de sésame ») : c'est la suite du texte qui
+    // tranche, donc on garde celui qui en consomme le plus.
+    const candidats = cibles
+      .filter((c) => !vus.has(c.nom) && correspond(brut, c.mots[0]!))
+      .map((c) => ({ ...c, ...consommerSuite(texte, depuis, c.mots.slice(1)) }))
+      .sort((a, b) => b.consommes - a.consommes)
+
+    const trouve = candidats[0]
     if (!trouve) continue
-
-    vus.add(trouve.mot)
-
-    // Nom composé ("oignon nouveau") : si le mot qui suit dans le
-    // texte correspond au qualificatif, on annote après lui plutôt
-    // qu'au milieu du groupe nominal.
-    let fin = m.index + m[0].length
-    if (trouve.motSuivant) {
-      const suite = /[\p{L}\p{M}]+/gu
-      suite.lastIndex = fin
-      const prochain = suite.exec(texte)
-      if (prochain && texte.slice(fin, prochain.index).trim() === '') {
-        const brutSuivant = sansAccents(prochain[0])
-        if (correspond(brutSuivant, trouve.motSuivant)) fin = prochain.index + prochain[0].length
-      }
+    // Tête générique que le texte ne qualifie pas : ce n'est pas notre
+    // ingrédient qui est cité, c'est le mot courant.
+    if (trouve.consommes === 0 && trouve.mots.length > 1 && TETES_GENERIQUES.has(trouve.mots[0]!)) {
+      continue
     }
-    segments.push({ texte: texte.slice(curseur, fin), quantite: trouve.quantite })
-    curseur = fin
-    regex.lastIndex = fin
+
+    vus.add(trouve.nom)
+    segments.push({ texte: texte.slice(curseur, trouve.fin), quantite: trouve.quantite })
+    curseur = trouve.fin
+    regex.lastIndex = trouve.fin
   }
 
   if (curseur < texte.length) segments.push({ texte: texte.slice(curseur) })
