@@ -409,6 +409,49 @@ button.discret.danger {
   border-color: color-mix(in srgb, var(--terracotta) 40%, transparent);
 }
 
+.detail-description {
+  font-size: 17px;
+  margin: 16px 0 0;
+}
+
+/* Entrée des cartes : montée courte + fondu, échelonnée par la
+   variable --rang posée sur chaque carte. */
+@keyframes monter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.grille-recettes .carte-recette {
+  animation: monter 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--rang, 0) * 40ms);
+}
+
+.bloc-astuce {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: var(--rayon);
+  background: rgb(166 212 126 / 0.12);
+  border: 1px solid rgb(166 212 126 / 0.25);
+  color: #bcefc0;
+}
+
+.bloc-astuce p {
+  margin: 0;
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.minuteur-valeur {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
 .bouton-ajout {
   flex: 0 0 44px;
   width: 44px;

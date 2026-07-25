@@ -49,6 +49,10 @@ export interface Recipe {
   etapes: string[]
   /** URL d'une photo du plat. Absente la plupart du temps : une vignette générée prend le relais. */
   image?: string
+  /** Une phrase qui donne envie, affichée sous le titre sur la fiche. */
+  description?: string
+  /** Tour de main, affiché en mode cuisson. `astuces[i]` accompagne `etapes[i]`. */
+  astuces?: string[]
 }
 
 /** Une recette retenue pour la semaine, avec son nombre de parts. */

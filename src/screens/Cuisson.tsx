@@ -1,8 +1,21 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Recipe, Verdict } from '../types'
 import { annoterEtape, formatQuantite } from '../lib/aggregate'
 import { useWakeLock } from '../hooks/useWakeLock'
 import Icone from '../components/Icone'
+
+/** mm:ss depuis un top de départ, pour le minuteur du plan de travail. */
+function useChrono(depuis: number | null): string {
+  const [maintenant, setMaintenant] = useState(Date.now())
+  useEffect(() => {
+    if (!depuis) return
+    const t = setInterval(() => setMaintenant(Date.now()), 1000)
+    return () => clearInterval(t)
+  }, [depuis])
+  if (!depuis) return ''
+  const s = Math.floor((maintenant - depuis) / 1000)
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+}
 
 interface Props {
   recette: Recipe
@@ -12,6 +25,8 @@ interface Props {
 
 export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
   const [index, setIndex] = useState(-1)
+  const [depuis, setDepuis] = useState<number | null>(null)
+  const ecoule = useChrono(depuis)
   useWakeLock(true)
 
   const fini = index >= recette.etapes.length
@@ -88,7 +103,13 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
             ))}
           </div>
         </div>
-        <div className="cuisson-rond" aria-hidden="true" />
+        <button
+          className="cuisson-rond"
+          onClick={() => setDepuis(depuis ? null : Date.now())}
+          aria-label={depuis ? 'Arrêter le minuteur' : 'Démarrer le minuteur'}
+        >
+          {depuis ? <b className="minuteur-valeur">{ecoule}</b> : <Icone nom="minuteur" taille={20} />}
+        </button>
       </header>
 
       <div className="badge-etape" aria-hidden="true">
@@ -111,6 +132,13 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
           </span>
         ))}
       </p>
+
+      {recette.astuces?.[index] && (
+        <div className="bloc-astuce">
+          <Icone nom="etoile" taille={20} />
+          <p>{recette.astuces[index]}</p>
+        </div>
+      )}
 
       <div className="cuisson-actions">
         {index > 0 && (

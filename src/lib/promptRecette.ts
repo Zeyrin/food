@@ -20,7 +20,9 @@ Format exact attendu :
   "ingredients": [
     { "nom": "string (nom canonique, sans quantité dedans)", "quantite": nombre, "unite": "une valeur parmi ${UNITS.join(', ')}", "magasin": "intermarche ou primeur (primeur = fruits/légumes/produits asiatiques frais, intermarche = le reste)" }
   ],
-  "etapes": ["une string par étape, dans l'ordre, texte clair et complet"]
+  "etapes": ["une string par étape, dans l'ordre, texte clair et complet"],
+  "description": "une phrase courte qui donne envie (optionnel)",
+  "astuces": ["un tour de main par étape, même ordre que etapes, chaîne vide si rien à dire (optionnel)"]
 }
 
 Contraintes :

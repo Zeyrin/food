@@ -15,13 +15,16 @@ import {
 } from './lib/local'
 import {
   ajouterRecette,
+  ecrireHistoriqueFoyer,
   ecrireListe,
+  lireHistoriqueFoyer,
   lireListe,
   lireRecettes,
   modifierRecette,
   semerCorpusInitial,
   supabase,
   supprimerRecette,
+  suivreHistorique,
   suivreListe,
   suivreRecettes,
 } from './lib/sync'
@@ -131,7 +134,18 @@ export default function App() {
       const existantes = await lireRecettes(foyer)
       setRecipes(existantes.length > 0 ? existantes : await semerCorpusInitial(foyer, CORPUS))
     })()
-    return suivreRecettes(foyer, (r) => setRecipes((prec) => [...prec, r]))
+    return suivreRecettes(foyer, setRecipes)
+  }, [foyer])
+
+  // L'historique suit le même chemin que la liste : il vit dans le
+  // foyer. Le local sert d'amorce hors ligne et de repli tant que
+  // Supabase n'a pas répondu.
+  useEffect(() => {
+    if (!foyer) return
+    void lireHistoriqueFoyer(foyer).then((distant) => {
+      if (distant) setHistorique(distant)
+    })
+    return suivreHistorique(foyer, setHistorique)
   }, [foyer])
 
   const ajouter = useCallback(
@@ -176,9 +190,14 @@ export default function App() {
     [foyer],
   )
 
-  const verdict = useCallback(async (recipeId: string, v: Verdict) => {
-    setHistorique(await marquerCuisine(recipeId, v))
-  }, [])
+  const verdict = useCallback(
+    async (recipeId: string, v: Verdict) => {
+      const suivant = await marquerCuisine(recipeId, v)
+      setHistorique(suivant)
+      if (foyer) void ecrireHistoriqueFoyer(foyer, suivant)
+    },
+    [foyer],
+  )
 
   const items = useMemo(() => buildList(basket, recipes), [basket])
 

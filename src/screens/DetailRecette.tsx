@@ -48,6 +48,8 @@ export default function DetailRecette({
         </span>
       </div>
 
+      {recette.description && <p className="aide detail-description">{recette.description}</p>}
+
       <div className="puces-info">
         <span className="puce-info">{recette.portions} parts</span>
         {recette.tags.map((t) => (

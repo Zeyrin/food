@@ -103,7 +103,7 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
         <p className="vide">Aucune recette ne correspond.</p>
       ) : (
         <div className="grille-recettes">
-          {affichees.map((r) => (
+          {affichees.map((r, i) => (
             <div
               key={r.id}
               className="carte carte-recette"
@@ -111,7 +111,15 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
               tabIndex={0}
               onClick={() => onDetail(r.id)}
               onKeyDown={(e) => e.key === 'Enter' && onDetail(r.id)}
-              style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
+              style={
+                {
+                  '--teinte': teinteRecette(r.titre),
+                  // Au-delà de la première vingtaine, plus de décalage :
+                  // ces cartes sont hors écran, l'attente serait perçue
+                  // comme une latence au scroll.
+                  '--rang': Math.min(i, 20),
+                } as React.CSSProperties
+              }
             >
               <div className="vignette" aria-hidden="true">
                 {r.image && <img src={r.image} alt="" />}

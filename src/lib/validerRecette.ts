@@ -55,6 +55,8 @@ export function validerRecette(json: unknown): { recette: Recipe } | { erreurs: 
       ingredients: r.ingredients as Recipe['ingredients'],
       etapes: r.etapes as string[],
       ...(typeof r.image === 'string' && r.image ? { image: r.image } : {}),
+      ...(typeof r.description === 'string' && r.description ? { description: r.description } : {}),
+      ...(Array.isArray(r.astuces) ? { astuces: r.astuces as string[] } : {}),
     },
   }
 }

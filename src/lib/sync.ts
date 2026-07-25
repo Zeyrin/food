@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import type { ListState, Recipe } from '../types'
+import type { Historique } from './propose'
 
 const url = import.meta.env.VITE_SUPABASE_URL
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -101,17 +102,62 @@ export async function semerCorpusInitial(foyer: string, corpus: Recipe[]): Promi
   return corpus
 }
 
-export function suivreRecettes(foyer: string, onAjout: (recette: Recipe) => void): () => void {
+/**
+ * Suit le catalogue du foyer : ajout, modification et suppression.
+ * On relit tout le catalogue à chaque changement plutôt que de
+ * patcher l'état pièce par pièce — un DELETE ne transporte que la
+ * clé primaire de la ligne, pas l'id de recette, donc le patch
+ * ciblé demanderait REPLICA IDENTITY FULL côté base. Quelques
+ * dizaines de recettes se relisent en une requête.
+ */
+/**
+ * L'historique de cuisson est un fait du foyer, pas de l'appareil :
+ * « on a mangé ça mardi » vaut pour les deux téléphones.
+ */
+export async function lireHistoriqueFoyer(foyer: string): Promise<Historique | null> {
+  if (!supabase) return null
+  const { data } = await supabase
+    .from('historiques')
+    .select('historique')
+    .eq('foyer', foyer)
+    .maybeSingle()
+  return (data?.historique as Historique) ?? null
+}
+
+export async function ecrireHistoriqueFoyer(foyer: string, historique: Historique): Promise<void> {
+  if (!supabase) return
+  await supabase
+    .from('historiques')
+    .upsert({ foyer, historique, maj: new Date().toISOString() })
+}
+
+export function suivreHistorique(foyer: string, onChange: (h: Historique) => void): () => void {
+  if (!supabase) return () => {}
+  const canal = supabase
+    .channel(`historique:${foyer}`)
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'historiques', filter: `foyer=eq.${foyer}` },
+      (payload) => {
+        const h = (payload.new as { historique?: Historique })?.historique
+        if (h) onChange(h)
+      },
+    )
+    .subscribe()
+
+  return () => {
+    void supabase.removeChannel(canal)
+  }
+}
+
+export function suivreRecettes(foyer: string, onChangement: (recettes: Recipe[]) => void): () => void {
   if (!supabase) return () => {}
   const canal = supabase
     .channel(`recettes:${foyer}`)
     .on(
       'postgres_changes',
-      { event: 'INSERT', schema: 'public', table: 'recettes', filter: `foyer=eq.${foyer}` },
-      (payload) => {
-        const recette = (payload.new as { recette?: Recipe })?.recette
-        if (recette) onAjout(recette)
-      },
+      { event: '*', schema: 'public', table: 'recettes', filter: `foyer=eq.${foyer}` },
+      () => void lireRecettes(foyer).then(onChangement),
     )
     .subscribe()
 

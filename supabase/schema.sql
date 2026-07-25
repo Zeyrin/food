@@ -70,3 +70,22 @@ create policy "resoudre un code precis" on foyers
 create policy "creer son propre foyer" on foyers
   for insert
   with check (true);
+
+-- Ce qui a été cuisiné et ce qu'on en a pensé. Partagé par foyer :
+-- « on a mangé ça mardi » et « on ne veut plus de ce plat » valent
+-- pour la maison, pas pour un téléphone. Même forme qu'une liste :
+-- une ligne, un JSON, dernier écrivain gagne.
+create table if not exists historiques (
+  foyer     uuid primary key,
+  historique jsonb not null default '{"derniereFois":{},"verdicts":{}}'::jsonb,
+  maj       timestamptz not null default now()
+);
+
+alter table historiques enable row level security;
+
+create policy "acces par uuid de foyer" on historiques
+  for all
+  using (true)
+  with check (true);
+
+-- À cocher aussi dans Database → Replication → `historiques`.
