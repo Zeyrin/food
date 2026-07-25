@@ -1,0 +1,435 @@
+/*
+  Deux contextes d'usage dictent tout : une main dans un magasin
+  éclairé au néon, et un téléphone posé sur un plan de travail à
+  60 cm des yeux. D'où des cibles tactiles de 56 px minimum, du
+  contraste élevé, et aucune information portée par la seule
+  couleur.
+*/
+
+:root {
+  --papier: #f7f5ef;
+  --carte: #ffffff;
+  --encre: #16211c;
+  --encre-douce: #5b6660;
+  --trait: #e4e1d7;
+
+  /* Vert de cuisine : sert d'accent d'état (sélection, coché, focus).
+     --sur-accent est le texte posé dessus : clair sur le vert foncé du
+     mode jour, foncé sur le vert clair du mode nuit. Sans ça, le nuit
+     tombe à ~2:1 de contraste. */
+  --accent: #1f6f52;
+  --accent-doux: #e6f0ea;
+  --sur-accent: #ffffff;
+
+  --intermarche: #2f5d50;
+  --primeur: #9a6209;
+
+  --ombre: 0 1px 2px rgb(22 33 28 / 0.05), 0 4px 12px rgb(22 33 28 / 0.04);
+  --ombre-nette: 0 2px 6px rgb(22 33 28 / 0.1);
+
+  --rayon: 14px;
+  --pouce: 56px;
+
+  --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --papier: #121518;
+    --carte: #1b1f23;
+    --encre: #eef0ec;
+    --encre-douce: #99a29c;
+    --trait: #2b3137;
+    --accent: #5cc79b;
+    --accent-doux: #1d2b26;
+    --sur-accent: #08130f;
+    --intermarche: #6db3a0;
+    --primeur: #d9a441;
+    --ombre: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 12px rgb(0 0 0 / 0.25);
+    --ombre-nette: 0 2px 8px rgb(0 0 0 / 0.4);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--papier);
+  color: var(--encre);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 16px calc(84px + env(safe-area-inset-bottom));
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 24px 0 4px;
+}
+
+h2 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+  margin: 28px 0 10px;
+}
+
+p.aide {
+  color: var(--encre-douce);
+  margin: 0 0 16px;
+}
+
+/* --- Barre d'onglets ----------------------------------------------------- */
+
+nav.onglets {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 4px;
+  /* color-mix évite de dupliquer la couleur par thème : la barre
+     reprend --carte, translucide, et le flou fait le reste. */
+  background: color-mix(in srgb, var(--carte) 82%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  backdrop-filter: blur(16px) saturate(1.6);
+  border-top: 1px solid var(--trait);
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+  z-index: 10;
+}
+
+nav.onglets button {
+  flex: 1;
+  min-height: calc(var(--pouce) - 12px);
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--encre-douce);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+nav.onglets button[aria-current='page'] {
+  color: var(--accent);
+  font-weight: 600;
+  background: var(--accent-doux);
+}
+
+/* --- Cartes et rangées --------------------------------------------------- */
+
+.carte {
+  background: var(--carte);
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: var(--ombre);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+/* Les cartes de « Proposer » sont des boutons : retour tactile au doigt. */
+button.carte:active {
+  transform: scale(0.985);
+  box-shadow: var(--ombre-nette);
+}
+
+/* Recette déjà au panier. La coche ✓ du titre porte déjà l'info —
+   la couleur ne fait que la doubler. */
+.carte[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent-doux);
+}
+
+.carte h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.meta {
+  color: var(--encre-douce);
+  font-size: 14px;
+  margin-top: 3px;
+}
+
+.rangee {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: var(--pouce);
+  width: 100%;
+  padding: 8px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--trait);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rangee:active {
+  background: var(--accent-doux);
+}
+
+.rangee[data-coche='true'] .nom {
+  text-decoration: line-through;
+  color: var(--encre-douce);
+}
+
+.rangee[data-coche='true'] {
+  opacity: 0.62;
+}
+
+.rangee[data-coche='true'] .qte {
+  text-decoration: line-through;
+}
+
+.rangee .nom {
+  flex: 1;
+  font-size: 19px;
+}
+
+.rangee .qte {
+  font-variant-numeric: tabular-nums;
+  color: var(--encre-douce);
+}
+
+.case {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border: 2px solid var(--trait);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  color: var(--carte);
+  transition: background-color 0.14s ease, border-color 0.14s ease;
+}
+
+.rangee[data-coche='true'] .case {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--sur-accent);
+}
+
+/* --- Étiquettes et boutons ----------------------------------------------- */
+
+.etiquette {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.etiquette::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.etiquette[data-magasin='intermarche'] {
+  color: var(--intermarche);
+}
+
+.etiquette[data-magasin='primeur'] {
+  color: var(--primeur);
+}
+
+.puces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.puce {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--trait);
+  border-radius: 20px;
+  background: var(--carte);
+  color: var(--encre-douce);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.puce[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--sur-accent);
+  font-weight: 600;
+}
+
+button.principal {
+  width: 100%;
+  min-height: var(--pouce);
+  border: 0;
+  border-radius: var(--rayon);
+  background: var(--accent);
+  color: var(--sur-accent);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  box-shadow: var(--ombre-nette);
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+button.principal:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+button.principal:disabled {
+  opacity: 0.4;
+  cursor: default;
+  box-shadow: none;
+}
+
+button.discret {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--trait);
+  border-radius: var(--rayon);
+  background: var(--carte);
+  color: var(--encre);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.12s ease;
+}
+
+button.discret:active:not(:disabled) {
+  border-color: var(--accent);
+}
+
+button.discret:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.compteur {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.compteur button {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--trait);
+  border-radius: 12px;
+  background: var(--papier);
+  color: var(--encre);
+  font: inherit;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.compteur button:active {
+  background: var(--accent-doux);
+  border-color: var(--accent);
+}
+
+.compteur span {
+  min-width: 2.5ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Mode cuisson -------------------------------------------------------- */
+
+.etape {
+  font-size: 22px;
+  line-height: 1.45;
+  margin: 20px 0 28px;
+}
+
+.dose {
+  color: var(--accent);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.apercu-etapes {
+  margin: 0 0 28px;
+  padding-left: 22px;
+  line-height: 1.5;
+}
+
+.apercu-etapes li {
+  margin-bottom: 12px;
+}
+
+.ingredients-rappel {
+  margin-bottom: 24px;
+}
+
+.ingredients-rappel > summary {
+  color: var(--encre-douce);
+  font-size: 15px;
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+.progression {
+  display: flex;
+  gap: 6px;
+  margin: 16px 0;
+}
+
+.progression i {
+  flex: 1;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--trait);
+  transition: background-color 0.2s ease;
+}
+
+.progression i[data-fait='true'] {
+  background: var(--accent);
+}
+
+.vide {
+  color: var(--encre-douce);
+  padding: 40px 0;
+  text-align: center;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

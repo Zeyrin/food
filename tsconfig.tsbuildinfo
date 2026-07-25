@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/types.ts","./src/vite-env.d.ts","./src/hooks/usewakelock.ts","./src/lib/aggregate.ts","./src/lib/local.ts","./src/lib/propose.ts","./src/lib/sync.ts","./src/screens/cuisson.tsx","./src/screens/liste.tsx","./src/screens/panier.tsx","./src/screens/propose.tsx"],"version":"5.9.3"}

@@ -1,0 +1,436 @@
+[
+  {
+    "id": "mapo-tofu",
+    "titre": "Mapo tofu",
+    "temps": 30,
+    "portions": 2,
+    "tags": ["asiatique", "épicé", "wok"],
+    "ingredients": [
+      { "nom": "tofu soyeux", "quantite": 400, "unite": "g", "magasin": "primeur" },
+      { "nom": "porc haché", "quantite": 150, "unite": "g", "magasin": "intermarche" },
+      { "nom": "riz blanc", "quantite": 180, "unite": "g", "magasin": "intermarche" },
+      { "nom": "oignon nouveau", "quantite": 1, "unite": "botte", "magasin": "primeur" },
+      { "nom": "gingembre frais", "quantite": 20, "unite": "g", "magasin": "primeur" },
+      { "nom": "ail", "quantite": 3, "unite": "piece", "magasin": "primeur" },
+      { "nom": "doubanjiang", "quantite": 2, "unite": "cs", "magasin": "primeur" },
+      { "nom": "pâte miso", "quantite": 1, "unite": "cs", "magasin": "primeur" },
+      { "nom": "sauce soja", "quantite": 1, "unite": "cs", "magasin": "primeur", "placard": true },
+      { "nom": "huile de sésame", "quantite": 1, "unite": "cs", "magasin": "primeur", "placard": true },
+      { "nom": "poivre du Sichuan", "quantite": 1, "unite": "cc", "magasin": "primeur", "placard": true },
+      { "nom": "fécule de maïs", "quantite": 1, "unite": "cs", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Lancer le riz. Couper le tofu en cubes de 2 cm et les réserver dans un bol d'eau tiède : ils se tiendront mieux à la cuisson.",
+      "Hacher l'ail, le gingembre et le blanc des oignons nouveaux. Réserver le vert pour la fin.",
+      "Faire revenir le porc à feu vif jusqu'à ce qu'il colore et se détache en grains, 4 min.",
+      "Ajouter ail, gingembre, doubanjiang et miso. Remuer 1 min — la pâte doit devenir rouge sombre et parfumée.",
+      "Verser 150 ml d'eau et la sauce soja, laisser frémir 3 min.",
+      "Ajouter le tofu égoutté, secouer la poêle plutôt que de remuer pour ne pas le casser. Laisser 4 min.",
+      "Délayer la fécule dans un peu d'eau froide, verser en filet et remuer jusqu'à ce que la sauce nappe.",
+      "Hors du feu : huile de sésame, poivre du Sichuan concassé, vert d'oignon. Servir sur le riz."
+    ]
+  },
+  {
+    "id": "falafel-bowl",
+    "titre": "Falafel bowl",
+    "temps": 40,
+    "portions": 2,
+    "tags": ["végé", "four", "moyen-orient"],
+    "ingredients": [
+      { "nom": "pois chiches", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "semoule fine", "quantite": 100, "unite": "g", "magasin": "intermarche" },
+      { "nom": "oignon", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "ail", "quantite": 3, "unite": "piece", "magasin": "primeur" },
+      { "nom": "coriandre fraîche", "quantite": 1, "unite": "botte", "magasin": "primeur" },
+      { "nom": "persil plat", "quantite": 1, "unite": "botte", "magasin": "primeur" },
+      { "nom": "menthe fraîche", "quantite": 1, "unite": "botte", "magasin": "primeur" },
+      { "nom": "tomate cerise", "quantite": 200, "unite": "g", "magasin": "primeur" },
+      { "nom": "concombre", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "citron", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "yaourt grec", "quantite": 150, "unite": "g", "magasin": "intermarche" },
+      { "nom": "hummus", "quantite": 100, "unite": "g", "magasin": "intermarche" },
+      { "nom": "cumin moulu", "quantite": 2, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "coriandre moulue", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "huile d'olive", "quantite": 3, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Préchauffer le four à 200 °C.",
+      "Mixer les pois chiches égouttés avec l'oignon, l'ail, la moitié des herbes, le cumin et la coriandre moulue. La texture doit rester granuleuse, pas lisse.",
+      "Saler, façonner une douzaine de boulettes aplaties, les huiler et enfourner 25 min en les retournant à mi-cuisson.",
+      "Pendant ce temps, verser 120 ml d'eau bouillante salée sur la semoule, couvrir et laisser gonfler 10 min.",
+      "Détailler concombre et tomates cerises, ciseler le reste des herbes, mélanger le tout à la semoule avec le jus du citron et un filet d'huile.",
+      "Monter les bols : taboulé, falafels, une cuillère de hummus et de yaourt."
+    ]
+  },
+  {
+    "id": "bowl-quinoa-legumes-rotis",
+    "titre": "Bowl quinoa & légumes rôtis",
+    "temps": 40,
+    "portions": 2,
+    "tags": ["végé", "four"],
+    "ingredients": [
+      { "nom": "quinoa", "quantite": 160, "unite": "g", "magasin": "intermarche" },
+      { "nom": "potimarron", "quantite": 400, "unite": "g", "magasin": "primeur" },
+      { "nom": "pois chiches", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "kale", "quantite": 100, "unite": "g", "magasin": "primeur" },
+      { "nom": "radis", "quantite": 5, "unite": "piece", "magasin": "primeur" },
+      { "nom": "avocat", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "citron", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "tahini", "quantite": 3, "unite": "cs", "magasin": "primeur" },
+      { "nom": "cumin moulu", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "paprika fumé", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "huile d'olive", "quantite": 3, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Préchauffer le four à 210 °C.",
+      "Couper le potimarron en cubes de 3 cm, mélanger avec les pois chiches bien égouttés et séchés, l'huile, le cumin et le paprika.",
+      "Enfourner 30 min : les pois chiches doivent croustiller et le potimarron dorer aux angles.",
+      "Cuire le quinoa 12 min dans deux fois son volume d'eau salée, puis laisser reposer à couvert 5 min hors du feu.",
+      "Fouetter le tahini avec le jus du citron et 2 cs d'eau froide — la sauce va d'abord épaissir puis redevenir fluide, c'est normal.",
+      "Masser le kale avec une pincée de sel pour l'attendrir, émincer les radis, trancher l'avocat.",
+      "Assembler et napper de sauce tahini."
+    ]
+  },
+  {
+    "id": "patate-douce-farcie",
+    "titre": "Patate douce farcie",
+    "temps": 55,
+    "portions": 2,
+    "tags": ["végé", "four", "une casserole"],
+    "ingredients": [
+      { "nom": "patate douce", "quantite": 2, "unite": "piece", "magasin": "primeur" },
+      { "nom": "pois chiches", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "yaourt grec", "quantite": 150, "unite": "g", "magasin": "intermarche" },
+      { "nom": "tahini", "quantite": 2, "unite": "cs", "magasin": "primeur" },
+      { "nom": "oignon nouveau", "quantite": 1, "unite": "botte", "magasin": "primeur" },
+      { "nom": "citron", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "piment frais", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "cumin moulu", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "paprika fumé", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "curcuma", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "huile d'olive", "quantite": 2, "unite": "cs", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Préchauffer le four à 200 °C. Piquer les patates douces à la fourchette et les enfourner entières 45 min, jusqu'à ce qu'une lame les traverse sans résistance.",
+      "À mi-cuisson, ajouter sur la plaque les pois chiches égouttés, huilés et mélangés aux épices.",
+      "Fouetter le yaourt avec le tahini et le jus du citron.",
+      "Fendre les patates dans la longueur, écraser un peu la chair à la fourchette.",
+      "Garnir de pois chiches épicés, napper de sauce, parsemer d'oignon nouveau et de piment émincé."
+    ]
+  },
+  {
+    "id": "dahl-lentilles-corail",
+    "titre": "Dahl de lentilles corail",
+    "temps": 35,
+    "portions": 4,
+    "tags": ["végé", "épicé", "une casserole"],
+    "ingredients": [
+      { "nom": "lentilles corail", "quantite": 250, "unite": "g", "magasin": "primeur" },
+      { "nom": "lait de coco", "quantite": 400, "unite": "ml", "magasin": "primeur" },
+      { "nom": "tomates concassées", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "oignon", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "ail", "quantite": 3, "unite": "piece", "magasin": "primeur" },
+      { "nom": "gingembre frais", "quantite": 20, "unite": "g", "magasin": "primeur" },
+      { "nom": "coriandre fraîche", "quantite": 1, "unite": "botte", "magasin": "primeur" },
+      { "nom": "citron", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "piment frais", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "cumin moulu", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "coriandre moulue", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "curcuma", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "garam masala", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "huile d'olive", "quantite": 2, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Émincer l'oignon, hacher l'ail, le gingembre et le piment.",
+      "Faire revenir l'oignon 5 min à feu moyen jusqu'à ce qu'il devienne translucide.",
+      "Ajouter ail, gingembre, piment et toutes les épices sauf le garam masala. Remuer 1 min — les épices doivent embaumer sans brûler.",
+      "Verser les lentilles rincées, les tomates, le lait de coco et 200 ml d'eau.",
+      "Laisser mijoter 20 min à couvert en remuant de temps en temps. Les lentilles doivent se défaire complètement.",
+      "Hors du feu : garam masala, sel, jus de citron et coriandre ciselée."
+    ]
+  },
+  {
+    "id": "curry-pois-chiches-epinards",
+    "titre": "Curry pois chiches & épinards",
+    "temps": 30,
+    "portions": 2,
+    "tags": ["végé", "rapide", "épicé", "une casserole"],
+    "ingredients": [
+      { "nom": "pois chiches", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "épinard frais", "quantite": 150, "unite": "g", "magasin": "primeur" },
+      { "nom": "lait de coco", "quantite": 200, "unite": "ml", "magasin": "primeur" },
+      { "nom": "tomates concassées", "quantite": 200, "unite": "g", "magasin": "intermarche" },
+      { "nom": "riz basmati", "quantite": 160, "unite": "g", "magasin": "intermarche" },
+      { "nom": "oignon", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "ail", "quantite": 3, "unite": "piece", "magasin": "primeur" },
+      { "nom": "gingembre frais", "quantite": 15, "unite": "g", "magasin": "primeur" },
+      { "nom": "coriandre fraîche", "quantite": 1, "unite": "botte", "magasin": "primeur" },
+      { "nom": "citron vert", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "cumin moulu", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "coriandre moulue", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "curcuma", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "garam masala", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "huile d'olive", "quantite": 2, "unite": "cs", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Lancer le riz.",
+      "Faire revenir l'oignon émincé 5 min, puis ajouter ail, gingembre et épices sauf le garam masala.",
+      "Verser les tomates et le lait de coco, laisser réduire 10 min à découvert jusqu'à ce que la sauce épaississe.",
+      "Ajouter les pois chiches égouttés, laisser 5 min de plus.",
+      "Incorporer les épinards par poignées : ils tombent en quelques secondes.",
+      "Finir avec le garam masala, le jus du citron vert et la coriandre."
+    ]
+  },
+  {
+    "id": "tacos-poulet-avocat",
+    "titre": "Tacos poulet-avocat",
+    "temps": 30,
+    "portions": 3,
+    "tags": ["rapide", "mexicain"],
+    "ingredients": [
+      { "nom": "blanc de poulet", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "tortilla", "quantite": 6, "unite": "piece", "magasin": "intermarche" },
+      { "nom": "avocat", "quantite": 2, "unite": "piece", "magasin": "primeur" },
+      { "nom": "oignon rouge", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "tomate cerise", "quantite": 200, "unite": "g", "magasin": "primeur" },
+      { "nom": "coriandre fraîche", "quantite": 1, "unite": "botte", "magasin": "primeur" },
+      { "nom": "citron vert", "quantite": 2, "unite": "piece", "magasin": "primeur" },
+      { "nom": "crème fraîche", "quantite": 6, "unite": "cl", "magasin": "intermarche" },
+      { "nom": "sauce sriracha", "quantite": 1, "unite": "cc", "magasin": "primeur", "placard": true },
+      { "nom": "épices mexicaines", "quantite": 2, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "paprika fumé", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "huile d'olive", "quantite": 2, "unite": "cs", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Tailler le poulet en lanières, le mélanger aux épices, au paprika, à l'huile et au jus d'un citron vert. Laisser mariner 10 min.",
+      "Pendant ce temps, préparer le pico de gallo : tomates cerises coupées en quatre, moitié de l'oignon rouge en petits dés, coriandre, jus de citron vert.",
+      "Écraser l'avocat à la fourchette avec du sel et un peu de jus de citron.",
+      "Mélanger la crème et la sriracha.",
+      "Saisir le poulet à feu vif 6 min, sans le remuer sans arrêt pour qu'il colore.",
+      "Réchauffer les tortillas 20 secondes à la poêle sèche, puis garnir."
+    ]
+  },
+  {
+    "id": "poelee-asiatique-nouilles",
+    "titre": "Poêlée asiatique complète",
+    "temps": 25,
+    "portions": 2,
+    "tags": ["asiatique", "rapide", "végé", "wok"],
+    "ingredients": [
+      { "nom": "nouilles chinoises", "quantite": 200, "unite": "g", "magasin": "primeur" },
+      { "nom": "pois chiches", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "brocoli", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "carotte", "quantite": 2, "unite": "piece", "magasin": "primeur" },
+      { "nom": "ail", "quantite": 2, "unite": "piece", "magasin": "primeur" },
+      { "nom": "gingembre frais", "quantite": 15, "unite": "g", "magasin": "primeur" },
+      { "nom": "sauce soja", "quantite": 3, "unite": "cs", "magasin": "primeur", "placard": true },
+      { "nom": "lao ganma", "quantite": 1, "unite": "cs", "magasin": "primeur", "placard": true },
+      { "nom": "huile de sésame", "quantite": 1, "unite": "cs", "magasin": "primeur", "placard": true }
+    ],
+    "etapes": [
+      "Cuire les nouilles selon le paquet, les rincer à l'eau froide et les réserver.",
+      "Détailler le brocoli en petits bouquets et les carottes en fins bâtonnets.",
+      "Chauffer un wok à feu vif, saisir ail et gingembre 30 secondes.",
+      "Ajouter carottes et brocoli, sauter 5 min : les légumes doivent rester croquants et marquer légèrement.",
+      "Ajouter les pois chiches égouttés, les nouilles, la sauce soja et le lao ganma. Sauter 2 min en mélangeant.",
+      "Hors du feu, verser l'huile de sésame."
+    ]
+  },
+  {
+    "id": "riz-saute-oeuf",
+    "titre": "Riz sauté à l'œuf",
+    "temps": 15,
+    "portions": 2,
+    "tags": ["asiatique", "rapide", "wok", "restes"],
+    "ingredients": [
+      { "nom": "riz blanc", "quantite": 300, "unite": "g", "magasin": "intermarche" },
+      { "nom": "œuf", "quantite": 3, "unite": "piece", "magasin": "intermarche" },
+      { "nom": "oignon nouveau", "quantite": 1, "unite": "botte", "magasin": "primeur" },
+      { "nom": "carotte", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "ail", "quantite": 2, "unite": "piece", "magasin": "primeur" },
+      { "nom": "sauce soja", "quantite": 2, "unite": "cs", "magasin": "primeur", "placard": true },
+      { "nom": "huile de sésame", "quantite": 1, "unite": "cs", "magasin": "primeur", "placard": true }
+    ],
+    "etapes": [
+      "Le riz doit être froid, cuit la veille de préférence : chaud, il colle et ne saute pas.",
+      "Tailler la carotte en petits dés, hacher l'ail, ciseler les oignons nouveaux.",
+      "Faire sauter carotte et ail 3 min à feu vif.",
+      "Ajouter le riz, l'écraser un peu à la spatule pour séparer les grains, sauter 4 min sans trop remuer.",
+      "Pousser le riz sur le côté, casser les œufs dans l'espace libre, les brouiller puis incorporer.",
+      "Finir avec la sauce soja, l'huile de sésame et le vert d'oignon."
+    ]
+  },
+  {
+    "id": "gratin-chou-fleur-jambon",
+    "titre": "Gratin chou-fleur & jambon",
+    "temps": 50,
+    "portions": 4,
+    "tags": ["four", "réconfort"],
+    "ingredients": [
+      { "nom": "chou-fleur", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "jambon blanc", "quantite": 4, "unite": "piece", "magasin": "intermarche" },
+      { "nom": "lait", "quantite": 500, "unite": "ml", "magasin": "intermarche" },
+      { "nom": "fromage râpé", "quantite": 100, "unite": "g", "magasin": "intermarche" },
+      { "nom": "lardons", "quantite": 100, "unite": "g", "magasin": "intermarche" },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "poivre noir", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Détailler le chou-fleur en bouquets et le cuire 10 min à l'eau bouillante salée : une lame doit entrer sans effort mais le bouquet doit rester entier.",
+      "Préchauffer le four à 200 °C.",
+      "Faire dorer les lardons à sec 4 min.",
+      "Égoutter le chou-fleur très soigneusement — l'eau résiduelle est ce qui rend un gratin fade.",
+      "Disposer dans un plat le chou-fleur, le jambon coupé en lanières et les lardons. Verser le lait chaud, saler, poivrer.",
+      "Couvrir de fromage râpé et enfourner 25 min, jusqu'à ce que le dessus soit bien coloré."
+    ]
+  },
+  {
+    "id": "soupe-chou-fleur-lait",
+    "titre": "Soupe de chou-fleur au lait",
+    "temps": 20,
+    "portions": 2,
+    "tags": ["rapide", "végé", "une casserole", "léger"],
+    "ingredients": [
+      { "nom": "chou-fleur", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "lait", "quantite": 400, "unite": "ml", "magasin": "intermarche" },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "poivre noir", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Détailler le chou-fleur en bouquets et le cuire 12 min à l'eau bouillante salée.",
+      "Faire chauffer le lait sans le faire bouillir.",
+      "Égoutter le chou-fleur, le mixer avec le lait chaud jusqu'à obtenir une texture lisse.",
+      "Saler, poivrer généreusement. C'est crémeux sans une goutte de crème."
+    ]
+  },
+  {
+    "id": "rouleaux-riz-jambon",
+    "titre": "Rouleaux de riz au jambon",
+    "temps": 15,
+    "portions": 2,
+    "tags": ["asiatique", "rapide", "sans cuisson"],
+    "ingredients": [
+      { "nom": "galette de riz", "quantite": 8, "unite": "piece", "magasin": "primeur" },
+      { "nom": "jambon blanc", "quantite": 4, "unite": "piece", "magasin": "intermarche" },
+      { "nom": "poivron", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "carotte", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "menthe fraîche", "quantite": 1, "unite": "botte", "magasin": "primeur" },
+      { "nom": "sauce soja", "quantite": 3, "unite": "cs", "magasin": "primeur", "placard": true }
+    ],
+    "etapes": [
+      "Tailler poivron et carotte en très fins bâtonnets, couper le jambon en lanières.",
+      "Tremper une galette de riz 30 secondes dans de l'eau tiède : elle doit rester légèrement rigide, elle finira de s'assouplir sur le plan de travail.",
+      "Garnir le tiers inférieur, rabattre les côtés puis rouler serré.",
+      "Servir avec la sauce soja. Le principe marche avec à peu près tout ce qui traîne au frigo."
+    ]
+  },
+  {
+    "id": "salade-mediterraneenne",
+    "titre": "Salade méditerranéenne complète",
+    "temps": 15,
+    "portions": 2,
+    "tags": ["rapide", "sans cuisson", "léger"],
+    "ingredients": [
+      { "nom": "pois chiches", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "flageolets", "quantite": 200, "unite": "g", "magasin": "intermarche" },
+      { "nom": "cœur de palmier", "quantite": 200, "unite": "g", "magasin": "intermarche" },
+      { "nom": "maïs", "quantite": 150, "unite": "g", "magasin": "intermarche" },
+      { "nom": "petits pois", "quantite": 150, "unite": "g", "magasin": "intermarche" },
+      { "nom": "thon en boîte", "quantite": 140, "unite": "g", "magasin": "intermarche" },
+      { "nom": "olives noires", "quantite": 80, "unite": "g", "magasin": "intermarche" },
+      { "nom": "citron", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "huile d'olive", "quantite": 3, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Rincer et égoutter toutes les conserves — c'est ce qui fait la différence entre une salade fraîche et une salade saumâtre.",
+      "Trancher les cœurs de palmier en rondelles.",
+      "Émietter le thon grossièrement.",
+      "Fouetter huile d'olive, jus de citron et sel, verser sur l'ensemble et mélanger délicatement.",
+      "Laisser reposer 10 min au frais avant de servir."
+    ]
+  },
+  {
+    "id": "pates-thon-legumineuses",
+    "titre": "Pâtes au thon et légumineuses",
+    "temps": 20,
+    "portions": 2,
+    "tags": ["rapide", "italien"],
+    "ingredients": [
+      { "nom": "pâtes longues", "quantite": 200, "unite": "g", "magasin": "intermarche" },
+      { "nom": "tomates concassées", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "thon en boîte", "quantite": 140, "unite": "g", "magasin": "intermarche" },
+      { "nom": "pois chiches", "quantite": 200, "unite": "g", "magasin": "intermarche" },
+      { "nom": "petits pois", "quantite": 150, "unite": "g", "magasin": "intermarche" },
+      { "nom": "olives noires", "quantite": 60, "unite": "g", "magasin": "intermarche" },
+      { "nom": "crème fraîche", "quantite": 5, "unite": "cl", "magasin": "intermarche" },
+      { "nom": "ail", "quantite": 2, "unite": "piece", "magasin": "primeur" },
+      { "nom": "huile d'olive", "quantite": 2, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Lancer les pâtes dans une grande casserole d'eau bien salée.",
+      "Faire revenir l'ail écrasé 30 secondes dans l'huile, puis verser les tomates. Laisser réduire 10 min.",
+      "Ajouter pois chiches, petits pois et olives, réchauffer 3 min.",
+      "Incorporer le thon égoutté et la crème hors du feu, pour que le thon ne se dessèche pas.",
+      "Égoutter les pâtes en gardant une louche d'eau de cuisson, mélanger et détendre la sauce si besoin."
+    ]
+  },
+  {
+    "id": "one-pot-mediterraneen",
+    "titre": "One-pot méditerranéen",
+    "temps": 25,
+    "portions": 4,
+    "tags": ["rapide", "une casserole", "italien"],
+    "ingredients": [
+      { "nom": "pâtes longues", "quantite": 350, "unite": "g", "magasin": "intermarche" },
+      { "nom": "tomates concassées", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "pois chiches", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "flageolets", "quantite": 200, "unite": "g", "magasin": "intermarche" },
+      { "nom": "maïs", "quantite": 150, "unite": "g", "magasin": "intermarche" },
+      { "nom": "petits pois", "quantite": 150, "unite": "g", "magasin": "intermarche" },
+      { "nom": "thon en boîte", "quantite": 140, "unite": "g", "magasin": "intermarche" },
+      { "nom": "olives noires", "quantite": 80, "unite": "g", "magasin": "intermarche" },
+      { "nom": "crème fraîche", "quantite": 5, "unite": "cl", "magasin": "intermarche" },
+      { "nom": "oignon", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "ail", "quantite": 2, "unite": "piece", "magasin": "primeur" },
+      { "nom": "huile d'olive", "quantite": 2, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Faire revenir l'oignon émincé et l'ail 5 min dans une grande sauteuse.",
+      "Ajouter les tomates et 700 ml d'eau salée, porter à ébullition.",
+      "Verser les pâtes crues directement dedans et cuire à découvert le temps indiqué sur le paquet, en remuant régulièrement.",
+      "Deux minutes avant la fin, ajouter pois chiches, flageolets, maïs et petits pois égouttés.",
+      "Hors du feu : thon, olives et crème. La sauce doit napper les pâtes sans être liquide.",
+      "Si c'est trop épais, un peu d'eau chaude ; trop liquide, deux minutes de plus à feu vif."
+    ]
+  },
+  {
+    "id": "pates-citron-parmesan",
+    "titre": "Pâtes citron & parmesan",
+    "temps": 20,
+    "portions": 2,
+    "tags": ["végé", "rapide", "italien"],
+    "ingredients": [
+      { "nom": "pâtes longues", "quantite": 200, "unite": "g", "magasin": "intermarche" },
+      { "nom": "parmesan", "quantite": 60, "unite": "g", "magasin": "intermarche" },
+      { "nom": "crème fraîche", "quantite": 10, "unite": "cl", "magasin": "intermarche" },
+      { "nom": "citron", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "ail", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "poivre noir", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Faire bouillir une grande casserole d'eau bien salée et y cuire les pâtes.",
+      "Pendant ce temps, râper le parmesan et zester le citron.",
+      "Mélanger la crème, le parmesan, le zeste et l'ail écrasé dans un saladier.",
+      "Égoutter les pâtes en gardant une louche d'eau de cuisson.",
+      "Verser les pâtes brûlantes sur le mélange, ajouter un peu d'eau de cuisson et remuer vivement jusqu'à ce que la sauce nappe.",
+      "Poivrer généreusement et servir aussitôt."
+    ]
+  }
+]
