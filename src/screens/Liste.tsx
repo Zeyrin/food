@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { ListItem, ListState } from '../types'
 import { STORES } from '../types'
 import { formatQuantite, groupByStore } from '../lib/aggregate'
+import Icone from '../components/Icone'
 
 interface Props {
   items: ListItem[]
@@ -29,10 +30,19 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
     else await navigator.clipboard.writeText(lien)
   }
 
+  const entete = (
+    <header className="entete-app">
+      <div className="entete-app-titre">
+        <Icone nom="liste" />
+        <h1>Liste</h1>
+      </div>
+    </header>
+  )
+
   if (items.length === 0) {
     return (
       <>
-        <h1>Liste</h1>
+        {entete}
         <p className="vide">La liste se remplit à partir du panier de la semaine.</p>
       </>
     )
@@ -41,10 +51,26 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
   const aAcheter = items.filter((i) => !etat.dejaPossede[i.key])
   const restants = aAcheter.filter((i) => !etat.coche[i.key]).length
 
+  const bascule = (
+    <div className="bascule-mode">
+      <button className="bascule-mode-bouton" aria-pressed={mode === 'tri'} onClick={() => setMode('tri')}>
+        Ce que j'ai déjà
+      </button>
+      <button
+        className="bascule-mode-bouton"
+        aria-pressed={mode === 'courses'}
+        onClick={() => setMode('courses')}
+      >
+        Liste magasin
+      </button>
+    </div>
+  )
+
   if (mode === 'tri') {
     return (
       <>
-        <h1>Ce que vous avez déjà</h1>
+        {entete}
+        {bascule}
         <p className="aide">
           Ouvrez le frigo et le placard, touchez ce qui est déjà là. Le reste part en courses.
         </p>
@@ -58,7 +84,7 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
               data-coche={deja}
               onClick={() => basculer('dejaPossede', item.key)}
             >
-              <span className="case">{deja ? '✓' : ''}</span>
+              <span className="case">{deja && <Icone nom="coche" taille={18} />}</span>
               <span className="nom">{item.nom}</span>
               <span className="qte">{formatQuantite(item)}</span>
             </button>
@@ -74,10 +100,15 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
 
   return (
     <>
-      <h1>Courses</h1>
-      <p className="aide">
-        {restants === 0 ? 'Tout est dans le panier.' : `${restants} produits restants.`}
-      </p>
+      {entete}
+      {bascule}
+
+      <div className="carte-resume">
+        <p className="carte-resume-label">Progression</p>
+        <h2 className="carte-resume-nombre">
+          {aAcheter.length - restants} <span>/ {aAcheter.length}</span>
+        </h2>
+      </div>
 
       {groupByStore(aAcheter).map(({ magasin, items: lignes }) => (
         <section key={magasin}>
@@ -95,7 +126,7 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
                 data-coche={coche}
                 onClick={() => basculer('coche', item.key)}
               >
-                <span className="case">{coche ? '✓' : ''}</span>
+                <span className="case">{coche && <Icone nom="coche" taille={18} />}</span>
                 <span className="nom">{item.nom}</span>
                 <span className="qte">{formatQuantite(item)}</span>
               </button>

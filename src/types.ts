@@ -40,6 +40,8 @@ export interface Recipe {
   tags: string[]
   ingredients: RecipeIngredient[]
   etapes: string[]
+  /** URL d'une photo du plat. Absente la plupart du temps : une vignette générée prend le relais. */
+  image?: string
 }
 
 /** Une recette retenue pour la semaine, avec son nombre de parts. */

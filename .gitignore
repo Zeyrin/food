@@ -4,3 +4,4 @@ dev-dist
 .env
 .DS_Store
 tsconfig.tsbuildinfo
+stitch_cook_shop_pwa

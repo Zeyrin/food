@@ -16,6 +16,7 @@ import Propose from './screens/Propose'
 import Panier from './screens/Panier'
 import Liste from './screens/Liste'
 import Cuisson from './screens/Cuisson'
+import Icone from './components/Icone'
 
 const recipes = corpus as Recipe[]
 
@@ -119,16 +120,17 @@ export default function App() {
       <nav className="onglets">
         {(
           [
-            ['propose', 'Proposer'],
-            ['panier', `Panier${basket.length ? ` (${basket.length})` : ''}`],
-            ['liste', 'Liste'],
+            ['propose', 'etoile', 'Proposer'],
+            ['panier', 'panier', `Panier${basket.length ? ` (${basket.length})` : ''}`],
+            ['liste', 'liste', 'Liste'],
           ] as const
-        ).map(([cle, label]) => (
+        ).map(([cle, icone, label]) => (
           <button
             key={cle}
             onClick={() => setOnglet(cle)}
             aria-current={onglet === cle ? 'page' : undefined}
           >
+            <Icone nom={icone} taille={22} />
             {label}
           </button>
         ))}

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import type { BasketEntry, Recipe } from '../types'
 import { type Historique, proposer, tousLesTags } from '../lib/propose'
 import { teinteRecette } from '../lib/identite'
+import Icone from '../components/Icone'
 
 interface Props {
   recipes: Recipe[]
@@ -45,7 +46,12 @@ export default function Propose({ recipes, propositions, historique, basket, onB
 
   return (
     <>
-      <h1>Qu'est-ce qu'on mange</h1>
+      <header className="entete-app">
+        <div className="entete-app-titre">
+          <Icone nom="grill" />
+          <h1>Proposer</h1>
+        </div>
+      </header>
       <p className="aide">
         Ce qui a été cuisiné dans le mois est écarté. Touchez une recette pour l'ajouter au panier.
       </p>
@@ -80,26 +86,31 @@ export default function Propose({ recipes, propositions, historique, basket, onB
         <p className="vide">Aucune recette ne passe ces filtres.</p>
       ) : (
         affichees.map((r) => (
-          <button
+          <div
             key={r.id}
             className="carte carte-recette"
-            onClick={() => basculer(r)}
-            aria-pressed={dansPanier(r.id)}
+            style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
           >
-            <div
-              className="vignette"
-              aria-hidden="true"
-              style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
-            >
-              {r.titre.charAt(0)}
+            <div className="vignette" aria-hidden="true">
+              {r.image && <img src={r.image} alt="" />}
+              <span className="badge-temps">
+                <Icone nom="minuteur" taille={14} /> {r.temps} min
+              </span>
+              {!r.image && r.titre.charAt(0)}
             </div>
             <div className="carte-recette-corps">
-              <h3>
-                {dansPanier(r.id) ? '✓ ' : ''}
-                {r.titre}
-              </h3>
+              <div className="carte-recette-ligne">
+                <h3>{r.titre}</h3>
+                <button
+                  className="bouton-ajout"
+                  onClick={() => basculer(r)}
+                  aria-pressed={dansPanier(r.id)}
+                  aria-label={dansPanier(r.id) ? `Retirer ${r.titre} du panier` : `Ajouter ${r.titre} au panier`}
+                >
+                  <Icone nom={dansPanier(r.id) ? 'coche' : 'plus'} taille={20} />
+                </button>
+              </div>
               <div className="puces-info">
-                <span className="puce-info">{r.temps} min</span>
                 <span className="puce-info">{r.portions} parts</span>
                 {r.tags.map((t) => (
                   <span className="puce-info" key={t}>
@@ -108,7 +119,7 @@ export default function Propose({ recipes, propositions, historique, basket, onB
                 ))}
               </div>
             </div>
-          </button>
+          </div>
         ))
       )}
 

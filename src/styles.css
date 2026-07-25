@@ -4,51 +4,102 @@
   60 cm des yeux. D'où des cibles tactiles de 56 px minimum, du
   contraste élevé, et aucune information portée par la seule
   couleur.
+
+  Palette et typo : système "Heritage & Modernity Wonders"
+  (voir stitch_cook_shop_pwa/heritage_modernity_wonders/DESIGN.md) —
+  Material 3 par les formes (rayons maximalistes, pilules, surfaces
+  tonales), chaleur organique par la couleur (sauge/terracotta sur
+  parchemin) et la typo (Bricolage Grotesque, un peu excentrique).
 */
 
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/bricolage-400.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/bricolage-600.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/bricolage-700.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/bricolage-800.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/hanken-400.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/hanken-600.ttf') format('truetype');
+}
+
 :root {
-  --papier: #f7f5ef;
+  --papier: #fff8ef;
   --carte: #ffffff;
-  --encre: #16211c;
-  --encre-douce: #5b6660;
-  --trait: #e4e1d7;
+  --carte-basse: #fdf3da;
+  --carte-haute: #f1e8cf;
+  --encre: #201b0c;
+  --encre-douce: #43493c;
+  --trait: #c3c9b8;
 
-  /* Vert de cuisine : sert d'accent d'état (sélection, coché, focus).
-     --sur-accent est le texte posé dessus : clair sur le vert foncé du
-     mode jour, foncé sur le vert clair du mode nuit. Sans ça, le nuit
-     tombe à ~2:1 de contraste. */
-  --accent: #1f6f52;
-  --accent-doux: #e6f0ea;
+  /* Sauge (Modernity) pour l'identité et l'action principale,
+     terracotta (Heritage) pour l'accent chaleureux et l'urgence. */
+  --accent: #385e16;
+  --accent-doux: #cefda3;
   --sur-accent: #ffffff;
+  --terracotta: #bc4749;
+  --terracotta-doux: #ffdad8;
 
-  --intermarche: #2f5d50;
-  --primeur: #9a6209;
+  --intermarche: #305e3a;
+  --primeur: #a7373b;
 
-  --ombre: 0 1px 2px rgb(22 33 28 / 0.05), 0 4px 12px rgb(22 33 28 / 0.04);
-  --ombre-nette: 0 2px 6px rgb(22 33 28 / 0.1);
+  --ombre: 0 1px 2px rgb(32 27 12 / 0.06), 0 6px 16px rgb(32 27 12 / 0.05);
+  --ombre-nette: 0 4px 14px rgb(56 94 22 / 0.18);
 
-  --rayon: 14px;
+  --rayon: 24px;
+  --rayon-grand: 32px;
   --pouce: 56px;
 
-  --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --affichage: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --texte: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
 
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --papier: #121518;
-    --carte: #1b1f23;
-    --encre: #eef0ec;
-    --encre-douce: #99a29c;
-    --trait: #2b3137;
-    --accent: #5cc79b;
-    --accent-doux: #1d2b26;
-    --sur-accent: #08130f;
-    --intermarche: #6db3a0;
-    --primeur: #d9a441;
-    --ombre: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 12px rgb(0 0 0 / 0.25);
-    --ombre-nette: 0 2px 8px rgb(0 0 0 / 0.4);
+    --papier: #16150f;
+    --carte: #201e17;
+    --carte-basse: #262319;
+    --carte-haute: #2c2920;
+    --encre: #f3f0e6;
+    --encre-douce: #b8bcae;
+    --trait: #3a3d31;
+    --accent: #a6d47e;
+    --accent-doux: #2b5008;
+    --sur-accent: #0c2000;
+    --terracotta: #ffb3b0;
+    --terracotta-doux: #5c1a1c;
+    --intermarche: #a0d3a5;
+    --primeur: #ffb3b0;
+    --ombre: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 16px rgb(0 0 0 / 0.3);
+    --ombre-nette: 0 4px 16px rgb(0 0 0 / 0.45);
   }
 }
 
@@ -61,8 +112,8 @@ body {
   margin: 0;
   background: var(--papier);
   color: var(--encre);
-  font-family: var(--sans);
-  font-size: 17px;
+  font-family: var(--texte);
+  font-size: 16px;
   line-height: 1.5;
   -webkit-tap-highlight-color: transparent;
 }
@@ -70,29 +121,60 @@ body {
 #root {
   max-width: 640px;
   margin: 0 auto;
-  padding: 0 16px calc(84px + env(safe-area-inset-bottom));
+  padding: 0 20px calc(96px + env(safe-area-inset-bottom));
 }
 
 h1 {
-  font-size: 30px;
+  font-family: var(--affichage);
+  font-size: 28px;
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
   margin: 24px 0 4px;
 }
 
 h2 {
-  font-size: 15px;
+  font-family: var(--affichage);
+  font-size: 22px;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--encre-douce);
-  margin: 28px 0 10px;
+  color: var(--encre);
+  margin: 28px 0 12px;
 }
 
 p.aide {
   color: var(--encre-douce);
   margin: 0 0 16px;
+}
+
+/* --- En-tête d'écran ------------------------------------------------------ */
+
+.entete-app {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: var(--pouce);
+  margin: 0 -20px;
+  padding: 0 20px;
+  background: color-mix(in srgb, var(--papier) 82%, transparent);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.entete-app h1 {
+  font-size: 22px;
+  margin: 0;
+  color: var(--accent);
+}
+
+.entete-app-titre {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--accent);
 }
 
 /* --- Barre d'onglets ----------------------------------------------------- */
@@ -103,114 +185,172 @@ nav.onglets {
   right: 0;
   bottom: 0;
   display: flex;
+  justify-content: space-around;
   gap: 4px;
-  /* color-mix évite de dupliquer la couleur par thème : la barre
-     reprend --carte, translucide, et le flou fait le reste. */
-  background: color-mix(in srgb, var(--carte) 82%, transparent);
-  -webkit-backdrop-filter: blur(16px) saturate(1.6);
-  backdrop-filter: blur(16px) saturate(1.6);
-  border-top: 1px solid var(--trait);
-  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--papier) 85%, transparent);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-radius: 24px 24px 0 0;
+  padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
   z-index: 10;
 }
 
 nav.onglets button {
   flex: 1;
-  min-height: calc(var(--pouce) - 12px);
+  max-width: 110px;
+  min-height: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 999px;
   background: none;
   color: var(--encre-douce);
   font: inherit;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.16s ease, color 0.16s ease;
 }
 
 nav.onglets button[aria-current='page'] {
   color: var(--accent);
-  font-weight: 600;
   background: var(--accent-doux);
 }
 
 /* --- Cartes et rangées --------------------------------------------------- */
 
 .carte {
-  background: var(--carte);
-  border: 1px solid var(--trait);
+  background: var(--carte-basse);
   border-radius: var(--rayon);
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  box-shadow: var(--ombre);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
 }
 
 /* Les cartes de « Proposer » sont des boutons : retour tactile au doigt. */
 button.carte:active {
   transform: scale(0.985);
-  box-shadow: var(--ombre-nette);
 }
 
-/* Recette déjà au panier. La coche ✓ du titre porte déjà l'info —
-   la couleur ne fait que la doubler. */
 .carte[aria-pressed='true'] {
-  border-color: var(--accent);
   background: var(--accent-doux);
 }
 
 .carte h3 {
+  font-family: var(--affichage);
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
 }
 
-/* --- Carte recette (écran Proposer) --------------------------------------- */
+/* --- Carte recette (écran Proposer) : vignette pleine largeur en
+   tête, badge temps flottant, corps avec titre + tags + bouton
+   d'ajout rond. ---------------------------------------------------------- */
 
-button.carte-recette {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 10px;
+.carte-recette {
+  padding: 0;
+  overflow: hidden;
+  background: var(--carte-basse);
+  box-shadow: var(--ombre);
 }
 
 .vignette {
-  flex: 0 0 56px;
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  font-size: 22px;
-  font-weight: 700;
+  position: relative;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  font-family: var(--affichage);
+  font-size: 56px;
+  font-weight: 800;
   text-transform: uppercase;
-  color: var(--sur-accent);
-  background: hsl(var(--teinte) 45% 42%);
+  color: hsl(var(--teinte) 35% 30% / 0.32);
+  background: hsl(var(--teinte) 65% 87%);
+  padding-bottom: 8px;
+}
+
+.vignette img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 @media (prefers-color-scheme: dark) {
   .vignette {
-    background: hsl(var(--teinte) 35% 32%);
+    color: hsl(var(--teinte) 55% 78% / 0.28);
+    background: hsl(var(--teinte) 30% 24%);
   }
 }
 
+.badge-temps {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--carte) 90%, transparent);
+  color: var(--terracotta);
+  font-size: 14px;
+  font-weight: 600;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
 .carte-recette-corps {
-  min-width: 0;
-  flex: 1;
+  padding: 20px;
+}
+
+.carte-recette-ligne {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bouton-ajout {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--sur-accent);
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.12s ease;
+}
+
+.bouton-ajout:active {
+  transform: scale(0.9);
+}
+
+.bouton-ajout[aria-pressed='true'] {
+  background: var(--terracotta);
 }
 
 .puces-info {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .puce-info {
-  padding: 2px 8px;
-  border-radius: 20px;
-  background: var(--papier);
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--carte-haute);
   color: var(--encre-douce);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -224,12 +364,11 @@ button.carte-recette {
 .rangee {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   min-height: var(--pouce);
   width: 100%;
-  padding: 8px 4px;
+  padding: 10px 8px;
   border: 0;
-  border-bottom: 1px solid var(--trait);
   background: none;
   color: inherit;
   font: inherit;
@@ -239,6 +378,7 @@ button.carte-recette {
 
 .rangee:active {
   background: var(--accent-doux);
+  border-radius: var(--rayon);
 }
 
 .rangee-lecture {
@@ -260,7 +400,7 @@ button.carte-recette {
 
 .rangee .nom {
   flex: 1;
-  font-size: 19px;
+  font-size: 18px;
 }
 
 .rangee .qte {
@@ -269,22 +409,23 @@ button.carte-recette {
 }
 
 .case {
-  width: 28px;
-  height: 28px;
-  flex: 0 0 28px;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
   border: 2px solid var(--trait);
-  border-radius: 8px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
-  font-size: 16px;
-  color: var(--carte);
-  transition: background-color 0.14s ease, border-color 0.14s ease;
+  color: var(--sur-accent);
+  transition: background-color 0.14s ease, border-color 0.14s ease, border-radius 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .rangee[data-coche='true'] .case {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--sur-accent);
+  transform: scale(1.05);
 }
 
 /* --- Étiquettes et boutons ----------------------------------------------- */
@@ -303,7 +444,7 @@ button.carte-recette {
   content: '';
   width: 9px;
   height: 9px;
-  border-radius: 2px;
+  border-radius: 3px;
   background: currentColor;
 }
 
@@ -317,40 +458,46 @@ button.carte-recette {
 
 .puces {
   display: flex;
-  flex-wrap: wrap;
+  overflow-x: auto;
   gap: 8px;
-  margin-bottom: 16px;
+  margin: 4px 0 16px;
+  padding-bottom: 2px;
 }
 
 .puce {
+  flex: 0 0 auto;
   min-height: 40px;
-  padding: 0 14px;
-  border: 1px solid var(--trait);
-  border-radius: 20px;
-  background: var(--carte);
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--carte-haute);
   color: var(--encre-douce);
   font: inherit;
-  font-size: 15px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.12s ease, color 0.12s ease;
 }
 
 .puce[aria-pressed='true'] {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--sur-accent);
-  font-weight: 600;
+  background: var(--accent-doux);
+  color: var(--accent);
 }
 
 button.principal {
   width: 100%;
   min-height: var(--pouce);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   border: 0;
-  border-radius: var(--rayon);
+  border-radius: 999px;
   background: var(--accent);
   color: var(--sur-accent);
   font: inherit;
   font-size: 17px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   margin-top: 8px;
   box-shadow: var(--ombre-nette);
@@ -358,7 +505,7 @@ button.principal {
 }
 
 button.principal:active:not(:disabled) {
-  transform: scale(0.985);
+  transform: scale(0.97);
 }
 
 button.principal:disabled {
@@ -376,13 +523,14 @@ button.carte {
 }
 
 button.discret {
-  min-height: 44px;
-  padding: 0 14px;
-  border: 1px solid var(--trait);
-  border-radius: var(--rayon);
-  background: var(--carte);
+  min-height: 48px;
+  padding: 0 18px;
+  border: 2px solid var(--trait);
+  border-radius: 999px;
+  background: transparent;
   color: var(--encre);
   font: inherit;
+  font-weight: 600;
   cursor: pointer;
   transition: border-color 0.12s ease;
 }
@@ -396,12 +544,112 @@ button.discret:disabled {
   cursor: default;
 }
 
+.carte-resume {
+  position: relative;
+  overflow: hidden;
+  background: var(--carte-basse);
+  border-radius: var(--rayon);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.carte-resume-label {
+  margin: 0;
+  color: var(--encre-douce);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.carte-resume-nombre {
+  margin: 4px 0 0;
+  font-size: 32px;
+}
+
+.carte-resume-nombre span {
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--encre-douce);
+}
+
+.bascule-mode {
+  display: flex;
+  gap: 4px;
+  background: var(--carte-haute);
+  border-radius: 999px;
+  padding: 4px;
+  margin: 4px 0 20px;
+}
+
+.bascule-mode-bouton {
+  flex: 1;
+  min-height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--encre-douce);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.bascule-mode-bouton[aria-pressed='true'] {
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+.carte-panier {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.vignette-mini {
+  position: relative;
+  flex: 0 0 72px;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--rayon);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  font-family: var(--affichage);
+  font-size: 26px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: hsl(var(--teinte) 35% 30% / 0.4);
+  background: hsl(var(--teinte) 65% 87%);
+}
+
+.vignette-mini img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vignette-mini {
+    color: hsl(var(--teinte) 55% 78% / 0.35);
+    background: hsl(var(--teinte) 30% 24%);
+  }
+}
+
+.carte-panier-corps {
+  flex: 1;
+  min-width: 0;
+}
+
 .ligne-panier {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin-top: 12px;
+  margin-top: 14px;
 }
 
 .compteur {
@@ -411,84 +659,244 @@ button.discret:disabled {
 }
 
 .compteur button {
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--trait);
-  border-radius: 12px;
-  background: var(--papier);
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--carte-haute);
   color: var(--encre);
   font: inherit;
-  font-size: 20px;
   cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
 }
 
 .compteur button:active {
   background: var(--accent-doux);
-  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .compteur span {
-  min-width: 2.5ch;
+  min-width: 2ch;
   text-align: center;
+  font-family: var(--affichage);
+  font-weight: 700;
+  color: var(--terracotta);
   font-variant-numeric: tabular-nums;
 }
 
-/* --- Mode cuisson -------------------------------------------------------- */
+/* --- Écran de préparation (mode cuisson, avant "Commencer") -------------- */
 
 .cuisson button.discret:first-child {
   margin-top: 20px;
 }
 
-.etape {
-  font-size: 22px;
-  line-height: 1.45;
-  margin: 20px 0 28px;
-}
-
-.dose {
-  color: var(--accent);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
 .apercu-etapes {
   margin: 0 0 28px;
   padding-left: 22px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .apercu-etapes li {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
-.ingredients-rappel {
-  margin-bottom: 24px;
+/* --- Mode cuisson focus : plein écran sombre indépendant du thème
+   clair/sombre du reste de l'app. Mains sales, lu à distance : gros
+   texte, fort contraste, peu de gestes fins. --------------------------- */
+
+.cuisson-focus {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  padding: max(16px, env(safe-area-inset-top)) 20px max(16px, env(safe-area-inset-bottom));
+  background: #201b0c;
+  color: #fff8ef;
 }
 
-.ingredients-rappel > summary {
-  color: var(--encre-douce);
-  font-size: 15px;
+.cuisson-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cuisson-rond {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 248 239 / 0.08);
+  color: #fff8ef;
+  display: grid;
+  place-items: center;
   cursor: pointer;
-  padding: 8px 0;
+  transition: transform 0.12s ease;
+}
+
+.cuisson-rond:active {
+  transform: scale(0.9);
+}
+
+.cuisson-progression {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.cuisson-progression span {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(255 248 239 / 0.55);
 }
 
 .progression {
   display: flex;
   gap: 6px;
-  margin: 16px 0;
 }
 
 .progression i {
-  flex: 1;
-  height: 5px;
-  border-radius: 3px;
-  background: var(--trait);
+  width: 26px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgb(255 248 239 / 0.18);
   transition: background-color 0.2s ease;
 }
 
 .progression i[data-fait='true'] {
-  background: var(--accent);
+  background: #a6d47e;
+}
+
+.puces-ingredients {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 28px 0;
+}
+
+.puce-ingredient {
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgb(255 248 239 / 0.08);
+  border: 1px solid rgb(255 248 239 / 0.14);
+  color: #fff8ef;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.etape-titre {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  font-family: var(--affichage);
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.cuisson-focus .dose {
+  color: #ffb3b0;
+}
+
+.cuisson-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 16px;
+}
+
+.bouton-cuisson {
+  flex: 1;
+  min-height: 68px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.bouton-cuisson:active {
+  transform: scale(0.97);
+}
+
+.bouton-cuisson-principal {
+  flex: 2;
+  background: #a6d47e;
+  color: #0c2000;
+  font-size: 17px;
+}
+
+.bouton-cuisson-secondaire {
+  background: transparent;
+  color: rgb(255 248 239 / 0.7);
+  border: 2px solid rgb(255 248 239 / 0.2);
+  font-size: 15px;
+}
+
+.ecran-fin {
+  margin: auto 0;
+  text-align: center;
+}
+
+.ecran-fin-coche {
+  width: 88px;
+  height: 88px;
+  margin: 0 auto 28px;
+  border-radius: 50%;
+  background: #a6d47e;
+  color: #0c2000;
+  display: grid;
+  place-items: center;
+}
+
+.ecran-fin h1 {
+  font-family: var(--affichage);
+  color: #fff8ef;
+  margin: 0 0 12px;
+}
+
+.ecran-fin p {
+  color: rgb(255 248 239 / 0.7);
+  margin: 0 0 36px;
+}
+
+.ecran-fin-choix {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.choix-verdict {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 12px;
+  border: 2px solid rgb(255 248 239 / 0.16);
+  border-radius: var(--rayon-grand);
+  background: rgb(255 248 239 / 0.06);
+  color: #fff8ef;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cuisson-focus .discret.suite {
+  background: transparent;
+  border: 0;
+  color: rgb(255 248 239 / 0.7);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .vide {
