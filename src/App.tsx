@@ -11,7 +11,16 @@ import {
   lireHistorique,
   marquerCuisine,
 } from './lib/local'
-import { ajouterRecette, ecrireListe, lireListe, lireRecettes, suivreListe, suivreRecettes } from './lib/sync'
+import {
+  ajouterRecette,
+  ecrireListe,
+  lireListe,
+  lireRecettes,
+  semerCorpusInitial,
+  supabase,
+  suivreListe,
+  suivreRecettes,
+} from './lib/sync'
 import Propose from './screens/Propose'
 import Panier from './screens/Panier'
 import Liste from './screens/Liste'
@@ -35,9 +44,7 @@ export default function App() {
   const [historique, setHistorique] = useState<Historique>({ derniereFois: {}, verdicts: {} })
   const [foyer, setFoyer] = useState<string | null>(null)
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
-  const [recettesAjoutees, setRecettesAjoutees] = useState<Recipe[]>([])
-
-  const recipes = useMemo(() => [...CORPUS, ...recettesAjoutees], [recettesAjoutees])
+  const [recipes, setRecipes] = useState<Recipe[]>([])
 
   // Amorçage : local d'abord, réseau ensuite. L'app est utilisable
   // avant que Supabase ait répondu.
@@ -55,17 +62,29 @@ export default function App() {
     return suivreListe(foyer, setEtatListe)
   }, [foyer])
 
+  // Le catalogue vit entièrement dans Supabase. Un foyer tout neuf
+  // (aucune ligne dans `recettes`) est peuplé une fois avec le corpus
+  // de départ ; les foyers déjà semés se contentent de le lire. Sans
+  // Supabase configuré, on retombe sur le corpus en mémoire — l'app
+  // reste utilisable, juste sans synchro.
   useEffect(() => {
     if (!foyer) return
-    void lireRecettes(foyer).then(setRecettesAjoutees)
-    return suivreRecettes(foyer, (r) => setRecettesAjoutees((prec) => [...prec, r]))
+    if (!supabase) {
+      setRecipes(CORPUS)
+      return
+    }
+    void (async () => {
+      const existantes = await lireRecettes(foyer)
+      setRecipes(existantes.length > 0 ? existantes : await semerCorpusInitial(foyer, CORPUS))
+    })()
+    return suivreRecettes(foyer, (r) => setRecipes((prec) => [...prec, r]))
   }, [foyer])
 
   const ajouter = useCallback(
     async (recette: Recipe) => {
       if (!foyer) throw new Error('Foyer non initialisé, réessayez dans un instant.')
       await ajouterRecette(foyer, recette)
-      setRecettesAjoutees((prec) => [...prec, recette])
+      setRecipes((prec) => [...prec, recette])
     },
     [foyer],
   )

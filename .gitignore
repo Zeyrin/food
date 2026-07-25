@@ -5,3 +5,5 @@ dev-dist
 .DS_Store
 tsconfig.tsbuildinfo
 stitch_cook_shop_pwa
+supabase/seed_corpus_initial.sql
+supabase/update_images.sql
