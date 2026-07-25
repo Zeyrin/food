@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import type { ListItem, ListState } from '../types'
+import type { ItemLibre, ListItem, ListState, Recipe } from '../types'
 import { STORES } from '../types'
 import { formatQuantite, groupByStore } from '../lib/aggregate'
+import { teinteRecette } from '../lib/identite'
 import Icone from '../components/Icone'
 
 interface Props {
@@ -9,9 +10,19 @@ interface Props {
   etat: ListState
   onEtat: (etat: ListState) => void
   foyer: string | null
+  prochaineCuisson: Recipe | null
 }
 
-export default function Liste({ items, etat, onEtat, foyer }: Props) {
+const itemLibreEnListItem = (item: ItemLibre): ListItem => ({
+  key: `libre|${item.id}`,
+  nom: item.nom,
+  quantite: 1,
+  unite: 'piece',
+  magasin: 'autre',
+  origines: [],
+})
+
+export default function Liste({ items, etat, onEtat, foyer, prochaineCuisson }: Props) {
   /**
    * Deux modes sur le même écran. « Tri » remplace l'inventaire du
    * placard : au lieu de tenir un stock à jour toute l'année, on
@@ -20,8 +31,21 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
    */
   const [mode, setMode] = useState<'tri' | 'courses'>('tri')
 
-  const basculer = (cle: keyof ListState, key: string) =>
+  const itemsLibres = (etat.items ?? []).map(itemLibreEnListItem)
+  const tousLesItems = [...items, ...itemsLibres]
+
+  const basculer = (cle: 'coche' | 'dejaPossede', key: string) =>
     onEtat({ ...etat, [cle]: { ...etat[cle], [key]: !etat[cle][key] } })
+
+  const ajouterItem = () => {
+    const nom = window.prompt('Ajouter à la liste :')?.trim()
+    if (!nom) return
+    const item: ItemLibre = { id: crypto.randomUUID(), nom }
+    onEtat({ ...etat, items: [...(etat.items ?? []), item] })
+  }
+
+  const retirerItem = (id: string) =>
+    onEtat({ ...etat, items: (etat.items ?? []).filter((i) => i.id !== id) })
 
   const partager = async () => {
     if (!foyer) return
@@ -39,16 +63,19 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
     </header>
   )
 
-  if (items.length === 0) {
+  if (tousLesItems.length === 0) {
     return (
       <>
         {entete}
         <p className="vide">La liste se remplit à partir du panier de la semaine.</p>
+        <button className="bouton-flottant" onClick={ajouterItem} aria-label="Ajouter un article">
+          <Icone nom="plus" taille={24} />
+        </button>
       </>
     )
   }
 
-  const aAcheter = items.filter((i) => !etat.dejaPossede[i.key])
+  const aAcheter = tousLesItems.filter((i) => !etat.dejaPossede[i.key])
   const restants = aAcheter.filter((i) => !etat.coche[i.key]).length
 
   const bascule = (
@@ -75,7 +102,7 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
           Ouvrez le frigo et le placard, touchez ce qui est déjà là. Le reste part en courses.
         </p>
 
-        {items.map((item) => {
+        {tousLesItems.map((item) => {
           const deja = etat.dejaPossede[item.key] === true
           return (
             <button
@@ -94,6 +121,9 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
         <button className="principal" onClick={() => setMode('courses')}>
           Passer aux courses ({aAcheter.length} produits)
         </button>
+        <button className="bouton-flottant" onClick={ajouterItem} aria-label="Ajouter un article">
+          <Icone nom="plus" taille={24} />
+        </button>
       </>
     )
   }
@@ -103,11 +133,23 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
       {entete}
       {bascule}
 
-      <div className="carte-resume">
-        <p className="carte-resume-label">Progression</p>
-        <h2 className="carte-resume-nombre">
-          {aAcheter.length - restants} <span>/ {aAcheter.length}</span>
-        </h2>
+      <div className="bento-deux-colonnes">
+        <div className="carte-resume carte-resume-bento">
+          <Icone nom="panier-plein" taille={96} />
+          <p className="carte-resume-label">Progression</p>
+          <h2 className="carte-resume-nombre">
+            {aAcheter.length - restants} <span>/ {aAcheter.length}</span>
+          </h2>
+        </div>
+        {prochaineCuisson && (
+          <div
+            className="carte-prochaine-cuisson"
+            style={{ '--teinte': teinteRecette(prochaineCuisson.titre) } as React.CSSProperties}
+          >
+            <p className="carte-resume-label">Prochaine cuisson</p>
+            <p className="carte-prochaine-cuisson-titre">{prochaineCuisson.titre}</p>
+          </div>
+        )}
       </div>
 
       {groupByStore(aAcheter).map(({ magasin, items: lignes }) => (
@@ -120,17 +162,24 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
           </h2>
           {lignes.map((item) => {
             const coche = etat.coche[item.key] === true
+            const libre = item.magasin === 'autre'
             return (
-              <button
-                className="rangee"
-                key={item.key}
-                data-coche={coche}
-                onClick={() => basculer('coche', item.key)}
-              >
-                <span className="case">{coche && <Icone nom="coche" taille={18} />}</span>
-                <span className="nom">{item.nom}</span>
-                <span className="qte">{formatQuantite(item)}</span>
-              </button>
+              <div className="rangee-avec-suppr" key={item.key}>
+                <button className="rangee" data-coche={coche} onClick={() => basculer('coche', item.key)}>
+                  <span className="case">{coche && <Icone nom="coche" taille={18} />}</span>
+                  <span className="nom">{item.nom}</span>
+                  {!libre && <span className="qte">{formatQuantite(item)}</span>}
+                </button>
+                {libre && (
+                  <button
+                    className="bouton-suppr"
+                    onClick={() => retirerItem(item.key.replace('libre|', ''))}
+                    aria-label={`Retirer ${item.nom}`}
+                  >
+                    <Icone nom="fermer" taille={16} />
+                  </button>
+                )}
+              </div>
             )
           })}
         </section>
@@ -144,6 +193,10 @@ export default function Liste({ items, etat, onEtat, foyer }: Props) {
           Partager la liste
         </button>
       </div>
+
+      <button className="bouton-flottant" onClick={ajouterItem} aria-label="Ajouter un article">
+        <Icone nom="plus" taille={24} />
+      </button>
     </>
   )
 }

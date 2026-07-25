@@ -141,7 +141,13 @@ export default function App() {
       )}
 
       {onglet === 'liste' && (
-        <Liste items={items} etat={etatListe} onEtat={majListe} foyer={foyer} />
+        <Liste
+          items={items}
+          etat={etatListe}
+          onEtat={majListe}
+          foyer={foyer}
+          prochaineCuisson={recipes.find((r) => r.id === basket[0]?.recipeId) ?? null}
+        />
       )}
 
       {onglet === 'cuisson' && (
