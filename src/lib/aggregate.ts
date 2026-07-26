@@ -68,6 +68,23 @@ export function buildList(
 }
 
 /**
+ * Recette recalculée pour un nombre de parts différent de celui du
+ * catalogue — même facteur que `buildList`, mais gardé par recette
+ * plutôt qu'agrégé : le mode cuisson doit afficher les doses qui
+ * correspondent à ce qui a été retenu dans le panier, pas la recette
+ * telle qu'écrite à l'origine.
+ */
+export function redimensionnerRecette(recette: Recipe, portionsCible: number): Recipe {
+  if (portionsCible === recette.portions) return recette
+  const facteur = portionsCible / recette.portions
+  return {
+    ...recette,
+    portions: portionsCible,
+    ingredients: recette.ingredients.map((ing) => ({ ...ing, quantite: ing.quantite * facteur })),
+  }
+}
+
+/**
  * Une quantité de courses n'a pas besoin d'être juste au gramme.
  * On arrondit à quelque chose qu'on peut lire d'un coup d'œil
  * dans un rayon.

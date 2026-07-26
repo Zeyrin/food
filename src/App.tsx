@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { flushSync } from 'react-dom'
 import corpus from './data/recipes.json'
 import type { BasketEntry, ListState, Recipe, Verdict } from './types'
-import { buildList } from './lib/aggregate'
+import { buildList, redimensionnerRecette } from './lib/aggregate'
 import { type Historique } from './lib/propose'
 import {
   ecrireBasket,
@@ -346,9 +346,13 @@ export default function App() {
   if (vueActuelle.type === 'cuisson') {
     const recette = recipes.find((r) => r.id === vueActuelle.recipeId)
     if (recette) {
+      // Les doses suivent les parts retenues dans le panier, pas celles
+      // écrites au catalogue — sinon la liste de courses et le mode
+      // cuisson racontent deux quantités différentes pour le même plat.
+      const portionsCible = basket.find((e) => e.recipeId === recette.id)?.portions ?? recette.portions
       return (
         <Cuisson
-          recette={recette}
+          recette={redimensionnerRecette(recette, portionsCible)}
           onVerdict={async (v) => {
             await verdict(recette.id, v)
             reculer()
@@ -454,6 +458,7 @@ export default function App() {
           onEtat={majListe}
           foyer={foyer}
           prochaineCuisson={recipes.find((r) => r.id === basket[0]?.recipeId) ?? null}
+          onVersCuisson={() => changerOnglet('cuisson')}
         />
       )}
 

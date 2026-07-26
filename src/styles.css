@@ -496,11 +496,6 @@ button.discret.danger {
   line-height: 1.45;
 }
 
-.minuteur-valeur {
-  font-size: 14px;
-  font-variant-numeric: tabular-nums;
-}
-
 .bouton-ajout {
   flex: 0 0 44px;
   width: 44px;
@@ -1421,19 +1416,92 @@ button.carte-panier-bouton .carte-panier-corps {
   background: none;
 }
 
-.cuisson-rond-minuteur {
-  background: rgb(166 212 126 / 0.18);
+/* Bandeau minuteur : remplace un petit rond dans le header — pendant
+   l'attente entre deux étapes c'est l'info la plus importante de
+   l'écran, elle mérite de gros chiffres lisibles de loin plutôt qu'un
+   badge qu'il faut plisser les yeux pour lire. */
+.bandeau-minuteur {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px 18px;
+  border: 0;
+  border-radius: var(--rayon);
+  background: rgb(166 212 126 / 0.1);
+  color: #fff8ef;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.2s ease;
+}
+
+.bandeau-minuteur-ligne {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bandeau-minuteur-nom {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
   color: #bcefc0;
 }
 
-.cuisson-rond-minuteur {
-  position: relative;
+.bandeau-minuteur-nom .pastille-nombre {
+  position: static;
+  margin-left: 2px;
 }
 
-.cuisson-rond-minuteur[data-sonne='true'] {
+.bandeau-minuteur-valeur {
+  font-family: var(--affichage);
+  font-size: 32px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: #fff8ef;
+}
+
+.bandeau-minuteur-jauge {
+  margin-top: 10px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgb(255 248 239 / 0.12);
+  overflow: hidden;
+}
+
+.bandeau-minuteur-jauge i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
   background: #a6d47e;
+  transition: width 0.5s linear;
+}
+
+.bandeau-minuteur[data-sonne='true'] {
+  background: #a6d47e;
+  animation: pulsation-bandeau 1s ease-in-out infinite;
+}
+
+.bandeau-minuteur[data-sonne='true'] .bandeau-minuteur-nom,
+.bandeau-minuteur[data-sonne='true'] .bandeau-minuteur-valeur {
   color: #0c2000;
-  animation: pulsation 0.9s ease-in-out infinite;
+}
+
+.bandeau-minuteur[data-sonne='true'] .bandeau-minuteur-jauge {
+  background: rgb(12 32 0 / 0.18);
+}
+
+.bandeau-minuteur[data-sonne='true'] .bandeau-minuteur-jauge i {
+  background: #0c2000;
+}
+
+@keyframes pulsation-bandeau {
+  50% {
+    background: #bcefc0;
+  }
 }
 
 /* Nombre de minuteurs quand il y en a plus d'un — le rond n'en affiche
@@ -1538,7 +1606,7 @@ button.carte-panier-bouton .carte-panier-corps {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cuisson-rond-minuteur[data-sonne='true'] {
+  .bandeau-minuteur[data-sonne='true'] {
     animation: none;
   }
 }

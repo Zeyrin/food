@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Recipe } from '../types'
 import { validerRecette } from '../lib/validerRecette'
 import { genererPrompt } from '../lib/promptRecette'
@@ -33,6 +33,7 @@ export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }
   const [erreurs, setErreurs] = useState<string[]>([])
   const [enCours, setEnCours] = useState(false)
   const [copie, setCopie] = useState(false)
+  const [ajoute, setAjoute] = useState(false)
 
   const copierPrompt = async () => {
     await navigator.clipboard.writeText(genererPrompt(demande))
@@ -59,13 +60,25 @@ export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }
     setEnCours(true)
     try {
       await onAjouter(resultat.recette)
-      onQuitter()
+      // Confirmation visible avant de quitter l'écran, plutôt qu'une
+      // sortie immédiate qui ne dit pas si ça a marché.
+      setAjoute(true)
     } catch (e) {
       setErreurs([e instanceof Error ? e.message : "Échec de l'ajout."])
-    } finally {
       setEnCours(false)
     }
   }
+
+  // Dans un `useEffect` (pas un `setTimeout` direct dans `valider`) pour
+  // que le nettoyage annule l'appel si l'écran se démonte avant —
+  // sinon un clic sur « Annuler » juste après l'ajout ferait reculer
+  // l'historique deux fois : une fois pour Annuler, une fois pour ce
+  // minuteur qui se déclenche quand même sur un `onQuitter` obsolète.
+  useEffect(() => {
+    if (!ajoute) return
+    const t = setTimeout(onQuitter, 900)
+    return () => clearTimeout(t)
+  }, [ajoute, onQuitter])
 
   return (
     <>
@@ -111,7 +124,16 @@ export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }
       )}
 
       <button className="principal" onClick={valider} disabled={!texte.trim() || enCours}>
-        {enCours ? 'Ajout…' : 'Ajouter au catalogue'}
+        {ajoute ? (
+          <>
+            <Icone nom="coche" taille={20} />
+            {recetteInitiale ? 'Modifications enregistrées !' : 'Recette ajoutée !'}
+          </>
+        ) : enCours ? (
+          'Ajout…'
+        ) : (
+          'Ajouter au catalogue'
+        )}
       </button>
       <button className="discret suite pleine-largeur" onClick={onQuitter}>
         Annuler

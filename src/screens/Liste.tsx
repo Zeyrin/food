@@ -11,6 +11,7 @@ interface Props {
   onEtat: (etat: ListState) => void
   foyer: string | null
   prochaineCuisson: Recipe | null
+  onVersCuisson: () => void
 }
 
 const itemLibreEnListItem = (item: ItemLibre): ListItem => ({
@@ -22,7 +23,7 @@ const itemLibreEnListItem = (item: ItemLibre): ListItem => ({
   origines: [],
 })
 
-export default function Liste({ items, etat, onEtat, foyer, prochaineCuisson }: Props) {
+export default function Liste({ items, etat, onEtat, foyer, prochaineCuisson, onVersCuisson }: Props) {
   /**
    * Deux modes sur le même écran. « Tri » remplace l'inventaire du
    * placard : au lieu de tenir un stock à jour toute l'année, on
@@ -122,6 +123,10 @@ export default function Liste({ items, etat, onEtat, foyer, prochaineCuisson }: 
           <button className="principal" onClick={() => setMode('courses')}>
             Passer aux courses ({aAcheter.length} produits)
           </button>
+
+          {/* Même raison que côté "Liste magasin" : sans cet espaceur, le
+              bouton flottant chevauche ce bouton une fois scrollé en bas. */}
+          <div className="espaceur-action-flottante" aria-hidden="true" />
         </div>
         <button className="bouton-flottant" onClick={ajouterItem} aria-label="Ajouter un article">
           <Icone nom="plus" taille={24} />
@@ -193,6 +198,10 @@ export default function Liste({ items, etat, onEtat, foyer, prochaineCuisson }: 
           </section>
         ))}
 
+        <button className="principal" onClick={onVersCuisson}>
+          <Icone nom="grill" taille={20} /> Commencer à cuisiner
+        </button>
+
         <div className="rangee-boutons espace-haut">
           <button className="discret" onClick={() => setMode('tri')}>
             Revoir le tri
@@ -201,6 +210,11 @@ export default function Liste({ items, etat, onEtat, foyer, prochaineCuisson }: 
             Partager la liste
           </button>
         </div>
+
+        {/* Sans cet espaceur, le bouton flottant "Ajouter un article"
+            (fixe, coin bas-droit) chevauche "Commencer à cuisiner" une
+            fois la liste scrollée jusqu'en bas. */}
+        <div className="espaceur-action-flottante" aria-hidden="true" />
       </div>
 
       <button className="bouton-flottant" onClick={ajouterItem} aria-label="Ajouter un article">

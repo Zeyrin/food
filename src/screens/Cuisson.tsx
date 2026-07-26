@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { Recipe, Verdict } from '../types'
 import { annoterEtape, formatQuantite } from '../lib/aggregate'
 import { formatDuree, minuteursDeLEtape } from '../lib/duree'
@@ -8,6 +8,8 @@ import Icone from '../components/Icone'
 interface MinuteurActif {
   id: string
   nom: string
+  /** Sert à calculer la jauge de progression (part écoulée du total). */
+  depart: number
   /** Heure de fin absolue, pas un compteur qu'on décrémente : l'écran en
    *  veille ou l'onglet en arrière-plan gèlent les `setInterval`, pas
    *  une heure de fin. */
@@ -30,6 +32,48 @@ function useMaintenant(actif: boolean): number {
 
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 
+/**
+ * Bip de minuteur en Web Audio plutôt qu'un fichier audio : rien à
+ * charger, et surtout le contexte peut être créé/débloqué au clic sur
+ * « Lancer » (geste utilisateur), pour qu'il joue plus tard sans
+ * geste quand le minuteur sonne réellement — un `<audio>` déclenché
+ * hors geste se ferait bloquer par l'autoplay des navigateurs.
+ */
+let contexteAudio: AudioContext | null = null
+
+function debloquerAudio() {
+  try {
+    contexteAudio ??= new (window.AudioContext ??
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
+    if (contexteAudio.state === 'suspended') void contexteAudio.resume()
+  } catch {
+    /* Web Audio indisponible : la vibration reste le seul signal */
+  }
+}
+
+function biper() {
+  const ctx = contexteAudio
+  if (!ctx) return
+  try {
+    const debut = ctx.currentTime
+    ;[880, 1175].forEach((frequence, i) => {
+      const depart = debut + i * 0.16
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'sine'
+      osc.frequency.value = frequence
+      gain.gain.setValueAtTime(0, depart)
+      gain.gain.linearRampToValueAtTime(0.35, depart + 0.02)
+      gain.gain.linearRampToValueAtTime(0, depart + 0.15)
+      osc.connect(gain).connect(ctx.destination)
+      osc.start(depart)
+      osc.stop(depart + 0.16)
+    })
+  } catch {
+    /* contexte fermé ou bloqué entretemps : tant pis pour ce bip */
+  }
+}
+
 interface Props {
   recette: Recipe
   onVerdict: (v: Verdict) => void
@@ -50,25 +94,39 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
   const enCours = [...minuteurs].sort((a, b) => a.fin - b.fin)
   const sonnent = minuteurs.filter((m) => m.fin <= maintenant)
 
-  const lancer = (secondes: number, nom: string) =>
-    setMinuteurs((prec) => [
-      ...prec,
-      { id: crypto.randomUUID(), nom, fin: Date.now() + secondes * 1000 },
-    ])
+  const lancer = (secondes: number, nom: string) => {
+    // Débloqué ici (clic = geste utilisateur), pas au moment où le
+    // minuteur sonnera réellement — sinon le navigateur bloque le son.
+    debloquerAudio()
+    const depart = Date.now()
+    setMinuteurs((prec) => [...prec, { id: crypto.randomUUID(), nom, depart, fin: depart + secondes * 1000 }])
+  }
+
+  const progression = (m: MinuteurActif) => {
+    const total = m.fin - m.depart
+    if (total <= 0) return 100
+    return Math.min(100, Math.max(0, ((maintenant - m.depart) / total) * 100))
+  }
 
   const retirer = (id: string) => setMinuteurs((prec) => prec.filter((m) => m.id !== id))
 
-  // Un minuteur ne peut pas sonner : un fichier audio ne survivrait ni au
-  // mode silencieux ni à la politique d'autoplay des navigateurs. La
-  // vibration, si. Le registre évite de re-vibrer à chaque battement.
-  const dejaSonnes = useRef(new Set<string>())
+  // Un bip seul, une vibration seule : trop facile à manquer en
+  // cuisine, mains occupées, attention ailleurs. Tant qu'un minuteur
+  // sonne sans avoir été retiré, l'alerte se répète et le panneau
+  // s'ouvre tout seul — impossible de rater que c'est prêt.
+  const yADesTimersQuiSonnent = sonnent.length > 0
   useEffect(() => {
-    for (const m of sonnent) {
-      if (dejaSonnes.current.has(m.id)) continue
-      dejaSonnes.current.add(m.id)
+    if (!yADesTimersQuiSonnent) return
+
+    setPanneau(true)
+    const alerter = () => {
       if ('vibrate' in navigator) navigator.vibrate([200, 100, 200, 100, 500])
+      biper()
     }
-  }, [sonnent])
+    alerter()
+    const t = setInterval(alerter, 4000)
+    return () => clearInterval(t)
+  }, [yADesTimersQuiSonnent])
 
   const fini = index >= recette.etapes.length
 
@@ -149,23 +207,38 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
             ))}
           </div>
         </div>
-        {/* Le rond de droite affiche le minuteur qui finira le premier et
-            ouvre le panneau. Sans minuteur, un vide de même largeur : le
-            titre d'étape doit rester centré. */}
-        {enCours.length === 0 ? (
-          <span className="cuisson-rond cuisson-rond-vide" aria-hidden="true" />
-        ) : (
-          <button
-            className="cuisson-rond cuisson-rond-minuteur"
-            data-sonne={sonnent.length > 0}
-            onClick={() => setPanneau(true)}
-            aria-label={`${enCours.length} minuteur${enCours.length > 1 ? 's' : ''} en cours, ouvrir la gestion`}
-          >
-            <b className="minuteur-valeur">{mmss(restantDe(enCours[0]!))}</b>
-            {enCours.length > 1 && <i className="pastille-nombre">{enCours.length}</i>}
-          </button>
-        )}
+        {/* Repère à droite pour équilibrer le bouton fermer à gauche —
+            le minuteur, lui, vit désormais dans le bandeau ci-dessous,
+            trop important pour tenir dans un petit rond. */}
+        <span className="cuisson-rond cuisson-rond-vide" aria-hidden="true" />
       </header>
+
+      {/* Bandeau plein largeur plutôt qu'un petit rond dans le header :
+          le minuteur est l'info la plus importante pendant l'attente
+          entre deux étapes, il mérite de gros chiffres qu'on lit sans
+          plisser les yeux depuis l'autre bout de la cuisine. */}
+      {enCours.length > 0 && (
+        <button
+          className="bandeau-minuteur"
+          data-sonne={sonnent.length > 0}
+          onClick={() => setPanneau(true)}
+          aria-label={`${enCours.length} minuteur${enCours.length > 1 ? 's' : ''} en cours, ouvrir la gestion`}
+        >
+          <div className="bandeau-minuteur-ligne">
+            <span className="bandeau-minuteur-nom">
+              <Icone nom="minuteur" taille={20} />
+              {enCours[0]!.nom}
+              {enCours.length > 1 && <i className="pastille-nombre">{enCours.length}</i>}
+            </span>
+            <b className="bandeau-minuteur-valeur">
+              {sonnent.length > 0 ? 'Terminé' : mmss(restantDe(enCours[0]!))}
+            </b>
+          </div>
+          <div className="bandeau-minuteur-jauge" aria-hidden="true">
+            <i style={{ width: `${progression(enCours[0]!)}%` }} />
+          </div>
+        </button>
+      )}
 
       {/* `details` natif : replié il ne coûte qu'une ligne, déplié il
           montre tout d'un coup. Aucun état à gérer, et il s'ouvre même
