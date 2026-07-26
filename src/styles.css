@@ -116,6 +116,10 @@ body {
   font-size: 16px;
   line-height: 1.5;
   -webkit-tap-highlight-color: transparent;
+  /* Sans ça, tirer vers le bas en haut de page déclenche le
+     pull-to-refresh natif d'Android/Chrome : rechargement complet,
+     qui perd la pile de navigation et retombe sur l'accueil. */
+  overscroll-behavior-y: contain;
 }
 
 #root {
@@ -889,17 +893,20 @@ button.discret:disabled {
 }
 
 /* Bandeau hors-ligne : rassure que rien ne se perd quand le réseau
-   coupe en magasin — ne bloque rien, disparaît seul au retour. */
+   coupe en magasin — ne bloque rien, disparaît seul au retour.
+   Bords ancrés au viewport (pas un centrage par transform à largeur
+   de contenu) : sur mobile étroit, un centrage aurait pu chevaucher
+   le bouton réglages fixé dans le même coin haut-droit. */
 .pastille-hors-ligne {
   position: fixed;
   top: max(12px, env(safe-area-inset-top));
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 12;
+  left: max(12px, env(safe-area-inset-left));
+  right: 64px;
+  z-index: 11;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  max-width: calc(100vw - 88px);
   margin: 0;
   padding: 10px 16px;
   border-radius: 999px;
@@ -916,7 +923,8 @@ button.discret:disabled {
 
 @media (min-width: 900px) {
   .pastille-hors-ligne {
-    left: calc(50% + 64px);
+    left: 144px;
+    right: 80px;
   }
 }
 
