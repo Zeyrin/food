@@ -456,7 +456,6 @@ export default function App() {
           items={items}
           etat={etatListe}
           onEtat={majListe}
-          foyer={foyer}
           prochaineCuisson={recipes.find((r) => r.id === basket[0]?.recipeId) ?? null}
           onVersCuisson={() => changerOnglet('cuisson')}
         />

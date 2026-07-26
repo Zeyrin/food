@@ -9,7 +9,6 @@ interface Props {
   items: ListItem[]
   etat: ListState
   onEtat: (etat: ListState) => void
-  foyer: string | null
   prochaineCuisson: Recipe | null
   onVersCuisson: () => void
 }
@@ -23,7 +22,7 @@ const itemLibreEnListItem = (item: ItemLibre): ListItem => ({
   origines: [],
 })
 
-export default function Liste({ items, etat, onEtat, foyer, prochaineCuisson, onVersCuisson }: Props) {
+export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCuisson }: Props) {
   /**
    * Deux modes sur le même écran. « Tri » remplace l'inventaire du
    * placard : au lieu de tenir un stock à jour toute l'année, on
@@ -47,13 +46,6 @@ export default function Liste({ items, etat, onEtat, foyer, prochaineCuisson, on
 
   const retirerItem = (id: string) =>
     onEtat({ ...etat, items: (etat.items ?? []).filter((i) => i.id !== id) })
-
-  const partager = async () => {
-    if (!foyer) return
-    const lien = `${location.origin}/#/f/${foyer}`
-    if (navigator.share) await navigator.share({ title: 'Liste de courses', url: lien })
-    else await navigator.clipboard.writeText(lien)
-  }
 
   const entete = (
     <header className="entete-app">
@@ -198,16 +190,12 @@ export default function Liste({ items, etat, onEtat, foyer, prochaineCuisson, on
           </section>
         ))}
 
-        <button className="principal" onClick={onVersCuisson}>
-          <Icone nom="grill" taille={20} /> Commencer à cuisiner
-        </button>
-
         <div className="rangee-boutons espace-haut">
           <button className="discret" onClick={() => setMode('tri')}>
             Revoir le tri
           </button>
-          <button className="discret" onClick={partager} disabled={!foyer}>
-            Partager la liste
+          <button className="discret accent" onClick={onVersCuisson}>
+            <Icone nom="grill" taille={18} /> Cuisson
           </button>
         </div>
 

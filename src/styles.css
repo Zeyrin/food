@@ -811,6 +811,20 @@ button.discret:disabled {
   cursor: default;
 }
 
+/* Variante pleine couleur — même gabarit que .discret, pour une
+   action qui mérite plus de poids qu'un bouton fantôme sans pour
+   autant prendre toute la largeur d'un .principal. */
+button.discret.accent {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--sur-accent);
+}
+
+button.discret.accent:active:not(:disabled) {
+  border-color: var(--accent);
+  opacity: 0.9;
+}
+
 .carte-resume {
   position: relative;
   overflow: hidden;
