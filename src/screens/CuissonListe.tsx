@@ -34,32 +34,34 @@ export default function CuissonListe({ recipes, basket, onCuisiner }: Props) {
       {entete}
       <p className="aide">Choisissez le plat à cuisiner maintenant.</p>
 
-      {basket.map((entree) => {
-        const r = byId.get(entree.recipeId)
-        if (!r) return null
-        return (
-          <button
-            className="carte carte-panier carte-panier-bouton"
-            key={entree.recipeId}
-            onClick={() => onCuisiner(r.id)}
-          >
-            <div
-              className="vignette-mini"
-              aria-hidden="true"
-              style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
+      <div className="grille-panier">
+        {basket.map((entree) => {
+          const r = byId.get(entree.recipeId)
+          if (!r) return null
+          return (
+            <button
+              className="carte carte-panier carte-panier-bouton"
+              key={entree.recipeId}
+              onClick={() => onCuisiner(r.id)}
             >
-              {r.image ? <img src={r.image} alt="" /> : r.titre.charAt(0)}
-            </div>
-            <div className="carte-panier-corps">
-              <h3>{r.titre}</h3>
-              <div className="meta">
-                {r.temps} min · {entree.portions} parts
+              <div
+                className="vignette-mini"
+                aria-hidden="true"
+                style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
+              >
+                {r.image ? <img src={r.image} alt="" /> : r.titre.charAt(0)}
               </div>
-            </div>
-            <Icone nom="suivant" taille={20} />
-          </button>
-        )
-      })}
+              <div className="carte-panier-corps">
+                <h3>{r.titre}</h3>
+                <div className="meta">
+                  {r.temps} min · {entree.portions} parts
+                </div>
+              </div>
+              <Icone nom="suivant" taille={20} />
+            </button>
+          )
+        })}
+      </div>
     </>
   )
 }

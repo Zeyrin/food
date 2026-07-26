@@ -39,20 +39,70 @@ import AjouterRecette from './screens/AjouterRecette'
 import Bienvenue from './screens/Bienvenue'
 import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
+import { useEnLigne } from './hooks/useEnLigne'
 
 const CORPUS: Recipe[] = corpus as Recipe[]
 
 type Onglet = 'propose' | 'panier' | 'liste' | 'cuisson'
 
+/**
+ * Un seul écran affiché à la fois, mais empilé plutôt que dans des
+ * flags séparés : « reculer » devient « dépiler », que ce soit via un
+ * bouton de l'appli ou le bouton retour du téléphone/navigateur. Sans
+ * ça, l'appli n'a qu'une seule page dans l'historique du navigateur —
+ * retour en sort directement au lieu de reculer d'un écran.
+ */
+type Vue =
+  | { type: 'onglet'; onglet: Onglet }
+  | { type: 'detail'; recipeId: string }
+  | { type: 'ajout' }
+  | { type: 'edition'; recette: Recipe }
+  | { type: 'cuisson'; recipeId: string }
+  | { type: 'reglages' }
+
 const ETAT_VIDE: ListState = { coche: {}, dejaPossede: {} }
 
 export default function App() {
-  const [onglet, setOnglet] = useState<Onglet>('propose')
-  const [enCuisson, setEnCuisson] = useState<string | null>(null)
-  const [enAjout, setEnAjout] = useState(false)
-  const [enReglages, setEnReglages] = useState(false)
-  const [enDetail, setEnDetail] = useState<string | null>(null)
-  const [enEdition, setEnEdition] = useState<Recipe | null>(null)
+  const [pile, setPile] = useState<Vue[]>([{ type: 'onglet', onglet: 'propose' }])
+  const vueActuelle = pile[pile.length - 1]!
+
+  // Avancer pousse une entrée dans l'historique du navigateur, avec la
+  // profondeur qu'elle représente ; reculer (bouton de l'appli ou
+  // bouton physique/navigateur) resynchronise `pile` sur cette
+  // profondeur via `popstate` ci-dessous. Un seul chemin pour les
+  // deux, jamais de pop direct de `pile` ailleurs — sinon la pile
+  // React et l'historique du navigateur désynchronisent. La
+  // profondeur (plutôt qu'un simple « dépiler un cran ») encaisse
+  // aussi un retour qui saute plusieurs crans d'un coup — menu
+  // d'historique en appui long sur Android, geste de bord iOS.
+  const irVers = useCallback((vue: Vue) => {
+    setPile((p) => {
+      const suivante = [...p, vue]
+      history.pushState({ profondeur: suivante.length }, '')
+      return suivante
+    })
+  }, [])
+
+  const reculer = useCallback(() => {
+    history.back()
+  }, [])
+
+  useEffect(() => {
+    const surRetour = (e: PopStateEvent) => {
+      const profondeur = Math.max(1, (e.state as { profondeur?: number } | null)?.profondeur ?? 1)
+      setPile((p) => (profondeur < p.length ? p.slice(0, profondeur) : p))
+    }
+    window.addEventListener('popstate', surRetour)
+    return () => window.removeEventListener('popstate', surRetour)
+  }, [])
+
+  const changerOnglet = useCallback(
+    (cle: Onglet) => {
+      if (vueActuelle.type === 'onglet' && vueActuelle.onglet === cle) return
+      irVers({ type: 'onglet', onglet: cle })
+    },
+    [vueActuelle, irVers],
+  )
 
   const [historique, setHistorique] = useState<Historique>({ derniereFois: {}, verdicts: {} })
   const [foyer, setFoyer] = useState<string | null>(null)
@@ -60,6 +110,7 @@ export default function App() {
   const [foyerCharge, setFoyerCharge] = useState(false)
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
+  const enLigne = useEnLigne()
 
   // Le panier n'a pas d'état à lui : il fait partie de la liste du foyer.
   // Une seule source de vérité, une seule écriture réseau — impossible que
@@ -110,16 +161,19 @@ export default function App() {
     // et seraient réécrits dans le prochain foyer rejoint.
     setEtatListe(ETAT_VIDE)
     setHistorique({ derniereFois: {}, verdicts: {} })
-    setEnReglages(false)
+    // Reset direct plutôt que `reculer()` : on quitte le foyer entier,
+    // pas juste l'écran réglages — l'écran Bienvenue qui suit ne fait
+    // de toute façon pas partie de cette pile.
+    setPile([{ type: 'onglet', onglet: 'propose' }])
   }, [])
 
   const rejoindreDepuisReglages = useCallback(
     async (code: string) => {
       const ok = await rejoindre(code)
-      if (ok) setEnReglages(false)
+      if (ok) reculer()
       return ok
     },
-    [rejoindre],
+    [rejoindre, reculer],
   )
 
   // Le panier arrive avec la liste. Tant que le foyer n'en a pas publié
@@ -207,9 +261,9 @@ export default function App() {
       await supprimerRecette(foyer, recipeId)
       setRecipes((prec) => prec.filter((r) => r.id !== recipeId))
       majBasket(basket.filter((e) => e.recipeId !== recipeId))
-      setEnDetail(null)
+      reculer()
     },
-    [foyer, basket, majBasket],
+    [foyer, basket, majBasket, reculer],
   )
 
   const verdict = useCallback(
@@ -232,38 +286,39 @@ export default function App() {
     return <Bienvenue onCreer={creer} onRejoindre={rejoindre} />
   }
 
-  if (enCuisson) {
-    const recette = recipes.find((r) => r.id === enCuisson)
+  if (vueActuelle.type === 'cuisson') {
+    const recette = recipes.find((r) => r.id === vueActuelle.recipeId)
     if (recette) {
       return (
         <Cuisson
           recette={recette}
           onVerdict={async (v) => {
             await verdict(recette.id, v)
-            setEnCuisson(null)
+            reculer()
           }}
-          onQuitter={() => setEnCuisson(null)}
+          onQuitter={reculer}
         />
       )
     }
   }
 
-  if (enEdition) {
+  if (vueActuelle.type === 'edition') {
+    const { recette } = vueActuelle
     return (
       <AjouterRecette
-        recetteInitiale={enEdition}
-        onAjouter={(r) => modifier({ ...r, id: enEdition.id })}
-        onQuitter={() => setEnEdition(null)}
+        recetteInitiale={recette}
+        onAjouter={(r) => modifier({ ...r, id: recette.id })}
+        onQuitter={reculer}
       />
     )
   }
 
-  if (enAjout) {
-    return <AjouterRecette onAjouter={ajouter} onQuitter={() => setEnAjout(false)} />
+  if (vueActuelle.type === 'ajout') {
+    return <AjouterRecette onAjouter={ajouter} onQuitter={reculer} />
   }
 
-  if (enDetail) {
-    const recette = recipes.find((r) => r.id === enDetail)
+  if (vueActuelle.type === 'detail') {
+    const recette = recipes.find((r) => r.id === vueActuelle.recipeId)
     if (recette) {
       return (
         <DetailRecette
@@ -276,35 +331,43 @@ export default function App() {
                 : [...basket, { recipeId: recette.id, portions: recette.portions }],
             )
           }
-          onCuisiner={() => setEnCuisson(recette.id)}
-          onModifier={() => setEnEdition(recette)}
+          onCuisiner={() => irVers({ type: 'cuisson', recipeId: recette.id })}
+          onModifier={() => irVers({ type: 'edition', recette })}
           onSupprimer={() => void supprimer(recette.id)}
-          onFermer={() => setEnDetail(null)}
+          onFermer={reculer}
         />
       )
     }
   }
 
-  if (enReglages) {
+  if (vueActuelle.type === 'reglages') {
     return (
       <Reglages
         codeFoyer={codeFoyer}
         onRejoindre={rejoindreDepuisReglages}
         onQuitter={quitter}
-        onFermer={() => setEnReglages(false)}
+        onFermer={reculer}
       />
     )
   }
+
+  const onglet = vueActuelle.type === 'onglet' ? vueActuelle.onglet : 'propose'
 
   return (
     <>
       <button
         className="bouton-rond-discret bouton-reglages-global"
-        onClick={() => setEnReglages(true)}
+        onClick={() => irVers({ type: 'reglages' })}
         aria-label="Réglages"
       >
         <Icone nom="menu" taille={20} />
       </button>
+
+      {!enLigne && (
+        <p className="pastille-hors-ligne" role="status">
+          <Icone nom="alerte" taille={16} /> Hors ligne — vos changements se synchroniseront au retour du réseau
+        </p>
+      )}
 
       {onglet === 'propose' && (
         <Propose
@@ -312,7 +375,7 @@ export default function App() {
           historique={historique}
           basket={basket}
           onBasket={majBasket}
-          onDetail={setEnDetail}
+          onDetail={(recipeId) => irVers({ type: 'detail', recipeId })}
         />
       )}
 
@@ -321,9 +384,9 @@ export default function App() {
           recipes={recipes}
           basket={basket}
           onBasket={majBasket}
-          onCuisiner={setEnCuisson}
-          onVersListe={() => setOnglet('liste')}
-          onAjouterRecette={() => setEnAjout(true)}
+          onVersPropose={() => changerOnglet('propose')}
+          onVersListe={() => changerOnglet('liste')}
+          onAjouterRecette={() => irVers({ type: 'ajout' })}
         />
       )}
 
@@ -338,7 +401,11 @@ export default function App() {
       )}
 
       {onglet === 'cuisson' && (
-        <CuissonListe recipes={recipes} basket={basket} onCuisiner={setEnCuisson} />
+        <CuissonListe
+          recipes={recipes}
+          basket={basket}
+          onCuisiner={(recipeId) => irVers({ type: 'cuisson', recipeId })}
+        />
       )}
 
       <nav className="onglets">
@@ -352,7 +419,7 @@ export default function App() {
         ).map(([cle, icone, label]) => (
           <button
             key={cle}
-            onClick={() => setOnglet(cle)}
+            onClick={() => changerOnglet(cle)}
             aria-current={onglet === cle ? 'page' : undefined}
           >
             <Icone nom={icone} taille={22} />

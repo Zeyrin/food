@@ -208,6 +208,30 @@ p.aide {
   height: 80px;
 }
 
+/* Barre d'actions des écrans pleine page (détail recette, préparation) :
+   collée en bas de l'écran, elle reprend sa place à la fin du contenu.
+   `sticky` et non `fixed` : elle occupe sa propre hauteur dans le flux,
+   donc rien à masquer dessous et aucun espaceur de hauteur codée en dur
+   à resynchroniser quand les boutons changent. */
+.barre-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 9;
+  margin: 24px -20px 0;
+  padding: 20px 20px max(16px, env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--papier) 72%, transparent);
+}
+
+.barre-actions > * + * {
+  margin-top: 10px;
+}
+
+/* Le fond de page ne sert qu'à dégager la barre d'onglets — ces écrans
+   n'en ont pas, et la barre d'actions doit finir au ras du bas. */
+#root:has(.barre-actions) {
+  padding-bottom: 0;
+}
+
 .action-flottante {
   position: fixed;
   left: 0;
@@ -394,8 +418,33 @@ button.carte:active {
   line-height: 1.25;
 }
 
-.champ-recherche {
-  margin: 12px 0 4px;
+.entete-propose {
+  flex-wrap: wrap;
+  height: auto;
+  min-height: var(--pouce);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  row-gap: 10px;
+}
+
+.recherche-propose {
+  position: relative;
+  flex: 1 1 100%;
+  order: 3;
+  display: flex;
+  align-items: center;
+  color: var(--encre-douce);
+}
+
+.recherche-propose svg {
+  position: absolute;
+  left: 16px;
+  pointer-events: none;
+}
+
+.recherche-propose .champ-recherche {
+  margin: 0;
+  padding-left: 44px;
 }
 
 .detail-vignette {
@@ -554,6 +603,28 @@ button.discret.danger {
   color: var(--encre-douce);
 }
 
+/* Ingrédient partagé par plusieurs recettes de la semaine : le savoir
+   évite d'en racheter en double au rayon suivant. */
+.nom-groupe {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nom-groupe .nom {
+  flex: none;
+}
+
+.nom-partage {
+  font-size: 12px;
+  color: var(--encre-douce);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .case {
   width: 32px;
   height: 32px;
@@ -627,6 +698,55 @@ button.discret.danger {
 .puce[aria-pressed='true'] {
   background: var(--accent-doux);
   color: var(--accent);
+}
+
+/* Tiroir des filtres (écran Proposer) : replié une ligne, déplié la
+   liste entière — même logique que .tiroir-ingredients (Cuisson), sur
+   une surface claire plutôt que le fond sombre du mode cuisson. */
+.tiroir-filtres {
+  margin: 4px 0 16px;
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+}
+
+.tiroir-filtres summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 16px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 700;
+}
+
+.tiroir-filtres summary::-webkit-details-marker {
+  display: none;
+}
+
+.tiroir-filtres summary em {
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+.tiroir-filtres summary svg {
+  margin-left: auto;
+  color: var(--encre-douce);
+  transition: transform 0.18s ease;
+}
+
+.tiroir-filtres[open] summary svg {
+  transform: rotate(90deg);
+}
+
+.tiroir-filtres .puces {
+  margin: 0;
+  padding: 0 16px 16px;
 }
 
 button.principal {
@@ -720,6 +840,84 @@ button.discret:disabled {
   font-size: 20px;
   font-weight: 400;
   color: var(--encre-douce);
+}
+
+/* Aperçu de la semaine (Panier) : le nombre de plats à gauche, l'état
+   de la liste à droite, sur une tache de couleur décorative. */
+/* La tache décorative est un ::after positionné : le contenu doit
+   repasser au-dessus. */
+.carte-resume-semaine > * {
+  position: relative;
+  z-index: 1;
+}
+
+.carte-resume-rangee {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.carte-resume-sous {
+  margin: 0;
+  font-family: var(--affichage);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--intermarche);
+}
+
+.carte-resume-semaine::after {
+  content: '';
+  position: absolute;
+  right: -40px;
+  bottom: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  filter: blur(32px);
+}
+
+.pastille-etat {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--accent-doux);
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Bandeau hors-ligne : rassure que rien ne se perd quand le réseau
+   coupe en magasin — ne bloque rien, disparaît seul au retour. */
+.pastille-hors-ligne {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 88px);
+  margin: 0;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--terracotta-doux);
+  color: var(--primeur);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--ombre);
+}
+
+.pastille-hors-ligne svg {
+  flex: none;
+}
+
+@media (min-width: 900px) {
+  .pastille-hors-ligne {
+    left: calc(50% + 64px);
+  }
 }
 
 .carte-code-foyer {
@@ -821,6 +1019,8 @@ button.discret:disabled {
   display: flex;
   gap: 16px;
   align-items: center;
+  background: var(--carte);
+  box-shadow: var(--ombre);
 }
 
 button.carte-panier-bouton {
@@ -837,10 +1037,10 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .vignette-mini {
   position: relative;
-  flex: 0 0 72px;
-  width: 72px;
-  height: 72px;
-  border-radius: var(--rayon);
+  flex: 0 0 80px;
+  width: 80px;
+  height: 80px;
+  border-radius: 18px;
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -878,7 +1078,7 @@ button.carte-panier-bouton .carte-panier-corps {
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  height: 120px;
+  height: 160px;
   padding: 20px;
   border: 0;
   border-radius: var(--rayon);
@@ -887,6 +1087,15 @@ button.carte-panier-bouton .carte-panier-corps {
   cursor: pointer;
   transition: transform 0.12s ease;
   margin-bottom: 12px;
+}
+
+.carte-bento.neutre {
+  background: var(--carte-haute);
+  color: var(--encre);
+}
+
+.bento-deux-colonnes .carte-bento {
+  margin-bottom: 0;
 }
 
 .carte-bento:active {
@@ -902,18 +1111,43 @@ button.carte-panier-bouton .carte-panier-corps {
   line-height: 1.2;
 }
 
-.ligne-panier {
+/* Titre tronqué plutôt que renvoyé à la ligne : le retrait reste à la
+   même place d'une carte à l'autre. */
+.ligne-titre-panier {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 14px;
+  gap: 8px;
 }
 
+.ligne-titre-panier h3 {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bouton-retirer {
+  background: none;
+  opacity: 0.6;
+}
+
+/* `wrap` : sous ~340 px, « Portions » passe à la ligne au lieu de
+   déborder de la carte. */
 .compteur {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.compteur .compteur-label {
+  min-width: 0;
+  font-family: var(--texte);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--encre-douce);
 }
 
 .compteur button {
@@ -939,6 +1173,7 @@ button.carte-panier-bouton .carte-panier-corps {
   min-width: 2ch;
   text-align: center;
   font-family: var(--affichage);
+  font-size: 20px;
   font-weight: 700;
   color: var(--terracotta);
   font-variant-numeric: tabular-nums;
@@ -1142,6 +1377,163 @@ button.carte-panier-bouton .carte-panier-corps {
 .cuisson-corps .bloc-astuce {
   flex: none;
   margin: 20px 0 0;
+}
+
+.minuteurs-etape {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.bouton-minuteur {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgb(166 212 126 / 0.4);
+  background: rgb(166 212 126 / 0.12);
+  color: #bcefc0;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.bouton-minuteur:active {
+  transform: scale(0.96);
+}
+
+/* Emplacement réservé quand aucun minuteur ne tourne : sans lui le
+   titre d'étape se décale d'un rond vers la droite. */
+.cuisson-rond-vide {
+  background: none;
+}
+
+.cuisson-rond-minuteur {
+  background: rgb(166 212 126 / 0.18);
+  color: #bcefc0;
+}
+
+.cuisson-rond-minuteur {
+  position: relative;
+}
+
+.cuisson-rond-minuteur[data-sonne='true'] {
+  background: #a6d47e;
+  color: #0c2000;
+  animation: pulsation 0.9s ease-in-out infinite;
+}
+
+/* Nombre de minuteurs quand il y en a plus d'un — le rond n'en affiche
+   qu'un, celui qui finira le premier. */
+.pastille-nombre {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--terracotta, #bc4749);
+  color: #fff8ef;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 18px;
+  text-align: center;
+}
+
+.voile-panneau {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  border: 0;
+  background: rgb(12 9 2 / 0.6);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+/* Feuille ancrée en bas : c'est là que le pouce arrive, et ça laisse
+   l'étape en cours visible au-dessus. */
+.panneau-minuteurs {
+  position: fixed;
+  z-index: 31;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 16px 20px max(20px, env(safe-area-inset-bottom));
+  border-radius: var(--rayon-grand) var(--rayon-grand) 0 0;
+  background: #2b2411;
+  color: #fff8ef;
+}
+
+.panneau-minuteurs-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panneau-minuteurs h2 {
+  margin: 0;
+  font-family: var(--affichage);
+  font-size: 20px;
+  color: #fff8ef;
+}
+
+.panneau-minuteurs ul {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panneau-minuteurs li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid rgb(255 248 239 / 0.1);
+}
+
+.panneau-minuteurs li > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.panneau-minuteurs li b {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.panneau-minuteurs li span {
+  font-size: 22px;
+  font-family: var(--affichage);
+  font-variant-numeric: tabular-nums;
+  color: #bcefc0;
+}
+
+.panneau-minuteurs li[data-sonne='true'] span {
+  color: #a6d47e;
+  animation: pulsation 0.9s ease-in-out infinite;
+}
+
+@keyframes pulsation {
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cuisson-rond-minuteur[data-sonne='true'] {
+    animation: none;
+  }
 }
 
 .cuisson-focus .dose {
@@ -1359,13 +1751,16 @@ button.carte-panier-bouton .carte-panier-corps {
 
 /* --- Utilitaires de mise en page ----------------------------------------- */
 
+/* Base `auto` (et non 0) : les boutons ne rétrécissent pas sous leur
+   texte, ils passent à la ligne. */
 .rangee-boutons {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
 .rangee-boutons > * {
-  flex: 1;
+  flex: 1 1 auto;
 }
 
 .espace-haut {
@@ -1391,5 +1786,131 @@ button.discret.pleine-largeur {
   * {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* --- Desktop (≥ 900px) ---------------------------------------------------
+   Écran large, souris ou trackpad, plus de place que de contrainte :
+   la barre d'onglets passe en rail vertical fixe, et « Proposer » étale
+   filtres et grille côte à côte plutôt que de tout empiler. Les autres
+   écrans héritent juste du rail et du conteneur élargi. */
+@media (min-width: 900px) {
+  #root {
+    max-width: 1180px;
+    padding: 0 40px 40px 128px;
+  }
+
+  #root:has(.barre-actions) {
+    padding-bottom: 0;
+  }
+
+  .bouton-reglages-global {
+    top: max(16px, env(safe-area-inset-top));
+    right: 24px;
+  }
+
+  nav.onglets {
+    top: 0;
+    right: auto;
+    left: 0;
+    bottom: 0;
+    width: 96px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    padding: 28px 8px;
+    border-radius: 0 24px 24px 0;
+    box-shadow: var(--ombre);
+  }
+
+  nav.onglets button {
+    flex: none;
+    width: 100%;
+    max-width: none;
+    min-height: 60px;
+    padding: 8px 4px;
+    border-radius: 20px;
+  }
+
+  .entete-propose {
+    margin: 0 -40px 0 -40px;
+    padding: 0 40px;
+    gap: 32px;
+  }
+
+  .entete-propose .entete-app-titre {
+    flex: none;
+  }
+
+  .recherche-propose {
+    flex: 1;
+    max-width: 420px;
+  }
+
+  .corps-propose {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    align-items: start;
+    gap: 32px;
+    margin-top: 24px;
+  }
+
+  .corps-propose .tiroir-filtres {
+    position: sticky;
+    top: 96px;
+    margin: 0;
+  }
+
+  .corps-propose .puces {
+    flex-direction: column;
+    overflow: visible;
+    gap: 6px;
+  }
+
+  .corps-propose .puce {
+    width: 100%;
+    text-align: left;
+  }
+
+  .grille-recettes {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  /* Panier et Cuisson (choix du plat) : les cartes horizontales
+     passent d'une pile à une grille, comme la recette elle-même. */
+  .grille-panier {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .grille-panier .carte-panier {
+    margin-bottom: 0;
+  }
+
+  /* Liste : une colonne de lecture large mais pas étirée — cocher des
+     cases se lit mieux sur une largeur maîtrisée qu'étalé sur tout
+     l'écran. */
+  .corps-liste {
+    max-width: 640px;
+    margin: 24px auto 0;
+  }
+
+  /* Mode cuisson : reste plein écran (mains sales, lu de loin), mais
+     le texte se lit mal étiré sur 1400px — on centre une colonne
+     confortable plutôt que d'élargir le pas de la lecture. */
+  .cuisson-focus {
+    align-items: center;
+  }
+
+  .cuisson-entete,
+  .tiroir-ingredients,
+  .cuisson-corps,
+  .cuisson-actions,
+  .ecran-fin {
+    width: 100%;
+    max-width: 720px;
   }
 }

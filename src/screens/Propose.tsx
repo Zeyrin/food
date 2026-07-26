@@ -56,96 +56,109 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
   const basculerTag = (t: string) =>
     setTags((prec) => (prec.includes(t) ? prec.filter((x) => x !== t) : [...prec, t]))
 
+  const nombreFiltres = (tempsMax !== null ? 1 : 0) + (aRefaire ? 1 : 0) + tags.length
+
   return (
-    <>
-      <header className="entete-app">
+    <div className="ecran-propose">
+      <header className="entete-app entete-propose">
         <div className="entete-app-titre">
           <Icone nom="grill" />
           <h1>Proposer</h1>
         </div>
+        <div className="recherche-propose">
+          <Icone nom="recherche" taille={18} />
+          <input
+            className="champ-texte champ-recherche"
+            type="search"
+            placeholder="Chercher une recette…"
+            value={recherche}
+            onChange={(e) => setRecherche(e.target.value)}
+          />
+        </div>
       </header>
 
-      <input
-        className="champ-texte champ-recherche"
-        type="search"
-        placeholder="Chercher une recette…"
-        value={recherche}
-        onChange={(e) => setRecherche(e.target.value)}
-      />
+      <div className="corps-propose">
+        <details className="tiroir-filtres" open>
+          <summary>
+            <span>Filtres</span>
+            {nombreFiltres > 0 && <em>{nombreFiltres}</em>}
+            <Icone nom="suivant" taille={16} />
+          </summary>
+          <div className="puces">
+            {TEMPS.map((t) => (
+              <button
+                key={t}
+                className="puce"
+                aria-pressed={tempsMax === t}
+                onClick={() => setTempsMax(tempsMax === t ? null : t)}
+              >
+                ≤ {t} min
+              </button>
+            ))}
+            <button className="puce" aria-pressed={aRefaire} onClick={() => setARefaire(!aRefaire)}>
+              À refaire
+            </button>
+            {tousLesTags(recipes).map((t) => (
+              <button
+                key={t}
+                className="puce"
+                aria-pressed={tags.includes(t)}
+                onClick={() => basculerTag(t)}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        </details>
 
-      <div className="puces">
-        {TEMPS.map((t) => (
-          <button
-            key={t}
-            className="puce"
-            aria-pressed={tempsMax === t}
-            onClick={() => setTempsMax(tempsMax === t ? null : t)}
-          >
-            ≤ {t} min
-          </button>
-        ))}
-        <button className="puce" aria-pressed={aRefaire} onClick={() => setARefaire(!aRefaire)}>
-          À refaire
-        </button>
-        {tousLesTags(recipes).map((t) => (
-          <button
-            key={t}
-            className="puce"
-            aria-pressed={tags.includes(t)}
-            onClick={() => basculerTag(t)}
-          >
-            {t}
-          </button>
-        ))}
+        {affichees.length === 0 ? (
+          <p className="vide">Aucune recette ne correspond.</p>
+        ) : (
+          <div className="grille-recettes">
+            {affichees.map((r, i) => (
+              <div
+                key={r.id}
+                className="carte carte-recette"
+                role="button"
+                tabIndex={0}
+                onClick={() => onDetail(r.id)}
+                onKeyDown={(e) => e.key === 'Enter' && onDetail(r.id)}
+                style={
+                  {
+                    '--teinte': teinteRecette(r.titre),
+                    // Au-delà de la première vingtaine, plus de décalage :
+                    // ces cartes sont hors écran, l'attente serait perçue
+                    // comme une latence au scroll.
+                    '--rang': Math.min(i, 20),
+                  } as React.CSSProperties
+                }
+              >
+                <div className="vignette" aria-hidden="true">
+                  {r.image && <img src={r.image} alt="" />}
+                  <span className="badge-temps">
+                    <Icone nom="minuteur" taille={12} /> {r.temps} min
+                  </span>
+                  {!r.image && r.titre.charAt(0)}
+                  <button
+                    className="bouton-ajout bouton-ajout-flottant"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      basculer(r)
+                    }}
+                    aria-pressed={dansPanier(r.id)}
+                    aria-label={dansPanier(r.id) ? `Retirer ${r.titre} du panier` : `Ajouter ${r.titre} au panier`}
+                  >
+                    <Icone nom={dansPanier(r.id) ? 'coche' : 'plus'} taille={20} />
+                  </button>
+                </div>
+                <div className="carte-recette-corps">
+                  <h3>{r.titre}</h3>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-
-      {affichees.length === 0 ? (
-        <p className="vide">Aucune recette ne correspond.</p>
-      ) : (
-        <div className="grille-recettes">
-          {affichees.map((r, i) => (
-            <div
-              key={r.id}
-              className="carte carte-recette"
-              role="button"
-              tabIndex={0}
-              onClick={() => onDetail(r.id)}
-              onKeyDown={(e) => e.key === 'Enter' && onDetail(r.id)}
-              style={
-                {
-                  '--teinte': teinteRecette(r.titre),
-                  // Au-delà de la première vingtaine, plus de décalage :
-                  // ces cartes sont hors écran, l'attente serait perçue
-                  // comme une latence au scroll.
-                  '--rang': Math.min(i, 20),
-                } as React.CSSProperties
-              }
-            >
-              <div className="vignette" aria-hidden="true">
-                {r.image && <img src={r.image} alt="" />}
-                <span className="badge-temps">
-                  <Icone nom="minuteur" taille={12} /> {r.temps} min
-                </span>
-                {!r.image && r.titre.charAt(0)}
-                <button
-                  className="bouton-ajout bouton-ajout-flottant"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    basculer(r)
-                  }}
-                  aria-pressed={dansPanier(r.id)}
-                  aria-label={dansPanier(r.id) ? `Retirer ${r.titre} du panier` : `Ajouter ${r.titre} au panier`}
-                >
-                  <Icone nom={dansPanier(r.id) ? 'coche' : 'plus'} taille={20} />
-                </button>
-              </div>
-              <div className="carte-recette-corps">
-                <h3>{r.titre}</h3>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </>
+    </div>
   )
 }

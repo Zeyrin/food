@@ -10,6 +10,7 @@ export type Nom =
   | 'liste'
   | 'grill'
   | 'plus'
+  | 'plus-cercle'
   | 'coche'
   | 'moins'
   | 'feuille'
@@ -19,6 +20,7 @@ export type Nom =
   | 'minuteur'
   | 'precedent'
   | 'suivant'
+  | 'recherche'
 
 const TRACES: Record<Nom, string> = {
   menu: 'M4 6h16M4 12h16M4 18h16',
@@ -28,6 +30,7 @@ const TRACES: Record<Nom, string> = {
   liste: 'M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01',
   grill: 'M5 8h14l-1.5 11h-11z M8 8V5a4 4 0 018 0v3',
   plus: 'M12 5v14M5 12h14',
+  'plus-cercle': 'M12 8v8M8 12h8 M12 21a9 9 0 100-18 9 9 0 000 18z',
   coche: 'M5 13l4 4L19 7',
   moins: 'M5 12h14',
   feuille: 'M5 20C5 10 12 4 20 4c0 8-6 15-16 16z M5 20c2-4 6-8 11-10',
@@ -37,6 +40,7 @@ const TRACES: Record<Nom, string> = {
   minuteur: 'M12 3v3 M12 22a8 8 0 100-16 8 8 0 000 16z M12 9v5l3 2',
   precedent: 'M15 5l-7 7 7 7',
   suivant: 'M9 5l7 7-7 7',
+  recherche: 'M11 4a7 7 0 100 14 7 7 0 000-14z M21 21l-4.3-4.3',
 }
 
 export default function Icone({ nom, taille = 24 }: { nom: Nom; taille?: number }) {

@@ -1,21 +1,34 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Recipe, Verdict } from '../types'
 import { annoterEtape, formatQuantite } from '../lib/aggregate'
+import { formatDuree, minuteursDeLEtape } from '../lib/duree'
 import { useWakeLock } from '../hooks/useWakeLock'
 import Icone from '../components/Icone'
 
-/** mm:ss depuis un top de départ, pour le minuteur du plan de travail. */
-function useChrono(depuis: number | null): string {
-  const [maintenant, setMaintenant] = useState(Date.now())
-  useEffect(() => {
-    if (!depuis) return
-    const t = setInterval(() => setMaintenant(Date.now()), 1000)
-    return () => clearInterval(t)
-  }, [depuis])
-  if (!depuis) return ''
-  const s = Math.floor((maintenant - depuis) / 1000)
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+interface MinuteurActif {
+  id: string
+  nom: string
+  /** Heure de fin absolue, pas un compteur qu'on décrémente : l'écran en
+   *  veille ou l'onglet en arrière-plan gèlent les `setInterval`, pas
+   *  une heure de fin. */
+  fin: number
 }
+
+/** Horloge partagée : un seul intervalle pour tous les minuteurs. */
+function useMaintenant(actif: boolean): number {
+  const [maintenant, setMaintenant] = useState(() => Date.now())
+
+  useEffect(() => {
+    if (!actif) return
+    setMaintenant(Date.now())
+    const t = setInterval(() => setMaintenant(Date.now()), 500)
+    return () => clearInterval(t)
+  }, [actif])
+
+  return maintenant
+}
+
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 
 interface Props {
   recette: Recipe
@@ -25,9 +38,37 @@ interface Props {
 
 export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
   const [index, setIndex] = useState(-1)
-  const [depuis, setDepuis] = useState<number | null>(null)
-  const ecoule = useChrono(depuis)
+  const [minuteurs, setMinuteurs] = useState<MinuteurActif[]>([])
+  const [panneau, setPanneau] = useState(false)
+  const maintenant = useMaintenant(minuteurs.length > 0)
   useWakeLock(true)
+
+  const etape = recette.etapes[index] ?? ''
+  const proposes = useMemo(() => minuteursDeLEtape(etape), [etape])
+
+  const restantDe = (m: MinuteurActif) => Math.max(0, Math.round((m.fin - maintenant) / 1000))
+  const enCours = [...minuteurs].sort((a, b) => a.fin - b.fin)
+  const sonnent = minuteurs.filter((m) => m.fin <= maintenant)
+
+  const lancer = (secondes: number, nom: string) =>
+    setMinuteurs((prec) => [
+      ...prec,
+      { id: crypto.randomUUID(), nom, fin: Date.now() + secondes * 1000 },
+    ])
+
+  const retirer = (id: string) => setMinuteurs((prec) => prec.filter((m) => m.id !== id))
+
+  // Un minuteur ne peut pas sonner : un fichier audio ne survivrait ni au
+  // mode silencieux ni à la politique d'autoplay des navigateurs. La
+  // vibration, si. Le registre évite de re-vibrer à chaque battement.
+  const dejaSonnes = useRef(new Set<string>())
+  useEffect(() => {
+    for (const m of sonnent) {
+      if (dejaSonnes.current.has(m.id)) continue
+      dejaSonnes.current.add(m.id)
+      if ('vibrate' in navigator) navigator.vibrate([200, 100, 200, 100, 500])
+    }
+  }, [sonnent])
 
   const fini = index >= recette.etapes.length
 
@@ -53,9 +94,14 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
             <li key={i}>{etape}</li>
           ))}
         </ol>
-        <button className="principal" onClick={() => setIndex(0)}>
-          Commencer
-        </button>
+
+        {/* Toujours sous les yeux, quel que soit le défilement : on vient
+            là pour commencer à cuisiner, pas pour lire jusqu'au bout. */}
+        <div className="barre-actions">
+          <button className="principal" onClick={() => setIndex(0)}>
+            <Icone nom="grill" taille={20} /> Commencer
+          </button>
+        </div>
       </div>
     )
   }
@@ -103,13 +149,22 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
             ))}
           </div>
         </div>
-        <button
-          className="cuisson-rond"
-          onClick={() => setDepuis(depuis ? null : Date.now())}
-          aria-label={depuis ? 'Arrêter le minuteur' : 'Démarrer le minuteur'}
-        >
-          {depuis ? <b className="minuteur-valeur">{ecoule}</b> : <Icone nom="minuteur" taille={20} />}
-        </button>
+        {/* Le rond de droite affiche le minuteur qui finira le premier et
+            ouvre le panneau. Sans minuteur, un vide de même largeur : le
+            titre d'étape doit rester centré. */}
+        {enCours.length === 0 ? (
+          <span className="cuisson-rond cuisson-rond-vide" aria-hidden="true" />
+        ) : (
+          <button
+            className="cuisson-rond cuisson-rond-minuteur"
+            data-sonne={sonnent.length > 0}
+            onClick={() => setPanneau(true)}
+            aria-label={`${enCours.length} minuteur${enCours.length > 1 ? 's' : ''} en cours, ouvrir la gestion`}
+          >
+            <b className="minuteur-valeur">{mmss(restantDe(enCours[0]!))}</b>
+            {enCours.length > 1 && <i className="pastille-nombre">{enCours.length}</i>}
+          </button>
+        )}
       </header>
 
       {/* `details` natif : replié il ne coûte qu'une ligne, déplié il
@@ -135,13 +190,29 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
           boutons hors de l'écran. */}
       <div className="cuisson-corps" key={index}>
         <p className="etape-titre">
-          {annoterEtape(recette.etapes[index] ?? '', recette.ingredients).map((seg, i) => (
+          {annoterEtape(etape, recette.ingredients).map((seg, i) => (
             <span key={i}>
               {seg.texte}
               {seg.quantite && <b className="dose"> {seg.quantite}</b>}
             </span>
           ))}
         </p>
+
+        {/* Un bouton par durée citée dans l'étape : la durée est déjà
+            sous les yeux, il ne reste qu'à la lancer. */}
+        {proposes.length > 0 && (
+          <div className="minuteurs-etape">
+            {proposes.map((m) => (
+              <button
+                key={m.secondes}
+                className="bouton-minuteur"
+                onClick={() => lancer(m.secondes, m.nom)}
+              >
+                <Icone nom="minuteur" taille={16} /> Lancer {formatDuree(m.secondes)}
+              </button>
+            ))}
+          </div>
+        )}
 
         {recette.astuces?.[index] && (
           <div className="bloc-astuce">
@@ -165,6 +236,54 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
           )}
         </button>
       </div>
+
+      {panneau && enCours.length > 0 && (
+        <>
+          <button
+            className="voile-panneau"
+            onClick={() => setPanneau(false)}
+            aria-label="Fermer les minuteurs"
+          />
+          <div className="panneau-minuteurs" role="dialog" aria-label="Minuteurs en cours">
+            <div className="panneau-minuteurs-entete">
+              <h2>Minuteurs</h2>
+              <button className="cuisson-rond" onClick={() => setPanneau(false)} aria-label="Fermer">
+                <Icone nom="fermer" taille={20} />
+              </button>
+            </div>
+
+            <ul>
+              {enCours.map((m) => (
+                <li key={m.id} data-sonne={m.fin <= maintenant}>
+                  <div>
+                    <b>{m.nom}</b>
+                    <span>{m.fin <= maintenant ? 'Terminé' : mmss(restantDe(m))}</span>
+                  </div>
+                  <button
+                    className="cuisson-rond"
+                    onClick={() => retirer(m.id)}
+                    aria-label={`Supprimer le minuteur ${m.nom}`}
+                  >
+                    <Icone nom="fermer" taille={18} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            {enCours.length > 1 && (
+              <button
+                className="discret suite pleine-largeur"
+                onClick={() => {
+                  setMinuteurs([])
+                  setPanneau(false)
+                }}
+              >
+                Tout supprimer
+              </button>
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }

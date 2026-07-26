@@ -97,30 +97,32 @@ export default function Liste({ items, etat, onEtat, foyer, prochaineCuisson }: 
     return (
       <>
         {entete}
-        {bascule}
-        <p className="aide">
-          Ouvrez le frigo et le placard, touchez ce qui est déjà là. Le reste part en courses.
-        </p>
+        <div className="corps-liste">
+          {bascule}
+          <p className="aide">
+            Ouvrez le frigo et le placard, touchez ce qui est déjà là. Le reste part en courses.
+          </p>
 
-        {tousLesItems.map((item) => {
-          const deja = etat.dejaPossede[item.key] === true
-          return (
-            <button
-              className="rangee"
-              key={item.key}
-              data-coche={deja}
-              onClick={() => basculer('dejaPossede', item.key)}
-            >
-              <span className="case">{deja && <Icone nom="coche" taille={18} />}</span>
-              <span className="nom">{item.nom}</span>
-              <span className="qte">{formatQuantite(item)}</span>
-            </button>
-          )
-        })}
+          {tousLesItems.map((item) => {
+            const deja = etat.dejaPossede[item.key] === true
+            return (
+              <button
+                className="rangee"
+                key={item.key}
+                data-coche={deja}
+                onClick={() => basculer('dejaPossede', item.key)}
+              >
+                <span className="case">{deja && <Icone nom="coche" taille={18} />}</span>
+                <span className="nom">{item.nom}</span>
+                <span className="qte">{formatQuantite(item)}</span>
+              </button>
+            )
+          })}
 
-        <button className="principal" onClick={() => setMode('courses')}>
-          Passer aux courses ({aAcheter.length} produits)
-        </button>
+          <button className="principal" onClick={() => setMode('courses')}>
+            Passer aux courses ({aAcheter.length} produits)
+          </button>
+        </div>
         <button className="bouton-flottant" onClick={ajouterItem} aria-label="Ajouter un article">
           <Icone nom="plus" taille={24} />
         </button>
@@ -131,67 +133,74 @@ export default function Liste({ items, etat, onEtat, foyer, prochaineCuisson }: 
   return (
     <>
       {entete}
-      {bascule}
+      <div className="corps-liste">
+        {bascule}
 
-      <div className="bento-deux-colonnes">
-        <div className="carte-resume carte-resume-bento">
-          <Icone nom="panier" taille={96} />
-          <p className="carte-resume-label">Progression</p>
-          <h2 className="carte-resume-nombre">
-            {aAcheter.length - restants} <span>/ {aAcheter.length}</span>
-          </h2>
-        </div>
-        {prochaineCuisson && (
-          <div
-            className="carte-prochaine-cuisson"
-            style={{ '--teinte': teinteRecette(prochaineCuisson.titre) } as React.CSSProperties}
-          >
-            <p className="carte-resume-label">Prochaine cuisson</p>
-            <p className="carte-prochaine-cuisson-titre">{prochaineCuisson.titre}</p>
+        <div className="bento-deux-colonnes">
+          <div className="carte-resume carte-resume-bento">
+            <Icone nom="panier" taille={96} />
+            <p className="carte-resume-label">Progression</p>
+            <h2 className="carte-resume-nombre">
+              {aAcheter.length - restants} <span>/ {aAcheter.length}</span>
+            </h2>
           </div>
-        )}
-      </div>
+          {prochaineCuisson && (
+            <div
+              className="carte-prochaine-cuisson"
+              style={{ '--teinte': teinteRecette(prochaineCuisson.titre) } as React.CSSProperties}
+            >
+              <p className="carte-resume-label">Prochaine cuisson</p>
+              <p className="carte-prochaine-cuisson-titre">{prochaineCuisson.titre}</p>
+            </div>
+          )}
+        </div>
 
-      {groupByStore(aAcheter).map(({ magasin, items: lignes }) => (
-        <section key={magasin}>
-          <h2 className="entete-section">
-            <span className="badge-section" data-magasin={magasin}>
-              <Icone nom={STORES[magasin].icone} taille={20} />
-            </span>
-            {STORES[magasin].label}
-          </h2>
-          {lignes.map((item) => {
-            const coche = etat.coche[item.key] === true
-            const libre = item.magasin === 'autre'
-            return (
-              <div className="rangee-avec-suppr" key={item.key}>
-                <button className="rangee" data-coche={coche} onClick={() => basculer('coche', item.key)}>
-                  <span className="case">{coche && <Icone nom="coche" taille={18} />}</span>
-                  <span className="nom">{item.nom}</span>
-                  {!libre && <span className="qte">{formatQuantite(item)}</span>}
-                </button>
-                {libre && (
-                  <button
-                    className="bouton-suppr"
-                    onClick={() => retirerItem(item.key.replace('libre|', ''))}
-                    aria-label={`Retirer ${item.nom}`}
-                  >
-                    <Icone nom="fermer" taille={16} />
+        {groupByStore(aAcheter).map(({ magasin, items: lignes }) => (
+          <section key={magasin}>
+            <h2 className="entete-section">
+              <span className="badge-section" data-magasin={magasin}>
+                <Icone nom={STORES[magasin].icone} taille={20} />
+              </span>
+              {STORES[magasin].label}
+            </h2>
+            {lignes.map((item) => {
+              const coche = etat.coche[item.key] === true
+              const libre = item.magasin === 'autre'
+              return (
+                <div className="rangee-avec-suppr" key={item.key}>
+                  <button className="rangee" data-coche={coche} onClick={() => basculer('coche', item.key)}>
+                    <span className="case">{coche && <Icone nom="coche" taille={18} />}</span>
+                    <span className="nom-groupe">
+                      <span className="nom">{item.nom}</span>
+                      {item.origines.length > 1 && (
+                        <span className="nom-partage">Pour {item.origines.join(', ')}</span>
+                      )}
+                    </span>
+                    {!libre && <span className="qte">{formatQuantite(item)}</span>}
                   </button>
-                )}
-              </div>
-            )
-          })}
-        </section>
-      ))}
+                  {libre && (
+                    <button
+                      className="bouton-suppr"
+                      onClick={() => retirerItem(item.key.replace('libre|', ''))}
+                      aria-label={`Retirer ${item.nom}`}
+                    >
+                      <Icone nom="fermer" taille={16} />
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+          </section>
+        ))}
 
-      <div className="rangee-boutons espace-haut">
-        <button className="discret" onClick={() => setMode('tri')}>
-          Revoir le tri
-        </button>
-        <button className="discret" onClick={partager} disabled={!foyer}>
-          Partager la liste
-        </button>
+        <div className="rangee-boutons espace-haut">
+          <button className="discret" onClick={() => setMode('tri')}>
+            Revoir le tri
+          </button>
+          <button className="discret" onClick={partager} disabled={!foyer}>
+            Partager la liste
+          </button>
+        </div>
       </div>
 
       <button className="bouton-flottant" onClick={ajouterItem} aria-label="Ajouter un article">

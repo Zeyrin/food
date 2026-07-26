@@ -99,9 +99,22 @@ const AFFICHAGE: Partial<Record<Unit, (n: number) => string>> = {
   cc: () => ' c. à c.',
 }
 
+const FRACTIONS: Record<string, string> = { '0.25': '¼', '0.5': '½', '0.75': '¾' }
+
+/**
+ * « 0.5 c. à c. » ne se lit pas : en cuisine on écrit ½. Le reste passe
+ * en virgule décimale, comme tout nombre écrit en français.
+ */
+function formatNombre(n: number): string {
+  const entier = Math.floor(n)
+  const fraction = FRACTIONS[String(+(n - entier).toFixed(2))]
+  if (fraction) return entier > 0 ? `${entier}${fraction}` : fraction
+  return String(n).replace('.', ',')
+}
+
 export function formatQuantite(item: Pick<ListItem, 'quantite' | 'unite'>): string {
   const suffixe = AFFICHAGE[item.unite]?.(item.quantite) ?? ` ${item.unite}`
-  return `${item.quantite}${suffixe}`.trim()
+  return `${formatNombre(item.quantite)}${suffixe}`.trim()
 }
 
 /**
@@ -111,6 +124,9 @@ export function formatQuantite(item: Pick<ListItem, 'quantite' | 'unite'>): stri
  */
 const quantiteMuette = (ing: Pick<ListItem, 'quantite' | 'unite'>) =>
   ing.unite === 'piece' && ing.quantite <= 1
+
+/** Ce dont l'annotation d'une étape a besoin d'un ingrédient. */
+export type IngredientCite = Pick<ListItem, 'nom' | 'quantite' | 'unite'> & { placard?: boolean }
 
 const sansAccents = (s: string) => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
 
@@ -208,7 +224,7 @@ function ingredientDesigne<T extends Pick<ListItem, 'nom'>>(
  */
 function annoterMarqueurs(
   texte: string,
-  ingredients: Array<Pick<ListItem, 'nom' | 'quantite' | 'unite'>>,
+  ingredients: IngredientCite[],
 ): Array<{ texte: string; quantite?: string }> {
   const segments: Array<{ texte: string; quantite?: string }> = []
   let curseur = 0
@@ -249,12 +265,15 @@ function annoterMarqueurs(
  */
 export function annoterEtape(
   texte: string,
-  ingredients: Array<Pick<ListItem, 'nom' | 'quantite' | 'unite'>>,
+  ingredients: IngredientCite[],
 ): Array<{ texte: string; quantite?: string }> {
   if (MARQUEUR.test(texte)) return annoterMarqueurs(texte, ingredients)
 
   const cibles = ingredients
-    .filter((ing) => !quantiteMuette(ing))
+    // Le placard est exclu de la reconnaissance : « poivrer avec le
+    // poivre ½ c. à c. » n'aide personne. Un marqueur explicite, lui,
+    // reste honoré — c'est l'auteur qui décide.
+    .filter((ing) => !ing.placard && !quantiteMuette(ing))
     .map((ing) => ({ nom: ing.nom, mots: motsDuNom(ing.nom), quantite: formatQuantite(ing) }))
     .filter((c) => (c.mots[0]?.length ?? 0) >= 4)
 

@@ -74,21 +74,23 @@ export default function DetailRecette({
         ))}
       </ol>
 
-      <button className="principal" onClick={onBasculerPanier}>
-        <Icone nom={dansPanier ? 'coche' : 'plus'} taille={20} />
-        {dansPanier ? 'Retirer du panier' : 'Ajouter au panier'}
-      </button>
-      <div className="rangee-boutons espace-haut">
-        <button className="discret" onClick={onCuisiner}>
-          <Icone nom="grill" taille={18} /> Cuisiner
+      <div className="barre-actions">
+        <button className="principal" onClick={onBasculerPanier}>
+          <Icone nom={dansPanier ? 'coche' : 'plus'} taille={20} />
+          {dansPanier ? 'Retirer du panier' : 'Ajouter au panier'}
         </button>
-        <button className="discret" onClick={onModifier}>
-          Modifier
+        <div className="rangee-boutons">
+          <button className="discret" onClick={onCuisiner}>
+            <Icone nom="grill" taille={18} /> Cuisiner
+          </button>
+          <button className="discret" onClick={onModifier}>
+            Modifier
+          </button>
+        </div>
+        <button className="discret pleine-largeur danger" onClick={supprimer}>
+          Supprimer du catalogue
         </button>
       </div>
-      <button className="discret suite pleine-largeur danger" onClick={supprimer}>
-        Supprimer du catalogue
-      </button>
     </>
   )
 }

@@ -1,12 +1,13 @@
 import type { BasketEntry, Recipe } from '../types'
 import { teinteRecette } from '../lib/identite'
+import { numeroSemaine } from '../lib/semaine'
 import Icone from '../components/Icone'
 
 interface Props {
   recipes: Recipe[]
   basket: BasketEntry[]
   onBasket: (basket: BasketEntry[]) => void
-  onCuisiner: (recipeId: string) => void
+  onVersPropose: () => void
   onVersListe: () => void
   onAjouterRecette: () => void
 }
@@ -15,7 +16,7 @@ export default function Panier({
   recipes,
   basket,
   onBasket,
-  onCuisiner,
+  onVersPropose,
   onVersListe,
   onAjouterRecette,
 }: Props) {
@@ -26,55 +27,82 @@ export default function Panier({
 
   const retirer = (recipeId: string) => onBasket(basket.filter((e) => e.recipeId !== recipeId))
 
-  if (basket.length === 0) {
-    return (
-      <>
-        <header className="entete-app">
-          <div className="entete-app-titre">
-            <Icone nom="panier" />
-            <h1>Panier</h1>
-          </div>
-        </header>
-        <p className="vide">Rien pour l'instant. Choisissez des recettes dans « Proposer ».</p>
-        <button className="carte-bento" onClick={onAjouterRecette}>
+  const entete = (
+    <header className="entete-app">
+      <div className="entete-app-titre">
+        <Icone nom="panier" />
+        <h1>Panier</h1>
+      </div>
+    </header>
+  )
+
+  const complements = (
+    <>
+      <h2>Compléter ma semaine</h2>
+      <div className="bento-deux-colonnes">
+        <button className="carte-bento" onClick={onVersPropose}>
+          <Icone nom="plus-cercle" taille={28} />
+          <p>Ajouter un plat rapide</p>
+        </button>
+        <button className="carte-bento neutre" onClick={onAjouterRecette}>
           <Icone nom="etoile" taille={28} />
           <p>Saisie automatique</p>
         </button>
+      </div>
+    </>
+  )
+
+  if (basket.length === 0) {
+    return (
+      <>
+        {entete}
+        <p className="vide">Rien pour l'instant. Choisissez des recettes dans « Proposer ».</p>
+        {complements}
       </>
     )
   }
 
   return (
     <>
-      <header className="entete-app">
-        <div className="entete-app-titre">
-          <Icone nom="panier" />
-          <h1>Panier</h1>
+      {entete}
+
+      <section className="carte-resume carte-resume-semaine">
+        <p className="carte-resume-label">Aperçu semaine</p>
+        <div className="carte-resume-rangee">
+          <div>
+            <h2 className="carte-resume-nombre">{basket.length} plats</h2>
+            <p className="carte-resume-sous">Semaine {numeroSemaine()}</p>
+          </div>
+          <span className="pastille-etat">Prêt à générer</span>
         </div>
-      </header>
+      </section>
 
-      <div className="carte-resume">
-        <p className="carte-resume-label">Ma semaine</p>
-        <h2 className="carte-resume-nombre">{basket.length} plats</h2>
-      </div>
+      <h2>Sélectionnés</h2>
 
-      <p className="aide">Ajustez les parts, puis passez à la liste.</p>
-
-      {basket.map((entree) => {
-        const r = byId.get(entree.recipeId)
-        if (!r) return null
-        return (
-          <div className="carte carte-panier" key={entree.recipeId}>
-            <div
-              className="vignette-mini"
-              aria-hidden="true"
-              style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
-            >
-              {r.image ? <img src={r.image} alt="" /> : r.titre.charAt(0)}
-            </div>
-            <div className="carte-panier-corps">
-              <h3>{r.titre}</h3>
-              <div className="ligne-panier">
+      <div className="grille-panier">
+        {basket.map((entree) => {
+          const r = byId.get(entree.recipeId)
+          if (!r) return null
+          return (
+            <div className="carte carte-panier" key={entree.recipeId}>
+              <div
+                className="vignette-mini"
+                aria-hidden="true"
+                style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
+              >
+                {r.image ? <img src={r.image} alt="" /> : r.titre.charAt(0)}
+              </div>
+              <div className="carte-panier-corps">
+                <div className="ligne-titre-panier">
+                  <h3>{r.titre}</h3>
+                  <button
+                    className="bouton-rond-discret bouton-retirer"
+                    onClick={() => retirer(entree.recipeId)}
+                    aria-label={`Retirer ${r.titre} du panier`}
+                  >
+                    <Icone nom="fermer" taille={18} />
+                  </button>
+                </div>
                 <div className="compteur">
                   <button
                     onClick={() => setPortions(entree.recipeId, Math.max(1, entree.portions - 1))}
@@ -89,32 +117,21 @@ export default function Panier({
                   >
                     <Icone nom="plus" taille={16} />
                   </button>
-                </div>
-                <div className="rangee-boutons">
-                  <button className="discret" onClick={() => onCuisiner(r.id)}>
-                    Cuisiner
-                  </button>
-                  <button className="discret" onClick={() => retirer(entree.recipeId)}>
-                    Retirer
-                  </button>
+                  <span className="compteur-label">Portions</span>
                 </div>
               </div>
             </div>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
 
-      <h2>Compléter ma semaine</h2>
-      <button className="carte-bento" onClick={onAjouterRecette}>
-        <Icone nom="etoile" taille={28} />
-        <p>Saisie automatique</p>
-      </button>
+      {complements}
 
       <div className="espaceur-action-flottante" aria-hidden="true" />
 
       <div className="action-flottante">
         <button className="principal" onClick={onVersListe}>
-          <Icone nom="panier" taille={20} /> Voir la liste
+          <Icone nom="panier" taille={20} /> Générer la liste de courses
         </button>
       </div>
     </>
