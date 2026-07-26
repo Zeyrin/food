@@ -672,12 +672,15 @@ button.discret.danger {
   background: color-mix(in srgb, var(--primeur) 16%, transparent);
 }
 
+/* Puces qui s'enroulent sur plusieurs lignes plutôt que de défiler à
+   l'horizontale : dans un tiroir repliable, rien ne force à tout tenir
+   sur une seule ligne — et un nuage d'étiquettes qui s'enroule n'a
+   jamais besoin de scrollbar. */
 .puces {
   display: flex;
-  overflow-x: auto;
+  flex-wrap: wrap;
   gap: 8px;
   margin: 4px 0 16px;
-  padding-bottom: 2px;
 }
 
 .puce {
