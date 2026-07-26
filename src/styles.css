@@ -377,6 +377,21 @@ button.carte:active {
   padding: 20px;
 }
 
+/* Pied de carte (écran Cuisson) : parts à gauche, chevron à droite —
+   sans lui, "4 parts" traînerait seul sous le titre sans dire que la
+   carte entière est cliquable. */
+.carte-cuisson-pied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  color: var(--encre-douce);
+}
+
+.carte-cuisson-pied .meta {
+  margin-top: 0;
+}
+
 /* Grille compacte : tout le catalogue visible d'un coup, deux
    colonnes, vignette carrée, titre seul — le reste vit sur la fiche. */
 .grille-recettes {

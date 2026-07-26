@@ -34,30 +34,40 @@ export default function CuissonListe({ recipes, basket, onCuisiner }: Props) {
       {entete}
       <p className="aide">Choisissez le plat à cuisiner maintenant.</p>
 
-      <div className="grille-panier">
-        {basket.map((entree) => {
+      {/* Même carte-vignette que Proposer plutôt que la petite ligne
+          d'avant : choisir quoi cuisiner mérite d'être aussi appétissant
+          que choisir quoi ajouter — et ça évite un bouton imbriqué dans
+          un bouton (la carte entière est déjà l'unique cible tactile). */}
+      <div className="grille-recettes">
+        {basket.map((entree, i) => {
           const r = byId.get(entree.recipeId)
           if (!r) return null
           return (
             <button
-              className="carte carte-panier carte-panier-bouton"
+              className="carte carte-recette"
               key={entree.recipeId}
               onClick={() => onCuisiner(r.id)}
+              style={
+                {
+                  '--teinte': teinteRecette(r.titre),
+                  '--rang': Math.min(i, 20),
+                } as React.CSSProperties
+              }
             >
-              <div
-                className="vignette-mini"
-                aria-hidden="true"
-                style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
-              >
-                {r.image ? <img src={r.image} alt="" /> : r.titre.charAt(0)}
+              <div className="vignette" aria-hidden="true">
+                {r.image && <img src={r.image} alt="" />}
+                <span className="badge-temps">
+                  <Icone nom="minuteur" taille={12} /> {r.temps} min
+                </span>
+                {!r.image && r.titre.charAt(0)}
               </div>
-              <div className="carte-panier-corps">
+              <div className="carte-recette-corps">
                 <h3>{r.titre}</h3>
-                <div className="meta">
-                  {r.temps} min · {entree.portions} parts
+                <div className="carte-cuisson-pied">
+                  <span className="meta">{entree.portions} parts</span>
+                  <Icone nom="suivant" taille={16} />
                 </div>
               </div>
-              <Icone nom="suivant" taille={20} />
             </button>
           )
         })}
