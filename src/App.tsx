@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { flushSync } from 'react-dom'
 import corpus from './data/recipes.json'
 import type { BasketEntry, ListState, Recipe, Verdict } from './types'
 import { buildList } from './lib/aggregate'
@@ -61,10 +62,59 @@ type Vue =
   | { type: 'reglages' }
 
 const ETAT_VIDE: ListState = { coche: {}, dejaPossede: {} }
+const PILE_INITIALE: Vue[] = [{ type: 'onglet', onglet: 'propose' }]
+const CLE_PILE = 'courses:pile'
+
+/**
+ * Pull-to-refresh (Android/Chrome) et rechargement manuel restent
+ * possibles — on ne bloque pas le geste. Mais un vrai rechargement
+ * redémarre React de zéro : sans ça, on retomberait sur l'accueil à
+ * chaque refresh. `sessionStorage` survit au rechargement (pas à la
+ * fermeture de l'onglet, ce qui est très bien : une vraie nouvelle
+ * session repart de l'accueil).
+ */
+function lirePileSauvegardee(): Vue[] {
+  try {
+    const brut = sessionStorage.getItem(CLE_PILE)
+    if (!brut) return PILE_INITIALE
+    const pile = JSON.parse(brut) as Vue[]
+    return Array.isArray(pile) && pile.length > 0 ? pile : PILE_INITIALE
+  } catch {
+    return PILE_INITIALE
+  }
+}
 
 export default function App() {
-  const [pile, setPile] = useState<Vue[]>([{ type: 'onglet', onglet: 'propose' }])
+  const [pile, setPile] = useState<Vue[]>(lirePileSauvegardee)
   const vueActuelle = pile[pile.length - 1]!
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(CLE_PILE, JSON.stringify(pile))
+    } catch {
+      /* stockage plein ou navigation privée stricte : tant pis, juste pas de reprise au refresh */
+    }
+  }, [pile])
+
+  // Transition d'écran native (View Transitions API) : zéro dépendance,
+  // se désactive toute seule sur les navigateurs qui ne la supportent
+  // pas (retombe sur `appliquer()` direct, comportement d'avant) et sur
+  // « réduire les animations » (le CSS `prefers-reduced-motion` ne
+  // couvre pas les pseudo-éléments ::view-transition-*, donc la garde
+  // se fait ici). `flushSync` force le commit React synchrone attendu
+  // par `startViewTransition` — sans lui, l'API capture l'ancien DOM
+  // des deux côtés, avant que React n'ait appliqué le changement.
+  const avecTransition = useCallback((direction: 'avant' | 'arriere', appliquer: () => void) => {
+    const reduitMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const demarrer = (document as Document & { startViewTransition?: (cb: () => void) => void })
+      .startViewTransition
+    if (reduitMotion || !demarrer) {
+      appliquer()
+      return
+    }
+    document.documentElement.dataset.navDir = direction
+    demarrer.call(document, () => flushSync(appliquer))
+  }, [])
 
   // Avancer pousse une entrée dans l'historique du navigateur, avec la
   // profondeur qu'elle représente ; reculer (bouton de l'appli ou
@@ -75,13 +125,18 @@ export default function App() {
   // profondeur (plutôt qu'un simple « dépiler un cran ») encaisse
   // aussi un retour qui saute plusieurs crans d'un coup — menu
   // d'historique en appui long sur Android, geste de bord iOS.
-  const irVers = useCallback((vue: Vue) => {
-    setPile((p) => {
-      const suivante = [...p, vue]
-      history.pushState({ profondeur: suivante.length }, '')
-      return suivante
-    })
-  }, [])
+  const irVers = useCallback(
+    (vue: Vue) => {
+      avecTransition('avant', () => {
+        setPile((p) => {
+          const suivante = [...p, vue]
+          history.pushState({ profondeur: suivante.length }, '')
+          return suivante
+        })
+      })
+    },
+    [avecTransition],
+  )
 
   const reculer = useCallback(() => {
     history.back()
@@ -90,11 +145,13 @@ export default function App() {
   useEffect(() => {
     const surRetour = (e: PopStateEvent) => {
       const profondeur = Math.max(1, (e.state as { profondeur?: number } | null)?.profondeur ?? 1)
-      setPile((p) => (profondeur < p.length ? p.slice(0, profondeur) : p))
+      avecTransition('arriere', () => {
+        setPile((p) => (profondeur < p.length ? p.slice(0, profondeur) : p))
+      })
     }
     window.addEventListener('popstate', surRetour)
     return () => window.removeEventListener('popstate', surRetour)
-  }, [])
+  }, [avecTransition])
 
   const changerOnglet = useCallback(
     (cle: Onglet) => {

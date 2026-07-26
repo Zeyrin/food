@@ -116,10 +116,6 @@ body {
   font-size: 16px;
   line-height: 1.5;
   -webkit-tap-highlight-color: transparent;
-  /* Sans ça, tirer vers le bas en haut de page déclenche le
-     pull-to-refresh natif d'Android/Chrome : rechargement complet,
-     qui perd la pile de navigation et retombe sur l'accueil. */
-  overscroll-behavior-y: contain;
 }
 
 #root {
@@ -1788,6 +1784,80 @@ button.discret.pleine-largeur {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* --- Transitions d'écran (View Transitions API) -------------------------
+   Déclenchées depuis App.tsx (`avecTransition`), qui pose déjà la garde
+   `prefers-reduced-motion` côté JS — ces règles ne s'exécutent donc que
+   quand l'animation est effectivement souhaitée. */
+
+/* Chrome persistant (rail/barre d'onglets, réglages, pastille hors-ligne) :
+   nommé pour sortir du cliché plein-écran « root ». Sans ça, changer
+   d'onglet ferait clignoter la barre alors qu'elle ne bouge pas — elle
+   existe des deux côtés de la transition, au même endroit. */
+nav.onglets {
+  view-transition-name: chrome-nav;
+}
+
+.bouton-reglages-global {
+  view-transition-name: chrome-reglages;
+}
+
+.pastille-hors-ligne {
+  view-transition-name: chrome-hors-ligne;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.28s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Avancer (nouvel écran) : l'ancien glisse et s'efface vers la gauche,
+   le nouveau arrive de la droite. Reculer : l'inverse — la direction
+   du geste raconte où on va dans la pile. */
+html[data-nav-dir='avant']::view-transition-old(root) {
+  animation-name: ecran-sort-vers-gauche;
+}
+
+html[data-nav-dir='avant']::view-transition-new(root) {
+  animation-name: ecran-entre-depuis-droite;
+}
+
+html[data-nav-dir='arriere']::view-transition-old(root) {
+  animation-name: ecran-sort-vers-droite;
+}
+
+html[data-nav-dir='arriere']::view-transition-new(root) {
+  animation-name: ecran-entre-depuis-gauche;
+}
+
+@keyframes ecran-sort-vers-gauche {
+  to {
+    transform: translateX(-3%);
+    opacity: 0;
+  }
+}
+
+@keyframes ecran-entre-depuis-droite {
+  from {
+    transform: translateX(3%);
+    opacity: 0;
+  }
+}
+
+@keyframes ecran-sort-vers-droite {
+  to {
+    transform: translateX(3%);
+    opacity: 0;
+  }
+}
+
+@keyframes ecran-entre-depuis-gauche {
+  from {
+    transform: translateX(-3%);
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
