@@ -132,6 +132,27 @@ plupart du contenu existant est du SEO creux d'éditeurs. Un article honnête et
 référence vite et qualifie les prospects avant même le premier échange. C'est le canal écrit
 qui convient au tempérament, plutôt que la vidéo.
 
+## Le levier « aides publiques » (à vérifier selon la région)
+
+Argument de vente puissant : une partie de la dépense peut être subventionnée, ce qui neutralise
+l'objection prix. Les **chèques numériques régionaux** vont de **500 à 5 000 €** selon la
+région, et sont cumulables avec les dispositifs nationaux (Île-de-France PM'up jusqu'à 5 000 €,
+Nouvelle-Aquitaine Num'Aquitaine 2 000 €, Auvergne-Rhône-Alpes Atouts Numériques jusqu'à
+16 000 € couvrant 50 % des dépenses). Plafond de cumul : 300 000 € sur 3 ans (règle *de
+minimis*).
+
+⚠️ **Le Chèque France Num de 500 € est fermé depuis octobre 2025**, et France Num n'est pas un
+guichet de financement mais une plateforme de ressources et un annuaire d'experts. Les aides
+réellement mobilisables sont **régionales** : à vérifier auprès de la région et de la CCI
+locale avant de l'annoncer à un prospect. Des dispositifs spécifiquement fléchés facturation
+électronique existent également.
+
+Sources : [Subventions Facile](https://www.subventions-facile.fr/blog/digitalisation-pme-tpe-aides-guide) ·
+[Comparatif Facture Électronique — aides 2026](https://www.comparatif-facture-electronique.fr/aides-subventions-facturation-electronique-2026/)
+
+**Action** : se référencer comme prestataire dans l'annuaire France Num. C'est gratuit, et
+c'est un canal d'inbound qualifié.
+
 ## Ce qui pourrait mal tourner
 
 - **Report de la réforme.** Le calendrier français a déjà glissé plusieurs fois. Vérifier
