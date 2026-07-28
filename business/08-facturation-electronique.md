@@ -84,6 +84,31 @@ lecture.
 Beaucoup de TPE facturent sous Word ou Excel. L'obligation force la migration vers un outil.
 C'est une porte d'entrée vers une relation durable et vers d'autres chantiers.
 
+## Précision de ciblage : qui NE PAS démarcher
+
+Vérification faite sur l'écosystème technique, et c'est un garde-fou important.
+
+**Ne pas cibler les micro-entreprises et les indépendants seuls.** Pour eux, des plateformes
+agréées comme Tiime sont **gratuites, sans engagement et opérationnelles en cinq minutes**. Il
+n'y a aucune valeur à vendre, et prétendre le contraire détruirait la crédibilité. C'est le
+même piège que le site vitrine à 29 €/mois chez les restaurants.
+
+**Cibler les entreprises qui ont déjà un système qui produit des factures** : e-commerce, ERP,
+logiciel métier, outil interne développé sur mesure, SaaS maison, cabinet avec un outil
+spécifique. Là, la mise en conformité suppose un vrai travail : **API REST avec OAuth2, mapping
+des pièces commerciales sur les schémas Factur-X, gestion des statuts de retour et des rejets,
+middleware, archivage**. C'est du développement, ça se facture au TJM, et aucune plateforme à
+bas prix ne le fait à leur place.
+
+Sources : [Plateforme Agréée — PA avec API développeur](https://plateforme-agree.org/par-fonctionnalite/api-developpeur/) ·
+[B2Brouter — API facturation électronique](https://www.b2brouter.net/fr/api-facturation-electronique/) ·
+[Guide développeurs API 2026](https://compafacturation.com/api-facturation-electronique)
+
+**Le critère de qualification en une question** : *« Aujourd'hui, vos factures sortent d'où ? »*
+Si la réponse est « de Word ou d'un tableur », le client vaut une heure de conseil et une
+recommandation d'outil gratuit — pas une mission. Si la réponse est « de notre logiciel / notre
+site / notre ERP », c'est un prospect réel.
+
 ## Le canal d'acquisition qui change tout : les experts-comptables
 
 C'est le point le plus important de ce document.
