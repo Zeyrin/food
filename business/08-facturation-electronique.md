@@ -180,9 +180,18 @@ c'est un canal d'inbound qualifié.
 
 ## Ce qui pourrait mal tourner
 
-- **Report de la réforme.** Le calendrier français a déjà glissé plusieurs fois. Vérifier
-  l'actualité avant d'investir lourdement. Cela dit, l'échéance de septembre 2026 est à cinq
-  semaines : un report annoncé maintenant serait extraordinaire.
+- ~~**Report de la réforme.**~~ **Risque écarté, vérifié.** Le calendrier a glissé par le passé
+  (d'où la méfiance légitime), mais **il n'y aura pas de nouveau report**. Un amendement
+  parlementaire demandant un délai supplémentaire a été **rejeté par l'Assemblée nationale**, et
+  le **Directeur général des Finances publiques a confirmé au plus haut niveau l'absence de
+  report** lors de la plénière de clôture de la Journée de la Facture Électronique du 6 mai
+  2026 (FNFE-MPE). La DGFiP a depuis publié un guide de démarrage pratique confirmant le
+  maintien du calendrier.
+  → https://www.compta-online.com/facturation-electronique-ao5562
+
+  C'est important commercialement : beaucoup de dirigeants **parient encore sur un report** pour
+  justifier leur inaction. Pouvoir citer la confirmation officielle de la DGFiP est un argument
+  qui débloque la décision.
 - **Le marché s'équipe tout seul.** Les plateformes agréées vendent en direct, souvent à bas
   prix. → C'est pourquoi il faut vendre **l'intégration et l'accompagnement**, pas la
   plateforme.
