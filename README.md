@@ -23,9 +23,17 @@ soustraction sans jamais maintenir d'inventaire.
 côté client. Qui a le lien a la liste. C'est un modèle de capacité assumé — le contenu est
 une liste de courses.
 
-**Une seule chose traverse le réseau** : l'état de la liste (cases cochées, produits
-écartés). Le panier de la semaine et l'historique de cuisson restent en local, dans
-IndexedDB. En magasin, l'app fonctionne sans réseau ; la synchro rattrape au retour.
+**Ce qui traverse le réseau est ce qui se décide à deux** : la liste (cases cochées,
+produits écartés), le panier de la semaine qui voyage avec elle, le catalogue de recettes,
+et l'historique de cuisson — « on a mangé ça mardi » vaut pour les deux téléphones. Chaque
+appareil en garde une copie locale (IndexedDB) : en magasin, l'app fonctionne sans réseau,
+et la synchro rattrape au retour.
+
+**Les minuteurs appartiennent à l'app, pas à l'écran de cuisson.** On lance un minuteur
+précisément pour aller faire autre chose — vérifier un ingrédient sur la liste, répondre à
+un message. Ils continuent donc de tourner quel que soit l'écran affiché, un bandeau les
+rappelle partout, et ils survivent au rechargement (`src/lib/minuteurs.ts`). L'étape en
+cours d'une recette est mémorisée de la même façon : une séance interrompue se reprend.
 
 ## Mise en route
 
@@ -66,7 +74,11 @@ Trois règles qui font tenir le reste :
    de courses, mais affiché en mode cuisson.
 3. Les quantités correspondent à `portions`. L'app fait la règle de trois.
 
-Pour constituer le corpus en discutant avec Claude, demander explicitement la sortie dans
+Depuis l'app (écran « Ajouter une recette »), le prompt est fourni et la réponse se colle
+telle quelle : bloc ```` ```json ````, phrases avant/après et tableau de plusieurs recettes
+sont acceptés, et une recette invalide dans un lot n'empêche pas les autres d'entrer.
+
+Pour constituer le corpus en ligne de commande, demander explicitement la sortie dans
 ce format, en fournissant la liste des noms déjà utilisés :
 
 > Voici les noms d'ingrédients déjà présents dans mon corpus : [coller la sortie de
@@ -103,7 +115,6 @@ gratuits. Sur iOS, installer via Partager → Sur l'écran d'accueil.
 
 ## Ce qui n'est pas fait
 
-- Les minuteurs en mode cuisson (les étapes sont là, le décompte non)
 - Le planning par jour de la semaine — le panier est une liste, pas un calendrier
 - Le déstockage (« que faire avec ce qui reste »), qui suppose un stock
 - Un ordre de rayons dans le magasin

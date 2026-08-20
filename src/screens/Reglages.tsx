@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useInstallation } from '../hooks/useInstallation'
 import Icone from '../components/Icone'
 
 interface Props {
@@ -16,6 +17,7 @@ export default function Reglages({
   onFermer,
   onRevoirPresentation,
 }: Props) {
+  const installation = useInstallation()
   const [code, setCode] = useState('')
   const [enCours, setEnCours] = useState(false)
   const [erreur, setErreur] = useState<string | null>(null)
@@ -51,6 +53,28 @@ export default function Reglages({
           <Icone nom="fermer" taille={20} />
         </button>
       </header>
+
+      {installation.etat !== 'installee' && (
+        <>
+          <h2>Installer sur le téléphone</h2>
+          <p className="aide">
+            Installée, l'app garde vos recettes et votre liste accessibles sans réseau — au rayon surgelés,
+            c'est la différence entre une liste et un écran blanc.
+          </p>
+          {installation.etat === 'possible' ? (
+            <button className="discret suite pleine-largeur" onClick={() => void installation.installer()}>
+              <Icone nom="plus-cercle" taille={18} /> Installer FFFood
+            </button>
+          ) : (
+            // iOS n'expose aucune API d'installation : reste le geste, à
+            // condition de savoir lequel — d'où ces deux lignes.
+            <p className="aide">
+              Sur iPhone : bouton <b>Partager</b> dans la barre de Safari, puis <b>Sur l'écran d'accueil</b>. Sur
+              ordinateur : l'icône d'installation dans la barre d'adresse.
+            </p>
+          )}
+        </>
+      )}
 
       <h2>Découvrir l'app</h2>
       <p className="aide">Revoir la présentation des fonctionnalités et comment les utiliser.</p>

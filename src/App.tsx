@@ -39,6 +39,9 @@ import CuissonListe from './screens/CuissonListe'
 import AjouterRecette from './screens/AjouterRecette'
 import Bienvenue from './screens/Bienvenue'
 import TourGuide from './components/TourGuide'
+import BandeauMinuteur from './components/BandeauMinuteur'
+import PanneauMinuteurs from './components/PanneauMinuteurs'
+import { useMinuteurs } from './hooks/useMinuteurs'
 import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
@@ -280,6 +283,24 @@ export default function App() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const enLigne = useEnLigne()
 
+  /**
+   * Les minuteurs vivent ici, pas dans l'écran de cuisson : on en lance
+   * un précisément pour aller faire autre chose, et jusqu'ici quitter
+   * cet écran les effaçait tous. Ils suivent donc l'app entière — un
+   * bandeau les rappelle sur tous les écrans, et ils survivent au
+   * rechargement (voir lib/minuteurs.ts).
+   */
+  const minuteurs = useMinuteurs()
+  const [panneauMinuteurs, setPanneauMinuteurs] = useState(false)
+
+  // Quand ça sonne, le panneau s'ouvre tout seul, où qu'on soit dans
+  // l'app. Sur `.length` et non sur le tableau : refermer le panneau
+  // pendant que ça sonne encore ne doit pas le rouvrir aussitôt.
+  const nombreQuiSonnent = minuteurs.sonnent.length
+  useEffect(() => {
+    if (nombreQuiSonnent > 0) setPanneauMinuteurs(true)
+  }, [nombreQuiSonnent])
+
   // Le panier n'a pas d'état à lui : il fait partie de la liste du foyer.
   // Une seule source de vérité, une seule écriture réseau — impossible que
   // le panier et les cases cochées partent chacun de leur côté.
@@ -392,6 +413,17 @@ export default function App() {
     return suivreHistorique(foyer, setHistorique)
   }, [foyer])
 
+  const rejoindreMinuteur = useCallback(
+    (recipeId: string) => {
+      setPanneauMinuteurs(false)
+      // Déjà sur ce plat : refermer suffit, empiler un second écran de
+      // cuisson du même plat n'apporterait qu'un « précédent » de plus.
+      if (vueActuelle.type === 'cuisson' && vueActuelle.recipeId === recipeId) return
+      irVers({ type: 'cuisson', recipeId })
+    },
+    [vueActuelle, irVers],
+  )
+
   const majListe = useCallback(
     (suivant: ListState) => {
       setEtatListe(suivant)
@@ -472,6 +504,20 @@ export default function App() {
     return <Bienvenue onCreer={creer} onRejoindre={rejoindre} />
   }
 
+  const panneau = panneauMinuteurs && minuteurs.liste.length > 0 && (
+    <PanneauMinuteurs
+      liste={minuteurs.liste}
+      maintenant={minuteurs.maintenant}
+      onFermer={() => setPanneauMinuteurs(false)}
+      onRetirer={minuteurs.retirer}
+      onToutRetirer={() => {
+        minuteurs.toutRetirer()
+        setPanneauMinuteurs(false)
+      }}
+      onRejoindre={rejoindreMinuteur}
+    />
+  )
+
   if (vueActuelle.type === 'cuisson') {
     const recette = recipes.find((r) => r.id === vueActuelle.recipeId)
     if (recette) {
@@ -480,14 +526,19 @@ export default function App() {
       // cuisson racontent deux quantités différentes pour le même plat.
       const portionsCible = basket.find((e) => e.recipeId === recette.id)?.portions ?? recette.portions
       return (
-        <Cuisson
-          recette={redimensionnerRecette(recette, portionsCible)}
-          onVerdict={async (v) => {
-            await verdict(recette.id, v)
-            reculer()
-          }}
-          onQuitter={reculer}
-        />
+        <>
+          <Cuisson
+            recette={redimensionnerRecette(recette, portionsCible)}
+            minuteurs={minuteurs}
+            onOuvrirMinuteurs={() => setPanneauMinuteurs(true)}
+            onVerdict={async (v) => {
+              await verdict(recette.id, v)
+              reculer()
+            }}
+            onQuitter={reculer}
+          />
+          {panneau}
+        </>
       )
     }
   }
@@ -549,7 +600,10 @@ export default function App() {
   const sousEcran = ecranPleinePage !== null
 
   return (
-    <div data-sous-ecran={sousEcran ? 'true' : undefined}>
+    <div
+      data-sous-ecran={sousEcran ? 'true' : undefined}
+      data-minuteur={minuteurs.liste.length > 0 ? 'true' : undefined}
+    >
       {vueActuelle.type !== 'reglages' && (
         <button
           className="bouton-rond-discret bouton-reglages-global"
@@ -583,6 +637,7 @@ export default function App() {
             <Panier
               recipes={recipes}
               basket={basket}
+              historique={historique}
               onBasket={majBasket}
               onVersPropose={() => changerOnglet('propose')}
               onVersListe={() => changerOnglet('liste')}
@@ -618,6 +673,19 @@ export default function App() {
           )}
         </>
       )}
+
+      {/* Hors mode cuisson : le minuteur reste sous les yeux, au-dessus
+          de la barre d'onglets. Les boutons flottants des écrans lui
+          cèdent la place (voir `[data-minuteur]` dans styles.css). */}
+      <BandeauMinuteur
+        liste={minuteurs.liste}
+        maintenant={minuteurs.maintenant}
+        sonne={minuteurs.sonnent.length > 0}
+        onOuvrir={() => setPanneauMinuteurs(true)}
+        variante="global"
+      />
+
+      {panneau}
 
       <nav className="onglets">
         {(

@@ -3,6 +3,7 @@ import type { ItemLibre, ListItem, ListState, Recipe } from '../types'
 import { STORES } from '../types'
 import { formatQuantite, groupByStore } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
+import { numeroSemaine } from '../lib/semaine'
 import Icone from '../components/Icone'
 
 interface Props {
@@ -40,6 +41,17 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
    */
   const [saisie, setSaisie] = useState<string | null>(null)
 
+  /**
+   * Partage de la liste en texte. Dans un foyer à deux, celui qui passe
+   * au magasin n'est pas toujours celui qui a préparé la semaine — et
+   * n'a pas forcément l'app installée. Un SMS règle le cas sans compte
+   * ni installation. `null` = rien à afficher ; une chaîne = le partage
+   * natif et le presse-papier ont tous deux été refusés, on montre le
+   * texte à sélectionner à la main.
+   */
+  const [texteAPartager, setTexteAPartager] = useState<string | null>(null)
+  const [copiee, setCopiee] = useState(false)
+
   const itemsLibres = (etat.items ?? []).map(itemLibreEnListItem)
   const tousLesItems = [...items, ...itemsLibres]
 
@@ -56,6 +68,36 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
 
   const retirerItem = (id: string) =>
     onEtat({ ...etat, items: (etat.items ?? []).filter((i) => i.id !== id) })
+
+  /** Ce qu'il reste à acheter, groupé par magasin, en texte brut. */
+  const composerTexte = (restant: ListItem[]) =>
+    [
+      `Liste de courses — semaine ${numeroSemaine()}`,
+      ...groupByStore(restant).map(({ magasin, items: lignes }) =>
+        [
+          STORES[magasin].label,
+          ...lignes.map((i) => `- ${i.nom}${i.magasin === 'autre' ? '' : ` (${formatQuantite(i)})`}`),
+        ].join('\n'),
+      ),
+    ].join('\n\n')
+
+  const envoyer = async (restant: ListItem[]) => {
+    const texte = composerTexte(restant)
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Liste de courses', text: texte })
+        return
+      }
+      await navigator.clipboard.writeText(texte)
+      setCopiee(true)
+      setTimeout(() => setCopiee(false), 2000)
+    } catch (e) {
+      // Fermer la feuille de partage sans choisir n'est pas un échec :
+      // afficher un repli à ce moment-là serait absurde.
+      if ((e as Error)?.name === 'AbortError') return
+      setTexteAPartager(texte)
+    }
+  }
 
   const entete = (
     <header className="entete-app">
@@ -236,6 +278,32 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
               <Icone nom="grill" taille={18} /> Passer à la cuisson
             </button>
           </div>
+        )}
+
+        {/* Placé en tête, avant la longue liste : on envoie sa liste
+            avant de partir, pas après avoir fait défiler dix-sept
+            produits. */}
+        {restants > 0 && (
+          <button className="discret pleine-largeur" onClick={() => void envoyer(aAcheter.filter((i) => !etat.coche[i.key]))}>
+            <Icone nom={copiee ? 'coche' : 'liste'} taille={18} />
+            {copiee ? 'Liste copiée !' : 'Envoyer la liste'}
+          </button>
+        )}
+
+        {texteAPartager !== null && (
+          <>
+            <p className="aide espace-haut" role="alert">
+              Ce navigateur refuse le partage et la copie. Sélectionnez le texte ci-dessous.
+            </p>
+            <textarea
+              className="champ-texte champ-texte-code"
+              value={texteAPartager}
+              readOnly
+              rows={8}
+              onFocus={(e) => e.currentTarget.select()}
+              aria-label="Liste de courses à copier à la main"
+            />
+          </>
         )}
 
         {groupByStore(aAcheter).map(({ magasin, items: lignes }) => (

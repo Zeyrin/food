@@ -1011,13 +1011,24 @@ button.discret.accent:active:not(:disabled) {
   filter: blur(32px);
 }
 
+.carte-resume-detail {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--encre-douce);
+}
+
 .pastille-etat {
   padding: 8px 16px;
   border-radius: 999px;
-  background: var(--accent-doux);
-  color: var(--accent);
+  background: var(--terracotta-doux);
+  color: var(--terracotta);
   font-size: 14px;
   font-weight: 600;
+}
+
+.pastille-etat[data-fini='true'] {
+  background: var(--accent-doux);
+  color: var(--accent);
 }
 
 /* Bandeau hors-ligne : rassure que rien ne se perd quand le réseau
@@ -1208,6 +1219,23 @@ button.carte-panier-bouton .carte-panier-corps {
   min-width: 0;
 }
 
+/* Rattrapage d'un retrait, à la place de la carte disparue. */
+.carte-annulation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--carte-haute);
+  animation: confirmation-entree 0.16s ease;
+}
+
+.carte-annulation p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--encre-douce);
+}
+
 .carte-bento {
   display: flex;
   flex-direction: column;
@@ -1230,7 +1258,24 @@ button.carte-panier-bouton .carte-panier-corps {
   color: var(--encre);
 }
 
-.bento-deux-colonnes .carte-bento {
+.bento-deux-colonnes /* Rattrapage d'un retrait, à la place de la carte disparue. */
+.carte-annulation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--carte-haute);
+  animation: confirmation-entree 0.16s ease;
+}
+
+.carte-annulation p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--encre-douce);
+}
+
+.carte-bento {
   margin-bottom: 0;
 }
 
@@ -1632,6 +1677,85 @@ button.carte-panier-bouton .carte-panier-corps {
   background: #0c2000;
 }
 
+/* Hors mode cuisson : même bandeau, mais posé sur le fond clair de
+   l'app et fixé au-dessus de la barre d'onglets. Un minuteur qui tourne
+   ne doit jamais demander de retourner le chercher. */
+.bandeau-minuteur-global {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  z-index: 9;
+  width: auto;
+  max-width: 616px;
+  margin: 0 auto;
+  padding: 12px 18px;
+  background: var(--accent);
+  color: var(--sur-accent);
+  box-shadow: var(--ombre-nette);
+}
+
+.bandeau-minuteur-global .bandeau-minuteur-nom,
+.bandeau-minuteur-global .bandeau-minuteur-valeur {
+  color: var(--sur-accent);
+}
+
+.bandeau-minuteur-global .bandeau-minuteur-valeur {
+  font-size: 26px;
+}
+
+.bandeau-minuteur-global .bandeau-minuteur-jauge {
+  background: color-mix(in srgb, var(--sur-accent) 25%, transparent);
+}
+
+.bandeau-minuteur-global .bandeau-minuteur-jauge i {
+  background: var(--sur-accent);
+}
+
+.bandeau-minuteur-global[data-sonne='true'] {
+  background: var(--terracotta);
+}
+
+/* Les boutons flottants lui cèdent la place plutôt que de le
+   chevaucher — l'attribut est posé sur la racine par App.tsx. */
+[data-minuteur='true'] .bouton-flottant {
+  bottom: calc(168px + env(safe-area-inset-bottom));
+}
+
+[data-minuteur='true'] .action-flottante {
+  bottom: calc(152px + env(safe-area-inset-bottom));
+}
+
+[data-minuteur='true'] .espaceur-action-flottante {
+  height: 160px;
+}
+
+/* De quel plat vient ce minuteur, et comment y retourner. */
+.panneau-minuteurs-plat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #bcefc0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.panneau-minuteurs-tout {
+  background: transparent;
+  border: 0;
+  color: rgb(255 248 239 / 0.7);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 @keyframes pulsation-bandeau {
   50% {
     background: #bcefc0;
@@ -1722,6 +1846,9 @@ button.carte-panier-bouton .carte-panier-corps {
 }
 
 .panneau-minuteurs li span {
+  /* En bloc : le décompte et le lien « revenir au plat » ajouté
+     au-dessous se chevauchaient sur la même ligne. */
+  display: block;
   font-size: 22px;
   font-family: var(--affichage);
   font-variant-numeric: tabular-nums;
@@ -1883,6 +2010,11 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .bouton-flottant:active {
   transform: scale(0.92);
+}
+
+/* Bouton d'envoi, entre l'aperçu et les rayons. */
+.corps-liste > .discret.pleine-largeur {
+  margin: 4px 0 20px;
 }
 
 .rangee-avec-suppr {
@@ -2329,6 +2461,22 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   .ecran-fin {
     width: 100%;
     max-width: 720px;
+  }
+
+  /* Le rail vertical libère le bas de l'écran : le bandeau minuteur s'y
+     pose au ras, décalé de la largeur du rail. */
+  .bandeau-minuteur-global {
+    left: 128px;
+    right: 40px;
+    bottom: 24px;
+  }
+
+  [data-minuteur='true'] .bouton-flottant {
+    bottom: calc(112px + env(safe-area-inset-bottom));
+  }
+
+  [data-minuteur='true'] .action-flottante {
+    bottom: 96px;
   }
 }
 
