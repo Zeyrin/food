@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon-192.png', 'icon-512.png'],
       manifest: {
-        name: 'Courses',
-        short_name: 'Courses',
-        description: 'Recettes, panier de la semaine et liste de courses',
+        name: 'FFFood',
+        short_name: 'FFFood',
+        description: 'FFFood : recettes, panier de la semaine et liste de courses, sans compte.',
         theme_color: '#385e16',
         background_color: '#fff8ef',
         display: 'standalone',

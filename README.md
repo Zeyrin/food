@@ -1,4 +1,4 @@
-# Courses
+# FFFood
 
 PWA pour choisir les repas de la semaine, en tirer une liste de courses, et cuisiner.
 Pas de compte, pas de service payant, hors ligne en magasin.
