@@ -101,3 +101,65 @@ export function biper(): void {
 }
 
 export const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+
+/* --- Alerte quand l'app n'est pas à l'écran --------------------------------
+
+   Un minuteur qu'on n'entend pas n'est pas un minuteur. Or dès que
+   l'onglet passe en arrière-plan (téléphone verrouillé, autre app), le
+   navigateur ralentit les `setInterval` à un par minute et suspend le
+   contexte audio : le bip et la vibration n'arrivent pas, ou une minute
+   trop tard. Une notification système, elle, sort de l'app.
+
+   Elle n'est jamais demandée à froid : la permission est réclamée au
+   moment où l'utilisateur lance son premier minuteur — le seul moment
+   où « je veux être prévenu » est ce qu'il vient d'exprimer. */
+
+const TAG = 'fffood-minuteur-'
+
+export function demanderNotifications(): void {
+  try {
+    if ('Notification' in window && Notification.permission === 'default') {
+      void Notification.requestPermission()
+    }
+  } catch {
+    /* navigateur sans notifications (Safari iOS non installé) : on s'en passe */
+  }
+}
+
+export function notifierMinuteur(minuteur: Minuteur): void {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return
+  const options: NotificationOptions = {
+    body: `${minuteur.recetteTitre} — c'est prêt.`,
+    // Un tag par minuteur : deux alertes du même minuteur se remplacent
+    // au lieu de s'empiler dans le centre de notifications.
+    tag: TAG + minuteur.id,
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
+  }
+  try {
+    // Android exige de passer par le service worker : `new Notification()`
+    // y lève une TypeError. Ailleurs, le constructeur suffit.
+    if ('serviceWorker' in navigator) {
+      void navigator.serviceWorker.ready
+        .then((reg) => reg.showNotification(minuteur.nom, options))
+        .catch(() => {
+          new Notification(minuteur.nom, options)
+        })
+      return
+    }
+    new Notification(minuteur.nom, options)
+  } catch {
+    /* refusé entre-temps, ou pas de SW enregistré : le bandeau reste */
+  }
+}
+
+/** De retour dans l'app, les notifications n'ont plus rien à dire. */
+export function fermerNotifications(): void {
+  if (!('serviceWorker' in navigator)) return
+  void navigator.serviceWorker.ready
+    .then((reg) => reg.getNotifications())
+    .then((liste) => liste.filter((n) => n.tag.startsWith(TAG)).forEach((n) => n.close()))
+    .catch(() => {
+      /* pas de SW (mode dev sans PWA) : rien à fermer */
+    })
+}

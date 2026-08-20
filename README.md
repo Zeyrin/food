@@ -32,8 +32,11 @@ et la synchro rattrape au retour.
 **Les minuteurs appartiennent à l'app, pas à l'écran de cuisson.** On lance un minuteur
 précisément pour aller faire autre chose — vérifier un ingrédient sur la liste, répondre à
 un message. Ils continuent donc de tourner quel que soit l'écran affiché, un bandeau les
-rappelle partout, et ils survivent au rechargement (`src/lib/minuteurs.ts`). L'étape en
-cours d'une recette est mémorisée de la même façon : une séance interrompue se reprend.
+rappelle partout, et ils survivent au rechargement (`src/lib/minuteurs.ts`). Quand l'app
+n'est plus au premier plan, le navigateur suspend le son et ralentit les intervalles : une
+notification système prend le relais, demandée au moment où l'utilisateur lance son premier
+minuteur et jamais avant. L'étape en cours d'une recette est mémorisée de la même façon :
+une séance interrompue se reprend.
 
 ## Mise en route
 

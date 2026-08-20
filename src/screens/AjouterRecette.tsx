@@ -7,11 +7,18 @@ import Icone from '../components/Icone'
 interface Props {
   onAjouter: (recette: Recipe) => Promise<void>
   onQuitter: () => void
+  /** Titres du catalogue, pour écarter un plat déjà présent. */
+  titresExistants: string[]
   /** En mode édition : la recette existante, préremplie en JSON. */
   recetteInitiale?: Recipe
 }
 
-export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }: Props) {
+export default function AjouterRecette({
+  onAjouter,
+  onQuitter,
+  titresExistants,
+  recetteInitiale,
+}: Props) {
   const [demande, setDemande] = useState('')
   const [texte, setTexte] = useState(() =>
     recetteInitiale
@@ -43,6 +50,7 @@ export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }
    * être sélectionné à la main.
    */
   const [promptEnClair, setPromptEnClair] = useState<string | null>(null)
+  const [doublons, setDoublons] = useState<string[]>([])
 
   const edition = recetteInitiale !== undefined
 
@@ -60,10 +68,23 @@ export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }
 
   const valider = async () => {
     setErreurs([])
-    const { recettes, erreurs: refusees } = validerCollage(texte)
+    setDoublons([])
+    // En modification, le titre du plat qu'on édite n'est pas un doublon
+    // de lui-même.
+    const dejaLa = edition
+      ? titresExistants.filter((t) => t !== recetteInitiale.titre)
+      : titresExistants
+    const { recettes, erreurs: refusees, doublons: dejaVus } = validerCollage(texte, dejaLa)
+    setDoublons(dejaVus)
 
     if (recettes.length === 0) {
-      setErreurs(refusees)
+      setErreurs(
+        refusees.length > 0
+          ? refusees
+          : dejaVus.length > 0
+            ? []
+            : ['Rien à ajouter dans ce collage.'],
+      )
       return
     }
     if (edition && recettes.length > 1) {
@@ -94,7 +115,7 @@ export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }
     setAjoutees(ajoutOk)
   }
 
-  const partiel = ajoutees > 0 && erreurs.length > 0
+  const partiel = ajoutees > 0 && (erreurs.length > 0 || doublons.length > 0)
 
   // Dans un `useEffect` (pas un `setTimeout` direct dans `valider`) pour
   // que le nettoyage annule l'appel si l'écran se démonte avant —
@@ -167,6 +188,15 @@ export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }
         onChange={(e) => setTexte(e.target.value)}
         rows={10}
       />
+
+      {doublons.length > 0 && (
+        <div className="bloc-doublons" role="status">
+          <p>
+            Déjà au catalogue, {doublons.length > 1 ? 'laissées' : 'laissée'} de côté :{' '}
+            {doublons.map((t) => `« ${t} »`).join(', ')}.
+          </p>
+        </div>
+      )}
 
       {erreurs.length > 0 && (
         <div className="bloc-erreurs" role="alert">

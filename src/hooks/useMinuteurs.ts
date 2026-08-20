@@ -1,9 +1,12 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   biper,
   debloquerAudio,
+  demanderNotifications,
   ecrireMinuteurs,
+  fermerNotifications,
   lireMinuteurs,
+  notifierMinuteur,
   type Minuteur,
 } from '../lib/minuteurs'
 
@@ -15,7 +18,17 @@ function useMaintenant(actif: boolean): number {
     if (!actif) return
     setMaintenant(Date.now())
     const t = setInterval(() => setMaintenant(Date.now()), 500)
-    return () => clearInterval(t)
+    // En arrière-plan, le navigateur ralentit l'intervalle jusqu'à un par
+    // minute : au retour, le décompte affiché aurait pu être faux pendant
+    // une minute entière. On le remet à l'heure aux deux transitions — au
+    // retour pour l'affichage, au départ pour que le minuteur déjà écoulé
+    // parte en notification tout de suite plutôt qu'au prochain tic ralenti.
+    const surBascule = () => setMaintenant(Date.now())
+    document.addEventListener('visibilitychange', surBascule)
+    return () => {
+      clearInterval(t)
+      document.removeEventListener('visibilitychange', surBascule)
+    }
   }, [actif])
 
   return maintenant
@@ -52,6 +65,9 @@ export function useMinuteurs(): Minuteurs {
       // Débloqué ici (clic = geste utilisateur), pas au moment où le
       // minuteur sonnera réellement — sinon le navigateur bloque le son.
       debloquerAudio()
+      // Même raison de calendrier : la permission de notifier se demande
+      // sur un geste, et celui-ci dit exactement « préviens-moi ».
+      demanderNotifications()
       const depart = Date.now()
       setMinuteurs((prec) => [
         ...prec,
@@ -83,6 +99,33 @@ export function useMinuteurs(): Minuteurs {
     const t = setInterval(alerter, 4000)
     return () => clearInterval(t)
   }, [yADesTimersQuiSonnent])
+
+  // Le bip et la vibration ne sortent pas de l'app : téléphone
+  // verrouillé ou autre application au premier plan, ils sont suspendus.
+  // Une notification système, si. Une seule par minuteur — le `ref`
+  // évite qu'elle ne se rejoue à chaque tic d'horloge.
+  const notifies = useRef(new Set<string>())
+  useEffect(() => {
+    if (!document.hidden) return
+    for (const m of sonnent) {
+      if (notifies.current.has(m.id)) continue
+      notifies.current.add(m.id)
+      notifierMinuteur(m)
+    }
+  }, [sonnent])
+
+  // De retour dans l'app, le bandeau dit tout ce qu'il faut : les
+  // notifications n'ont plus lieu d'être, et un minuteur relancé plus
+  // tard doit pouvoir en produire une nouvelle.
+  useEffect(() => {
+    const surRetour = () => {
+      if (document.hidden) return
+      fermerNotifications()
+      notifies.current.clear()
+    }
+    document.addEventListener('visibilitychange', surRetour)
+    return () => document.removeEventListener('visibilitychange', surRetour)
+  }, [])
 
   return { liste, maintenant, sonnent, lancer, retirer, toutRetirer }
 }

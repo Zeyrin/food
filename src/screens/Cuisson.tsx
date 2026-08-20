@@ -122,9 +122,19 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           <span>
             Étape {index + 1} sur {recette.etapes.length}
           </span>
-          <div className="progression" aria-hidden="true">
+          {/* Les traits n'étaient qu'un décor : relire l'étape 2 depuis la
+              7 demandait cinq appuis sur « Précédent ». Ce sont des
+              boutons, avec une zone de touche débordant largement les
+              6 px visibles. */}
+          <div className="progression">
             {recette.etapes.map((_, i) => (
-              <i key={i} data-fait={i <= index} />
+              <button
+                key={i}
+                data-fait={i <= index}
+                aria-current={i === index ? 'step' : undefined}
+                aria-label={`Aller à l'étape ${i + 1}`}
+                onClick={() => setIndex(i)}
+              />
             ))}
           </div>
         </div>

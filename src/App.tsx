@@ -558,12 +558,19 @@ export default function App() {
     ecranPleinePage = (
       <AjouterRecette
         recetteInitiale={recette}
+        titresExistants={recipes.map((r) => r.titre)}
         onAjouter={(r) => modifier({ ...r, id: recette.id })}
         onQuitter={reculer}
       />
     )
   } else if (vueActuelle.type === 'ajout') {
-    ecranPleinePage = <AjouterRecette onAjouter={ajouter} onQuitter={reculer} />
+    ecranPleinePage = (
+      <AjouterRecette
+        titresExistants={recipes.map((r) => r.titre)}
+        onAjouter={ajouter}
+        onQuitter={reculer}
+      />
+    )
   } else if (vueActuelle.type === 'detail') {
     const recette = recipes.find((r) => r.id === vueActuelle.recipeId)
     if (recette) {
@@ -572,12 +579,15 @@ export default function App() {
           recette={recette}
           portions={basket.find((e) => e.recipeId === recette.id)?.portions ?? recette.portions}
           dansPanier={basket.some((e) => e.recipeId === recette.id)}
-          onBasculerPanier={() =>
+          onBasculerPanier={(portions) =>
             majBasket(
               basket.some((e) => e.recipeId === recette.id)
                 ? basket.filter((e) => e.recipeId !== recette.id)
-                : [...basket, { recipeId: recette.id, portions: recette.portions }],
+                : [...basket, { recipeId: recette.id, portions }],
             )
+          }
+          onPortions={(portions) =>
+            majBasket(basket.map((e) => (e.recipeId === recette.id ? { ...e, portions } : e)))
           }
           onCuisiner={() => irVers({ type: 'cuisson', recipeId: recette.id })}
           onModifier={() => irVers({ type: 'edition', recette })}

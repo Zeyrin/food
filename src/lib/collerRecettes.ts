@@ -33,7 +33,22 @@ export interface ResultatCollage {
   recettes: Recipe[]
   /** Ce qui a été refusé, prêt à afficher. Vide si tout est passé. */
   erreurs: string[]
+  /**
+   * Titres déjà présents au catalogue, écartés du lot. Ce n'est pas une
+   * erreur — recoller la même réponse est un geste banal — mais il faut
+   * le dire, sinon le catalogue se remplit de doublons en silence.
+   */
+  doublons: string[]
 }
+
+/** Comparaison de titres tolérante aux accents, à la casse, aux espaces. */
+const normaliserTitre = (titre: string) =>
+  titre
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim()
 
 /**
  * Un collage → zéro, une ou plusieurs recettes. Demander « 5 recettes
@@ -43,10 +58,10 @@ export interface ResultatCollage {
  * rejetée — reformuler une demande entière parce qu'une unité est mal
  * orthographiée coûte plus cher que d'ajouter la manquante ensuite.
  */
-export function validerCollage(texte: string): ResultatCollage {
+export function validerCollage(texte: string, titresExistants: string[] = []): ResultatCollage {
   const extrait = extraire(texte)
   if (extrait === null) {
-    return { recettes: [], erreurs: ["Aucun JSON trouvé dans le texte collé."] }
+    return { recettes: [], erreurs: ["Aucun JSON trouvé dans le texte collé."], doublons: [] }
   }
 
   let json: unknown
@@ -58,14 +73,19 @@ export function validerCollage(texte: string): ResultatCollage {
       erreurs: [
         "Le JSON est incomplet ou mal formé — souvent une réponse d'IA coupée en route. Redemandez-la, ou collez-la en entier.",
       ],
+      doublons: [],
     }
   }
 
   const liste = Array.isArray(json) ? json : [json]
-  if (liste.length === 0) return { recettes: [], erreurs: ['La liste collée est vide.'] }
+  if (liste.length === 0) return { recettes: [], erreurs: ['La liste collée est vide.'], doublons: [] }
 
   const recettes: Recipe[] = []
   const erreurs: string[] = []
+  const doublons: string[] = []
+  // Les titres déjà vus, catalogue compris : un lot qui contient deux
+  // fois le même plat ne doit pas non plus l'ajouter deux fois.
+  const vus = new Set(titresExistants.map(normaliserTitre))
 
   liste.forEach((item, i) => {
     const resultat = validerRecette(item)
@@ -76,10 +96,13 @@ export function validerCollage(texte: string): ResultatCollage {
       const etiquette =
         liste.length === 1 ? '' : `${typeof nom === 'string' && nom.trim() ? nom : `Recette #${i + 1}`} : `
       erreurs.push(...resultat.erreurs.map((e) => etiquette + e))
+    } else if (vus.has(normaliserTitre(resultat.recette.titre))) {
+      doublons.push(resultat.recette.titre)
     } else {
+      vus.add(normaliserTitre(resultat.recette.titre))
       recettes.push(resultat.recette)
     }
   })
 
-  return { recettes, erreurs }
+  return { recettes, erreurs, doublons }
 }

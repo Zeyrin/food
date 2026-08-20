@@ -11,6 +11,8 @@ const RECETTE = {
 }
 
 const json = (x: unknown) => JSON.stringify(x)
+/** Même recette, autre titre — les titres identiques sont désormais fusionnés. */
+const autre = (titre: string) => ({ ...RECETTE, titre })
 
 // Le collage propre, celui que le prompt demande.
 assert.equal(validerCollage(json(RECETTE)).recettes.length, 1)
@@ -22,12 +24,34 @@ assert.equal(validerCollage('```\n' + json(RECETTE) + '\n```').recettes.length, 
 assert.equal(validerCollage(`Voici !\n${json(RECETTE)}\nBon appétit 🍲`).recettes.length, 1)
 
 // Demander « 5 recettes » renvoie un tableau : il passe en un collage.
-assert.equal(validerCollage(json([RECETTE, RECETTE, RECETTE])).recettes.length, 3)
-assert.equal(validerCollage('Bien sûr :\n```json\n' + json([RECETTE, RECETTE]) + '\n```\n').recettes.length, 2)
+assert.equal(validerCollage(json([RECETTE, autre('Deux'), autre('Trois')])).recettes.length, 3)
+assert.equal(
+  validerCollage('Bien sûr :\n```json\n' + json([RECETTE, autre('Deux')]) + '\n```\n').recettes.length,
+  2,
+)
 
 // Deux recettes d'un même lot ne partagent pas d'identifiant.
-const lot = validerCollage(json([RECETTE, RECETTE]))
+const lot = validerCollage(json([RECETTE, autre('Deux')]))
 assert.notEqual(lot.recettes[0]!.id, lot.recettes[1]!.id)
+
+// Recoller la même réponse est un geste banal : le catalogue ne doit pas
+// se remplir de doublons en silence. Le titre est signalé, pas ajouté.
+const deja = validerCollage(json(RECETTE), [RECETTE.titre])
+assert.equal(deja.recettes.length, 0)
+assert.deepEqual(deja.doublons, [RECETTE.titre])
+
+// La comparaison ignore accents, casse et espaces en trop.
+assert.equal(validerCollage(json(RECETTE), ['  DAHL DE LENTILLES CORAIL ']).recettes.length, 0)
+
+// Un lot qui répète deux fois le même plat ne l'ajoute qu'une fois.
+const repete = validerCollage(json([RECETTE, RECETTE, autre('Vraiment neuve')]))
+assert.equal(repete.recettes.length, 2)
+assert.equal(repete.doublons.length, 1)
+
+// Le reste du lot entre quand même quand un seul titre est déjà connu.
+const melange = validerCollage(json([RECETTE, autre('Vraiment neuve')]), [RECETTE.titre])
+assert.equal(melange.recettes.length, 1)
+assert.equal(melange.recettes[0]!.titre, 'Vraiment neuve')
 
 // Une recette invalide dans le lot ne bloque pas les autres, et son
 // titre apparaît dans l'erreur pour qu'on sache laquelle reprendre.

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Recipe } from '../types'
 import { formatQuantite, redimensionnerRecette } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
@@ -10,7 +10,10 @@ interface Props {
   /** Parts retenues au panier, ou celles du catalogue si le plat n'y est pas. */
   portions: number
   dansPanier: boolean
-  onBasculerPanier: () => void
+  /** Ajoute (avec le nombre de parts choisi ici) ou retire du panier. */
+  onBasculerPanier: (portions: number) => void
+  /** Change les parts d'un plat déjà au panier. */
+  onPortions: (portions: number) => void
   onCuisiner: () => void
   onModifier: () => void
   onSupprimer: () => void
@@ -22,6 +25,7 @@ export default function DetailRecette({
   portions,
   dansPanier,
   onBasculerPanier,
+  onPortions,
   onCuisiner,
   onModifier,
   onSupprimer,
@@ -39,8 +43,22 @@ export default function DetailRecette({
    * La fiche montrait toujours les quantités du catalogue, même quand le
    * panier retenait six parts : la liste de courses et le mode cuisson
    * annonçaient alors des doses que la fiche contredisait.
+   *
+   * Le nombre se règle ici, là où on lit la recette et où la question se
+   * pose (« on est quatre ce soir ») — plutôt qu'après coup, dans le
+   * panier. Tant que le plat n'y est pas, le réglage reste local et sert
+   * de valeur d'entrée ; une fois dedans, il écrit dans le panier.
    */
-  const doses = redimensionnerRecette(recette, portions).ingredients
+  const [choix, setChoix] = useState(portions)
+  useEffect(() => setChoix(portions), [portions])
+
+  const changerParts = (n: number) => {
+    const parts = Math.max(1, n)
+    setChoix(parts)
+    if (dansPanier) onPortions(parts)
+  }
+
+  const doses = redimensionnerRecette(recette, choix).ingredients
 
   return (
     <>
@@ -67,10 +85,25 @@ export default function DetailRecette({
 
       {recette.description && <p className="aide detail-description">{recette.description}</p>}
 
+      <div className="reglage-parts">
+        <div className="compteur">
+          <button onClick={() => changerParts(choix - 1)} aria-label="Moins de parts">
+            <Icone nom="moins" taille={16} />
+          </button>
+          <span aria-live="polite">{choix}</span>
+          <button onClick={() => changerParts(choix + 1)} aria-label="Plus de parts">
+            <Icone nom="plus" taille={16} />
+          </button>
+          <span className="compteur-label">Part{choix > 1 ? 's' : ''}</span>
+        </div>
+        {choix !== recette.portions && (
+          <button className="lien-discret" onClick={() => changerParts(recette.portions)}>
+            revenir à {recette.portions}
+          </button>
+        )}
+      </div>
+
       <div className="puces-info">
-        <span className="puce-info" data-ajuste={portions !== recette.portions ? 'true' : undefined}>
-          {portions} part{portions > 1 ? 's' : ''}
-        </span>
         {recette.tags.map((t) => (
           <span className="puce-info" key={t}>
             {t}
@@ -94,7 +127,7 @@ export default function DetailRecette({
       </ol>
 
       <div className="barre-actions">
-        <button className="principal" onClick={onBasculerPanier}>
+        <button className="principal" onClick={() => onBasculerPanier(choix)}>
           <Icone nom={dansPanier ? 'coche' : 'plus'} taille={20} />
           {dansPanier ? 'Retirer du panier' : 'Ajouter au panier'}
         </button>

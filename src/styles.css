@@ -638,18 +638,39 @@ button.discret.danger {
   box-shadow: var(--ombre-nette);
 }
 
+/* Réglage des parts sur la fiche : le compteur du panier, réutilisé là
+   où on lit la recette. */
+.reglage-parts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Poussé au bout de la ligne : collé au compteur, « revenir à 4 » se
+   lisait dans la foulée de « Parts ». */
+.reglage-parts .lien-discret {
+  margin-left: auto;
+}
+
+.lien-discret {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--encre-douce);
+  font: inherit;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
 .puces-info {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 10px;
-}
-
-/* Parts ajustées au panier : la fiche ne montre plus les quantités du
-   catalogue, autant que ça se voie. */
-.puce-info[data-ajuste='true'] {
-  background: var(--accent-doux);
-  color: var(--accent);
 }
 
 .puce-info {
@@ -1447,17 +1468,38 @@ button.carte-panier-bouton .carte-panier-corps {
   gap: 6px;
 }
 
-.progression i {
+/* Zone de touche de 44 px de haut sur un trait de 6 px : le padding
+   déborde au-dessus et en dessous, la marge négative empêche la barre
+   de pousser le reste de l'en-tête. */
+.progression button {
   width: 26px;
+  height: 6px;
+  padding: 19px 0;
+  margin: -19px 0;
+  border: 0;
+  background: none;
+  box-sizing: content-box;
+  cursor: pointer;
+}
+
+.progression button::before {
+  content: '';
+  display: block;
   height: 6px;
   border-radius: 999px;
   background: rgb(255 248 239 / 0.18);
   transition: background-color 0.2s ease;
 }
 
-.progression i[data-fait='true'] {
+.progression button[data-fait='true']::before {
   background: #a6d47e;
 }
+
+.progression button[aria-current='step']::before {
+  background: #fff8ef;
+}
+
+
 
 /* Tiroir des doses. Replié : une ligne. Déplié : la liste entière, qui
    défile pour son propre compte sans jamais dépasser 40 % de la hauteur
@@ -2082,6 +2124,21 @@ button.carte-panier-bouton .carte-panier-corps {
   font-weight: 700;
   letter-spacing: 0.3em;
   text-transform: uppercase;
+}
+
+/* Recettes écartées parce que déjà là : une information, pas une
+   erreur — d'où une surface neutre plutôt que le rouge du bloc voisin. */
+.bloc-doublons {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: var(--rayon);
+  background: var(--carte-haute);
+  color: var(--encre-douce);
+}
+
+.bloc-doublons p {
+  margin: 0;
+  font-size: 14px;
 }
 
 .bloc-erreurs {
