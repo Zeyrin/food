@@ -3,7 +3,12 @@
 Analyse et plan d'action commerciale, juillet 2026. Chaque document est fondé sur des
 recherches vérifiées avec sources primaires, pas sur des généralités de coaching.
 
-**👉 Commencer par `05-plan.md`.** Le reste est le dossier de preuves.
+**👉 Commencer par `10-paris-7ans.md`, puis `05-plan.md`.** Le reste est le dossier de preuves.
+
+> ⚠️ **Mise à jour** — les deux variables manquantes (7+ ans d'expérience, Paris) sont arrivées
+> après la rédaction du plan initial. Elles le simplifient radicalement : le marché parisien paie
+> **600-800 €/jour** pour ce profil, contre **100 €/jour** facturés aujourd'hui. `10-paris-7ans.md`
+> remplace la couche 2 de `05-plan.md`.
 
 | Document | Contenu |
 |---|---|
@@ -17,6 +22,7 @@ recherches vérifiées avec sources primaires, pas sur des généralités de coa
 | `07-regles-de-vente.md` | Les 7 règles tirées de l'analyse du démarchage restaurant. |
 | `08-facturation-electronique.md` | **L'opportunité à 5 semaines.** Obligation légale au 1er septembre 2026. |
 | `09-messages-prets.md` | Emails, relances, réponses aux objections. Prêts à envoyer. |
+| **`10-paris-7ans.md`** | **Le plan révisé : Paris + 7 ans = 600-800 €/jour. Une mission règle la survie.** |
 | `pipeline.csv` | Suivi des prospects. Un prospect à la fois = chaque « non » pèse trop lourd. |
 
 ## Les 4 chiffres à retenir
