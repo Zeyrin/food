@@ -439,7 +439,11 @@ button.carte:active {
   min-height: var(--pouce);
   padding-top: 10px;
   padding-bottom: 10px;
-  row-gap: 10px;
+  /* Sur mobile, la recherche passe sur sa propre ligne (voir
+     `.recherche-propose` ci-dessous) sous le titre — un row-gap trop
+     court la fait démarrer avant le bas du bouton réglages fixé en
+     haut à droite (même bande verticale), les deux se chevauchent. */
+  row-gap: 22px;
 }
 
 .recherche-propose {
