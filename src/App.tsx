@@ -158,10 +158,30 @@ export default function App() {
   const changerOnglet = useCallback(
     (cle: Onglet) => {
       if (vueActuelle.type === 'onglet' && vueActuelle.onglet === cle) return
-      irVers({ type: 'onglet', onglet: cle })
+      if (vueActuelle.type === 'onglet') {
+        irVers({ type: 'onglet', onglet: cle })
+        return
+      }
+      // Depuis un écran plein page (détail, ajout, réglages…), le rail
+      // desktop reste visible et ses boutons cliquables : basculer
+      // d'onglet doit alors remplacer cet écran plutôt que l'empiler,
+      // sinon « précédent » y ramènerait au lieu de reculer vers ce qui
+      // était ouvert avant.
+      avecTransition('avant', () => {
+        setPile((p) => {
+          const suivante = [...p.slice(0, -1), { type: 'onglet' as const, onglet: cle }]
+          history.replaceState({ profondeur: suivante.length }, '')
+          return suivante
+        })
+      })
     },
-    [vueActuelle, irVers],
+    [vueActuelle, irVers, avecTransition],
   )
+
+  const ouvrirAjout = useCallback(() => {
+    if (vueActuelle.type === 'ajout') return
+    irVers({ type: 'ajout' })
+  }, [vueActuelle, irVers])
 
   // Bascule d'onglet sans empiler d'entrée d'historique — utilisée par
   // la visite guidée pour amener le bon écran derrière chaque repère.
@@ -398,25 +418,31 @@ export default function App() {
     }
   }
 
+  const onglet = vueActuelle.type === 'onglet' ? vueActuelle.onglet : 'propose'
+  const estOnglet = vueActuelle.type === 'onglet'
+
+  // Écrans plein page (détail, ajout/édition, réglages) : sur mobile ils
+  // restent immersifs comme avant (le CSS masque le rail en dessous de
+  // 900px via `data-sous-ecran`), mais sur desktop le rail d'onglets et
+  // les repères globaux (réglages, hors ligne) sont le squelette
+  // permanent de l'appli — les perdre en ouvrant « Ajouter une recette »
+  // se lisait comme un plantage plutôt qu'une navigation normale.
+  let ecranPleinePage: React.ReactNode = null
   if (vueActuelle.type === 'edition') {
     const { recette } = vueActuelle
-    return (
+    ecranPleinePage = (
       <AjouterRecette
         recetteInitiale={recette}
         onAjouter={(r) => modifier({ ...r, id: recette.id })}
         onQuitter={reculer}
       />
     )
-  }
-
-  if (vueActuelle.type === 'ajout') {
-    return <AjouterRecette onAjouter={ajouter} onQuitter={reculer} />
-  }
-
-  if (vueActuelle.type === 'detail') {
+  } else if (vueActuelle.type === 'ajout') {
+    ecranPleinePage = <AjouterRecette onAjouter={ajouter} onQuitter={reculer} />
+  } else if (vueActuelle.type === 'detail') {
     const recette = recipes.find((r) => r.id === vueActuelle.recipeId)
     if (recette) {
-      return (
+      ecranPleinePage = (
         <DetailRecette
           recette={recette}
           dansPanier={basket.some((e) => e.recipeId === recette.id)}
@@ -434,10 +460,8 @@ export default function App() {
         />
       )
     }
-  }
-
-  if (vueActuelle.type === 'reglages') {
-    return (
+  } else if (vueActuelle.type === 'reglages') {
+    ecranPleinePage = (
       <Reglages
         codeFoyer={codeFoyer}
         onRejoindre={rejoindreDepuisReglages}
@@ -448,18 +472,20 @@ export default function App() {
     )
   }
 
-  const onglet = vueActuelle.type === 'onglet' ? vueActuelle.onglet : 'propose'
+  const sousEcran = ecranPleinePage !== null
 
   return (
-    <>
-      <button
-        className="bouton-rond-discret bouton-reglages-global"
-        onClick={() => irVers({ type: 'reglages' })}
-        aria-label="Réglages"
-        data-tour="reglages"
-      >
-        <Icone nom="menu" taille={20} />
-      </button>
+    <div data-sous-ecran={sousEcran ? 'true' : undefined}>
+      {vueActuelle.type !== 'reglages' && (
+        <button
+          className="bouton-rond-discret bouton-reglages-global"
+          onClick={() => irVers({ type: 'reglages' })}
+          aria-label="Réglages"
+          data-tour="reglages"
+        >
+          <Icone nom="menu" taille={20} />
+        </button>
+      )}
 
       {!enLigne && (
         <p className="pastille-hors-ligne" role="status">
@@ -467,43 +493,47 @@ export default function App() {
         </p>
       )}
 
-      {onglet === 'propose' && (
-        <Propose
-          recipes={recipes}
-          historique={historique}
-          basket={basket}
-          onBasket={majBasket}
-          onDetail={(recipeId) => irVers({ type: 'detail', recipeId })}
-        />
-      )}
+      {ecranPleinePage ?? (
+        <>
+          {onglet === 'propose' && (
+            <Propose
+              recipes={recipes}
+              historique={historique}
+              basket={basket}
+              onBasket={majBasket}
+              onDetail={(recipeId) => irVers({ type: 'detail', recipeId })}
+            />
+          )}
 
-      {onglet === 'panier' && (
-        <Panier
-          recipes={recipes}
-          basket={basket}
-          onBasket={majBasket}
-          onVersPropose={() => changerOnglet('propose')}
-          onVersListe={() => changerOnglet('liste')}
-          onAjouterRecette={() => irVers({ type: 'ajout' })}
-        />
-      )}
+          {onglet === 'panier' && (
+            <Panier
+              recipes={recipes}
+              basket={basket}
+              onBasket={majBasket}
+              onVersPropose={() => changerOnglet('propose')}
+              onVersListe={() => changerOnglet('liste')}
+              onAjouterRecette={ouvrirAjout}
+            />
+          )}
 
-      {onglet === 'liste' && (
-        <Liste
-          items={items}
-          etat={etatListe}
-          onEtat={majListe}
-          prochaineCuisson={recipes.find((r) => r.id === basket[0]?.recipeId) ?? null}
-          onVersCuisson={() => changerOnglet('cuisson')}
-        />
-      )}
+          {onglet === 'liste' && (
+            <Liste
+              items={items}
+              etat={etatListe}
+              onEtat={majListe}
+              prochaineCuisson={recipes.find((r) => r.id === basket[0]?.recipeId) ?? null}
+              onVersCuisson={() => changerOnglet('cuisson')}
+            />
+          )}
 
-      {onglet === 'cuisson' && (
-        <CuissonListe
-          recipes={recipes}
-          basket={basket}
-          onCuisiner={(recipeId) => irVers({ type: 'cuisson', recipeId })}
-        />
+          {onglet === 'cuisson' && (
+            <CuissonListe
+              recipes={recipes}
+              basket={basket}
+              onCuisiner={(recipeId) => irVers({ type: 'cuisson', recipeId })}
+            />
+          )}
+        </>
       )}
 
       <nav className="onglets">
@@ -519,21 +549,25 @@ export default function App() {
             key={cle}
             data-tour={`nav-${cle}`}
             onClick={() => changerOnglet(cle)}
-            aria-current={onglet === cle ? 'page' : undefined}
+            aria-current={estOnglet && onglet === cle ? 'page' : undefined}
           >
             <Icone nom={icone} taille={22} />
             {label}
           </button>
         ))}
-        <button data-tour="nav-ajouter" onClick={() => irVers({ type: 'ajout' })}>
+        <button
+          data-tour="nav-ajouter"
+          onClick={ouvrirAjout}
+          aria-current={vueActuelle.type === 'ajout' ? 'page' : undefined}
+        >
           <Icone nom="plus-cercle" taille={22} />
           Ajouter
         </button>
       </nav>
 
-      {!onboardingVu && (
+      {!onboardingVu && estOnglet && (
         <TourGuide ongletActuel={onglet} onOnglet={forcerOnglet} onTerminer={terminerOnboarding} />
       )}
-    </>
+    </div>
   )
 }
