@@ -84,12 +84,12 @@ export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }
     <>
       <header className="entete-app">
         <div className="entete-app-titre">
-          <Icone nom="etoile" />
-          <h1>{recetteInitiale ? 'Modifier la recette' : 'Saisie automatique'}</h1>
+          <Icone nom="plus-cercle" />
+          <h1>{recetteInitiale ? 'Modifier la recette' : 'Ajouter une recette'}</h1>
         </div>
       </header>
       <p className="aide">
-        Demandez une recette à une IA avec le prompt ci-dessous, puis collez sa réponse JSON. Dans
+        Saisie automatique : demandez une recette à une IA avec le prompt ci-dessous, puis collez sa réponse JSON. Dans
         les étapes, un ingrédient entre accolades — « cuire les {'{pâtes}'} » — s'affiche avec sa
         dose en mode cuisson.
       </p>

@@ -6,9 +6,16 @@ interface Props {
   onRejoindre: (code: string) => Promise<boolean>
   onQuitter: () => void
   onFermer: () => void
+  onRevoirPresentation: () => void
 }
 
-export default function Reglages({ codeFoyer, onRejoindre, onQuitter, onFermer }: Props) {
+export default function Reglages({
+  codeFoyer,
+  onRejoindre,
+  onQuitter,
+  onFermer,
+  onRevoirPresentation,
+}: Props) {
   const [code, setCode] = useState('')
   const [enCours, setEnCours] = useState(false)
   const [erreur, setErreur] = useState(false)
@@ -35,6 +42,12 @@ export default function Reglages({ codeFoyer, onRejoindre, onQuitter, onFermer }
           <Icone nom="fermer" taille={20} />
         </button>
       </header>
+
+      <h2>Découvrir l'app</h2>
+      <p className="aide">Revoir la présentation des fonctionnalités et comment les utiliser.</p>
+      <button className="discret suite pleine-largeur" onClick={onRevoirPresentation}>
+        <Icone nom="etoile" taille={18} /> Revoir la présentation
+      </button>
 
       {codeFoyer && (
         <>
