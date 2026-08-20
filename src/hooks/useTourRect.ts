@@ -1,0 +1,50 @@
+import { useEffect, useState } from 'react'
+
+/**
+ * Rectangle (coordonnées viewport) de l'élément marqué
+ * `data-tour="cible"`, recalculé au défilement, au redimensionnement, et
+ * si l'élément change de taille. `null` tant qu'il n'existe pas encore
+ * (l'onglet qui le contient est en train de se monter) ou si `cible` est
+ * `null` (étape sans repère).
+ *
+ * Quelques essais espacés plutôt qu'un `MutationObserver` : le rendu
+ * React qui suit un changement d'onglet prend un ou deux battements,
+ * jamais plus.
+ */
+export function useTourRect(cible: string | null): DOMRect | null {
+  const [rect, setRect] = useState<DOMRect | null>(null)
+
+  useEffect(() => {
+    if (!cible) {
+      setRect(null)
+      return
+    }
+
+    let el: Element | null = null
+    let ro: ResizeObserver | null = null
+
+    const mesurer = () => {
+      if (!el) {
+        el = document.querySelector(`[data-tour="${cible}"]`)
+        if (el) {
+          ro = new ResizeObserver(mesurer)
+          ro.observe(el)
+        }
+      }
+      if (el) setRect(el.getBoundingClientRect())
+    }
+
+    const essais = [0, 50, 150, 350, 600].map((delai) => window.setTimeout(mesurer, delai))
+    window.addEventListener('resize', mesurer)
+    window.addEventListener('scroll', mesurer, true)
+
+    return () => {
+      essais.forEach(clearTimeout)
+      window.removeEventListener('resize', mesurer)
+      window.removeEventListener('scroll', mesurer, true)
+      ro?.disconnect()
+    }
+  }, [cible])
+
+  return rect
+}

@@ -98,3 +98,6 @@ export interface ListState {
 }
 
 export type Verdict = 'refaire' | 'jamais'
+
+/** Les quatre onglets de la barre de navigation principale. */
+export type Onglet = 'propose' | 'panier' | 'liste' | 'cuisson'

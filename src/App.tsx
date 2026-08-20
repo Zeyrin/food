@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { flushSync } from 'react-dom'
 import corpus from './data/recipes.json'
-import type { BasketEntry, ListState, Recipe, Verdict } from './types'
+import type { BasketEntry, ListState, Onglet, Recipe, Verdict } from './types'
 import { buildList, redimensionnerRecette } from './lib/aggregate'
 import { type Historique } from './lib/propose'
 import {
@@ -38,14 +38,12 @@ import Cuisson from './screens/Cuisson'
 import CuissonListe from './screens/CuissonListe'
 import AjouterRecette from './screens/AjouterRecette'
 import Bienvenue from './screens/Bienvenue'
-import Onboarding from './screens/Onboarding'
+import TourGuide from './components/TourGuide'
 import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
 
 const CORPUS: Recipe[] = corpus as Recipe[]
-
-type Onglet = 'propose' | 'panier' | 'liste' | 'cuisson'
 
 /**
  * Un seul écran affiché à la fois, mais empilé plutôt que dans des
@@ -165,6 +163,18 @@ export default function App() {
     [vueActuelle, irVers],
   )
 
+  // Bascule d'onglet sans empiler d'entrée d'historique — utilisée par
+  // la visite guidée pour amener le bon écran derrière chaque repère.
+  // Une vraie navigation (`changerOnglet`) ferait reculer l'utilisateur
+  // d'un cran par étape au lieu de refermer la visite.
+  const forcerOnglet = useCallback((cle: Onglet) => {
+    setPile((p) => {
+      const dernier = p[p.length - 1]
+      if (dernier?.type === 'onglet' && dernier.onglet === cle) return p
+      return [...p.slice(0, -1), { type: 'onglet', onglet: cle }]
+    })
+  }, [])
+
   const [onboardingVu, setOnboardingVu] = useState(
     () => localStorage.getItem(CLE_ONBOARDING_VU) === '1',
   )
@@ -176,10 +186,15 @@ export default function App() {
     }
     setOnboardingVu(true)
   }, [])
-  // Rouvre la présentation depuis Réglages sans toucher au drapeau déjà
-  // enregistré : à la fin des diapos, `terminerOnboarding` le réécrit
-  // simplement à la même valeur.
-  const revoirOnboarding = useCallback(() => setOnboardingVu(false), [])
+  // Rouvre la visite depuis Réglages sans toucher au drapeau déjà
+  // enregistré : à la fin, `terminerOnboarding` le réécrit simplement à
+  // la même valeur. On repart de l'onglet Proposer — la visite y
+  // commence toujours — plutôt que de laisser l'écran Réglages ouvert
+  // dessous.
+  const revoirOnboarding = useCallback(() => {
+    setPile([{ type: 'onglet', onglet: 'propose' }])
+    setOnboardingVu(false)
+  }, [])
 
   const [historique, setHistorique] = useState<Historique>({ derniereFois: {}, verdicts: {} })
   const [foyer, setFoyer] = useState<string | null>(null)
@@ -363,10 +378,6 @@ export default function App() {
     return <Bienvenue onCreer={creer} onRejoindre={rejoindre} />
   }
 
-  if (!onboardingVu) {
-    return <Onboarding onTerminer={terminerOnboarding} />
-  }
-
   if (vueActuelle.type === 'cuisson') {
     const recette = recipes.find((r) => r.id === vueActuelle.recipeId)
     if (recette) {
@@ -445,6 +456,7 @@ export default function App() {
         className="bouton-rond-discret bouton-reglages-global"
         onClick={() => irVers({ type: 'reglages' })}
         aria-label="Réglages"
+        data-tour="reglages"
       >
         <Icone nom="menu" taille={20} />
       </button>
@@ -505,6 +517,7 @@ export default function App() {
         ).map(([cle, icone, label]) => (
           <button
             key={cle}
+            data-tour={`nav-${cle}`}
             onClick={() => changerOnglet(cle)}
             aria-current={onglet === cle ? 'page' : undefined}
           >
@@ -512,11 +525,15 @@ export default function App() {
             {label}
           </button>
         ))}
-        <button onClick={() => irVers({ type: 'ajout' })}>
+        <button data-tour="nav-ajouter" onClick={() => irVers({ type: 'ajout' })}>
           <Icone nom="plus-cercle" taille={22} />
           Ajouter
         </button>
       </nav>
+
+      {!onboardingVu && (
+        <TourGuide ongletActuel={onglet} onOnglet={forcerOnglet} onTerminer={terminerOnboarding} />
+      )}
     </>
   )
 }

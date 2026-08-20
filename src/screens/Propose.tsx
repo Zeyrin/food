@@ -65,7 +65,7 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
           <Icone nom="grill" />
           <h1>Proposer</h1>
         </div>
-        <div className="recherche-propose">
+        <div className="recherche-propose" data-tour="recherche-propose">
           <Icone nom="recherche" taille={18} />
           <input
             className="champ-texte champ-recherche"
@@ -78,7 +78,7 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
       </header>
 
       <div className="corps-propose">
-        <details className="tiroir-filtres" open>
+        <details className="tiroir-filtres" open data-tour="filtres-propose">
           <summary>
             <span>Filtres</span>
             {nombreFiltres > 0 && <em>{nombreFiltres}</em>}
