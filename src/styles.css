@@ -247,6 +247,20 @@ p.aide {
   margin: 0 auto;
 }
 
+/* Écrans plein page (détail, ajout/édition, réglages) sur mobile : le
+   rail est un rail desktop, pas un onglet — en dessous de 900px il
+   redevient la barre de tabs du bas et n'a pas sa place au-dessus d'un
+   écran immersif à bouton retour dédié. Le rail reste monté dans le DOM
+   (voir App.tsx) pour rester visible côté desktop ; ce n'est que sous
+   900px qu'on le masque, avec les repères globaux qui iraient avec. */
+@media (max-width: 899px) {
+  [data-sous-ecran='true'] nav.onglets,
+  [data-sous-ecran='true'] .bouton-reglages-global,
+  [data-sous-ecran='true'] .pastille-hors-ligne {
+    display: none;
+  }
+}
+
 nav.onglets {
   position: fixed;
   left: 0;
