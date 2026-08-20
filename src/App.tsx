@@ -349,6 +349,24 @@ export default function App() {
     [etatListe, majListe],
   )
 
+  /**
+   * Fin de semaine. Le panier et la liste sont la même décision de
+   * foyer (« on mange ça » → « il faut acheter ça ») : ils repartent
+   * de zéro ensemble, en une seule écriture réseau. Les cases cochées
+   * comptent autant que le panier — leur clé est le nom de
+   * l'ingrédient, stable d'une semaine à l'autre, donc les garder
+   * ferait démarrer la liste suivante à moitié cochée.
+   *
+   * `panier: []` explicite plutôt que `ETAT_VIDE` : l'application d'un
+   * état distant garde le panier local quand le champ est absent (une
+   * ligne `listes` d'avant le partage du panier), donc un panier
+   * simplement omis ne se viderait pas sur l'autre téléphone.
+   */
+  const viderSemaine = useCallback(
+    () => majListe({ coche: {}, dejaPossede: {}, items: [], panier: [] }),
+    [majListe],
+  )
+
   const ajouter = useCallback(
     async (recette: Recipe) => {
       if (!foyer) throw new Error('Foyer non initialisé, réessayez dans un instant.')
@@ -513,6 +531,7 @@ export default function App() {
               onVersPropose={() => changerOnglet('propose')}
               onVersListe={() => changerOnglet('liste')}
               onAjouterRecette={ouvrirAjout}
+              onViderSemaine={viderSemaine}
             />
           )}
 

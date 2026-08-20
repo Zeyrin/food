@@ -22,6 +22,17 @@ const normaliser = (s: string) =>
 
 export default function Propose({ recipes, historique, basket, onBasket, onDetail }: Props) {
   const [recherche, setRecherche] = useState('')
+  /**
+   * Le tiroir de filtres est une colonne latérale sur desktop (il y a la
+   * place, il reste ouvert), mais sur un téléphone le nuage de tags fait
+   * une pleine hauteur d'écran : ouvert par défaut, il repoussait toutes
+   * les recettes sous la ligne de flottaison. On atterrit donc sur le
+   * catalogue, les filtres à un doigt — leur nombre s'affiche sur le
+   * résumé replié.
+   */
+  const [filtresOuverts, setFiltresOuverts] = useState(
+    () => window.matchMedia('(min-width: 900px)').matches,
+  )
   const [tempsMax, setTempsMax] = useState<number | null>(null)
   const [aRefaire, setARefaire] = useState(false)
   const [tags, setTags] = useState<string[]>([])
@@ -58,6 +69,13 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
 
   const nombreFiltres = (tempsMax !== null ? 1 : 0) + (aRefaire ? 1 : 0) + tags.length
 
+  const toutEffacer = () => {
+    setTempsMax(null)
+    setARefaire(false)
+    setTags([])
+    setRecherche('')
+  }
+
   return (
     <div className="ecran-propose">
       <header className="entete-app entete-propose">
@@ -73,18 +91,41 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
             placeholder="Chercher une recette…"
             value={recherche}
             onChange={(e) => setRecherche(e.target.value)}
+            aria-label="Chercher une recette"
           />
+          {/* La croix native de `type=search` n'existe pas partout (ni sur
+              Firefox, ni sur iOS) : sans elle, effacer demande d'ouvrir le
+              clavier et de maintenir « retour arrière ». */}
+          {recherche && (
+            <button
+              className="bouton-effacer-recherche"
+              onClick={() => setRecherche('')}
+              aria-label="Effacer la recherche"
+            >
+              <Icone nom="fermer" taille={16} />
+            </button>
+          )}
         </div>
       </header>
 
       <div className="corps-propose">
-        <details className="tiroir-filtres" open data-tour="filtres-propose">
+        <details
+          className="tiroir-filtres"
+          open={filtresOuverts}
+          onToggle={(e) => setFiltresOuverts(e.currentTarget.open)}
+          data-tour="filtres-propose"
+        >
           <summary>
             <span>Filtres</span>
             {nombreFiltres > 0 && <em>{nombreFiltres}</em>}
             <Icone nom="suivant" taille={16} />
           </summary>
           <div className="puces">
+            {nombreFiltres > 0 && (
+              <button className="puce puce-effacer" onClick={toutEffacer}>
+                <Icone nom="fermer" taille={14} /> Tout effacer
+              </button>
+            )}
             {TEMPS.map((t) => (
               <button
                 key={t}
@@ -112,7 +153,16 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
         </details>
 
         {affichees.length === 0 ? (
-          <p className="vide">Aucune recette ne correspond.</p>
+          <div className="vide">
+            <p>Aucune recette ne correspond.</p>
+            {/* Un cul-de-sac sans issue sinon : les filtres qui ont vidé
+                l'écran sont repliés dans le tiroir, hors de vue. */}
+            {(nombreFiltres > 0 || recherche.trim() !== '') && (
+              <button className="discret suite" onClick={toutEffacer}>
+                Effacer les filtres
+              </button>
+            )}
+          </div>
         ) : (
           <div className="grille-recettes">
             {affichees.map((r, i) => (
@@ -121,8 +171,18 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
                 className="carte carte-recette"
                 role="button"
                 tabIndex={0}
+                data-panier={dansPanier(r.id) ? 'true' : undefined}
                 onClick={() => onDetail(r.id)}
-                onKeyDown={(e) => e.key === 'Enter' && onDetail(r.id)}
+                // La barre d'espace ouvre aussi la fiche (un vrai bouton le
+                // ferait), mais seulement si le focus est sur la carte —
+                // sinon elle doublerait le clic du bouton « + » imbriqué.
+                onKeyDown={(e) => {
+                  if (e.target !== e.currentTarget) return
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    onDetail(r.id)
+                  }
+                }}
                 style={
                   {
                     '--teinte': teinteRecette(r.titre),

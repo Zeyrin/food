@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Recipe } from '../types'
 import { formatQuantite } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
@@ -22,9 +23,13 @@ export default function DetailRecette({
   onSupprimer,
   onFermer,
 }: Props) {
-  const supprimer = () => {
-    if (window.confirm(`Supprimer « ${recette.titre} » du catalogue ?`)) onSupprimer()
-  }
+  /**
+   * Confirmation dans la page plutôt qu'un `window.confirm` : la boîte
+   * native s'affiche hors du thème de l'app, et son bouton « OK » est
+   * exactement là où le doigt vient de cliquer — un double-appui
+   * suffisait à supprimer une recette sans l'avoir lue.
+   */
+  const [confirmation, setConfirmation] = useState(false)
 
   return (
     <>
@@ -87,9 +92,23 @@ export default function DetailRecette({
             Modifier
           </button>
         </div>
-        <button className="discret pleine-largeur danger" onClick={supprimer}>
-          Supprimer du catalogue
-        </button>
+        {confirmation ? (
+          <div className="bloc-confirmation" role="alertdialog" aria-label="Confirmer la suppression">
+            <p>Supprimer « {recette.titre} » du catalogue ? Les autres appareils du foyer la perdront aussi.</p>
+            <div className="rangee-boutons">
+              <button className="discret" onClick={() => setConfirmation(false)}>
+                Annuler
+              </button>
+              <button className="discret danger" onClick={onSupprimer}>
+                Supprimer
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button className="discret pleine-largeur danger" onClick={() => setConfirmation(true)}>
+            Supprimer du catalogue
+          </button>
+        )}
       </div>
     </>
   )

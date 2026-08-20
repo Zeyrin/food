@@ -34,11 +34,25 @@ export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }
   const [enCours, setEnCours] = useState(false)
   const [copie, setCopie] = useState(false)
   const [ajoute, setAjoute] = useState(false)
+  /**
+   * Le presse-papier n'est pas toujours disponible : absent hors HTTPS,
+   * refusé par certains navigateurs hors geste direct, et hors d'usage
+   * dans une webview verrouillée. Le bouton ne faisait alors rien du
+   * tout, sans un mot. Repli : on affiche le prompt en clair, prêt à
+   * être sélectionné à la main.
+   */
+  const [promptEnClair, setPromptEnClair] = useState<string | null>(null)
 
   const copierPrompt = async () => {
-    await navigator.clipboard.writeText(genererPrompt(demande))
-    setCopie(true)
-    setTimeout(() => setCopie(false), 2000)
+    const prompt = genererPrompt(demande)
+    try {
+      await navigator.clipboard.writeText(prompt)
+      setPromptEnClair(null)
+      setCopie(true)
+      setTimeout(() => setCopie(false), 2000)
+    } catch {
+      setPromptEnClair(prompt)
+    }
   }
 
   const valider = async () => {
@@ -105,6 +119,21 @@ export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }
       <button className="discret suite pleine-largeur" onClick={copierPrompt}>
         <Icone nom={copie ? 'coche' : 'liste'} taille={18} /> {copie ? 'Copié !' : 'Copier le prompt'}
       </button>
+      {promptEnClair !== null && (
+        <>
+          <p className="aide espace-haut" role="alert">
+            Ce navigateur refuse la copie automatique. Sélectionnez le texte ci-dessous et copiez-le à la main.
+          </p>
+          <textarea
+            className="champ-texte champ-texte-code"
+            value={promptEnClair}
+            readOnly
+            rows={6}
+            onFocus={(e) => e.currentTarget.select()}
+            aria-label="Prompt à copier à la main"
+          />
+        </>
+      )}
 
       <h2>2. La réponse de l'IA</h2>
       <textarea
@@ -116,7 +145,7 @@ export default function AjouterRecette({ onAjouter, onQuitter, recetteInitiale }
       />
 
       {erreurs.length > 0 && (
-        <div className="bloc-erreurs">
+        <div className="bloc-erreurs" role="alert">
           {erreurs.map((e, i) => (
             <p key={i}>{e}</p>
           ))}

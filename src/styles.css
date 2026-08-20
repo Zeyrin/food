@@ -478,6 +478,32 @@ button.carte:active {
 .recherche-propose .champ-recherche {
   margin: 0;
   padding-left: 44px;
+  padding-right: 48px;
+}
+
+/* Sinon deux croix se superposent là où WebKit dessine la sienne. */
+.champ-recherche::-webkit-search-cancel-button {
+  display: none;
+}
+
+.bouton-effacer-recherche {
+  position: absolute;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--carte-haute);
+  color: var(--encre-douce);
+  cursor: pointer;
+}
+
+/* Les icônes de ce bloc sont posées en absolu (la loupe, à gauche) —
+   celle-ci vit dans son bouton. */
+.bouton-effacer-recherche svg {
+  position: static;
 }
 
 .detail-vignette {
@@ -549,6 +575,17 @@ button.discret.danger {
 
 .bouton-ajout[aria-pressed='true'] {
   background: var(--terracotta);
+}
+
+/* Une recette déjà retenue se repère en parcourant la grille, pas
+   seulement à l'icône du petit rond posé dessus. */
+.carte-recette[data-panier='true'] {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.carte-recette[data-panier='true'] .carte-recette-corps {
+  background: var(--accent-doux);
 }
 
 .bouton-ajout-flottant {
@@ -729,6 +766,16 @@ button.discret.danger {
 .puce[aria-pressed='true'] {
   background: var(--accent-doux);
   color: var(--accent);
+}
+
+/* Sortie de secours quand un filtre a vidé la grille : on la met en
+   tête du nuage, avant les filtres qu'elle annule. */
+.puce-effacer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--terracotta-doux);
+  color: var(--terracotta);
 }
 
 /* Tiroir des filtres (écran Proposer) : replié une ligne, déplié la
@@ -1772,6 +1819,10 @@ button.carte-panier-bouton .carte-panier-corps {
   text-align: center;
 }
 
+.vide p {
+  margin: 0;
+}
+
 .bouton-flottant {
   position: fixed;
   right: 20px;
@@ -1869,6 +1920,136 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .bloc-erreurs p + p {
   margin-top: 6px;
+}
+
+/* --- Composeur d'article (écran Liste) -----------------------------------
+   Remplace le `window.prompt` d'avant : un champ dans la page, ouvert
+   par le bouton flottant, qui reste ouvert après validation — on ajoute
+   rarement une seule chose à la liste. */
+
+.composeur-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 20px;
+}
+
+.composeur-item .champ-texte {
+  flex: 1;
+  min-width: 0;
+}
+
+.composeur-valider {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--rayon);
+  background: var(--accent);
+  color: var(--sur-accent);
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.composeur-valider:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.composeur-valider:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* --- Confirmation en place -----------------------------------------------
+   Une action qu'on ne rattrape pas (supprimer une recette, vider la
+   semaine, quitter le foyer) se confirme dans la page : `window.confirm`
+   s'affiche hors du thème de l'app, et pose son « OK » exactement sous
+   le doigt qui vient de cliquer. */
+
+.bloc-confirmation {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: var(--rayon);
+  background: var(--terracotta-doux);
+  color: var(--encre);
+  animation: confirmation-entree 0.16s ease;
+}
+
+.bloc-confirmation p {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+
+.bloc-confirmation .rangee-boutons .discret {
+  background: var(--carte);
+  border-color: transparent;
+}
+
+.bloc-confirmation .rangee-boutons .discret.danger {
+  background: var(--terracotta);
+  border-color: transparent;
+  color: var(--papier);
+}
+
+@keyframes confirmation-entree {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* --- Liste bouclée --------------------------------------------------------
+   Le 0 restant méritait mieux qu'un compteur : c'est le moment où on
+   quitte le magasin. */
+
+.carte-fini {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 4px 0 8px;
+  padding: 16px;
+  border-radius: var(--rayon);
+  background: var(--accent-doux);
+}
+
+.carte-fini-texte {
+  flex: 1;
+  min-width: 160px;
+}
+
+/* Le bouton passe sous le texte dès que la carte se resserre — un
+   « Cuisson » écrasé à 60 px n'est plus une cible de pouce. */
+.carte-fini .discret {
+  flex: 1 0 100%;
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--sur-accent);
+}
+
+.carte-fini-coche {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--sur-accent);
+}
+
+.carte-fini h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--accent);
+}
+
+.carte-fini p {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--encre-douce);
 }
 
 /* --- Utilitaires de mise en page ----------------------------------------- */

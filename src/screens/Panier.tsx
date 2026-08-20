@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { BasketEntry, Recipe } from '../types'
 import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
@@ -10,6 +11,8 @@ interface Props {
   onVersPropose: () => void
   onVersListe: () => void
   onAjouterRecette: () => void
+  /** Vide le panier *et* la liste (cases cochées comprises) — voir App.tsx. */
+  onViderSemaine: () => void
 }
 
 export default function Panier({
@@ -19,8 +22,10 @@ export default function Panier({
   onVersPropose,
   onVersListe,
   onAjouterRecette,
+  onViderSemaine,
 }: Props) {
   const byId = new Map(recipes.map((r) => [r.id, r]))
+  const [confirmation, setConfirmation] = useState(false)
 
   const setPortions = (recipeId: string, portions: number) =>
     onBasket(basket.map((e) => (e.recipeId === recipeId ? { ...e, portions } : e)))
@@ -34,6 +39,49 @@ export default function Panier({
         <h1>Panier</h1>
       </div>
     </header>
+  )
+
+  /**
+   * La semaine a une fin, et rien ne la marquait : il fallait retirer
+   * les plats un par un, et les cases cochées — dont la clé est le nom
+   * de l'ingrédient, donc stable d'une semaine à l'autre — revenaient
+   * déjà cochées sur la liste suivante.
+   */
+  const finDeSemaine = (
+    <>
+      <h2>Nouvelle semaine</h2>
+      {confirmation ? (
+        <div className="bloc-confirmation" role="alertdialog" aria-label="Confirmer la remise à zéro">
+          <p>
+            Vider les {basket.length} plats du panier et la liste de courses, cases cochées comprises ? Le
+            catalogue de recettes, lui, ne bouge pas.
+          </p>
+          <div className="rangee-boutons">
+            <button className="discret" onClick={() => setConfirmation(false)}>
+              Annuler
+            </button>
+            <button
+              className="discret danger"
+              onClick={() => {
+                setConfirmation(false)
+                onViderSemaine()
+              }}
+            >
+              Vider
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <p className="aide">
+            Courses faites et plats cuisinés ? Repartez d'un panier et d'une liste vides.
+          </p>
+          <button className="discret suite pleine-largeur" onClick={() => setConfirmation(true)}>
+            Vider la semaine
+          </button>
+        </>
+      )}
+    </>
   )
 
   const complements = (
@@ -126,6 +174,8 @@ export default function Panier({
       </div>
 
       {complements}
+
+      {finDeSemaine}
 
       <div className="espaceur-action-flottante" aria-hidden="true" />
 
