@@ -14,6 +14,22 @@ interface Props {
 const MARGE = 10
 
 /**
+ * Rayon de bordure du repère à partir de celui, réel, de l'élément visé.
+ * Le repère est plus grand que l'élément de `MARGE` de chaque côté : pour
+ * que ses coins restent concentriques à ceux du bouton (au lieu d'un
+ * rayon fixe qui ne correspond à rien), on ajoute cette même marge au
+ * rayon en pixels. Les rayons en pourcentage (cercle) ou en unités
+ * relatives (pilule à `999px`) restent tels quels, la forme se conserve
+ * déjà à l'agrandissement.
+ */
+function rayonRepere(rayon: string | undefined): string {
+  if (!rayon) return `${MARGE}px`
+  const valeur = parseFloat(rayon)
+  if (Number.isNaN(valeur) || !rayon.endsWith('px')) return rayon
+  return `${valeur + MARGE}px`
+}
+
+/**
  * Visite guidée jouée par-dessus l'app réelle plutôt qu'un diaporama à
  * part : quatre bandes sombres laissent un trou exactement sur le
  * bouton visé (`data-tour` sur l'élément réel), avec un anneau qui
@@ -34,7 +50,8 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
     if (etape.onglet && etape.onglet !== ongletActuel) onOnglet(etape.onglet)
   }, [index])
 
-  const rect = useTourRect(etape.cible)
+  const tour = useTourRect(etape.cible)
+  const rect = tour?.rect ?? null
 
   const carteRef = useRef<HTMLDivElement>(null)
   const [style, setStyle] = useState<CSSProperties>({})
@@ -108,6 +125,7 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
             left: rect.left - MARGE,
             width: rect.width + MARGE * 2,
             height: rect.height + MARGE * 2,
+            borderRadius: rayonRepere(tour?.rayon),
           }}
         />
       )}

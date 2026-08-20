@@ -2135,14 +2135,15 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   position: fixed;
   z-index: 56;
   border: 3px solid var(--accent);
-  border-radius: 20px;
+  border-radius: 20px; /* repli tant que le rayon réel de la cible n'est pas encore mesuré */
   pointer-events: none;
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
   transition:
     top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .visite-repere::after {
