@@ -3,6 +3,7 @@ import type { BasketEntry, Recipe } from '../types'
 import { type Historique, proposer, tousLesTags } from '../lib/propose'
 import { teinteRecette } from '../lib/identite'
 import Icone from '../components/Icone'
+import ImageRecette from '../components/ImageRecette'
 
 interface Props {
   recipes: Recipe[]
@@ -215,11 +216,11 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
                 }
               >
                 <div className="vignette" aria-hidden="true">
-                  {r.image && <img src={r.image} alt="" />}
+                  {r.titre.charAt(0)}
+                  <ImageRecette src={r.image} />
                   <span className="badge-temps">
                     <Icone nom="minuteur" taille={12} /> {r.temps} min
                   </span>
-                  {!r.image && r.titre.charAt(0)}
                   <button
                     className="bouton-ajout bouton-ajout-flottant"
                     onClick={(e) => {

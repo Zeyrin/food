@@ -207,6 +207,10 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
                 className="rangee"
                 key={item.key}
                 data-coche={deja}
+                // `data-coche` ne pilote que le style : sans `aria-pressed`,
+                // un lecteur d'écran annonce un bouton sans jamais dire si
+                // le produit est coché.
+                aria-pressed={deja}
                 onClick={() => basculer('dejaPossede', item.key)}
               >
                 <span className="case">{deja && <Icone nom="coche" taille={18} />}</span>
@@ -319,7 +323,12 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
               const libre = item.magasin === 'autre'
               return (
                 <div className="rangee-avec-suppr" key={item.key}>
-                  <button className="rangee" data-coche={coche} onClick={() => basculer('coche', item.key)}>
+                  <button
+                    className="rangee"
+                    data-coche={coche}
+                    aria-pressed={coche}
+                    onClick={() => basculer('coche', item.key)}
+                  >
                     <span className="case">{coche && <Icone nom="coche" taille={18} />}</span>
                     <span className="nom-groupe">
                       <span className="nom">{item.nom}</span>

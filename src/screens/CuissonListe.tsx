@@ -2,6 +2,7 @@ import type { BasketEntry, Recipe } from '../types'
 import { teinteRecette } from '../lib/identite'
 import { cuisineRecemment, type Historique } from '../lib/propose'
 import Icone from '../components/Icone'
+import ImageRecette from '../components/ImageRecette'
 
 interface Props {
   recipes: Recipe[]
@@ -73,11 +74,11 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
               }
             >
               <div className="vignette" aria-hidden="true">
-                {r.image && <img src={r.image} alt="" />}
+                {r.titre.charAt(0)}
+                <ImageRecette src={r.image} />
                 <span className="badge-temps">
                   <Icone nom="minuteur" taille={12} /> {r.temps} min
                 </span>
-                {!r.image && r.titre.charAt(0)}
               </div>
               <div className="carte-recette-corps">
                 <h3>{r.titre}</h3>

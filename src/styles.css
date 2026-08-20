@@ -645,6 +645,13 @@ button.discret.danger {
   margin-top: 10px;
 }
 
+/* Parts ajustées au panier : la fiche ne montre plus les quantités du
+   catalogue, autant que ça se voie. */
+.puce-info[data-ajuste='true'] {
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
 .puce-info {
   padding: 5px 12px;
   border-radius: 999px;

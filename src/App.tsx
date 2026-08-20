@@ -438,8 +438,8 @@ export default function App() {
   )
 
   /**
-   * Fin de semaine. Le panier et la liste sont la même décision de
-   * foyer (« on mange ça » → « il faut acheter ça ») : ils repartent
+   * Vider le panier vide aussi la liste : ce sont les deux faces de la
+   * même décision de foyer (« on mange ça » → « il faut acheter ça ») : ils repartent
    * de zéro ensemble, en une seule écriture réseau. Les cases cochées
    * comptent autant que le panier — leur clé est le nom de
    * l'ingrédient, stable d'une semaine à l'autre, donc les garder
@@ -450,7 +450,7 @@ export default function App() {
    * ligne `listes` d'avant le partage du panier), donc un panier
    * simplement omis ne se viderait pas sur l'autre téléphone.
    */
-  const viderSemaine = useCallback(
+  const viderPanier = useCallback(
     () => majListe({ coche: {}, dejaPossede: {}, items: [], panier: [] }),
     [majListe],
   )
@@ -570,6 +570,7 @@ export default function App() {
       ecranPleinePage = (
         <DetailRecette
           recette={recette}
+          portions={basket.find((e) => e.recipeId === recette.id)?.portions ?? recette.portions}
           dansPanier={basket.some((e) => e.recipeId === recette.id)}
           onBasculerPanier={() =>
             majBasket(
@@ -642,7 +643,7 @@ export default function App() {
               onVersPropose={() => changerOnglet('propose')}
               onVersListe={() => changerOnglet('liste')}
               onAjouterRecette={ouvrirAjout}
-              onViderSemaine={viderSemaine}
+              onViderPanier={viderPanier}
             />
           )}
 

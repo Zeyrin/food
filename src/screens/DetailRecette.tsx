@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import type { Recipe } from '../types'
-import { formatQuantite } from '../lib/aggregate'
+import { formatQuantite, redimensionnerRecette } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
 import Icone from '../components/Icone'
+import ImageRecette from '../components/ImageRecette'
 
 interface Props {
   recette: Recipe
+  /** Parts retenues au panier, ou celles du catalogue si le plat n'y est pas. */
+  portions: number
   dansPanier: boolean
   onBasculerPanier: () => void
   onCuisiner: () => void
@@ -16,6 +19,7 @@ interface Props {
 
 export default function DetailRecette({
   recette,
+  portions,
   dansPanier,
   onBasculerPanier,
   onCuisiner,
@@ -30,6 +34,13 @@ export default function DetailRecette({
    * suffisait à supprimer une recette sans l'avoir lue.
    */
   const [confirmation, setConfirmation] = useState(false)
+
+  /**
+   * La fiche montrait toujours les quantités du catalogue, même quand le
+   * panier retenait six parts : la liste de courses et le mode cuisson
+   * annonçaient alors des doses que la fiche contredisait.
+   */
+  const doses = redimensionnerRecette(recette, portions).ingredients
 
   return (
     <>
@@ -47,7 +58,8 @@ export default function DetailRecette({
         aria-hidden="true"
         style={{ '--teinte': teinteRecette(recette.titre) } as React.CSSProperties}
       >
-        {recette.image ? <img src={recette.image} alt="" /> : recette.titre.charAt(0)}
+        {recette.titre.charAt(0)}
+        <ImageRecette src={recette.image} />
         <span className="badge-temps">
           <Icone nom="minuteur" taille={14} /> {recette.temps} min
         </span>
@@ -56,7 +68,9 @@ export default function DetailRecette({
       {recette.description && <p className="aide detail-description">{recette.description}</p>}
 
       <div className="puces-info">
-        <span className="puce-info">{recette.portions} parts</span>
+        <span className="puce-info" data-ajuste={portions !== recette.portions ? 'true' : undefined}>
+          {portions} part{portions > 1 ? 's' : ''}
+        </span>
         {recette.tags.map((t) => (
           <span className="puce-info" key={t}>
             {t}
@@ -65,7 +79,7 @@ export default function DetailRecette({
       </div>
 
       <h2>Ingrédients</h2>
-      {recette.ingredients.map((ing) => (
+      {doses.map((ing) => (
         <div className="rangee rangee-lecture" key={ing.nom}>
           <span className="nom">{ing.nom}</span>
           <span className="qte">{formatQuantite(ing)}</span>

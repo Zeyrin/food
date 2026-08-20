@@ -4,6 +4,7 @@ import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { cuisineRecemment, type Historique } from '../lib/propose'
 import Icone from '../components/Icone'
+import ImageRecette from '../components/ImageRecette'
 
 interface Props {
   recipes: Recipe[]
@@ -14,7 +15,7 @@ interface Props {
   onVersListe: () => void
   onAjouterRecette: () => void
   /** Vide le panier *et* la liste (cases cochées comprises) — voir App.tsx. */
-  onViderSemaine: () => void
+  onViderPanier: () => void
 }
 
 /** « 150 » → « 2 h 30 ». Une durée de semaine se lit en heures. */
@@ -32,7 +33,7 @@ export default function Panier({
   onVersPropose,
   onVersListe,
   onAjouterRecette,
-  onViderSemaine,
+  onViderPanier,
 }: Props) {
   const byId = new Map(recipes.map((r) => [r.id, r]))
   const [confirmation, setConfirmation] = useState(false)
@@ -102,14 +103,14 @@ export default function Panier({
    * de l'ingrédient, donc stable d'une semaine à l'autre — revenaient
    * déjà cochées sur la liste suivante.
    */
-  const finDeSemaine = (
+  const viderLePanier = (
     <>
-      <h2>Nouvelle semaine</h2>
+      <h2>Vider le panier</h2>
       {confirmation ? (
         <div className="bloc-confirmation" role="alertdialog" aria-label="Confirmer la remise à zéro">
           <p>
-            Vider les {basket.length} plats du panier et la liste de courses, cases cochées comprises ? Le
-            catalogue de recettes, lui, ne bouge pas.
+            Vider les {basket.length} plat{basket.length > 1 ? 's' : ''} du panier ? La liste de courses part
+            avec, cases cochées comprises. Le catalogue de recettes, lui, ne bouge pas.
           </p>
           <div className="rangee-boutons">
             <button className="discret" onClick={() => setConfirmation(false)}>
@@ -119,7 +120,7 @@ export default function Panier({
               className="discret danger"
               onClick={() => {
                 setConfirmation(false)
-                onViderSemaine()
+                onViderPanier()
               }}
             >
               Vider
@@ -132,7 +133,7 @@ export default function Panier({
             Courses faites et plats cuisinés ? Repartez d'un panier et d'une liste vides.
           </p>
           <button className="discret suite pleine-largeur" onClick={() => setConfirmation(true)}>
-            Vider la semaine
+            Vider le panier
           </button>
         </>
       )}
@@ -210,7 +211,8 @@ export default function Panier({
                 aria-hidden="true"
                 style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
               >
-                {r.image ? <img src={r.image} alt="" /> : r.titre.charAt(0)}
+                {r.titre.charAt(0)}
+                <ImageRecette src={r.image} />
               </div>
               <div className="carte-panier-corps">
                 <div className="ligne-titre-panier">
@@ -247,7 +249,7 @@ export default function Panier({
 
       {complements}
 
-      {finDeSemaine}
+      {viderLePanier}
 
       <div className="espaceur-action-flottante" aria-hidden="true" />
 
