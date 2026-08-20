@@ -31,7 +31,8 @@ export const VISITE_GUIDEE: EtapeVisite[] = [
     cible: 'recherche-propose',
     onglet: 'propose',
     titre: 'Chercher une recette',
-    texte: 'Tapez un mot ici pour retrouver une recette précise dans le catalogue.',
+    texte:
+      "Un titre de plat, mais aussi un ingrédient : tapez « aubergine » pour trouver quoi faire de celle qui traîne.",
   },
   {
     cible: 'filtres-propose',

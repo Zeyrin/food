@@ -387,8 +387,28 @@ button.carte:active {
   backdrop-filter: blur(6px);
 }
 
+/* Pourquoi cette recette remonte alors que son titre ne contient pas
+   le mot cherché : l'ingrédient (ou le tag) qui a fait la
+   correspondance. */
+.motif-recherche {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
 .carte-recette-corps {
   padding: 20px;
+}
+
+/* Plat déjà passé en cuisine cette semaine : présent, mais visiblement
+   derrière ceux qui restent à faire. */
+.carte-recette[data-fait='true'] {
+  opacity: 0.55;
+}
+
+.carte-recette[data-fait='true'] .carte-cuisson-pied {
+  color: var(--accent);
 }
 
 /* Pied de carte (écran Cuisson) : parts à gauche, chevron à droite —
@@ -438,7 +458,17 @@ button.carte:active {
   right: 8px;
 }
 
-.grille-recettes .carte-recette-corps {
+.grille-recettes /* Pourquoi cette recette remonte alors que son titre ne contient pas
+   le mot cherché : l'ingrédient (ou le tag) qui a fait la
+   correspondance. */
+.motif-recherche {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.carte-recette-corps {
   padding: 12px 14px 14px;
 }
 
@@ -584,7 +614,17 @@ button.discret.danger {
   outline-offset: -3px;
 }
 
-.carte-recette[data-panier='true'] .carte-recette-corps {
+.carte-recette[data-panier='true'] /* Pourquoi cette recette remonte alors que son titre ne contient pas
+   le mot cherché : l'ingrédient (ou le tag) qui a fait la
+   correspondance. */
+.motif-recherche {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.carte-recette-corps {
   background: var(--accent-doux);
 }
 

@@ -40,18 +40,39 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
   // Tout le catalogue d'un coup (pas de limite à 8) : `proposer` sert
   // encore pour l'ordre — le rejeté disparaît, le récent descend, le
   // « à refaire » remonte.
-  const affichees = useMemo(() => {
+  //
+  // La recherche regarde aussi les ingrédients : on tape rarement le
+  // titre d'un plat qu'on ne connaît pas encore, on tape « aubergine »
+  // parce qu'il y en a une à finir. `motifs` retient l'ingrédient qui a
+  // fait correspondre la recette, pour l'afficher sur la carte — sinon
+  // « Dahl de lentilles » remonté par « coco » ressemble à un bug.
+  const { affichees, motifs } = useMemo(() => {
     let liste = proposer(recipes, historique, {
       tempsMax: tempsMax ?? undefined,
       tags,
       nombre: recipes.length,
     })
     if (aRefaire) liste = liste.filter((r) => historique.verdicts[r.id] === 'refaire')
+
+    const motifs = new Map<string, string>()
     if (recherche.trim()) {
       const q = normaliser(recherche)
-      liste = liste.filter((r) => normaliser(r.titre).includes(q))
+      liste = liste.filter((r) => {
+        if (normaliser(r.titre).includes(q)) return true
+        const ing = r.ingredients.find((i) => normaliser(i.nom).includes(q))
+        if (ing) {
+          motifs.set(r.id, ing.nom)
+          return true
+        }
+        const tag = r.tags.find((t) => normaliser(t).includes(q))
+        if (tag) {
+          motifs.set(r.id, tag)
+          return true
+        }
+        return false
+      })
     }
-    return liste
+    return { affichees: liste, motifs }
   }, [recipes, historique, tempsMax, tags, aRefaire, recherche])
 
   const dansPanier = (id: string) => basket.some((e) => e.recipeId === id)
@@ -88,10 +109,10 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
           <input
             className="champ-texte champ-recherche"
             type="search"
-            placeholder="Chercher une recette…"
+            placeholder="Un plat, un ingrédient…"
             value={recherche}
             onChange={(e) => setRecherche(e.target.value)}
-            aria-label="Chercher une recette"
+            aria-label="Chercher un plat ou un ingrédient"
           />
           {/* La croix native de `type=search` n'existe pas partout (ni sur
               Firefox, ni sur iOS) : sans elle, effacer demande d'ouvrir le
@@ -213,6 +234,7 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
                 </div>
                 <div className="carte-recette-corps">
                   <h3>{r.titre}</h3>
+                  {motifs.has(r.id) && <p className="motif-recherche">contient {motifs.get(r.id)}</p>}
                 </div>
               </div>
             ))}

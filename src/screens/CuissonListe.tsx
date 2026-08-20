@@ -1,15 +1,27 @@
 import type { BasketEntry, Recipe } from '../types'
 import { teinteRecette } from '../lib/identite'
+import { cuisineRecemment, type Historique } from '../lib/propose'
 import Icone from '../components/Icone'
 
 interface Props {
   recipes: Recipe[]
   basket: BasketEntry[]
+  historique: Historique
   onCuisiner: (recipeId: string) => void
 }
 
-export default function CuissonListe({ recipes, basket, onCuisiner }: Props) {
+export default function CuissonListe({ recipes, basket, historique, onCuisiner }: Props) {
   const byId = new Map(recipes.map((r) => [r.id, r]))
+
+  /**
+   * Les plats déjà faits cette semaine passent derrière, sans
+   * disparaître : on peut vouloir refaire le même, ou juste relire une
+   * étape. L'écran répond d'abord à « qu'est-ce qu'il reste à
+   * cuisiner ? », qui est la question qu'on se pose en l'ouvrant.
+   */
+  const fait = (recipeId: string) => cuisineRecemment(historique, recipeId)
+  const ordonne = [...basket].sort((a, b) => Number(fait(a.recipeId)) - Number(fait(b.recipeId)))
+  const restants = basket.filter((e) => !fait(e.recipeId)).length
 
   const entete = (
     <header className="entete-app">
@@ -32,20 +44,26 @@ export default function CuissonListe({ recipes, basket, onCuisiner }: Props) {
   return (
     <>
       {entete}
-      <p className="aide">Choisissez le plat à cuisiner maintenant.</p>
+      <p className="aide">
+        {restants === 0
+          ? "Tous les plats de la semaine sont passés en cuisine. Rien n'empêche d'en refaire un."
+          : `Choisissez le plat à cuisiner maintenant — ${restants} sur ${basket.length} vous attendent encore.`}
+      </p>
 
       {/* Même carte-vignette que Proposer plutôt que la petite ligne
           d'avant : choisir quoi cuisiner mérite d'être aussi appétissant
           que choisir quoi ajouter — et ça évite un bouton imbriqué dans
           un bouton (la carte entière est déjà l'unique cible tactile). */}
       <div className="grille-recettes">
-        {basket.map((entree, i) => {
+        {ordonne.map((entree, i) => {
           const r = byId.get(entree.recipeId)
           if (!r) return null
+          const dejaFait = fait(entree.recipeId)
           return (
             <button
               className="carte carte-recette"
               key={entree.recipeId}
+              data-fait={dejaFait ? 'true' : undefined}
               onClick={() => onCuisiner(r.id)}
               style={
                 {
@@ -64,8 +82,10 @@ export default function CuissonListe({ recipes, basket, onCuisiner }: Props) {
               <div className="carte-recette-corps">
                 <h3>{r.titre}</h3>
                 <div className="carte-cuisson-pied">
-                  <span className="meta">{entree.portions} parts</span>
-                  <Icone nom="suivant" taille={16} />
+                  <span className="meta">
+                    {dejaFait ? 'Déjà cuisiné' : `${entree.portions} parts`}
+                  </span>
+                  <Icone nom={dejaFait ? 'coche' : 'suivant'} taille={16} />
                 </div>
               </div>
             </button>

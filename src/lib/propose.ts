@@ -56,6 +56,17 @@ export function proposer(recipes: Recipe[], historique: Historique, criteres: Cr
     .map((s) => s.recipe)
 }
 
+/**
+ * Cuisiné dans les derniers jours. Le panier couvre une semaine : au
+ * sein de cette fenêtre, « déjà fait » est une information utile (quel
+ * plat reste-t-il à cuisiner ?) alors que le mois dernier ne dit plus
+ * rien sur la semaine en cours.
+ */
+export function cuisineRecemment(historique: Historique, recipeId: string, jours = 7): boolean {
+  const derniere = historique.derniereFois[recipeId]
+  return derniere !== undefined && Date.now() - derniere < jours * JOUR
+}
+
 /** Tous les tags présents dans le corpus, pour construire les filtres. */
 export function tousLesTags(recipes: Recipe[]): string[] {
   return [...new Set(recipes.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'fr'))

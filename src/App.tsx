@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import corpus from './data/recipes.json'
 import type { BasketEntry, ListState, Onglet, Recipe, Verdict } from './types'
 import { buildList, redimensionnerRecette } from './lib/aggregate'
-import { type Historique } from './lib/propose'
+import { cuisineRecemment, type Historique } from './lib/propose'
 import {
   ecrireBasket,
   lireBasket,
@@ -90,6 +90,38 @@ export default function App() {
   const [pile, setPile] = useState<Vue[]>(lirePileSauvegardee)
   const vueActuelle = pile[pile.length - 1]!
 
+  /**
+   * Défilement mémorisé par profondeur de pile. Une SPA garde la
+   * position de la page entre deux écrans : ouvrir une recette depuis
+   * le bas de la grille arrivait au milieu de sa fiche, et revenir
+   * repartait du haut du catalogue — deux fois le mauvais endroit.
+   * Avancer remet donc en haut, reculer rend la place qu'on occupait.
+   */
+  const positions = useRef<number[]>([])
+
+  /**
+   * Deux passes : au moment où React vient de commiter, la hauteur du
+   * document est encore parfois celle de l'écran qu'on quitte, et le
+   * navigateur rogne le défilement demandé à ce maximum-là (revenir au
+   * bas d'un long catalogue depuis une fiche courte atterrissait au
+   * milieu). La seconde passe, une frame plus tard, tombe juste.
+   */
+  /**
+   * La profondeur vit déjà dans l'état d'historique : on s'en sert comme
+   * index plutôt que de lire `pile`, pour pouvoir noter la position
+   * *avant* la navigation, hors de l'updater React. Le faire dedans
+   * marchait par accident — sans `startViewTransition` (navigateur qui
+   * ne l'a pas, ou « réduire les animations »), l'updater est différé et
+   * s'exécutait après le retour en haut de page : on mémorisait zéro.
+   */
+  const profondeurActuelle = () =>
+    (history.state as { profondeur?: number } | null)?.profondeur ?? 1
+
+  const defilerVers = useCallback((y: number) => {
+    window.scrollTo(0, y)
+    if (y > 0) requestAnimationFrame(() => window.scrollTo(0, y))
+  }, [])
+
   useEffect(() => {
     try {
       sessionStorage.setItem(CLE_PILE, JSON.stringify(pile))
@@ -129,15 +161,17 @@ export default function App() {
   // d'historique en appui long sur Android, geste de bord iOS.
   const irVers = useCallback(
     (vue: Vue) => {
+      positions.current[profondeurActuelle() - 1] = window.scrollY
       avecTransition('avant', () => {
         setPile((p) => {
           const suivante = [...p, vue]
           history.pushState({ profondeur: suivante.length }, '')
           return suivante
         })
+        defilerVers(0)
       })
     },
-    [avecTransition],
+    [avecTransition, defilerVers],
   )
 
   const reculer = useCallback(() => {
@@ -149,11 +183,12 @@ export default function App() {
       const profondeur = Math.max(1, (e.state as { profondeur?: number } | null)?.profondeur ?? 1)
       avecTransition('arriere', () => {
         setPile((p) => (profondeur < p.length ? p.slice(0, profondeur) : p))
+        defilerVers(positions.current[profondeur - 1] ?? 0)
       })
     }
     window.addEventListener('popstate', surRetour)
     return () => window.removeEventListener('popstate', surRetour)
-  }, [avecTransition])
+  }, [avecTransition, defilerVers])
 
   const changerOnglet = useCallback(
     (cle: Onglet) => {
@@ -173,9 +208,10 @@ export default function App() {
           history.replaceState({ profondeur: suivante.length }, '')
           return suivante
         })
+        defilerVers(0)
       })
     },
-    [vueActuelle, irVers, avecTransition],
+    [vueActuelle, irVers, avecTransition, defilerVers],
   )
 
   const ouvrirAjout = useCallback(() => {
@@ -215,6 +251,26 @@ export default function App() {
     setPile([{ type: 'onglet', onglet: 'propose' }])
     setOnboardingVu(false)
   }, [])
+
+  /**
+   * Au clavier ou au lecteur d'écran, changer d'écran ne déplaçait pas
+   * le focus : il restait sur le bouton d'un écran désormais démonté,
+   * donc renvoyé au début du document, et la lecture ne disait pas où
+   * on venait d'arriver. On le pose sur le titre de l'écran — pas
+   * pendant la visite guidée, dont la carte a ses propres boutons.
+   */
+  const premierRendu = useRef(true)
+  useEffect(() => {
+    if (premierRendu.current) {
+      premierRendu.current = false
+      return
+    }
+    if (!onboardingVu) return
+    const titre = document.querySelector('h1')
+    if (!titre) return
+    titre.tabIndex = -1
+    titre.focus({ preventScroll: true })
+  }, [vueActuelle, onboardingVu])
 
   const [historique, setHistorique] = useState<Historique>({ derniereFois: {}, verdicts: {} })
   const [foyer, setFoyer] = useState<string | null>(null)
@@ -540,7 +596,14 @@ export default function App() {
               items={items}
               etat={etatListe}
               onEtat={majListe}
-              prochaineCuisson={recipes.find((r) => r.id === basket[0]?.recipeId) ?? null}
+              // Le premier plat qui reste à faire, pas le premier du
+              // panier : une fois le curry cuisiné lundi, l'annoncer
+              // encore mercredi comme « prochaine cuisson » est faux.
+              prochaineCuisson={
+                basket
+                  .map((e) => recipes.find((r) => r.id === e.recipeId))
+                  .find((r): r is Recipe => !!r && !cuisineRecemment(historique, r.id)) ?? null
+              }
               onVersCuisson={() => changerOnglet('cuisson')}
             />
           )}
@@ -549,6 +612,7 @@ export default function App() {
             <CuissonListe
               recipes={recipes}
               basket={basket}
+              historique={historique}
               onCuisiner={(recipeId) => irVers({ type: 'cuisson', recipeId })}
             />
           )}

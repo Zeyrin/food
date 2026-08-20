@@ -3,6 +3,7 @@ import type { Recipe, Verdict } from '../types'
 import { annoterEtape, formatQuantite } from '../lib/aggregate'
 import { formatDuree, minuteursDeLEtape } from '../lib/duree'
 import { useWakeLock } from '../hooks/useWakeLock'
+import { ecrireProgression, lireProgression, oublierProgression } from '../lib/progressionCuisson'
 import Icone from '../components/Icone'
 
 interface MinuteurActif {
@@ -82,6 +83,9 @@ interface Props {
 
 export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
   const [index, setIndex] = useState(-1)
+  // Lu une seule fois au montage : la valeur ne doit pas disparaître de
+  // l'écran de préparation au moment où on écrit la progression suivante.
+  const [reprise] = useState(() => lireProgression(recette.id))
   const [minuteurs, setMinuteurs] = useState<MinuteurActif[]>([])
   const [panneau, setPanneau] = useState(false)
   const maintenant = useMaintenant(minuteurs.length > 0)
@@ -130,6 +134,13 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
 
   const fini = index >= recette.etapes.length
 
+  // On note l'étape en cours à chaque pas, et on oublie tout une fois
+  // le plat terminé : reprendre une recette finie n'aurait aucun sens.
+  useEffect(() => {
+    if (index >= 1 && !fini) ecrireProgression(recette.id, index)
+    if (fini) oublierProgression(recette.id)
+  }, [recette.id, index, fini])
+
   if (index < 0) {
     return (
       <div className="cuisson">
@@ -156,9 +167,24 @@ export default function Cuisson({ recette, onVerdict, onQuitter }: Props) {
         {/* Toujours sous les yeux, quel que soit le défilement : on vient
             là pour commencer à cuisiner, pas pour lire jusqu'au bout. */}
         <div className="barre-actions">
-          <button className="principal" onClick={() => setIndex(0)}>
-            <Icone nom="grill" taille={20} /> Commencer
-          </button>
+          {reprise !== null && reprise < recette.etapes.length ? (
+            <>
+              {/* Une séance interrompue (le téléphone qui sonne, l'appli
+                  balayée) reprend où elle en était — mais c'est un choix
+                  explicite : rien de pire que de croire repartir du début
+                  et sauter la moitié des étapes sans le voir. */}
+              <button className="principal" onClick={() => setIndex(reprise)}>
+                <Icone nom="grill" taille={20} /> Reprendre à l'étape {reprise + 1}
+              </button>
+              <button className="discret pleine-largeur" onClick={() => setIndex(0)}>
+                Repartir du début
+              </button>
+            </>
+          ) : (
+            <button className="principal" onClick={() => setIndex(0)}>
+              <Icone nom="grill" taille={20} /> Commencer
+            </button>
+          )}
         </div>
       </div>
     )
