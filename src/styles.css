@@ -2092,3 +2092,77 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
     max-width: 720px;
   }
 }
+
+/* --- Présentation (onboarding) -------------------------------------------- */
+
+.onboarding {
+  min-height: calc(100dvh - env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  padding-top: max(20px, env(safe-area-inset-top));
+}
+
+.onboarding-passer {
+  align-self: flex-end;
+}
+
+.onboarding-corps {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+  padding: 24px 8px;
+}
+
+.onboarding-icone {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--accent-doux);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  margin-bottom: 12px;
+}
+
+.onboarding-corps h1 {
+  margin: 0;
+}
+
+.onboarding-corps p {
+  max-width: 46ch;
+  margin: 0;
+}
+
+.onboarding-points {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 0 20px;
+}
+
+.onboarding-point {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--trait);
+  cursor: pointer;
+  transition: width 0.16s ease, background-color 0.16s ease;
+}
+
+.onboarding-point[aria-current='true'] {
+  width: 24px;
+  background: var(--accent);
+}
+
+@media (min-width: 900px) {
+  .onboarding {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}

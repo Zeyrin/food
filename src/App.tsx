@@ -38,6 +38,7 @@ import Cuisson from './screens/Cuisson'
 import CuissonListe from './screens/CuissonListe'
 import AjouterRecette from './screens/AjouterRecette'
 import Bienvenue from './screens/Bienvenue'
+import Onboarding from './screens/Onboarding'
 import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
@@ -64,6 +65,9 @@ type Vue =
 const ETAT_VIDE: ListState = { coche: {}, dejaPossede: {} }
 const PILE_INITIALE: Vue[] = [{ type: 'onglet', onglet: 'propose' }]
 const CLE_PILE = 'courses:pile'
+// Par appareil, pas par foyer : une présentation déjà vue ici ne doit pas
+// se redéclencher parce qu'on a rejoint un nouveau foyer sur ce téléphone.
+const CLE_ONBOARDING_VU = 'fffood:onboarding-vu'
 
 /**
  * Pull-to-refresh (Android/Chrome) et rechargement manuel restent
@@ -160,6 +164,22 @@ export default function App() {
     },
     [vueActuelle, irVers],
   )
+
+  const [onboardingVu, setOnboardingVu] = useState(
+    () => localStorage.getItem(CLE_ONBOARDING_VU) === '1',
+  )
+  const terminerOnboarding = useCallback(() => {
+    try {
+      localStorage.setItem(CLE_ONBOARDING_VU, '1')
+    } catch {
+      /* stockage plein ou navigation privée stricte : tant pis, la présentation se redéclenchera */
+    }
+    setOnboardingVu(true)
+  }, [])
+  // Rouvre la présentation depuis Réglages sans toucher au drapeau déjà
+  // enregistré : à la fin des diapos, `terminerOnboarding` le réécrit
+  // simplement à la même valeur.
+  const revoirOnboarding = useCallback(() => setOnboardingVu(false), [])
 
   const [historique, setHistorique] = useState<Historique>({ derniereFois: {}, verdicts: {} })
   const [foyer, setFoyer] = useState<string | null>(null)
@@ -343,6 +363,10 @@ export default function App() {
     return <Bienvenue onCreer={creer} onRejoindre={rejoindre} />
   }
 
+  if (!onboardingVu) {
+    return <Onboarding onTerminer={terminerOnboarding} />
+  }
+
   if (vueActuelle.type === 'cuisson') {
     const recette = recipes.find((r) => r.id === vueActuelle.recipeId)
     if (recette) {
@@ -408,6 +432,7 @@ export default function App() {
         onRejoindre={rejoindreDepuisReglages}
         onQuitter={quitter}
         onFermer={reculer}
+        onRevoirPresentation={revoirOnboarding}
       />
     )
   }
@@ -487,6 +512,10 @@ export default function App() {
             {label}
           </button>
         ))}
+        <button onClick={() => irVers({ type: 'ajout' })}>
+          <Icone nom="plus-cercle" taille={22} />
+          Ajouter
+        </button>
       </nav>
     </>
   )

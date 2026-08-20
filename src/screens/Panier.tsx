@@ -45,8 +45,8 @@ export default function Panier({
           <p>Ajouter un plat rapide</p>
         </button>
         <button className="carte-bento neutre" onClick={onAjouterRecette}>
-          <Icone nom="etoile" taille={28} />
-          <p>Saisie automatique</p>
+          <Icone nom="plus-cercle" taille={28} />
+          <p>Nouvelle recette</p>
         </button>
       </div>
     </>
