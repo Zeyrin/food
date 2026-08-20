@@ -3,7 +3,8 @@
 Analyse et plan d'action commerciale, juillet 2026. Chaque document est fondé sur des
 recherches vérifiées avec sources primaires, pas sur des généralités de coaching.
 
-**👉 Commencer par `10-paris-7ans.md`, puis `05-plan.md`.** Le reste est le dossier de preuves.
+**👉 Reprise du dossier : lire `HANDOFF.md`.** Ensuite `10-paris-7ans.md` (le plan à jour), puis
+`05-plan.md`. Le reste est le dossier de preuves.
 
 > ⚠️ **Mise à jour** — les deux variables manquantes (7+ ans d'expérience, Paris) sont arrivées
 > après la rédaction du plan initial. Elles le simplifient radicalement : le marché parisien paie
@@ -12,6 +13,7 @@ recherches vérifiées avec sources primaires, pas sur des généralités de coa
 
 | Document | Contenu |
 |---|---|
+| **`HANDOFF.md`** | **Note de passation : d'où on part, ce qui a changé, ce qui reste à faire.** |
 | **`05-plan.md`** | **Le plan d'exécution chiffré. À lire en premier.** |
 | `00-diagnostic.md` | Pourquoi ça bloque. Le problème n'est pas la compétence — la preuve par le code. |
 | `01-marche-restaurants.md` | **Verdict : abandonner.** Le pitch anti-TheFork est factuellement faux. |
