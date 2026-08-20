@@ -1391,5 +1391,205 @@
       "Poivrer généreusement et servir aussitôt."
     ],
     "image": "https://images.unsplash.com/photo-1571777663262-fcc9e6076644?w=800&q=80"
+  },
+  {
+    "id": "salade-pates-estivale",
+    "titre": "Salade de pâtes estivale",
+    "temps": 25,
+    "portions": 4,
+    "tags": [
+      "italien",
+      "estival",
+      "léger"
+    ],
+    "ingredients": [
+      { "nom": "pâtes courtes", "quantite": 350, "unite": "g", "magasin": "intermarche" },
+      { "nom": "tomate cerise", "quantite": 250, "unite": "g", "magasin": "primeur" },
+      { "nom": "concombre", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "mozzarella", "quantite": 200, "unite": "g", "magasin": "intermarche" },
+      { "nom": "olives noires", "quantite": 80, "unite": "g", "magasin": "intermarche" },
+      { "nom": "basilic frais", "quantite": 1, "unite": "botte", "magasin": "primeur" },
+      { "nom": "oignon rouge", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "huile d'olive", "quantite": 4, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "vinaigre balsamique", "quantite": 2, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "poivre noir", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Faire bouillir une grande casserole d'eau salée et y cuire les {pâtes courtes} selon le paquet, jusqu'à ce qu'elles restent fermes sous la dent.",
+      "Égoutter et rincer aussitôt à l'eau froide pour stopper la cuisson et éviter qu'elles collent en refroidissant.",
+      "Couper les {tomates cerises} en deux, le {concombre} en petits dés, et émincer finement l'{oignon rouge}.",
+      "Ciseler le {basilic}, égoutter les {olives noires} et couper la {mozzarella} en petits morceaux.",
+      "Mélanger dans un grand saladier les pâtes refroidies, les légumes, la mozzarella, le basilic et les olives.",
+      "Fouetter l'{huile d'olive} avec le {vinaigre balsamique}, le sel et le poivre, verser sur la salade et mélanger.",
+      "Laisser reposer 10 min au frais avant de servir, le temps que les saveurs se mélangent."
+    ]
+  },
+  {
+    "id": "poke-bowl-saumon-avocat",
+    "titre": "Poke bowl saumon avocat",
+    "temps": 30,
+    "portions": 2,
+    "tags": [
+      "japonais",
+      "rapide",
+      "léger"
+    ],
+    "ingredients": [
+      { "nom": "riz à sushi", "quantite": 160, "unite": "g", "magasin": "intermarche" },
+      { "nom": "saumon frais", "quantite": 300, "unite": "g", "magasin": "intermarche" },
+      { "nom": "avocat", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "concombre", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "edamame", "quantite": 150, "unite": "g", "magasin": "primeur" },
+      { "nom": "radis", "quantite": 4, "unite": "piece", "magasin": "primeur" },
+      { "nom": "sauce soja", "quantite": 2, "unite": "cs", "magasin": "primeur", "placard": true },
+      { "nom": "vinaigre de riz", "quantite": 2, "unite": "cs", "magasin": "primeur", "placard": true },
+      { "nom": "graines de sésame", "quantite": 1, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "huile de sésame", "quantite": 1, "unite": "cs", "magasin": "primeur", "placard": true },
+      { "nom": "citron vert", "quantite": 1, "unite": "piece", "magasin": "primeur" }
+    ],
+    "etapes": [
+      "Cuire le {riz à sushi} selon le paquet, puis l'assaisonner encore chaud avec le {vinaigre de riz} et une pincée de sel. Laisser tiédir.",
+      "Couper le {saumon frais} en cubes de 1,5 cm.",
+      "Faire mariner le saumon 10 min avec la {sauce soja}, l'{huile de sésame} et le jus du {citron vert} — pas plus longtemps, sinon l'acidité commence à cuire le poisson.",
+      "Couper l'{avocat} et le {concombre} en tranches, émincer les {radis}.",
+      "Répartir le riz tiède dans les bols, puis disposer saumon, avocat, concombre, radis et {edamame}.",
+      "Parsemer de {graines de sésame} et arroser du reste de marinade avant de servir."
+    ]
+  },
+  {
+    "id": "chili-sin-carne",
+    "titre": "Chili sin carne",
+    "temps": 40,
+    "portions": 4,
+    "tags": [
+      "végé",
+      "mexicain",
+      "épicé",
+      "une casserole"
+    ],
+    "ingredients": [
+      { "nom": "haricots rouges", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "pois chiches", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "maïs", "quantite": 150, "unite": "g", "magasin": "intermarche" },
+      { "nom": "tomates concassées", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "poivron", "quantite": 2, "unite": "piece", "magasin": "primeur" },
+      { "nom": "oignon", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "ail", "quantite": 3, "unite": "piece", "magasin": "primeur" },
+      { "nom": "riz blanc", "quantite": 180, "unite": "g", "magasin": "intermarche" },
+      { "nom": "piment frais", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "cumin moulu", "quantite": 2, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "paprika fumé", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "épices mexicaines", "quantite": 1, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "huile d'olive", "quantite": 2, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Lancer le {riz blanc}.",
+      "Émincer l'{oignon}, hacher l'{ail} et le {piment frais}, couper les {poivrons} en dés.",
+      "Faire revenir l'oignon et les poivrons 5 min dans l'{huile d'olive} jusqu'à ce qu'ils s'attendrissent.",
+      "Ajouter l'ail, le piment, le {cumin moulu}, le {paprika fumé} et les {épices mexicaines}. Remuer 1 min, le temps que ça embaume.",
+      "Verser les {tomates concassées}, les {haricots rouges} et les {pois chiches} égouttés, le {maïs} et 100 ml d'eau.",
+      "Laisser mijoter 20 min à découvert en remuant de temps en temps, jusqu'à ce que la sauce épaississe.",
+      "Saler et servir sur le riz."
+    ]
+  },
+  {
+    "id": "curry-vert-thai-poulet",
+    "titre": "Curry vert thaï au poulet",
+    "temps": 30,
+    "portions": 3,
+    "tags": [
+      "asiatique",
+      "thaïlandais",
+      "épicé",
+      "wok"
+    ],
+    "ingredients": [
+      { "nom": "blanc de poulet", "quantite": 400, "unite": "g", "magasin": "intermarche" },
+      { "nom": "pâte de curry vert", "quantite": 3, "unite": "cs", "magasin": "primeur" },
+      { "nom": "lait de coco", "quantite": 400, "unite": "ml", "magasin": "primeur" },
+      { "nom": "riz blanc", "quantite": 180, "unite": "g", "magasin": "intermarche" },
+      { "nom": "aubergine", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "poivron", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "basilic frais", "quantite": 1, "unite": "botte", "magasin": "primeur" },
+      { "nom": "citron vert", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "sauce nuoc mam", "quantite": 1, "unite": "cs", "magasin": "primeur", "placard": true },
+      { "nom": "sucre roux", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "huile d'olive", "quantite": 1, "unite": "cs", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Lancer le {riz blanc}.",
+      "Couper le {blanc de poulet} en morceaux, l'{aubergine} en cubes et le {poivron} en lanières.",
+      "Chauffer l'{huile d'olive} dans un wok, faire revenir la {pâte de curry vert} 1 min à feu moyen jusqu'à ce qu'elle embaume.",
+      "Ajouter le poulet, saisir 4 min à feu vif jusqu'à ce qu'il blanchisse sur toutes les faces.",
+      "Verser le {lait de coco}, ajouter l'aubergine et le poivron. Laisser mijoter 15 min à couvert, jusqu'à ce que l'aubergine soit fondante.",
+      "Assaisonner avec la {sauce nuoc mam} et le {sucre roux}, goûter et ajuster.",
+      "Hors du feu, ajouter le jus du {citron vert} et le {basilic frais} ciselé. Servir sur le riz."
+    ]
+  },
+  {
+    "id": "ratatouille-four-oeuf-poche",
+    "titre": "Ratatouille au four & œuf poché",
+    "temps": 55,
+    "portions": 4,
+    "tags": [
+      "végé",
+      "four",
+      "français",
+      "léger"
+    ],
+    "ingredients": [
+      { "nom": "aubergine", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "courgette", "quantite": 2, "unite": "piece", "magasin": "primeur" },
+      { "nom": "poivron", "quantite": 2, "unite": "piece", "magasin": "primeur" },
+      { "nom": "tomate", "quantite": 4, "unite": "piece", "magasin": "primeur" },
+      { "nom": "oignon", "quantite": 1, "unite": "piece", "magasin": "primeur" },
+      { "nom": "ail", "quantite": 3, "unite": "piece", "magasin": "primeur" },
+      { "nom": "œuf", "quantite": 4, "unite": "piece", "magasin": "intermarche" },
+      { "nom": "herbes de Provence", "quantite": 1, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "huile d'olive", "quantite": 4, "unite": "cs", "magasin": "intermarche", "placard": true },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "poivre noir", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Préchauffer le four à 200 °C.",
+      "Couper l'{aubergine}, les {courgettes}, les {poivrons} et les {tomates} en morceaux réguliers d'environ 2 cm.",
+      "Émincer l'{oignon} et l'{ail}.",
+      "Mélanger tous les légumes dans un grand plat avec l'{huile d'olive}, les {herbes de Provence}, le sel et le poivre.",
+      "Enfourner 40 min en remuant à mi-cuisson, jusqu'à ce que les légumes soient fondants et légèrement caramélisés sur les bords.",
+      "Dans les 5 dernières minutes, creuser quatre puits dans les légumes et y casser les {œufs}. Remettre au four jusqu'à ce que le blanc soit pris et le jaune encore coulant.",
+      "Servir directement dans le plat."
+    ]
+  },
+  {
+    "id": "quiche-courgette-chevre",
+    "titre": "Quiche courgette & chèvre",
+    "temps": 50,
+    "portions": 4,
+    "tags": [
+      "végé",
+      "four",
+      "réconfort"
+    ],
+    "ingredients": [
+      { "nom": "pâte brisée", "quantite": 1, "unite": "piece", "magasin": "intermarche" },
+      { "nom": "courgette", "quantite": 2, "unite": "piece", "magasin": "primeur" },
+      { "nom": "bûche de chèvre", "quantite": 150, "unite": "g", "magasin": "intermarche" },
+      { "nom": "œuf", "quantite": 3, "unite": "piece", "magasin": "intermarche" },
+      { "nom": "crème fraîche", "quantite": 20, "unite": "cl", "magasin": "intermarche" },
+      { "nom": "lait", "quantite": 100, "unite": "ml", "magasin": "intermarche" },
+      { "nom": "poivre noir", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "sel", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true },
+      { "nom": "muscade", "quantite": 1, "unite": "pincee", "magasin": "intermarche", "placard": true }
+    ],
+    "etapes": [
+      "Préchauffer le four à 190 °C.",
+      "Dérouler la {pâte brisée} dans un moule à tarte et la piquer à la fourchette.",
+      "Couper les {courgettes} en fines rondelles, les faire suer 5 min à la poêle pour qu'elles ne rendent plus d'eau dans la quiche.",
+      "Fouetter les {œufs} avec la {crème fraîche}, le {lait}, le sel, le poivre et la {muscade}.",
+      "Répartir les courgettes sur le fond de tarte, verser l'appareil, couvrir de rondelles de {bûche de chèvre}.",
+      "Enfourner 30 min, jusqu'à ce que la quiche soit dorée et à peine tremblante au centre."
+    ]
   }
 ]
