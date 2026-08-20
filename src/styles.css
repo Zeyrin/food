@@ -2093,60 +2093,135 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   }
 }
 
-/* --- Présentation (onboarding) -------------------------------------------- */
+/* --- Visite guidée --------------------------------------------------------
 
-.onboarding {
-  min-height: calc(100dvh - env(safe-area-inset-bottom));
-  display: flex;
-  flex-direction: column;
-  padding-top: max(20px, env(safe-area-inset-top));
+   Jouée par-dessus l'app réelle plutôt qu'un diaporama à part : quatre
+   bandes sombres (.visite-bande) laissent un trou exactement sur le
+   bouton visé, un anneau (.visite-repere) pulse autour, et la carte de
+   texte (.visite-carte) glisse d'un repère à l'autre. Les bandes ne
+   recouvrent jamais le trou lui-même — l'élément réel reste visible et
+   cliquable dessous, la visite ne fait qu'indiquer où il est. */
+
+.visite-bande {
+  position: fixed;
+  background: color-mix(in srgb, var(--encre) 62%, transparent);
+  z-index: 55;
+  transition:
+    top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.onboarding-passer {
-  align-self: flex-end;
+.visite-repere {
+  position: fixed;
+  z-index: 56;
+  border: 3px solid var(--accent);
+  border-radius: 20px;
+  pointer-events: none;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+  transition:
+    top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.onboarding-corps {
-  flex: 1;
+.visite-repere::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 3px solid var(--accent);
+  animation: visite-ping 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+
+@keyframes visite-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.18);
+    opacity: 0;
+  }
+}
+
+.visite-carte {
+  position: fixed;
+  z-index: 60;
+  width: min(340px, calc(100vw - 32px));
+  background: var(--carte);
+  border-radius: var(--rayon-grand);
+  box-shadow: var(--ombre-nette);
+  padding: 20px;
+  transition:
+    top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.visite-carte-centre {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.visite-carte-entete {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 4px;
-  padding: 24px 8px;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
 }
 
-.onboarding-icone {
-  width: 88px;
-  height: 88px;
-  border-radius: 50%;
-  background: var(--accent-doux);
-  color: var(--accent);
-  display: grid;
-  place-items: center;
-  margin-bottom: 12px;
+.visite-compteur {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--encre-douce);
 }
 
-.onboarding-corps h1 {
+.visite-passer {
+  padding: 6px 12px;
+  font-size: 13px;
+  min-height: auto;
+}
+
+.visite-carte-corps {
+  animation: visite-entree 0.28s ease;
+}
+
+@keyframes visite-entree {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.visite-carte h2 {
+  font-family: var(--affichage);
+  font-size: 20px;
+  font-weight: 700;
+  margin: 4px 0 6px;
+}
+
+.visite-carte p {
   margin: 0;
 }
 
-.onboarding-corps p {
-  max-width: 46ch;
-  margin: 0;
-}
-
-.onboarding-points {
+.visite-points {
   display: flex;
   justify-content: center;
-  gap: 8px;
-  padding: 8px 0 20px;
+  gap: 6px;
+  margin: 16px 0;
 }
 
-.onboarding-point {
-  width: 8px;
-  height: 8px;
+.visite-point {
+  width: 7px;
+  height: 7px;
   padding: 0;
   border: 0;
   border-radius: 999px;
@@ -2155,14 +2230,41 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   transition: width 0.16s ease, background-color 0.16s ease;
 }
 
-.onboarding-point[aria-current='true'] {
-  width: 24px;
+.visite-point[aria-current='true'] {
+  width: 20px;
   background: var(--accent);
 }
 
-@media (min-width: 900px) {
-  .onboarding {
-    max-width: 480px;
-    margin: 0 auto;
+.visite-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.visite-actions .principal {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.visite-actions .discret {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visite-bande,
+  .visite-repere,
+  .visite-carte {
+    transition: none;
+  }
+  .visite-repere::after {
+    animation: none;
+  }
+  .visite-carte-corps {
+    animation: none;
   }
 }

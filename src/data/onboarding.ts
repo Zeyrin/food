@@ -1,58 +1,80 @@
-import type { Nom as IconeNom } from '../components/Icone'
+import type { Onglet } from '../types'
 
 /**
- * Contenu de l'écran de présentation (voir screens/Onboarding.tsx).
- * Une diapo = une fonctionnalité. Ajouter, retirer ou reformuler une
- * entrée ici suffit à changer la présentation — aucun autre fichier à
- * toucher.
+ * Contenu de la visite guidée (voir components/TourGuide.tsx). Chaque
+ * étape désigne un élément réel de l'interface via son attribut
+ * `data-tour`, et l'onglet qui doit être actif pour qu'il existe à
+ * l'écran — la visite bascule l'app dessus toute seule. `cible: null`
+ * affiche une carte centrée sans repérer d'élément (ouverture et
+ * clôture de la visite). `onglet: null` garde l'onglet déjà actif.
+ *
+ * Ajouter, retirer, réordonner ou reformuler une étape ici suffit à
+ * changer la visite — aucun autre fichier à toucher, tant que l'attribut
+ * `data-tour` visé existe déjà quelque part dans l'interface.
  */
-export interface DiapoOnboarding {
-  icone: IconeNom
+export interface EtapeVisite {
+  cible: string | null
+  onglet: Onglet | null
   titre: string
   texte: string
 }
 
-export const ONBOARDING_SLIDES: DiapoOnboarding[] = [
+export const VISITE_GUIDEE: EtapeVisite[] = [
   {
-    icone: 'etoile',
+    cible: null,
+    onglet: 'propose',
     titre: 'Bienvenue sur FFFood',
     texte:
-      "Choisissez vos repas de la semaine, générez la liste de courses, et cuisinez. Sans compte, sans pub, et ça marche même hors ligne en magasin.",
+      "Un tour de deux minutes pour repérer les boutons utiles. Choisissez vos repas, générez la liste de courses, et cuisinez — sans compte, sans pub, même hors ligne en magasin.",
   },
   {
-    icone: 'etoile',
-    titre: 'Proposer',
+    cible: 'recherche-propose',
+    onglet: 'propose',
+    titre: 'Chercher une recette',
+    texte: 'Tapez un mot ici pour retrouver une recette précise dans le catalogue.',
+  },
+  {
+    cible: 'filtres-propose',
+    onglet: 'propose',
+    titre: 'Filtrer le catalogue',
+    texte: "Par temps de préparation, par tag, ou juste les plats « à refaire » que vous avez aimés.",
+  },
+  {
+    cible: 'nav-panier',
+    onglet: 'panier',
+    titre: 'Le Panier',
     texte:
-      "Parcourez le catalogue de recettes, filtrez par temps ou par tag, et ajoutez celles qui vous tentent d'un tap sur le +.",
+      "Les plats retenus pour la semaine atterrissent ici. Ajustez le nombre de parts, puis générez la liste quand vous êtes prêt·e.",
   },
   {
-    icone: 'panier',
-    titre: 'Panier',
-    texte:
-      "Ajustez le nombre de parts de chaque plat retenu, complétez votre semaine, puis générez la liste dès que vous êtes prêt.",
-  },
-  {
-    icone: 'liste',
-    titre: 'Liste',
-    texte:
-      "La liste de courses se construit toute seule, triée par magasin. Cochez d'abord ce que vous avez déjà avant d'y aller.",
-  },
-  {
-    icone: 'grill',
-    titre: 'Cuisson',
-    texte:
-      "Suivez les étapes une à une : les quantités s'affichent directement dans le texte, plus besoin de faire l'aller-retour avec la recette.",
-  },
-  {
-    icone: 'plus-cercle',
+    cible: 'nav-ajouter',
+    onglet: 'panier',
     titre: 'Ajouter une recette',
     texte:
-      "Depuis l'onglet « Ajouter », copiez le prompt fourni, demandez une recette à une IA, puis collez sa réponse : elle rejoint votre catalogue en quelques secondes.",
+      "Toujours accessible : ce bouton fait entrer une nouvelle recette dans votre catalogue, en quelques secondes avec l'aide d'une IA.",
   },
   {
-    icone: 'boite',
-    titre: 'Un foyer partagé',
-    texte:
-      "Partagez le code de votre foyer : la liste et le panier se mettent à jour en temps réel pour tout le monde. Le code se retrouve dans Réglages à tout moment.",
+    cible: 'nav-liste',
+    onglet: 'liste',
+    titre: 'La Liste',
+    texte: "Générée automatiquement à partir du panier, triée par magasin. Cochez d'abord ce que vous avez déjà.",
+  },
+  {
+    cible: 'nav-cuisson',
+    onglet: 'cuisson',
+    titre: 'Le mode Cuisson',
+    texte: 'Les étapes défilent une à une, avec les quantités affichées directement dans le texte.',
+  },
+  {
+    cible: 'reglages',
+    onglet: null,
+    titre: 'Réglages',
+    texte: 'Le code de votre foyer à partager, et cette visite à tout moment, vous attendent ici.',
+  },
+  {
+    cible: null,
+    onglet: 'propose',
+    titre: "C'est parti !",
+    texte: "Vous savez l'essentiel. Le reste se découvre en cuisinant.",
   },
 ]
