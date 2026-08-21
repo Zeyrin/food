@@ -45,7 +45,8 @@ const fr: Dico = {
   },
   bienvenue: {
     titre: 'Bienvenue',
-    intro: 'Créez votre maison, ou rejoignez celle de quelqu\'un avec son code.',
+    intro: 'Décider les repas de la semaine, en tirer la liste, et cuisiner. À deux, sans compte.',
+    ou: 'ou',
     creation: 'Création…',
     creerMaMaison: 'Créer ma maison',
     creerErreur: "La maison n'a pas pu être créée. Vérifiez votre connexion et réessayez.",
@@ -345,7 +346,8 @@ const en: Dico = {
   },
   bienvenue: {
     titre: 'Welcome',
-    intro: 'Create your household, or join someone else\'s with their code.',
+    intro: 'Decide the week\'s meals, turn them into a list, and cook. Together, no account.',
+    ou: 'or',
     creation: 'Creating…',
     creerMaMaison: 'Create my household',
     creerErreur: 'The household could not be created. Check your connection and try again.',

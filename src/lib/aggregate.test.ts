@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { annoterEtape, formatQuantite } from './aggregate'
+import { annoterEtape, etapeEnTexte, formatQuantite } from './aggregate'
 import type { Unit } from '../types'
 
 const ing = (nom: string, quantite: number, unite: Unit) => ({ nom, quantite, unite })
@@ -137,5 +137,13 @@ assert.equal(rendu('Ajouter le {wasabi}.', [ing('tofu', 400, 'g')]), 'Ajouter le
 // Une étape sans marqueur retombe sur l'heuristique, même dans une
 // recette dont les autres étapes en ont.
 assert.equal(rendu('Cuire les pâtes.', [ing('pâtes longues', 200, 'g')]), 'Cuire les pâtes [200 g].')
+
+// Aperçus (fiche recette, écran de préparation) : le libellé reste, les
+// accolades partent — sans quoi on lisait « Couper la {tomate} ».
+assert.equal(
+  etapeEnTexte('Couper la {tomate} et l\'{oignon rouge} en rondelles.'),
+  "Couper la tomate et l'oignon rouge en rondelles.",
+)
+assert.equal(etapeEnTexte('Cuire les pâtes.'), 'Cuire les pâtes.')
 
 console.log('ok')

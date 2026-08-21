@@ -46,6 +46,7 @@ import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
 import { useDecalageBarreOutils } from './hooks/useDecalageBarreOutils'
+import { useEnteteDefilee } from './hooks/useEnteteDefilee'
 import { useLangue } from './lib/i18n'
 
 const CORPUS: Recipe[] = corpus as Recipe[]
@@ -94,6 +95,7 @@ function lirePileSauvegardee(): Vue[] {
 export default function App() {
   const { t } = useLangue()
   useDecalageBarreOutils()
+  useEnteteDefilee()
   const [pile, setPile] = useState<Vue[]>(lirePileSauvegardee)
   const vueActuelle = pile[pile.length - 1]!
 
@@ -717,7 +719,11 @@ export default function App() {
             onClick={() => changerOnglet(cle)}
             aria-current={estOnglet && onglet === cle ? 'page' : undefined}
           >
-            <Icone nom={icone} taille={22} />
+            {/* L'icône vit dans sa propre pastille : c'est elle que la
+                sélection colore, pas le bouton entier (voir styles.css). */}
+            <span className="onglet-pastille">
+              <Icone nom={icone} taille={22} />
+            </span>
             {label}
           </button>
         ))}
@@ -726,7 +732,9 @@ export default function App() {
           onClick={ouvrirAjout}
           aria-current={vueActuelle.type === 'ajout' ? 'page' : undefined}
         >
-          <Icone nom="plus-cercle" taille={22} />
+          <span className="onglet-pastille">
+            <Icone nom="plus-cercle" taille={22} />
+          </span>
           {t('app.ajouter')}
         </button>
       </nav>

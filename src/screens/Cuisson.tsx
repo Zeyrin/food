@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Recipe, Verdict } from '../types'
-import { annoterEtape, formatQuantite } from '../lib/aggregate'
+import { annoterEtape, etapeEnTexte, formatQuantite } from '../lib/aggregate'
 import { formatDuree, minuteursDeLEtape } from '../lib/duree'
 import { useWakeLock } from '../hooks/useWakeLock'
 import type { Minuteurs } from '../hooks/useMinuteurs'
@@ -57,7 +57,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
         <h2>{t('cuisson.lesEtapes')}</h2>
         <ol className="apercu-etapes">
           {recette.etapes.map((etape, i) => (
-            <li key={i}>{etape}</li>
+            <li key={i}>{etapeEnTexte(etape)}</li>
           ))}
         </ol>
 

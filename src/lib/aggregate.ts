@@ -216,6 +216,17 @@ function consommerSuite(
 const MARQUEUR = /\{([^{}]+)\}/
 const MARQUEURS = new RegExp(MARQUEUR, 'g')
 
+/**
+ * L'étape en texte nu, marqueurs retirés. Le mode cuisson passe par
+ * `annoterEtape`, qui les remplace par leur libellé annoté de la dose ;
+ * les aperçus (fiche recette, écran de préparation) veulent la même
+ * phrase, sans les doses et surtout sans les accolades — elles s'y
+ * affichaient telles quelles, « Couper la {tomate} » sur la fiche.
+ */
+export function etapeEnTexte(texte: string): string {
+  return texte.replace(MARQUEURS, '$1')
+}
+
 /** Retrouve l'ingrédient désigné par un marqueur : d'abord au nom
  *  exact, sinon sur son premier mot (« {pâtes} » → « pâtes longues »). */
 function ingredientDesigne<T extends Pick<ListItem, 'nom'>>(

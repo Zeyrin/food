@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Recipe } from '../types'
-import { formatQuantite, redimensionnerRecette } from '../lib/aggregate'
+import { etapeEnTexte, formatQuantite, redimensionnerRecette } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
@@ -124,7 +124,7 @@ export default function DetailRecette({
       <h2>{t('detail.etapes')}</h2>
       <ol className="apercu-etapes">
         {recette.etapes.map((etape, i) => (
-          <li key={i}>{etape}</li>
+          <li key={i}>{etapeEnTexte(etape)}</li>
         ))}
       </ol>
 

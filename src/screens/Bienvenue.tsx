@@ -48,45 +48,63 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
   }
 
   return (
-    <>
-      <header className="entete-app">
-        <div className="entete-app-titre">
-          <Icone nom="etoile" />
-          <h1>{t('bienvenue.titre')}</h1>
-        </div>
-      </header>
-      <p className="aide">{t('bienvenue.intro')}</p>
+    <main className="accueil">
+      {/* Premier écran de l'app, et le seul qui n'ait rien à montrer :
+          pas de recette, pas de liste, rien à reprendre. Il présente donc
+          le produit — sceau, nom, promesse — avant de demander la seule
+          décision qu'il réclame, créer ou rejoindre. Le bloc de marque
+          occupe la place libre, les actions restent au pouce. */}
+      <div className="accueil-marque">
+        <span className="accueil-sceau" aria-hidden="true">
+          <Icone nom="grill" taille={30} />
+        </span>
+        <p className="accueil-surtitre">{t('bienvenue.titre')}</p>
+        <h1 className="accueil-nom">FFFood</h1>
+        <p className="accueil-baseline">{t('bienvenue.intro')}</p>
+      </div>
 
-      <button className="principal" onClick={creer} disabled={enCours !== null}>
-        {enCours === 'creation' ? t('bienvenue.creation') : t('bienvenue.creerMaMaison')}
-      </button>
+      <div className="accueil-actions">
+        <button className="principal" onClick={creer} disabled={enCours !== null}>
+          {enCours === 'creation' ? t('bienvenue.creation') : t('bienvenue.creerMaMaison')}
+        </button>
 
-      <h2>{t('bienvenue.rejoindreAvecCode')}</h2>
-      <input
-        className="champ-texte champ-texte-code-court"
-        placeholder="A3F9K2"
-        value={code}
-        onChange={(e) => setCode(e.target.value.toUpperCase().slice(0, 6))}
-        onKeyDown={(e) => e.key === 'Enter' && void rejoindre()}
-        maxLength={6}
-        autoCapitalize="characters"
-        autoCorrect="off"
-        spellCheck={false}
-        enterKeyHint="go"
-        aria-label={t('bienvenue.codeLabel')}
-      />
-      {erreur && (
-        <div className="bloc-erreurs" role="alert">
-          <p>{erreur}</p>
-        </div>
-      )}
-      <button
-        className="discret suite pleine-largeur"
-        onClick={rejoindre}
-        disabled={code.trim().length !== 6 || enCours !== null}
-      >
-        {enCours === 'jonction' ? t('bienvenue.recherche') : t('bienvenue.rejoindre')}
-      </button>
-    </>
+        {/* Deux chemins de même rang, pas une action et son repli : le
+            filet les sépare au lieu d'un titre de section qui hiérarchise. */}
+        <p className="accueil-ou">
+          <span>{t('bienvenue.ou')}</span>
+        </p>
+
+        <label className="accueil-champ">
+          <span className="accueil-legende">{t('bienvenue.rejoindreAvecCode')}</span>
+          <input
+            className="champ-texte champ-texte-code-court"
+            placeholder="A3F9K2"
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase().slice(0, 6))}
+            onKeyDown={(e) => e.key === 'Enter' && void rejoindre()}
+            maxLength={6}
+            autoCapitalize="characters"
+            autoCorrect="off"
+            spellCheck={false}
+            enterKeyHint="go"
+            aria-label={t('bienvenue.codeLabel')}
+          />
+        </label>
+
+        {erreur && (
+          <div className="bloc-erreurs" role="alert">
+            <p>{erreur}</p>
+          </div>
+        )}
+
+        <button
+          className="discret suite pleine-largeur"
+          onClick={rejoindre}
+          disabled={code.trim().length !== 6 || enCours !== null}
+        >
+          {enCours === 'jonction' ? t('bienvenue.recherche') : t('bienvenue.rejoindre')}
+        </button>
+      </div>
+    </main>
   )
 }
