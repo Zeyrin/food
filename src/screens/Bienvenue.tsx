@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Icone from '../components/Icone'
+import { useLangue } from '../lib/i18n'
 
 interface Props {
   onCreer: () => Promise<void>
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export default function Bienvenue({ onCreer, onRejoindre }: Props) {
+  const { t } = useLangue()
   const [code, setCode] = useState('')
   const [enCours, setEnCours] = useState<'creation' | 'jonction' | null>(null)
   const [erreur, setErreur] = useState<string | null>(null)
@@ -24,7 +26,7 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
     try {
       await onCreer()
     } catch {
-      setErreur("La maison n'a pas pu être créée. Vérifiez votre connexion et réessayez.")
+      setErreur(t('bienvenue.creerErreur'))
       setEnCours(null)
     }
   }
@@ -36,11 +38,11 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
     try {
       const ok = await onRejoindre(code)
       if (!ok) {
-        setErreur('Code introuvable, vérifiez-le.')
+        setErreur(t('bienvenue.codeErreurIntrouvable'))
         setEnCours(null)
       }
     } catch {
-      setErreur('La recherche a échoué. Vérifiez votre connexion et réessayez.')
+      setErreur(t('bienvenue.codeErreurReseau'))
       setEnCours(null)
     }
   }
@@ -50,16 +52,16 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
       <header className="entete-app">
         <div className="entete-app-titre">
           <Icone nom="etoile" />
-          <h1>Bienvenue</h1>
+          <h1>{t('bienvenue.titre')}</h1>
         </div>
       </header>
-      <p className="aide">Créez votre maison, ou rejoignez celle de quelqu'un avec son code.</p>
+      <p className="aide">{t('bienvenue.intro')}</p>
 
       <button className="principal" onClick={creer} disabled={enCours !== null}>
-        {enCours === 'creation' ? 'Création…' : 'Créer ma maison'}
+        {enCours === 'creation' ? t('bienvenue.creation') : t('bienvenue.creerMaMaison')}
       </button>
 
-      <h2>Rejoindre avec un code</h2>
+      <h2>{t('bienvenue.rejoindreAvecCode')}</h2>
       <input
         className="champ-texte champ-texte-code-court"
         placeholder="A3F9K2"
@@ -71,7 +73,7 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
         autoCorrect="off"
         spellCheck={false}
         enterKeyHint="go"
-        aria-label="Code du foyer à rejoindre"
+        aria-label={t('bienvenue.codeLabel')}
       />
       {erreur && (
         <div className="bloc-erreurs" role="alert">
@@ -83,7 +85,7 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
         onClick={rejoindre}
         disabled={code.trim().length !== 6 || enCours !== null}
       >
-        {enCours === 'jonction' ? 'Recherche…' : 'Rejoindre'}
+        {enCours === 'jonction' ? t('bienvenue.recherche') : t('bienvenue.rejoindre')}
       </button>
     </>
   )

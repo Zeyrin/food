@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import type { BasketEntry, Recipe } from '../types'
 import { type Historique, proposer, tousLesTags } from '../lib/propose'
 import { teinteRecette } from '../lib/identite'
+import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 
@@ -22,6 +23,7 @@ const normaliser = (s: string) =>
     .toLowerCase()
 
 export default function Propose({ recipes, historique, basket, onBasket, onDetail }: Props) {
+  const { t } = useLangue()
   const [recherche, setRecherche] = useState('')
   /**
    * Le tiroir de filtres est une colonne latérale sur desktop (il y a la
@@ -103,17 +105,17 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
       <header className="entete-app entete-propose">
         <div className="entete-app-titre">
           <Icone nom="grill" />
-          <h1>Proposer</h1>
+          <h1>{t('propose.titre')}</h1>
         </div>
         <div className="recherche-propose" data-tour="recherche-propose">
           <Icone nom="recherche" taille={18} />
           <input
             className="champ-texte champ-recherche"
             type="search"
-            placeholder="Un plat, un ingrédient…"
+            placeholder={t('propose.recherchePlaceholder')}
             value={recherche}
             onChange={(e) => setRecherche(e.target.value)}
-            aria-label="Chercher un plat ou un ingrédient"
+            aria-label={t('propose.rechercheLabel')}
           />
           {/* La croix native de `type=search` n'existe pas partout (ni sur
               Firefox, ni sur iOS) : sans elle, effacer demande d'ouvrir le
@@ -122,7 +124,7 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
             <button
               className="bouton-effacer-recherche"
               onClick={() => setRecherche('')}
-              aria-label="Effacer la recherche"
+              aria-label={t('propose.effacerRecherche')}
             >
               <Icone nom="fermer" taille={16} />
             </button>
@@ -138,37 +140,37 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
           data-tour="filtres-propose"
         >
           <summary>
-            <span>Filtres</span>
+            <span>{t('propose.filtres')}</span>
             {nombreFiltres > 0 && <em>{nombreFiltres}</em>}
             <Icone nom="suivant" taille={16} />
           </summary>
           <div className="puces">
             {nombreFiltres > 0 && (
               <button className="puce puce-effacer" onClick={toutEffacer}>
-                <Icone nom="fermer" taille={14} /> Tout effacer
+                <Icone nom="fermer" taille={14} /> {t('propose.toutEffacer')}
               </button>
             )}
-            {TEMPS.map((t) => (
+            {TEMPS.map((mn) => (
               <button
-                key={t}
+                key={mn}
                 className="puce"
-                aria-pressed={tempsMax === t}
-                onClick={() => setTempsMax(tempsMax === t ? null : t)}
+                aria-pressed={tempsMax === mn}
+                onClick={() => setTempsMax(tempsMax === mn ? null : mn)}
               >
-                ≤ {t} min
+                {t('propose.minutesMax', { n: mn })}
               </button>
             ))}
             <button className="puce" aria-pressed={aRefaire} onClick={() => setARefaire(!aRefaire)}>
-              À refaire
+              {t('propose.aRefaire')}
             </button>
-            {tousLesTags(recipes).map((t) => (
+            {tousLesTags(recipes).map((tag) => (
               <button
-                key={t}
+                key={tag}
                 className="puce"
-                aria-pressed={tags.includes(t)}
-                onClick={() => basculerTag(t)}
+                aria-pressed={tags.includes(tag)}
+                onClick={() => basculerTag(tag)}
               >
-                {t}
+                {tag}
               </button>
             ))}
           </div>
@@ -176,12 +178,12 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
 
         {affichees.length === 0 ? (
           <div className="vide">
-            <p>Aucune recette ne correspond.</p>
+            <p>{t('propose.aucuneRecette')}</p>
             {/* Un cul-de-sac sans issue sinon : les filtres qui ont vidé
                 l'écran sont repliés dans le tiroir, hors de vue. */}
             {(nombreFiltres > 0 || recherche.trim() !== '') && (
               <button className="discret suite" onClick={toutEffacer}>
-                Effacer les filtres
+                {t('propose.effacerFiltres')}
               </button>
             )}
           </div>
@@ -219,7 +221,7 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
                   {r.titre.charAt(0)}
                   <ImageRecette src={r.image} />
                   <span className="badge-temps">
-                    <Icone nom="minuteur" taille={12} /> {r.temps} min
+                    <Icone nom="minuteur" taille={12} /> {t('propose.minutes', { n: r.temps })}
                   </span>
                   <button
                     className="bouton-ajout bouton-ajout-flottant"
@@ -228,14 +230,20 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
                       basculer(r)
                     }}
                     aria-pressed={dansPanier(r.id)}
-                    aria-label={dansPanier(r.id) ? `Retirer ${r.titre} du panier` : `Ajouter ${r.titre} au panier`}
+                    aria-label={
+                      dansPanier(r.id)
+                        ? t('propose.retirerDuPanier', { titre: r.titre })
+                        : t('propose.ajouterAuPanier', { titre: r.titre })
+                    }
                   >
                     <Icone nom={dansPanier(r.id) ? 'coche' : 'plus'} taille={20} />
                   </button>
                 </div>
                 <div className="carte-recette-corps">
                   <h3>{r.titre}</h3>
-                  {motifs.has(r.id) && <p className="motif-recherche">contient {motifs.get(r.id)}</p>}
+                  {motifs.has(r.id) && (
+                    <p className="motif-recherche">{t('propose.contient', { motif: motifs.get(r.id) ?? '' })}</p>
+                  )}
                 </div>
               </div>
             ))}

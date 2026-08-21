@@ -222,7 +222,7 @@ p.aide a {
    à resynchroniser quand les boutons changent. */
 .barre-actions {
   position: sticky;
-  bottom: 0;
+  bottom: var(--decalage-barre-outils, 0px);
   z-index: 9;
   margin: 24px -20px 0;
   padding: 20px 20px max(16px, env(safe-area-inset-bottom));
@@ -243,7 +243,7 @@ p.aide a {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(72px + env(safe-area-inset-bottom));
+  bottom: calc(72px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
   z-index: 9;
   padding: 20px 20px 12px;
   background: linear-gradient(to top, var(--papier) 55%, transparent);
@@ -272,7 +272,7 @@ nav.onglets {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: var(--decalage-barre-outils, 0px);
   display: flex;
   justify-content: space-around;
   gap: 4px;
@@ -1720,7 +1720,7 @@ button.carte-panier-bouton .carte-panier-corps {
   position: fixed;
   left: 12px;
   right: 12px;
-  bottom: calc(80px + env(safe-area-inset-bottom));
+  bottom: calc(80px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
   z-index: 9;
   width: auto;
   max-width: 616px;
@@ -1755,11 +1755,11 @@ button.carte-panier-bouton .carte-panier-corps {
 /* Les boutons flottants lui cèdent la place plutôt que de le
    chevaucher — l'attribut est posé sur la racine par App.tsx. */
 [data-minuteur='true'] .bouton-flottant {
-  bottom: calc(168px + env(safe-area-inset-bottom));
+  bottom: calc(168px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
 }
 
 [data-minuteur='true'] .action-flottante {
-  bottom: calc(152px + env(safe-area-inset-bottom));
+  bottom: calc(152px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
 }
 
 [data-minuteur='true'] .espaceur-action-flottante {
@@ -2029,7 +2029,7 @@ button.carte-panier-bouton .carte-panier-corps {
 .bouton-flottant {
   position: fixed;
   right: 20px;
-  bottom: calc(88px + env(safe-area-inset-bottom));
+  bottom: calc(88px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
   z-index: 8;
   width: 56px;
   height: 56px;

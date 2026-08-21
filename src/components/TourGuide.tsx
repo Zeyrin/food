@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from
 import type { Onglet } from '../types'
 import { VISITE_GUIDEE } from '../data/onboarding'
 import { useTourRect } from '../hooks/useTourRect'
+import { etapesOnboarding, useLangue } from '../lib/i18n'
 import Icone from './Icone'
 
 interface Props {
@@ -38,8 +39,10 @@ function rayonRepere(rayon: string | undefined): string {
  * qu'afficher et positionner.
  */
 export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props) {
+  const { langue, t } = useLangue()
   const [index, setIndex] = useState(0)
-  const etape = VISITE_GUIDEE[index]!
+  const textes = etapesOnboarding(langue)
+  const etape = { ...VISITE_GUIDEE[index]!, ...textes[index]! }
   const dernier = index === VISITE_GUIDEE.length - 1
 
   // Ne réagit qu'aux changements d'étape : si l'utilisateur navigue de
@@ -112,7 +115,7 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
     : [{ top: 0, left: 0, width: vw, height: vh }]
 
   return (
-    <div className="visite" role="dialog" aria-modal="true" aria-label="Visite guidée de FFFood">
+    <div className="visite" role="dialog" aria-modal="true" aria-label={t('tour.dialogueLabel')}>
       {bandes.map((b, i) => (
         <div key={i} className="visite-bande" style={b} />
       ))}
@@ -136,7 +139,7 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
             {index + 1} / {VISITE_GUIDEE.length}
           </span>
           <button className="discret visite-passer" onClick={onTerminer}>
-            Passer
+            {t('tour.passer')}
           </button>
         </div>
 
@@ -145,15 +148,15 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
           <p className="aide">{etape.texte}</p>
         </div>
 
-        <div className="visite-points" role="tablist" aria-label="Étapes de la visite">
-          {VISITE_GUIDEE.map((e, i) => (
+        <div className="visite-points" role="tablist" aria-label={t('tour.etapesLabel')}>
+          {textes.map((e, i) => (
             <button
               key={e.titre}
               className="visite-point"
               role="tab"
               aria-current={i === index}
               aria-selected={i === index}
-              aria-label={`Étape ${i + 1} sur ${VISITE_GUIDEE.length} : ${e.titre}`}
+              aria-label={t('tour.etapeLabel', { n: i + 1, total: VISITE_GUIDEE.length, titre: e.titre })}
               onClick={() => setIndex(i)}
             />
           ))}
@@ -162,11 +165,11 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
         <div className="visite-actions">
           {index > 0 && (
             <button className="discret" onClick={precedent}>
-              <Icone nom="precedent" taille={18} /> Retour
+              <Icone nom="precedent" taille={18} /> {t('tour.retour')}
             </button>
           )}
           <button className="principal" onClick={suivant}>
-            {dernier ? 'Commencer' : 'Suivant'} <Icone nom="suivant" taille={18} />
+            {dernier ? t('tour.commencer') : t('tour.suivant')} <Icone nom="suivant" taille={18} />
           </button>
         </div>
       </div>

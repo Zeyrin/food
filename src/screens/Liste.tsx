@@ -4,6 +4,7 @@ import { STORES } from '../types'
 import { formatQuantite, groupByStore } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
+import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 
 interface Props {
@@ -24,6 +25,8 @@ const itemLibreEnListItem = (item: ItemLibre): ListItem => ({
 })
 
 export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCuisson }: Props) {
+  const { t } = useLangue()
+
   /**
    * Deux modes sur le même écran. « Tri » remplace l'inventaire du
    * placard : au lieu de tenir un stock à jour toute l'année, on
@@ -69,13 +72,18 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
   const retirerItem = (id: string) =>
     onEtat({ ...etat, items: (etat.items ?? []).filter((i) => i.id !== id) })
 
+  const labelMagasin = (magasin: keyof typeof STORES) => {
+    const traduit = t(`stores.${magasin}`)
+    return traduit === `stores.${magasin}` ? STORES[magasin].label : traduit
+  }
+
   /** Ce qu'il reste à acheter, groupé par magasin, en texte brut. */
   const composerTexte = (restant: ListItem[]) =>
     [
-      `Liste de courses — semaine ${numeroSemaine()}`,
+      t('liste.listeDeCourses', { n: numeroSemaine() }),
       ...groupByStore(restant).map(({ magasin, items: lignes }) =>
         [
-          STORES[magasin].label,
+          labelMagasin(magasin),
           ...lignes.map((i) => `- ${i.nom}${i.magasin === 'autre' ? '' : ` (${formatQuantite(i)})`}`),
         ].join('\n'),
       ),
@@ -85,7 +93,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
     const texte = composerTexte(restant)
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'Liste de courses', text: texte })
+        await navigator.share({ title: t('liste.titrePartage'), text: texte })
         return
       }
       await navigator.clipboard.writeText(texte)
@@ -103,7 +111,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
     <header className="entete-app">
       <div className="entete-app-titre">
         <Icone nom="liste" />
-        <h1>Liste</h1>
+        <h1>{t('liste.titre')}</h1>
       </div>
     </header>
   )
@@ -121,18 +129,18 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
         // clavier au moment du clic sur « + », et pas au chargement.
         autoFocus
         className="champ-texte"
-        placeholder="Papier toilette, café…"
+        placeholder={t('liste.articlePlaceholder')}
         value={saisie}
         enterKeyHint="done"
         onChange={(e) => setSaisie(e.target.value)}
         onKeyDown={(e) => e.key === 'Escape' && setSaisie(null)}
-        aria-label="Nom de l'article à ajouter"
+        aria-label={t('liste.articleLabel')}
       />
       <button
         type="submit"
         className="composeur-valider"
         disabled={!saisie.trim()}
-        aria-label="Ajouter à la liste"
+        aria-label={t('liste.ajouter')}
       >
         <Icone nom="plus" taille={20} />
       </button>
@@ -140,7 +148,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
         type="button"
         className="bouton-suppr"
         onClick={() => setSaisie(null)}
-        aria-label="Fermer l'ajout d'article"
+        aria-label={t('liste.fermerAjout')}
       >
         <Icone nom="fermer" taille={18} />
       </button>
@@ -152,7 +160,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
       className="bouton-flottant"
       onClick={() => setSaisie((p) => (p === null ? '' : null))}
       aria-expanded={saisie !== null}
-      aria-label={saisie === null ? 'Ajouter un article' : "Fermer l'ajout d'article"}
+      aria-label={saisie === null ? t('liste.ajouterArticle') : t('liste.fermerAjout')}
     >
       <Icone nom={saisie === null ? 'plus' : 'fermer'} taille={24} />
     </button>
@@ -164,7 +172,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
         {entete}
         <div className="corps-liste">
           {composeur}
-          <p className="vide">La liste se remplit à partir du panier de la semaine.</p>
+          <p className="vide">{t('liste.videTexte')}</p>
         </div>
         {boutonAjout}
       </>
@@ -177,14 +185,14 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
   const bascule = (
     <div className="bascule-mode">
       <button className="bascule-mode-bouton" aria-pressed={mode === 'tri'} onClick={() => setMode('tri')}>
-        Ce que j'ai déjà
+        {t('liste.modeTri')}
       </button>
       <button
         className="bascule-mode-bouton"
         aria-pressed={mode === 'courses'}
         onClick={() => setMode('courses')}
       >
-        Liste magasin
+        {t('liste.modeCourses')}
       </button>
     </div>
   )
@@ -196,9 +204,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
         <div className="corps-liste">
           {bascule}
           {composeur}
-          <p className="aide">
-            Ouvrez le frigo et le placard, touchez ce qui est déjà là. Le reste part en courses.
-          </p>
+          <p className="aide">{t('liste.triTexte')}</p>
 
           {tousLesItems.map((item) => {
             const deja = etat.dejaPossede[item.key] === true
@@ -221,7 +227,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
           })}
 
           <button className="principal" onClick={() => setMode('courses')}>
-            Passer aux courses ({aAcheter.length} produits)
+            {t('liste.passerAuxCourses', { n: aAcheter.length })}
           </button>
 
           {/* Même raison que côté "Liste magasin" : sans cet espaceur, le
@@ -243,7 +249,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
         <div className="bento-deux-colonnes">
           <div className="carte-resume carte-resume-bento">
             <Icone nom="panier" taille={96} />
-            <p className="carte-resume-label">Progression</p>
+            <p className="carte-resume-label">{t('liste.progression')}</p>
             <h2 className="carte-resume-nombre">
               {aAcheter.length - restants} <span>/ {aAcheter.length}</span>
             </h2>
@@ -253,7 +259,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
               className="carte-prochaine-cuisson"
               style={{ '--teinte': teinteRecette(prochaineCuisson.titre) } as React.CSSProperties}
             >
-              <p className="carte-resume-label">Prochaine cuisson</p>
+              <p className="carte-resume-label">{t('liste.prochaineCuisson')}</p>
               <p className="carte-prochaine-cuisson-titre">{prochaineCuisson.titre}</p>
             </div>
           )}
@@ -268,18 +274,18 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
               <Icone nom="coche" taille={24} />
             </div>
             <div className="carte-fini-texte">
-              <h2>{aAcheter.length === 0 ? 'Rien à acheter' : 'Courses terminées'}</h2>
+              <h2>{aAcheter.length === 0 ? t('liste.rienAAcheter') : t('liste.coursesTerminees')}</h2>
               <p>
                 {aAcheter.length === 0
-                  ? "Tout ce qu'il faut est déjà dans vos placards."
-                  : `Les ${aAcheter.length} produits sont dans le panier.`}
+                  ? t('liste.rienAAcheterTexte')
+                  : t('liste.coursesTermineesTexte', { n: aAcheter.length })}
               </p>
             </div>
             {/* La suite du parcours, ici et pas seulement tout en bas de la
                 liste : quand la dernière case se coche, on est debout dans
                 la file d'attente, pas en train de faire défiler l'écran. */}
             <button className="discret" onClick={onVersCuisson}>
-              <Icone nom="grill" taille={18} /> Passer à la cuisson
+              <Icone nom="grill" taille={18} /> {t('liste.passerALaCuisson')}
             </button>
           </div>
         )}
@@ -290,14 +296,14 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
         {restants > 0 && (
           <button className="discret pleine-largeur" onClick={() => void envoyer(aAcheter.filter((i) => !etat.coche[i.key]))}>
             <Icone nom={copiee ? 'coche' : 'liste'} taille={18} />
-            {copiee ? 'Liste copiée !' : 'Envoyer la liste'}
+            {copiee ? t('liste.listeCopiee') : t('liste.envoyerListe')}
           </button>
         )}
 
         {texteAPartager !== null && (
           <>
             <p className="aide espace-haut" role="alert">
-              Ce navigateur refuse le partage et la copie. Sélectionnez le texte ci-dessous.
+              {t('liste.partageRefuse')}
             </p>
             <textarea
               className="champ-texte champ-texte-code"
@@ -305,7 +311,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
               readOnly
               rows={8}
               onFocus={(e) => e.currentTarget.select()}
-              aria-label="Liste de courses à copier à la main"
+              aria-label={t('liste.copierAMain')}
             />
           </>
         )}
@@ -316,7 +322,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
               <span className="badge-section" data-magasin={magasin}>
                 <Icone nom={STORES[magasin].icone} taille={20} />
               </span>
-              {STORES[magasin].label}
+              {labelMagasin(magasin)}
             </h2>
             {lignes.map((item) => {
               const coche = etat.coche[item.key] === true
@@ -333,7 +339,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
                     <span className="nom-groupe">
                       <span className="nom">{item.nom}</span>
                       {item.origines.length > 1 && (
-                        <span className="nom-partage">Pour {item.origines.join(', ')}</span>
+                        <span className="nom-partage">{t('liste.pourPlats', { liste: item.origines.join(', ') })}</span>
                       )}
                     </span>
                     {!libre && <span className="qte">{formatQuantite(item)}</span>}
@@ -342,7 +348,7 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
                     <button
                       className="bouton-suppr"
                       onClick={() => retirerItem(item.key.replace('libre|', ''))}
-                      aria-label={`Retirer ${item.nom}`}
+                      aria-label={t('liste.retirer', { nom: item.nom })}
                     >
                       <Icone nom="fermer" taille={16} />
                     </button>
@@ -355,10 +361,10 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
 
         <div className="rangee-boutons espace-haut">
           <button className="discret" onClick={() => setMode('tri')}>
-            Revoir le tri
+            {t('liste.revoirLeTri')}
           </button>
           <button className="discret accent" onClick={onVersCuisson}>
-            <Icone nom="grill" taille={18} /> Cuisson
+            <Icone nom="grill" taille={18} /> {t('liste.cuisson')}
           </button>
         </div>
 

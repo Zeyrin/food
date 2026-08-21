@@ -1,6 +1,18 @@
 import { useState } from 'react'
 import { useInstallation } from '../hooks/useInstallation'
+import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
+
+/**
+ * Ni iOS ni Android n'exposent l'un l'API de l'autre : sur iPhone,
+ * `beforeinstallprompt` n'existe pas du tout ; sur Android, Chrome
+ * peut mettre un moment à l'émettre (ou pas, hors Chrome). Tant que
+ * `useInstallation` répond « manuelle », il faut donc dire *où*
+ * cliquer selon l'appareil plutôt que de supposer iOS pour tout le
+ * monde.
+ */
+const estIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent)
+const estAndroid = () => /Android/.test(navigator.userAgent)
 
 interface Props {
   codeFoyer: string | null
@@ -18,6 +30,7 @@ export default function Reglages({
   onRevoirPresentation,
 }: Props) {
   const installation = useInstallation()
+  const { langue, definirLangue, t } = useLangue()
   const [code, setCode] = useState('')
   const [enCours, setEnCours] = useState(false)
   const [erreur, setErreur] = useState<string | null>(null)
@@ -33,11 +46,11 @@ export default function Reglages({
     try {
       const ok = await onRejoindre(code)
       if (!ok) {
-        setErreur('Code introuvable, vérifiez-le.')
+        setErreur(t('reglages.codeErreurIntrouvable'))
         setEnCours(false)
       }
     } catch {
-      setErreur('La recherche a échoué. Vérifiez votre connexion et réessayez.')
+      setErreur(t('reglages.codeErreurReseau'))
       setEnCours(false)
     }
   }
@@ -47,53 +60,95 @@ export default function Reglages({
       <header className="entete-app">
         <div className="entete-app-titre">
           <Icone nom="menu" />
-          <h1>Réglages</h1>
+          <h1>{t('reglages.titre')}</h1>
         </div>
-        <button className="bouton-rond-discret" onClick={onFermer} aria-label="Fermer les réglages">
+        <button className="bouton-rond-discret" onClick={onFermer} aria-label={t('reglages.fermer')}>
           <Icone nom="fermer" taille={20} />
         </button>
       </header>
 
+      <h2>{t('reglages.langue')}</h2>
+      <div className="rangee-boutons" role="group" aria-label={t('reglages.langue')}>
+        <button
+          className="discret"
+          aria-pressed={langue === 'fr'}
+          onClick={() => definirLangue('fr')}
+        >
+          Français
+        </button>
+        <button
+          className="discret"
+          aria-pressed={langue === 'en'}
+          onClick={() => definirLangue('en')}
+        >
+          English
+        </button>
+      </div>
+
       {installation.etat !== 'installee' && (
         <>
-          <h2>Installer sur le téléphone</h2>
-          <p className="aide">
-            Installée, l'app garde vos recettes et votre liste accessibles sans réseau — au rayon surgelés,
-            c'est la différence entre une liste et un écran blanc.
-          </p>
+          <h2>{t('reglages.installerTitre')}</h2>
+          <p className="aide">{t('reglages.installerTexte')}</p>
           {installation.etat === 'possible' ? (
             <button className="discret suite pleine-largeur" onClick={() => void installation.installer()}>
-              <Icone nom="plus-cercle" taille={18} /> Installer FFFood
+              <Icone nom="plus-cercle" taille={18} /> {t('reglages.installerBouton')}
             </button>
-          ) : (
+          ) : estIOS() ? (
             // iOS n'expose aucune API d'installation : reste le geste, à
-            // condition de savoir lequel — d'où ces deux lignes.
+            // condition de savoir lequel.
             <p className="aide">
-              Sur iPhone : bouton <b>Partager</b> dans la barre de Safari, puis <b>Sur l'écran d'accueil</b>. Sur
-              ordinateur : l'icône d'installation dans la barre d'adresse.
+              {langue === 'fr' ? (
+                <>
+                  Sur iPhone : bouton <b>{t('reglages.partager')}</b> dans la barre de Safari, puis{' '}
+                  <b>{t('reglages.ecranAccueil')}</b>.
+                </>
+              ) : (
+                <>
+                  On iPhone: <b>{t('reglages.partager')}</b> button in the Safari bar, then{' '}
+                  <b>{t('reglages.ecranAccueil')}</b>.
+                </>
+              )}
             </p>
+          ) : estAndroid() ? (
+            // Chrome/Android émet `beforeinstallprompt` avec un peu de
+            // retard (ou pas du tout hors Chrome) : le geste manuel reste
+            // utile même sur Android.
+            <p className="aide">
+              {langue === 'fr' ? (
+                <>
+                  Sur Android (Chrome) : menu <b>⋮</b> en haut à droite, puis{' '}
+                  <b>{t('reglages.ajouterEcranAndroid')}</b>.
+                </>
+              ) : (
+                <>
+                  On Android (Chrome): <b>⋮</b> menu top right, then <b>{t('reglages.ajouterEcranAndroid')}</b>.
+                </>
+              )}
+            </p>
+          ) : (
+            <p className="aide">{t('reglages.installerOrdinateur')}</p>
           )}
         </>
       )}
 
-      <h2>Découvrir l'app</h2>
-      <p className="aide">Revoir la présentation des fonctionnalités et comment les utiliser.</p>
+      <h2>{t('reglages.decouvrirTitre')}</h2>
+      <p className="aide">{t('reglages.decouvrirTexte')}</p>
       <button className="discret suite pleine-largeur" onClick={onRevoirPresentation}>
-        <Icone nom="etoile" taille={18} /> Revoir la présentation
+        <Icone nom="etoile" taille={18} /> {t('reglages.revoirPresentation')}
       </button>
 
       {codeFoyer && (
         <>
-          <h2>Votre foyer</h2>
+          <h2>{t('reglages.votreFoyer')}</h2>
           <div className="carte-code-foyer">
-            <p className="carte-resume-label">Code à partager</p>
+            <p className="carte-resume-label">{t('reglages.codeAPartager')}</p>
             <p className="carte-code-foyer-valeur">{codeFoyer}</p>
           </div>
         </>
       )}
 
-      <h2>Rejoindre un autre foyer</h2>
-      <p className="aide">Change la maison que vous partagez — vos recettes et votre liste actuelles resteront accessibles avec leur propre code.</p>
+      <h2>{t('reglages.rejoindreAutreFoyer')}</h2>
+      <p className="aide">{t('reglages.rejoindreAutreFoyerTexte')}</p>
       <input
         className="champ-texte champ-texte-code-court"
         placeholder="A3F9K2"
@@ -105,7 +160,7 @@ export default function Reglages({
         autoCorrect="off"
         spellCheck={false}
         enterKeyHint="go"
-        aria-label="Code du foyer à rejoindre"
+        aria-label={t('reglages.codeLabel')}
       />
       {erreur && (
         <div className="bloc-erreurs" role="alert">
@@ -113,31 +168,31 @@ export default function Reglages({
         </div>
       )}
       <button className="discret suite pleine-largeur" onClick={rejoindre} disabled={code.trim().length !== 6 || enCours}>
-        {enCours ? 'Recherche…' : 'Rejoindre'}
+        {enCours ? t('reglages.recherche') : t('reglages.rejoindre')}
       </button>
 
-      <h2>Quitter ce foyer</h2>
+      <h2>{t('reglages.quitterFoyer')}</h2>
       {confirmationQuitter ? (
-        <div className="bloc-confirmation" role="alertdialog" aria-label="Confirmer le départ du foyer">
+        <div className="bloc-confirmation" role="alertdialog" aria-label={t('reglages.quitterFoyer')}>
           <p>
-            Quitter ce foyer sur cet appareil ? {codeFoyer ? `Notez son code (${codeFoyer}) pour y revenir.` : ''}
+            {t('reglages.quitterConfirmation', {
+              code: codeFoyer ? t('reglages.quitterConfirmationCode', { code: codeFoyer }) : '',
+            })}
           </p>
           <div className="rangee-boutons">
             <button className="discret" onClick={() => setConfirmationQuitter(false)}>
-              Annuler
+              {t('reglages.annuler')}
             </button>
             <button className="discret danger" onClick={onQuitter}>
-              Quitter
+              {t('reglages.quitter')}
             </button>
           </div>
         </div>
       ) : (
         <>
-          <p className="aide">
-            Retour à l'écran d'accueil, pour en créer un nouveau ou en rejoindre un autre par code.
-          </p>
+          <p className="aide">{t('reglages.quitterTexte')}</p>
           <button className="discret suite pleine-largeur" onClick={() => setConfirmationQuitter(true)}>
-            Quitter le foyer
+            {t('reglages.quitterFoyerBouton')}
           </button>
         </>
       )}
@@ -146,11 +201,11 @@ export default function Reglages({
           licences Creative Commons qui demandent de citer l'auteur : la page
           de crédits doit donc être atteignable depuis l'app, pas seulement
           depuis le dépôt. */}
-      <h2>Crédits photo</h2>
+      <h2>{t('reglages.creditsPhoto')}</h2>
       <p className="aide">
-        Les photos des plats sont de leurs auteurs, sous licence Creative Commons ou Unsplash.{' '}
+        {t('reglages.creditsPhotoTexte')}{' '}
         <a href="/credits.html" target="_blank" rel="noopener noreferrer">
-          Voir la liste
+          {t('reglages.voirListe')}
         </a>
         .
       </p>

@@ -3,6 +3,7 @@ import type { BasketEntry, Recipe } from '../types'
 import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { cuisineRecemment, type Historique } from '../lib/propose'
+import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 
@@ -18,13 +19,6 @@ interface Props {
   onViderPanier: () => void
 }
 
-/** « 150 » → « 2 h 30 ». Une durée de semaine se lit en heures. */
-const formatMinutes = (minutes: number) => {
-  if (minutes < 60) return `${minutes} min`
-  const reste = minutes % 60
-  return `${Math.floor(minutes / 60)} h${reste ? ` ${reste}` : ''}`
-}
-
 export default function Panier({
   recipes,
   basket,
@@ -35,6 +29,15 @@ export default function Panier({
   onAjouterRecette,
   onViderPanier,
 }: Props) {
+  const { t } = useLangue()
+
+  /** « 150 » → « 2 h 30 ». Une durée de semaine se lit en heures. */
+  const formatMinutes = (minutes: number) => {
+    if (minutes < 60) return t('panier.minutes', { n: minutes })
+    const reste = minutes % 60
+    return t('panier.heures', { h: Math.floor(minutes / 60), reste: reste ? ` ${reste}` : '' })
+  }
+
   const byId = new Map(recipes.map((r) => [r.id, r]))
   const [confirmation, setConfirmation] = useState(false)
 
@@ -77,9 +80,9 @@ export default function Panier({
 
   const rattrapage = retire && (
     <div className="carte carte-annulation" role="status">
-      <p>« {byId.get(retire.entree.recipeId)?.titre ?? 'Plat'} » retiré du panier.</p>
+      <p>{t('panier.retireDuPanier', { titre: byId.get(retire.entree.recipeId)?.titre ?? '' })}</p>
       <button className="discret" onClick={annulerRetrait}>
-        <Icone nom="precedent" taille={16} /> Annuler
+        <Icone nom="precedent" taille={16} /> {t('panier.annuler')}
       </button>
     </div>
   )
@@ -92,7 +95,7 @@ export default function Panier({
     <header className="entete-app">
       <div className="entete-app-titre">
         <Icone nom="panier" />
-        <h1>Panier</h1>
+        <h1>{t('panier.titre')}</h1>
       </div>
     </header>
   )
@@ -105,16 +108,13 @@ export default function Panier({
    */
   const viderLePanier = (
     <>
-      <h2>Vider le panier</h2>
+      <h2>{t('panier.viderLePanier')}</h2>
       {confirmation ? (
-        <div className="bloc-confirmation" role="alertdialog" aria-label="Confirmer la remise à zéro">
-          <p>
-            Vider les {basket.length} plat{basket.length > 1 ? 's' : ''} du panier ? La liste de courses part
-            avec, cases cochées comprises. Le catalogue de recettes, lui, ne bouge pas.
-          </p>
+        <div className="bloc-confirmation" role="alertdialog" aria-label={t('panier.viderLePanier')}>
+          <p>{t('panier.viderConfirmation', { n: basket.length, s: basket.length > 1 ? 's' : '' })}</p>
           <div className="rangee-boutons">
             <button className="discret" onClick={() => setConfirmation(false)}>
-              Annuler
+              {t('panier.annuler')}
             </button>
             <button
               className="discret danger"
@@ -123,17 +123,15 @@ export default function Panier({
                 onViderPanier()
               }}
             >
-              Vider
+              {t('panier.vider')}
             </button>
           </div>
         </div>
       ) : (
         <>
-          <p className="aide">
-            Courses faites et plats cuisinés ? Repartez d'un panier et d'une liste vides.
-          </p>
+          <p className="aide">{t('panier.viderTexte')}</p>
           <button className="discret suite pleine-largeur" onClick={() => setConfirmation(true)}>
-            Vider le panier
+            {t('panier.viderLePanier')}
           </button>
         </>
       )}
@@ -142,15 +140,15 @@ export default function Panier({
 
   const complements = (
     <>
-      <h2>Compléter ma semaine</h2>
+      <h2>{t('panier.completerSemaine')}</h2>
       <div className="bento-deux-colonnes">
         <button className="carte-bento" onClick={onVersPropose}>
           <Icone nom="plus-cercle" taille={28} />
-          <p>Ajouter un plat rapide</p>
+          <p>{t('panier.ajouterPlatRapide')}</p>
         </button>
         <button className="carte-bento neutre" onClick={onAjouterRecette}>
           <Icone nom="plus-cercle" taille={28} />
-          <p>Nouvelle recette</p>
+          <p>{t('panier.nouvelleRecette')}</p>
         </button>
       </div>
     </>
@@ -161,7 +159,7 @@ export default function Panier({
       <>
         {entete}
         {rattrapage}
-        <p className="vide">Rien pour l'instant. Choisissez des recettes dans « Proposer ».</p>
+        <p className="vide">{t('panier.videTexte')}</p>
         {complements}
       </>
     )
@@ -176,27 +174,25 @@ export default function Panier({
           qu'on veut vraiment : combien de parts ça fait, combien de
           temps de cuisine ça représente, et ce qu'il reste à cuisiner. */}
       <section className="carte-resume carte-resume-semaine">
-        <p className="carte-resume-label">Aperçu semaine</p>
+        <p className="carte-resume-label">{t('panier.apercuSemaine')}</p>
         <div className="carte-resume-rangee">
           <div>
-            <h2 className="carte-resume-nombre">
-              {basket.length} plat{basket.length > 1 ? 's' : ''}
-            </h2>
+            <h2 className="carte-resume-nombre">{t('panier.plats', { n: basket.length, s: basket.length > 1 ? 's' : '' })}</h2>
             {/* Deux lignes courtes plutôt qu'une longue : sur 390 px, tout
                 mettre bout à bout renvoyait « de cuisine » à la ligne et
                 poussait la pastille sous le bloc. */}
             <p className="carte-resume-sous">
-              Semaine {numeroSemaine()} · {parts} part{parts > 1 ? 's' : ''}
+              {t('panier.semaine', { n: numeroSemaine(), parts, s: parts > 1 ? 's' : '' })}
             </p>
-            <p className="carte-resume-detail">{formatMinutes(tempsTotal)} de cuisine</p>
+            <p className="carte-resume-detail">{t('panier.tempsCuisine', { temps: formatMinutes(tempsTotal) })}</p>
           </div>
           <span className="pastille-etat" data-fini={aCuisiner === 0 ? 'true' : undefined}>
-            {aCuisiner === 0 ? 'Tout est cuisiné' : `${aCuisiner} à cuisiner`}
+            {aCuisiner === 0 ? t('panier.toutCuisine') : t('panier.aCuisiner', { n: aCuisiner })}
           </span>
         </div>
       </section>
 
-      <h2>Sélectionnés</h2>
+      <h2>{t('panier.selectionnes')}</h2>
 
       {rattrapage}
 
@@ -220,7 +216,7 @@ export default function Panier({
                   <button
                     className="bouton-rond-discret bouton-retirer"
                     onClick={() => retirer(entree.recipeId)}
-                    aria-label={`Retirer ${r.titre} du panier`}
+                    aria-label={t('panier.retirerPlat', { titre: r.titre })}
                   >
                     <Icone nom="fermer" taille={18} />
                   </button>
@@ -228,18 +224,18 @@ export default function Panier({
                 <div className="compteur">
                   <button
                     onClick={() => setPortions(entree.recipeId, Math.max(1, entree.portions - 1))}
-                    aria-label={`Moins de parts pour ${r.titre}`}
+                    aria-label={t('panier.moinsDeParts', { titre: r.titre })}
                   >
                     <Icone nom="moins" taille={16} />
                   </button>
                   <span>{entree.portions}</span>
                   <button
                     onClick={() => setPortions(entree.recipeId, entree.portions + 1)}
-                    aria-label={`Plus de parts pour ${r.titre}`}
+                    aria-label={t('panier.plusDeParts', { titre: r.titre })}
                   >
                     <Icone nom="plus" taille={16} />
                   </button>
-                  <span className="compteur-label">Portions</span>
+                  <span className="compteur-label">{t('panier.portions')}</span>
                 </div>
               </div>
             </div>
@@ -255,7 +251,7 @@ export default function Panier({
 
       <div className="action-flottante">
         <button className="principal" onClick={onVersListe}>
-          <Icone nom="panier" taille={20} /> Générer la liste de courses
+          <Icone nom="panier" taille={20} /> {t('panier.genererListe')}
         </button>
       </div>
     </>

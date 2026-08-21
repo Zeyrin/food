@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { Recipe } from '../types'
 import { validerCollage } from '../lib/collerRecettes'
 import { genererPrompt } from '../lib/promptRecette'
+import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 
 interface Props {
@@ -19,6 +20,7 @@ export default function AjouterRecette({
   titresExistants,
   recetteInitiale,
 }: Props) {
+  const { t } = useLangue()
   const [demande, setDemande] = useState('')
   const [texte, setTexte] = useState(() =>
     recetteInitiale
@@ -83,12 +85,12 @@ export default function AjouterRecette({
           ? refusees
           : dejaVus.length > 0
             ? []
-            : ['Rien à ajouter dans ce collage.'],
+            : [t('ajouter.rienAAjouter')],
       )
       return
     }
     if (edition && recettes.length > 1) {
-      setErreurs(['Vous modifiez une recette : collez-en une seule, pas une liste.'])
+      setErreurs([t('ajouter.modificationSeule')])
       return
     }
 
@@ -100,7 +102,7 @@ export default function AjouterRecette({
         ajoutOk++
       }
     } catch (e) {
-      setErreurs([e instanceof Error ? e.message : "Échec de l'ajout."])
+      setErreurs([e instanceof Error ? e.message : t('ajouter.echecAjout')])
       setEnCours(false)
       // Une panne réseau au milieu d'un lot : ce qui est passé est
       // passé, on ne le redemande pas — le compteur le dit et le reste
@@ -132,11 +134,11 @@ export default function AjouterRecette({
 
   const libelleBouton = () => {
     if (ajoutees > 0) {
-      if (edition) return 'Modifications enregistrées !'
-      return ajoutees > 1 ? `${ajoutees} recettes ajoutées !` : 'Recette ajoutée !'
+      if (edition) return t('ajouter.modificationsEnregistrees')
+      return ajoutees > 1 ? t('ajouter.recettesAjoutees', { n: ajoutees }) : t('ajouter.recetteAjouteeSeule')
     }
-    if (enCours) return 'Ajout…'
-    return edition ? 'Enregistrer' : 'Ajouter au catalogue'
+    if (enCours) return t('ajouter.ajoutEnCours')
+    return edition ? t('ajouter.enregistrer') : t('ajouter.ajouterAuCatalogue')
   }
 
   return (
@@ -144,30 +146,26 @@ export default function AjouterRecette({
       <header className="entete-app">
         <div className="entete-app-titre">
           <Icone nom="plus-cercle" />
-          <h1>{edition ? 'Modifier la recette' : 'Ajouter une recette'}</h1>
+          <h1>{edition ? t('ajouter.titreEdition') : t('ajouter.titreAjout')}</h1>
         </div>
       </header>
-      <p className="aide">
-        Saisie automatique : demandez des recettes à une IA avec le prompt ci-dessous, puis collez sa réponse telle
-        quelle — bloc de code, phrases autour et liste de plusieurs recettes sont acceptés. Dans les étapes, un
-        ingrédient entre accolades — « cuire les {'{pâtes}'} » — s'affiche avec sa dose en mode cuisson.
-      </p>
+      <p className="aide">{t('ajouter.intro', { exemple: '{pâtes}' })}</p>
 
-      <h2>1. Le prompt à copier</h2>
+      <h2>{t('ajouter.etape1')}</h2>
       <textarea
         className="champ-texte"
-        placeholder="Ce que vous voulez (ex: 5 recettes d'été, végé, en moins de 20 min)…"
+        placeholder={t('ajouter.demandePlaceholder')}
         value={demande}
         onChange={(e) => setDemande(e.target.value)}
         rows={2}
       />
       <button className="discret suite pleine-largeur" onClick={copierPrompt}>
-        <Icone nom={copie ? 'coche' : 'liste'} taille={18} /> {copie ? 'Copié !' : 'Copier le prompt'}
+        <Icone nom={copie ? 'coche' : 'liste'} taille={18} /> {copie ? t('ajouter.copie') : t('ajouter.copierLePrompt')}
       </button>
       {promptEnClair !== null && (
         <>
           <p className="aide espace-haut" role="alert">
-            Ce navigateur refuse la copie automatique. Sélectionnez le texte ci-dessous et copiez-le à la main.
+            {t('ajouter.copieRefusee')}
           </p>
           <textarea
             className="champ-texte champ-texte-code"
@@ -175,15 +173,15 @@ export default function AjouterRecette({
             readOnly
             rows={6}
             onFocus={(e) => e.currentTarget.select()}
-            aria-label="Prompt à copier à la main"
+            aria-label={t('ajouter.promptAMain')}
           />
         </>
       )}
 
-      <h2>2. La réponse de l'IA</h2>
+      <h2>{t('ajouter.etape2')}</h2>
       <textarea
         className="champ-texte champ-texte-code"
-        placeholder='{ "titre": "...", "temps": 30, ... }'
+        placeholder={t('ajouter.reponsePlaceholder')}
         value={texte}
         onChange={(e) => setTexte(e.target.value)}
         rows={10}
@@ -192,8 +190,10 @@ export default function AjouterRecette({
       {doublons.length > 0 && (
         <div className="bloc-doublons" role="status">
           <p>
-            Déjà au catalogue, {doublons.length > 1 ? 'laissées' : 'laissée'} de côté :{' '}
-            {doublons.map((t) => `« ${t} »`).join(', ')}.
+            {t('ajouter.dejaAuCatalogue', {
+              mot: doublons.length > 1 ? t('ajouter.laissees') : t('ajouter.laissee'),
+              titres: doublons.map((d) => `« ${d} »`).join(', '),
+            })}
           </p>
         </div>
       )}
@@ -202,10 +202,8 @@ export default function AjouterRecette({
         <div className="bloc-erreurs" role="alert">
           {partiel && (
             <p>
-              <b>
-                {ajoutees} recette{ajoutees > 1 ? 's' : ''} ajoutée{ajoutees > 1 ? 's' : ''}.
-              </b>{' '}
-              Le reste a été laissé de côté :
+              <b>{t('ajouter.recetteAjoutee', { n: ajoutees, s: ajoutees > 1 ? 's' : '' })}</b>{' '}
+              {t('ajouter.resteLaisseDeCote')}
             </p>
           )}
           {erreurs.map((e, i) => (
@@ -214,15 +212,17 @@ export default function AjouterRecette({
         </div>
       )}
 
-      {/* Désactivé une fois le lot passé : recliquer rejouerait tout le
-          collage et créerait des doublons. */}
-      <button className="principal" onClick={valider} disabled={!texte.trim() || enCours || ajoutees > 0}>
-        {ajoutees > 0 && <Icone nom="coche" taille={20} />}
-        {libelleBouton()}
-      </button>
-      <button className="discret suite pleine-largeur" onClick={onQuitter}>
-        {partiel ? 'Terminer' : 'Annuler'}
-      </button>
+      <div className="barre-actions">
+        {/* Désactivé une fois le lot passé : recliquer rejouerait tout le
+            collage et créerait des doublons. */}
+        <button className="principal" onClick={valider} disabled={!texte.trim() || enCours || ajoutees > 0}>
+          {ajoutees > 0 && <Icone nom="coche" taille={20} />}
+          {libelleBouton()}
+        </button>
+        <button className="discret suite pleine-largeur" onClick={onQuitter}>
+          {partiel ? t('ajouter.terminer') : t('ajouter.annuler')}
+        </button>
+      </div>
     </>
   )
 }

@@ -1,5 +1,6 @@
 import type { Minuteur } from '../lib/minuteurs'
 import { mmss } from '../lib/minuteurs'
+import { useLangue } from '../lib/i18n'
 import Icone from './Icone'
 
 interface Props {
@@ -29,13 +30,14 @@ export default function PanneauMinuteurs({
   onToutRetirer,
   onRejoindre,
 }: Props) {
+  const { t } = useLangue()
   return (
     <>
-      <button className="voile-panneau" onClick={onFermer} aria-label="Fermer les minuteurs" />
-      <div className="panneau-minuteurs" role="dialog" aria-label="Minuteurs en cours">
+      <button className="voile-panneau" onClick={onFermer} aria-label={t('panneauMinuteurs.fermer')} />
+      <div className="panneau-minuteurs" role="dialog" aria-label={t('panneauMinuteurs.dialogueLabel')}>
         <div className="panneau-minuteurs-entete">
-          <h2>Minuteurs</h2>
-          <button className="cuisson-rond" onClick={onFermer} aria-label="Fermer">
+          <h2>{t('panneauMinuteurs.titre')}</h2>
+          <button className="cuisson-rond" onClick={onFermer} aria-label={t('panneauMinuteurs.fermer')}>
             <Icone nom="fermer" taille={20} />
           </button>
         </div>
@@ -45,19 +47,23 @@ export default function PanneauMinuteurs({
             <li key={m.id} data-sonne={m.fin <= maintenant}>
               <div>
                 <b>{m.nom}</b>
-                <span>{m.fin <= maintenant ? 'Terminé' : mmss(Math.max(0, Math.round((m.fin - maintenant) / 1000)))}</span>
+                <span>
+                  {m.fin <= maintenant
+                    ? t('panneauMinuteurs.termine')
+                    : mmss(Math.max(0, Math.round((m.fin - maintenant) / 1000)))}
+                </span>
                 {/* De quel plat il vient : trois minuteurs sans étiquette
                     de recette, c'est trois questions de plus. */}
                 {onRejoindre && (
                   <button className="panneau-minuteurs-plat" onClick={() => onRejoindre(m.recipeId)}>
-                    Revenir à {m.recetteTitre} <Icone nom="suivant" taille={14} />
+                    {t('panneauMinuteurs.revenirA', { titre: m.recetteTitre })} <Icone nom="suivant" taille={14} />
                   </button>
                 )}
               </div>
               <button
                 className="cuisson-rond"
                 onClick={() => onRetirer(m.id)}
-                aria-label={`Supprimer le minuteur ${m.nom}`}
+                aria-label={t('panneauMinuteurs.supprimer', { nom: m.nom })}
               >
                 <Icone nom="fermer" taille={18} />
               </button>
@@ -67,7 +73,7 @@ export default function PanneauMinuteurs({
 
         {liste.length > 1 && (
           <button className="discret suite pleine-largeur panneau-minuteurs-tout" onClick={onToutRetirer}>
-            Tout supprimer
+            {t('panneauMinuteurs.toutSupprimer')}
           </button>
         )}
       </div>

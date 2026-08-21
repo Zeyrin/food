@@ -45,6 +45,8 @@ import { useMinuteurs } from './hooks/useMinuteurs'
 import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
+import { useDecalageBarreOutils } from './hooks/useDecalageBarreOutils'
+import { useLangue } from './lib/i18n'
 
 const CORPUS: Recipe[] = corpus as Recipe[]
 
@@ -90,6 +92,8 @@ function lirePileSauvegardee(): Vue[] {
 }
 
 export default function App() {
+  const { t } = useLangue()
+  useDecalageBarreOutils()
   const [pile, setPile] = useState<Vue[]>(lirePileSauvegardee)
   const vueActuelle = pile[pile.length - 1]!
 
@@ -457,7 +461,7 @@ export default function App() {
 
   const ajouter = useCallback(
     async (recette: Recipe) => {
-      if (!foyer) throw new Error('Foyer non initialisé, réessayez dans un instant.')
+      if (!foyer) throw new Error(t('app.foyerNonInitialiseReessayez'))
       await ajouterRecette(foyer, recette)
       setRecipes((prec) => [...prec, recette])
     },
@@ -466,7 +470,7 @@ export default function App() {
 
   const modifier = useCallback(
     async (recette: Recipe) => {
-      if (!foyer) throw new Error('Foyer non initialisé.')
+      if (!foyer) throw new Error(t('app.foyerNonInitialise'))
       await modifierRecette(foyer, recette)
       setRecipes((prec) => prec.map((r) => (r.id === recette.id ? recette : r)))
     },
@@ -619,7 +623,7 @@ export default function App() {
         <button
           className="bouton-rond-discret bouton-reglages-global"
           onClick={() => irVers({ type: 'reglages' })}
-          aria-label="Réglages"
+          aria-label={t('app.reglages')}
           data-tour="reglages"
         >
           <Icone nom="menu" taille={20} />
@@ -628,7 +632,7 @@ export default function App() {
 
       {!enLigne && (
         <p className="pastille-hors-ligne" role="status">
-          <Icone nom="alerte" taille={16} /> Hors ligne — vos changements se synchroniseront au retour du réseau
+          <Icone nom="alerte" taille={16} /> {t('app.horsLigne')}
         </p>
       )}
 
@@ -701,10 +705,10 @@ export default function App() {
       <nav className="onglets">
         {(
           [
-            ['propose', 'etoile', 'Proposer'],
-            ['panier', 'panier', `Panier${basket.length ? ` (${basket.length})` : ''}`],
-            ['liste', 'liste', 'Liste'],
-            ['cuisson', 'grill', 'Cuisson'],
+            ['propose', 'etoile', t('app.proposer')],
+            ['panier', 'panier', basket.length ? t('app.panier', { n: basket.length }) : t('panier.titre')],
+            ['liste', 'liste', t('app.liste')],
+            ['cuisson', 'grill', t('app.cuisson')],
           ] as const
         ).map(([cle, icone, label]) => (
           <button
@@ -723,7 +727,7 @@ export default function App() {
           aria-current={vueActuelle.type === 'ajout' ? 'page' : undefined}
         >
           <Icone nom="plus-cercle" taille={22} />
-          Ajouter
+          {t('app.ajouter')}
         </button>
       </nav>
 
