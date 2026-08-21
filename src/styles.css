@@ -146,6 +146,13 @@ p.aide {
   margin: 0 0 16px;
 }
 
+/* Le bleu souligné du navigateur détonne dans une palette qui n'en a pas :
+   même trait que `.lien-discret`, à la couleur du texte accentué. */
+p.aide a {
+  color: var(--accent);
+  text-underline-offset: 3px;
+}
+
 /* --- En-tête d'écran ------------------------------------------------------ */
 
 .entete-app {
@@ -305,6 +312,7 @@ nav.onglets button[aria-current='page'] {
 /* --- Cartes et rangées --------------------------------------------------- */
 
 .carte {
+  display: block;
   background: var(--carte-basse);
   border-radius: var(--rayon);
   padding: 16px;
@@ -337,6 +345,12 @@ button.carte:active {
   overflow: hidden;
   background: var(--carte-basse);
   box-shadow: var(--ombre);
+  /* Les cartes d'une même rangée de grille sont étirées à la plus haute :
+     sans ce partage, un titre d'une ligne laissait le bas de la carte à nu
+     sous le corps — visible dès que celui-ci a son propre fond (recette
+     retenue au panier). */
+  display: flex;
+  flex-direction: column;
 }
 
 .vignette {
@@ -352,6 +366,11 @@ button.carte:active {
   color: hsl(var(--teinte) 35% 30% / 0.32);
   background: hsl(var(--teinte) 65% 87%);
   padding-bottom: 8px;
+}
+
+/* La vignette garde sa hauteur : c'est le corps qui absorbe l'étirement. */
+.carte-recette > .vignette {
+  flex: none;
 }
 
 .vignette img {
@@ -398,6 +417,7 @@ button.carte:active {
 }
 
 .carte-recette-corps {
+  flex: 1;
   padding: 20px;
 }
 
@@ -458,17 +478,7 @@ button.carte:active {
   right: 8px;
 }
 
-.grille-recettes /* Pourquoi cette recette remonte alors que son titre ne contient pas
-   le mot cherché : l'ingrédient (ou le tag) qui a fait la
-   correspondance. */
-.motif-recherche {
-  margin: 4px 0 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.carte-recette-corps {
+.grille-recettes .carte-recette-corps {
   padding: 12px 14px 14px;
 }
 
@@ -614,17 +624,7 @@ button.discret.danger {
   outline-offset: -3px;
 }
 
-.carte-recette[data-panier='true'] /* Pourquoi cette recette remonte alors que son titre ne contient pas
-   le mot cherché : l'ingrédient (ou le tag) qui a fait la
-   correspondance. */
-.motif-recherche {
-  margin: 4px 0 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.carte-recette-corps {
+.carte-recette[data-panier='true'] .carte-recette-corps {
   background: var(--accent-doux);
 }
 
@@ -925,9 +925,13 @@ button.principal:disabled {
   box-shadow: none;
 }
 
-/* Bouton "carte" cliquable en bloc (`button.carte`, reset natif). */
+/* Bouton "carte" cliquable en bloc (`button.carte`, reset natif). Le
+   `display` vient de `.carte` : posé ici, il l'emportait sur celui des
+   cartes qui se disposent autrement (`.carte-recette`), et un bouton plus
+   haut que son contenu centre ce dernier verticalement — la carte de
+   l'écran Cuisson se retrouvait avec un bandeau vide au-dessus de sa
+   photo. */
 button.carte {
-  display: block;
   width: 100%;
   text-align: left;
   cursor: pointer;
@@ -1286,24 +1290,7 @@ button.carte-panier-bouton .carte-panier-corps {
   color: var(--encre);
 }
 
-.bento-deux-colonnes /* Rattrapage d'un retrait, à la place de la carte disparue. */
-.carte-annulation {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  background: var(--carte-haute);
-  animation: confirmation-entree 0.16s ease;
-}
-
-.carte-annulation p {
-  margin: 0;
-  font-size: 15px;
-  color: var(--encre-douce);
-}
-
-.carte-bento {
+.bento-deux-colonnes .carte-bento {
   margin-bottom: 0;
 }
 

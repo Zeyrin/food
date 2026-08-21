@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>FFFood — crédits photo</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fond: #fff8ef;
+        --carte: #fffdfa;
+        --encre: #241f1a;
+        --encre-douce: #6d6358;
+        --accent: #385e16;
+        --trait: #e5dccd;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fond: #17150f;
+          --carte: #211e17;
+          --encre: #f2ece1;
+          --encre-douce: #a89e90;
+          --accent: #a6d47e;
+          --trait: #38332a;
+        }
+      }
+      body {
+        margin: 0;
+        padding: 32px 20px 64px;
+        background: var(--fond);
+        color: var(--encre);
+        font: 16px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+      main { max-width: 760px; margin: 0 auto; }
+      h1 { font-size: 28px; margin: 0 0 8px; }
+      h2 { font-size: 20px; margin: 40px 0 8px; }
+      p { color: var(--encre-douce); margin: 0 0 16px; }
+      a { color: var(--accent); text-underline-offset: 3px; }
+      .cadre {
+        background: var(--carte);
+        border: 1px solid var(--trait);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      table { border-collapse: collapse; width: 100%; font-size: 15px; }
+      th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--trait); vertical-align: top; }
+      thead th { color: var(--encre-douce); font-weight: 600; white-space: nowrap; }
+      tbody th { font-weight: 600; }
+      tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+
+      /* Quatre colonnes sur la largeur d'un téléphone donnent des mots
+         coupés à la syllabe : chaque ligne devient un bloc, l'en-tête de
+         colonne passe devant la valeur. */
+      @media (max-width: 560px) {
+        thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+        tbody tr { display: block; padding: 12px 14px; border-bottom: 1px solid var(--trait); }
+        tbody tr:last-child { border-bottom: 0; }
+        tbody th, tbody td { display: block; padding: 0; border: 0; }
+        tbody th { font-size: 16px; margin-bottom: 4px; }
+        tbody td { color: var(--encre-douce); }
+        tbody td::before { content: attr(data-libelle) ' : '; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Crédits photo</h1>
+      <p>
+        Les photos des plats de FFFood sont livrées avec l'app (<code>/plats/</code>) pour
+        qu'elle tienne hors ligne. Elles restent l'œuvre de leurs auteurs.
+      </p>
+
+      <h2>Wikimedia Commons</h2>
+      <p>
+        Réutilisées sous licence Creative Commons — la mention de l'auteur et de la licence
+        fait partie des conditions de réutilisation.
+      </p>
+      <div class="cadre">
+        <table>
+          <thead><tr><th>Plat</th><th>Auteur</th><th>Licence</th><th>Fichier</th></tr></thead>
+          <tbody>
+          <tr><th scope="row">Mapo tofu</th><td data-libelle="Auteur">Sichuanfoodlover</td><td data-libelle="Licence">CC BY-SA 4.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Authentic_Mapo_Tofu.jpg">Authentic Mapo Tofu.jpg</a></td></tr>
+          <tr><th scope="row">Salade de pâtes estivale</th><td data-libelle="Auteur">Brynn</td><td data-libelle="Licence">CC BY-SA 3.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Pasta_salad_closeup.JPG">Pasta salad closeup.JPG</a></td></tr>
+          <tr><th scope="row">Poke bowl saumon avocat</th><td data-libelle="Auteur">Openmalware.exe</td><td data-libelle="Licence">CC BY-SA 4.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Ahi_tuna_Poke.jpeg">Ahi tuna Poke.jpeg</a></td></tr>
+          <tr><th scope="row">Chili sin carne</th><td data-libelle="Auteur">Benreis</td><td data-libelle="Licence">CC BY-SA 4.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Chilli_sine_carne_Zur_Tanne_Harsdorf.jpg">Chilli sine carne Zur Tanne Harsdorf.jpg</a></td></tr>
+          <tr><th scope="row">Curry vert thaï au poulet</th><td data-libelle="Auteur">Takeaway</td><td data-libelle="Licence">CC BY-SA 3.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Thai_green_chicken_curry_and_roti.jpg">Thai green chicken curry and roti.jpg</a></td></tr>
+          <tr><th scope="row">Ratatouille au four &amp; œuf poché</th><td data-libelle="Auteur">Arnaud 25</td><td data-libelle="Licence">CC BY-SA 4.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Ratatouille_001.jpg">Ratatouille 001.jpg</a></td></tr>
+          <tr><th scope="row">Quiche courgette &amp; chèvre</th><td data-libelle="Auteur">Benoît Prieur</td><td data-libelle="Licence">CC0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Quiche_fromage_de_ch%C3%A8vre_et_courgette_(mai_2022).jpg">Quiche fromage de chèvre et courgette (mai 2022).jpg</a></td></tr>
+          <tr><th scope="row">Couscous poulet &amp; légumes</th><td data-libelle="Auteur">Lmmima</td><td data-libelle="Licence">CC BY-SA 4.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Moroccan_cuscus,_from_Casablanca,_September_2018.jpg">Moroccan cuscus, from Casablanca, September 2018.jpg</a></td></tr>
+          <tr><th scope="row">Risotto aux champignons</th><td data-libelle="Auteur">Number55</td><td data-libelle="Licence">CC BY-SA 3.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Risotto_ai_funghi_porcini.JPG">Risotto ai funghi porcini.JPG</a></td></tr>
+          <tr><th scope="row">Poulet basquaise</th><td data-libelle="Auteur">Arnaud 25</td><td data-libelle="Licence">CC BY-SA 4.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Poulet_basquaise_01.jpg">Poulet basquaise 01.jpg</a></td></tr>
+          <tr><th scope="row">Soupe miso au tofu</th><td data-libelle="Auteur">Ocdp</td><td data-libelle="Licence">CC0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Miso_Soup_001.jpg">Miso Soup 001.jpg</a></td></tr>
+          <tr><th scope="row">Burger maison</th><td data-libelle="Auteur">Hongreddotbrewhouse</td><td data-libelle="Licence">CC BY-SA 3.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:RedDot_Burger.jpg">RedDot Burger.jpg</a></td></tr>
+          <tr><th scope="row">Pizza margherita maison</th><td data-libelle="Auteur">Valerio Capello at English Wikipedia</td><td data-libelle="Licence">CC BY-SA 3.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Eq_it-na_pizza-margherita_sep2005_sml.jpg">Eq it-na pizza-margherita sep2005 sml.jpg</a></td></tr>
+          <tr><th scope="row">Tartiflette</th><td data-libelle="Auteur">Arnaud 25</td><td data-libelle="Licence">CC BY-SA 4.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Tartiflette_6.jpg">Tartiflette 6.jpg</a></td></tr>
+          <tr><th scope="row">Shakshuka</th><td data-libelle="Auteur">Calliopejen1</td><td data-libelle="Licence">CC BY-SA 3.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Shakshuka_by_Calliopejen1.jpg">Shakshuka by Calliopejen1.jpg</a></td></tr>
+          <tr><th scope="row">Gyoza au porc</th><td data-libelle="Auteur">Misaochan</td><td data-libelle="Licence">CC BY-SA 4.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Pork_gyoza_in_a_Japanese_restaurant_in_Brisbane.jpg">Pork gyoza in a Japanese restaurant in Brisbane.jpg</a></td></tr>
+          <tr><th scope="row">Buddha bowl tofu croustillant</th><td data-libelle="Auteur">PizzaMan</td><td data-libelle="Licence">CC BY-SA 4.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:BuddhaBowlLot.jpg">BuddhaBowlLot.jpg</a></td></tr>
+          <tr><th scope="row">Saumon teriyaki &amp; riz</th><td data-libelle="Auteur">Alpha from Melbourne, Australia</td><td data-libelle="Licence">CC BY-SA 2.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Teriyaki_Salmon_Claypot_Rice_-_Claypot_King,_Glen_Waverley_(2993613849).jpg">Teriyaki Salmon Claypot Rice - Claypot King, Glen Waverley (2993613849).jpg</a></td></tr>
+          <tr><th scope="row">Tagine d&#x27;agneau aux abricots</th><td data-libelle="Auteur">LilKil</td><td data-libelle="Licence">CC BY-SA 4.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Tagine_d%27agneau.jpg">Tagine d&#x27;agneau.jpg</a></td></tr>
+          <tr><th scope="row">Pad thaï au poulet</th><td data-libelle="Auteur">Takeaway</td><td data-libelle="Licence">CC BY-SA 3.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Phat_Thai_kung_Chang_Khien_street_stall.jpg">Phat Thai kung Chang Khien street stall.jpg</a></td></tr>
+          <tr><th scope="row">Lasagnes aux légumes</th><td data-libelle="Auteur">jules / stonesoup</td><td data-libelle="Licence">CC BY 2.0</td><td data-libelle="Fichier"><a href="https://commons.wikimedia.org/wiki/File:Lasagne_-_stonesoup.jpg">Lasagne - stonesoup.jpg</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Unsplash</h2>
+      <p>
+        Réutilisées sous <a href="https://unsplash.com/license">licence Unsplash</a>, qui
+        n'exige pas d'attribution : la source est notée pour pouvoir remonter à l'original.
+      </p>
+      <div class="cadre">
+        <table>
+          <thead><tr><th>Plat</th><th>Original</th></tr></thead>
+          <tbody>
+          <tr><th scope="row">Falafel bowl</th><td data-libelle="Fichier"><a href="https://images.unsplash.com/photo-1680405531955-8b4981bb1b0c">photo-1680405531955-8b4981bb1b0c</a></td></tr>
+          <tr><th scope="row">Bowl quinoa &amp; légumes rôtis</th><td data-libelle="Fichier"><a href="https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf">photo-1623428187969-5da2dcea5ebf</a></td></tr>
+          <tr><th scope="row">Patate douce farcie</th><td data-libelle="Fichier"><a href="https://plus.unsplash.com/premium_photo-1713088501689-517b74d9a68b">premium_photo-1713088501689-517b74d9a68b</a></td></tr>
+          <tr><th scope="row">Dahl de lentilles corail</th><td data-libelle="Fichier"><a href="https://plus.unsplash.com/premium_photo-1701000190407-a59d371a97d5">premium_photo-1701000190407-a59d371a97d5</a></td></tr>
+          <tr><th scope="row">Curry pois chiches &amp; épinards</th><td data-libelle="Fichier"><a href="https://plus.unsplash.com/premium_photo-1695456064603-aa7568121827">premium_photo-1695456064603-aa7568121827</a></td></tr>
+          <tr><th scope="row">Tacos poulet-avocat</th><td data-libelle="Fichier"><a href="https://images.unsplash.com/photo-1686555758112-f2ed8567f1f4">photo-1686555758112-f2ed8567f1f4</a></td></tr>
+          <tr><th scope="row">Poêlée asiatique complète</th><td data-libelle="Fichier"><a href="https://plus.unsplash.com/premium_photo-1694670234085-4f38b261ce5b">premium_photo-1694670234085-4f38b261ce5b</a></td></tr>
+          <tr><th scope="row">Riz sauté à l&#x27;œuf</th><td data-libelle="Fichier"><a href="https://images.unsplash.com/photo-1609570324378-ec0c4c9b6ba8">photo-1609570324378-ec0c4c9b6ba8</a></td></tr>
+          <tr><th scope="row">Gratin chou-fleur &amp; jambon</th><td data-libelle="Fichier"><a href="https://images.unsplash.com/photo-1645453014403-4ad5170a386c">photo-1645453014403-4ad5170a386c</a></td></tr>
+          <tr><th scope="row">Soupe de chou-fleur au lait</th><td data-libelle="Fichier"><a href="https://plus.unsplash.com/premium_photo-1699467556560-fdcde714ff8a">premium_photo-1699467556560-fdcde714ff8a</a></td></tr>
+          <tr><th scope="row">Rouleaux de riz au jambon</th><td data-libelle="Fichier"><a href="https://images.unsplash.com/photo-1581438761655-ebb4e43add30">photo-1581438761655-ebb4e43add30</a></td></tr>
+          <tr><th scope="row">Salade méditerranéenne complète</th><td data-libelle="Fichier"><a href="https://plus.unsplash.com/premium_photo-1676047258557-de72954cf17c">premium_photo-1676047258557-de72954cf17c</a></td></tr>
+          <tr><th scope="row">Pâtes au thon et légumineuses</th><td data-libelle="Fichier"><a href="https://images.unsplash.com/photo-1693820206774-d4a769355142">photo-1693820206774-d4a769355142</a></td></tr>
+          <tr><th scope="row">One-pot méditerranéen</th><td data-libelle="Fichier"><a href="https://images.unsplash.com/photo-1634111498162-0521b7f83a0f">photo-1634111498162-0521b7f83a0f</a></td></tr>
+          <tr><th scope="row">Pâtes citron &amp; parmesan</th><td data-libelle="Fichier"><a href="https://images.unsplash.com/photo-1571777663262-fcc9e6076644">photo-1571777663262-fcc9e6076644</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

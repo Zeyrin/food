@@ -97,7 +97,7 @@
       "Délayer la fécule dans un peu d'eau froide, verser en filet et remuer jusqu'à ce que la sauce nappe.",
       "Hors du feu : huile de sésame, poivre du Sichuan concassé, vert d'oignon. Servir sur le riz."
     ],
-    "image": "https://images.unsplash.com/photo-1769065647078-f067eb768035?w=800&q=80"
+    "image": "/plats/mapo-tofu.webp"
   },
   {
     "id": "falafel-bowl",
@@ -219,7 +219,7 @@
       "Détailler concombre et tomates cerises, ciseler le reste des herbes, mélanger le tout à la semoule avec le jus du citron et un filet d'huile.",
       "Monter les bols : taboulé, falafels, une cuillère de hummus et de yaourt."
     ],
-    "image": "https://images.unsplash.com/photo-1680405531955-8b4981bb1b0c?w=800&q=80"
+    "image": "/plats/falafel-bowl.webp"
   },
   {
     "id": "bowl-quinoa-legumes-rotis",
@@ -317,7 +317,7 @@
       "Masser le kale avec une pincée de sel pour l'attendrir, émincer les radis, trancher l'avocat.",
       "Assembler et napper de sauce tahini."
     ],
-    "image": "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=800&q=80"
+    "image": "/plats/bowl-quinoa-legumes-rotis.webp"
   },
   {
     "id": "patate-douce-farcie",
@@ -408,7 +408,7 @@
       "Fendre les patates dans la longueur, écraser un peu la chair à la fourchette.",
       "Garnir de pois chiches épicés, napper de sauce, parsemer d'oignon nouveau et de piment émincé."
     ],
-    "image": "https://plus.unsplash.com/premium_photo-1713088501689-517b74d9a68b?w=800&q=80"
+    "image": "/plats/patate-douce-farcie.webp"
   },
   {
     "id": "dahl-lentilles-corail",
@@ -526,7 +526,7 @@
       "Laisser mijoter 20 min à couvert en remuant de temps en temps. Les lentilles doivent se défaire complètement.",
       "Hors du feu : garam masala, sel, jus de citron et coriandre ciselée."
     ],
-    "image": "https://plus.unsplash.com/premium_photo-1701000190407-a59d371a97d5?w=800&q=80"
+    "image": "/plats/dahl-lentilles-corail.webp"
   },
   {
     "id": "curry-pois-chiches-epinards",
@@ -644,7 +644,7 @@
       "Incorporer les épinards par poignées : ils tombent en quelques secondes.",
       "Finir avec le garam masala, le jus du citron vert et la coriandre."
     ],
-    "image": "https://plus.unsplash.com/premium_photo-1695456064603-aa7568121827?w=800&q=80"
+    "image": "/plats/curry-pois-chiches-epinards.webp"
   },
   {
     "id": "tacos-poulet-avocat",
@@ -741,7 +741,7 @@
       "Saisir le poulet à feu vif 6 min, sans le remuer sans arrêt pour qu'il colore.",
       "Réchauffer les tortillas 20 secondes à la poêle sèche, puis garnir."
     ],
-    "image": "https://images.unsplash.com/photo-1686555758112-f2ed8567f1f4?w=800&q=80"
+    "image": "/plats/tacos-poulet-avocat.webp"
   },
   {
     "id": "poelee-asiatique-nouilles",
@@ -821,7 +821,7 @@
       "Ajouter les pois chiches égouttés, les nouilles, la sauce soja et le lao ganma. Sauter 2 min en mélangeant.",
       "Hors du feu, verser l'huile de sésame."
     ],
-    "image": "https://plus.unsplash.com/premium_photo-1694670234085-4f38b261ce5b?w=800&q=80"
+    "image": "/plats/poelee-asiatique-nouilles.webp"
   },
   {
     "id": "riz-saute-oeuf",
@@ -888,7 +888,7 @@
       "Pousser le riz sur le côté, casser les œufs dans l'espace libre, les brouiller puis incorporer.",
       "Finir avec la sauce soja, l'huile de sésame et le vert d'oignon."
     ],
-    "image": "https://images.unsplash.com/photo-1609570324378-ec0c4c9b6ba8?w=800&q=80"
+    "image": "/plats/riz-saute-oeuf.webp"
   },
   {
     "id": "gratin-chou-fleur-jambon",
@@ -953,7 +953,7 @@
       "Disposer dans un plat le chou-fleur, le jambon coupé en lanières et les lardons. Verser le lait chaud, saler, poivrer.",
       "Couvrir de fromage râpé et enfourner 25 min, jusqu'à ce que le dessus soit bien coloré."
     ],
-    "image": "https://images.unsplash.com/photo-1645453014403-4ad5170a386c?w=800&q=80"
+    "image": "/plats/gratin-chou-fleur-jambon.webp"
   },
   {
     "id": "soupe-chou-fleur-lait",
@@ -1000,7 +1000,7 @@
       "Égoutter le chou-fleur, le mixer avec le lait chaud jusqu'à obtenir une texture lisse.",
       "Saler, poivrer généreusement. C'est crémeux sans une goutte de crème."
     ],
-    "image": "https://plus.unsplash.com/premium_photo-1699467556560-fdcde714ff8a?w=800&q=80"
+    "image": "/plats/soupe-chou-fleur-lait.webp"
   },
   {
     "id": "rouleaux-riz-jambon",
@@ -1057,7 +1057,7 @@
       "Garnir le tiers inférieur, rabattre les côtés puis rouler serré.",
       "Servir avec la sauce soja. Le principe marche avec à peu près tout ce qui traîne au frigo."
     ],
-    "image": "https://images.unsplash.com/photo-1581438761655-ebb4e43add30?w=800&q=80"
+    "image": "/plats/rouleaux-riz-jambon.webp"
   },
   {
     "id": "salade-mediterraneenne",
@@ -1140,7 +1140,7 @@
       "Fouetter huile d'olive, jus de citron et sel, verser sur l'ensemble et mélanger délicatement.",
       "Laisser reposer 10 min au frais avant de servir."
     ],
-    "image": "https://plus.unsplash.com/premium_photo-1676047258557-de72954cf17c?w=800&q=80"
+    "image": "/plats/salade-mediterraneenne.webp"
   },
   {
     "id": "pates-thon-legumineuses",
@@ -1222,7 +1222,7 @@
       "Incorporer le thon égoutté et la crème hors du feu, pour que le thon ne se dessèche pas.",
       "Égoutter les pâtes en gardant une louche d'eau de cuisson, mélanger et détendre la sauce si besoin."
     ],
-    "image": "https://images.unsplash.com/photo-1693820206774-d4a769355142?w=800&q=80"
+    "image": "/plats/pates-thon-legumineuses.webp"
   },
   {
     "id": "one-pot-mediterraneen",
@@ -1324,7 +1324,7 @@
       "Hors du feu : thon, olives et crème. La sauce doit napper les pâtes sans être liquide.",
       "Si c'est trop épais, un peu d'eau chaude ; trop liquide, deux minutes de plus à feu vif."
     ],
-    "image": "https://images.unsplash.com/photo-1634111498162-0521b7f83a0f?w=800&q=80"
+    "image": "/plats/one-pot-mediterraneen.webp"
   },
   {
     "id": "pates-citron-parmesan",
@@ -1390,7 +1390,7 @@
       "Verser les pâtes brûlantes sur le mélange, ajouter un peu d'eau de cuisson et remuer vivement jusqu'à ce que la sauce nappe.",
       "Poivrer généreusement et servir aussitôt."
     ],
-    "image": "https://images.unsplash.com/photo-1571777663262-fcc9e6076644?w=800&q=80"
+    "image": "/plats/pates-citron-parmesan.webp"
   },
   {
     "id": "salade-pates-estivale",
@@ -1482,7 +1482,8 @@
       "Mélanger dans un grand saladier les pâtes refroidies, les légumes, la mozzarella, le basilic et les olives.",
       "Fouetter l'{huile d'olive} avec le {vinaigre balsamique}, le sel et le poivre, verser sur la salade et mélanger.",
       "Laisser reposer 10 min au frais avant de servir, le temps que les saveurs se mélangent."
-    ]
+    ],
+    "image": "/plats/salade-pates-estivale.webp"
   },
   {
     "id": "poke-bowl-saumon-avocat",
@@ -1573,7 +1574,8 @@
       "Couper l'{avocat} et le {concombre} en tranches, émincer les {radis}.",
       "Répartir le riz tiède dans les bols, puis disposer saumon, avocat, concombre, radis et {edamame}.",
       "Parsemer de {graines de sésame} et arroser du reste de marinade avant de servir."
-    ]
+    ],
+    "image": "/plats/poke-bowl-saumon-avocat.webp"
   },
   {
     "id": "chili-sin-carne",
@@ -1685,7 +1687,8 @@
       "Verser les {tomates concassées}, les {haricots rouges} et les {pois chiches} égouttés, le {maïs} et 100 ml d'eau.",
       "Laisser mijoter 20 min à découvert en remuant de temps en temps, jusqu'à ce que la sauce épaississe.",
       "Saler et servir sur le riz."
-    ]
+    ],
+    "image": "/plats/chili-sin-carne.webp"
   },
   {
     "id": "curry-vert-thai-poulet",
@@ -1777,7 +1780,8 @@
       "Verser le {lait de coco}, ajouter l'aubergine et le poivron. Laisser mijoter 15 min à couvert, jusqu'à ce que l'aubergine soit fondante.",
       "Assaisonner avec la {sauce nuoc mam} et le {sucre roux}, goûter et ajuster.",
       "Hors du feu, ajouter le jus du {citron vert} et le {basilic frais} ciselé. Servir sur le riz."
-    ]
+    ],
+    "image": "/plats/curry-vert-thai-poulet.webp"
   },
   {
     "id": "ratatouille-four-oeuf-poche",
@@ -1870,7 +1874,8 @@
       "Enfourner 40 min en remuant à mi-cuisson, jusqu'à ce que les légumes soient fondants et légèrement caramélisés sur les bords.",
       "Dans les 5 dernières minutes, creuser quatre puits dans les légumes et y casser les {œufs}. Remettre au four jusqu'à ce que le blanc soit pris et le jaune encore coulant.",
       "Servir directement dans le plat."
-    ]
+    ],
+    "image": "/plats/ratatouille-four-oeuf-poche.webp"
   },
   {
     "id": "quiche-courgette-chevre",
@@ -1948,7 +1953,8 @@
       "Fouetter les {œufs} avec la {crème fraîche}, le {lait}, le sel, le poivre et la {muscade}.",
       "Répartir les courgettes sur le fond de tarte, verser l'appareil, couvrir de rondelles de {bûche de chèvre}.",
       "Enfourner 30 min, jusqu'à ce que la quiche soit dorée et à peine tremblante au centre."
-    ]
+    ],
+    "image": "/plats/quiche-courgette-chevre.webp"
   },
   {
     "id": "couscous-poulet-legumes",
@@ -2041,7 +2047,8 @@
       "Ajouter les courgettes et les {pois chiches} égouttés, poursuivre la cuisson 15 min.",
       "Pendant ce temps, préparer la {semoule fine} avec les {raisins secs} selon le paquet.",
       "Servir le poulet et les légumes sur la semoule, arrosés d'un peu de bouillon."
-    ]
+    ],
+    "image": "/plats/couscous-poulet-legumes.webp"
   },
   {
     "id": "risotto-champignons",
@@ -2126,7 +2133,8 @@
       "Dans la même casserole, faire suer l'oignon et l'ail 2 min, ajouter le {riz rond (risotto)} et nacrer 1 min.",
       "Verser le {vin blanc}, laisser réduire, puis ajouter le bouillon louche par louche en remuant jusqu'à absorption complète, pendant 18 min.",
       "Remettre les champignons, ajouter le {beurre} et le {parmesan}, poivrer et servir aussitôt."
-    ]
+    ],
+    "image": "/plats/risotto-champignons.webp"
   },
   {
     "id": "poulet-basquaise",
@@ -2204,7 +2212,8 @@
       "Faire revenir les poivrons et oignons 5 min dans la même poêle.",
       "Ajouter l'ail, le {piment d'Espelette}, les {tomates concassées} et le poulet, saler.",
       "Couvrir et laisser mijoter 25 min à feu doux. Servir sur le riz."
-    ]
+    ],
+    "image": "/plats/poulet-basquaise.webp"
   },
   {
     "id": "soupe-miso-tofu",
@@ -2256,7 +2265,8 @@
       "Couper le {tofu soyeux} en petits dés, émincer l'{oignon nouveau}.",
       "Délayer la {pâte miso} dans une louche d'eau chaude puis reverser dans la casserole hors du feu.",
       "Ajouter le tofu, l'algue et la {sauce soja}, répartir dans les bols et parsemer d'oignon nouveau."
-    ]
+    ],
+    "image": "/plats/soupe-miso-tofu.webp"
   },
   {
     "id": "burger-maison",
@@ -2346,7 +2356,8 @@
       "Toaster les {pain à burger} légèrement.",
       "Tartiner de {ketchup} et {moutarde}, garnir de salade, tomate, oignon et {cornichons}.",
       "Poser le steak fromagé et refermer le pain."
-    ]
+    ],
+    "image": "/plats/burger-maison.webp"
   },
   {
     "id": "pizza-margherita-maison",
@@ -2403,7 +2414,8 @@
       "Répartir la {mozzarella} égouttée et coupée en morceaux.",
       "Enfourner 12 à 15 min jusqu'à ce que les bords soient dorés.",
       "À la sortie, arroser d'{huile d'olive} et parsemer de {basilic frais}."
-    ]
+    ],
+    "image": "/plats/pizza-margherita-maison.webp"
   },
   {
     "id": "tartiflette",
@@ -2461,7 +2473,8 @@
       "Dans un plat, alterner pommes de terre, lardons-oignons et {crème fraîche}, poivrer.",
       "Couper le {reblochon} en deux dans l'épaisseur, poser croûte vers le haut sur le dessus.",
       "Enfourner 25 min jusqu'à ce que le fromage soit fondu et doré."
-    ]
+    ],
+    "image": "/plats/tartiflette.webp"
   },
   {
     "id": "shakshuka",
@@ -2546,7 +2559,8 @@
       "Verser les {tomates concassées}, saler et laisser mijoter 10 min jusqu'à épaississement.",
       "Creuser 4 puits dans la sauce, y casser les {œuf}, couvrir et cuire 6 min jusqu'à ce que le blanc soit pris.",
       "Parsemer de {coriandre fraîche} et servir dans la poêle."
-    ]
+    ],
+    "image": "/plats/shakshuka.webp"
   },
   {
     "id": "gyoza-porc",
@@ -2615,7 +2629,8 @@
       "Déposer une cuillère de farce au centre de chaque {feuilles à gyoza}, humecter les bords et plisser pour souder.",
       "Faire dorer les gyoza 2 min à la poêle huilée, côté plat.",
       "Verser 60 ml d'eau, couvrir aussitôt et laisser cuire à la vapeur 5 min jusqu'à évaporation complète."
-    ]
+    ],
+    "image": "/plats/gyoza-porc.webp"
   },
   {
     "id": "buddha-bowl-tofu",
@@ -2692,7 +2707,8 @@
       "Enfourner le tofu et le {brocoli} en fleurettes 20 min, jusqu'à ce que le tofu soit doré et croustillant.",
       "Râper les {carotte}, couper l'{avocat} en tranches.",
       "Répartir quinoa, tofu, brocoli, carotte et avocat dans les bols, arroser de {sauce soja} et parsemer de {graines de sésame}."
-    ]
+    ],
+    "image": "/plats/buddha-bowl-tofu.webp"
   },
   {
     "id": "saumon-teriyaki-riz",
@@ -2749,7 +2765,8 @@
       "Faire dorer les {saumon frais} 3 min côté peau dans l'{huile de sésame}, retourner 2 min.",
       "Verser la {sauce teriyaki}, laisser réduire 2 min en nappant le poisson.",
       "Servir sur le riz avec le brocoli, parsemer de {graines de sésame}."
-    ]
+    ],
+    "image": "/plats/saumon-teriyaki-riz.webp"
   },
   {
     "id": "tagine-agneau-abricots",
@@ -2836,7 +2853,8 @@
       "Remettre la viande, couvrir d'eau à hauteur, saler, couvrir et laisser mijoter 1 h à feu doux.",
       "Ajouter les {abricots secs} et poursuivre 15 min.",
       "Préparer la {semoule fine} selon le paquet, parsemer le tagine d'{amandes effilées} et servir sur la semoule."
-    ]
+    ],
+    "image": "/plats/tagine-agneau-abricots.webp"
   },
   {
     "id": "pad-thai-poulet",
@@ -2915,7 +2933,8 @@
       "Pousser sur le côté, casser les {œuf} et brouiller 1 min, puis mélanger au poulet.",
       "Ajouter les nouilles, la {sauce nuoc mam} et le {sucre roux}, sauter 2 min.",
       "Ajouter les {pousses de soja}, sauter 1 min, servir avec {cacahuètes} concassées et quartiers de {citron vert}."
-    ]
+    ],
+    "image": "/plats/pad-thai-poulet.webp"
   },
   {
     "id": "lasagnes-legumes",
@@ -3019,6 +3038,7 @@
       "Préparer une béchamel : faire fondre le {beurre}, ajouter la {farine}, cuire 1 min puis verser le {lait} peu à peu en fouettant jusqu'à épaississement.",
       "Préchauffer le four à 200°C. Alterner dans un plat : sauce tomate-légumes, {pâtes à lasagne}, béchamel, en 3 couches.",
       "Terminer par la béchamel, la {mozzarella} et le {parmesan}. Enfourner 30 min jusqu'à ce que le dessus soit gratiné."
-    ]
+    ],
+    "image": "/plats/lasagnes-legumes.webp"
   }
 ]
