@@ -41,11 +41,22 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
   if (index < 0) {
     return (
       <div className="cuisson">
-        <button className="discret" onClick={onQuitter}>
-          <Icone nom="precedent" taille={18} /> {t('cuisson.quitter')}
-        </button>
-
-        <h1>{recette.titre}</h1>
+        {/* Même en-tête que la fiche recette : c'était le seul écran de
+            l'app où le retour était une pilule fantôme posée au-dessus
+            d'un titre nu, sans la barre collée que portent tous les
+            autres. */}
+        <header className="entete-app">
+          <div className="entete-app-titre">
+            <button
+              className="bouton-rond-discret"
+              onClick={onQuitter}
+              aria-label={t('cuisson.quitter')}
+            >
+              <Icone nom="precedent" taille={20} />
+            </button>
+            <h1>{recette.titre}</h1>
+          </div>
+        </header>
 
         <h2>{t('cuisson.ceQuIlFaut')}</h2>
         {recette.ingredients.map((ing) => (

@@ -903,7 +903,11 @@ button.discret.danger {
   animation-delay: calc(var(--rang, 0) * 40ms);
 }
 
-.bloc-astuce {
+/* Bloc d'astuce du mode cuisson. Ses couleurs sont écrites en dur
+   (fond et texte clairs) parce que cet écran est sombre quel que soit le
+   thème : la règle est donc portée par `.cuisson-focus`, sinon un jour
+   posé sur une surface claire, le texte vert pâle y serait illisible. */
+.cuisson-focus .bloc-astuce {
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -915,7 +919,7 @@ button.discret.danger {
   color: #bcefc0;
 }
 
-.bloc-astuce p {
+.cuisson-focus .bloc-astuce p {
   margin: 0;
   font-size: 15px;
   font-style: italic;
@@ -1138,10 +1142,22 @@ button.discret.danger {
 
 /* --- Boutons et sections --------------------------------------------------- */
 
+/* Le rayon reste annoncé pendant qu'on le parcourt : sur dix-neuf
+   produits répartis en deux magasins, le titre sortait de l'écran au
+   troisième article et on ne savait plus dans quel rayon on cochait.
+   Collé sous l'en-tête d'écran, qui fait une hauteur de pouce. */
 .entete-section {
+  position: sticky;
+  top: var(--pouce);
+  z-index: 8;
   display: flex;
   align-items: center;
   gap: 10px;
+  margin: 28px -20px 12px;
+  padding: 6px 20px;
+  background: color-mix(in srgb, var(--papier) 90%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
 }
 
 .badge-section {
@@ -1315,10 +1331,15 @@ button.principal:active:not(:disabled) {
   }
 }
 
+/* Un bouton désactivé se lit inerte, pas délavé : à 40 % d'opacité, le
+   vert plein virait au sauge boueux sur le parchemin. Surface neutre,
+   texte encre douce — la forme reste, l'invitation disparaît. */
 button.principal:disabled {
-  opacity: 0.4;
+  background: var(--carte-haute);
+  color: var(--encre-douce);
+  opacity: 1;
   cursor: default;
-  box-shadow: none;
+  box-shadow: inset 0 0 0 1px var(--filet);
 }
 
 /* Bouton "carte" cliquable en bloc (`button.carte`, reset natif). Le
@@ -1371,7 +1392,9 @@ button.discret:active:not(:disabled) {
 }
 
 button.discret:disabled {
-  opacity: 0.4;
+  border-color: var(--filet-fort);
+  color: var(--encre-douce);
+  opacity: 0.65;
   cursor: default;
 }
 
@@ -1577,9 +1600,15 @@ button.discret.accent:active:not(:disabled) {
   opacity: 0.8;
 }
 
+/* La photo du plat en fond, le titre posé dessus sur un voile qui remonte
+   du bas. Le fond teinté tiré du titre reste dessous, en repli pour les
+   recettes sans photo — mais il ne fait plus surface pleine : un magenta
+   ou un cyan tombait à côté du vert de la tuile voisine. */
 .carte-prochaine-cuisson {
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: flex-end;
   background: hsl(var(--teinte) 65% 90%);
   border-radius: var(--rayon);
   padding: 20px;
@@ -1592,12 +1621,53 @@ button.discret.accent:active:not(:disabled) {
   }
 }
 
+.carte-prochaine-cuisson img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Voile bas, posé seulement quand il y a une photo à voiler : le titre
+   reste lisible sur un plat clair comme sur un plat sombre, sans avoir à
+   connaître la photo. Sur la teinte de repli il n'a rien à faire — le
+   texte y est déjà à l'encre. */
+.carte-prochaine-cuisson:has(img)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Le bloc de texte fait deux à trois lignes : le voile doit rester
+     dense sur toute la moitié basse, sinon le sur-titre remonte dans la
+     partie claire de la photo (un pain de burger doré, par exemple). */
+  background: linear-gradient(to top, rgb(12 9 2 / 0.88), rgb(12 9 2 / 0.62) 46%, rgb(12 9 2 / 0.1));
+}
+
+/* Sur-titre resserré : « PROCHAINE CUISSON » tenait sur deux lignes dans
+   une tuile de demi-largeur. */
+.carte-prochaine-cuisson .carte-resume-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.carte-prochaine-cuisson-texte {
+  position: relative;
+  z-index: 1;
+}
+
+.carte-prochaine-cuisson:has(img) .carte-prochaine-cuisson-titre,
+.carte-prochaine-cuisson:has(img) .carte-resume-label {
+  color: #fff8ef;
+}
+
 .carte-prochaine-cuisson-titre {
   margin: 6px 0 0;
   font-family: var(--affichage);
   font-size: 17px;
   font-weight: 700;
+  letter-spacing: -0.012em;
   line-height: 1.25;
+  text-wrap: balance;
 }
 
 .bascule-mode {
@@ -1859,10 +1929,6 @@ button.carte-panier-bouton .carte-panier-corps {
 
 /* --- Écran de préparation (mode cuisson, avant "Commencer") -------------- */
 
-.cuisson button.discret:first-child {
-  margin-top: 20px;
-}
-
 .apercu-etapes {
   margin: 0 0 28px;
   padding-left: 22px;
@@ -2057,20 +2123,28 @@ button.carte-panier-bouton .carte-panier-corps {
   overscroll-behavior-y: contain;
   display: flex;
   flex-direction: column;
-  padding: 8px 0;
+  /* Fond de 18 px : une étape plus haute que la zone (tiroir des doses
+     ouvert, minuteur en cours) est coupée dans cette réserve et non au
+     milieu d'une ligne de texte contre le filet des boutons. */
+  padding: 8px 0 18px;
 }
 
 /* Marges automatiques plutôt que `justify-content: center` : ça centre
    l'étape courte tout en laissant l'étape longue défiler sans que son
    début soit rogné en haut. */
+/* Une étape se lit à 60 cm, les mains occupées : c'est l'écran de
+   l'app qui a le plus de place et le moins de texte à y mettre. Le
+   corps monte donc franchement — 21 px laissaient un tiers d'écran vide
+   au-dessus et au-dessous d'une phrase de trois lignes. `balance`
+   répartit ces lignes au lieu de laisser un mot seul sur la dernière. */
 .etape-titre {
   margin: auto 0;
   font-family: var(--affichage);
-  font-size: clamp(21px, 5.4vw, 32px);
+  font-size: clamp(25px, 7vw, 38px);
   font-weight: 800;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-  text-wrap: pretty;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .cuisson-corps .bloc-astuce {
@@ -2138,14 +2212,29 @@ button.carte-panier-bouton .carte-panier-corps {
   gap: 12px;
 }
 
+/* Le décompte est ce qu'on vient lire : il garde sa place, et c'est le
+   nom du minuteur qui se tronque. Sur deux lignes, « Saler les steak
+   haché et les cuire dans… » écrasait les chiffres contre le bord. */
 .bandeau-minuteur-nom {
   position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
   font-size: 15px;
   font-weight: 700;
   color: #bcefc0;
+}
+
+.bandeau-minuteur-nom svg {
+  flex: none;
+}
+
+.bandeau-minuteur-libelle {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .bandeau-minuteur-nom .pastille-nombre {
@@ -2154,10 +2243,12 @@ button.carte-panier-bouton .carte-panier-corps {
 }
 
 .bandeau-minuteur-valeur {
+  flex: none;
   font-family: var(--affichage);
   font-size: 32px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
   color: #fff8ef;
 }
 
@@ -2605,9 +2696,13 @@ button.carte-panier-bouton .carte-panier-corps {
   border-color: var(--accent);
 }
 
+/* Zone de collage : une surface teintée plutôt qu'un pavé blanc de dix
+   lignes, qui dominait l'écran avant même qu'on y colle quoi que ce soit. */
 .champ-texte-code {
   font-family: ui-monospace, 'SF Mono', Consolas, monospace;
   font-size: 13px;
+  line-height: 1.6;
+  background: var(--carte-basse);
   margin-top: 12px;
 }
 

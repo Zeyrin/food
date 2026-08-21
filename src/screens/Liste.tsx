@@ -6,6 +6,7 @@ import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
+import ImageRecette from '../components/ImageRecette'
 
 interface Props {
   items: ListItem[]
@@ -254,13 +255,21 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
               {aAcheter.length - restants} <span>/ {aAcheter.length}</span>
             </h2>
           </div>
+          {/* La tuile prenait pour fond une teinte tirée du titre : un
+              magenta ou un cyan tombait à côté du vert de la tuile
+              voisine, hors de la palette de l'app. Le plat a sa photo —
+              elle dit mieux ce qui attend en cuisine, et la teinte reste
+              le repli des recettes qui n'en ont pas. */}
           {prochaineCuisson && (
             <div
               className="carte-prochaine-cuisson"
               style={{ '--teinte': teinteRecette(prochaineCuisson.titre) } as React.CSSProperties}
             >
-              <p className="carte-resume-label">{t('liste.prochaineCuisson')}</p>
-              <p className="carte-prochaine-cuisson-titre">{prochaineCuisson.titre}</p>
+              <ImageRecette src={prochaineCuisson.image} />
+              <div className="carte-prochaine-cuisson-texte">
+                <p className="carte-resume-label">{t('liste.prochaineCuisson')}</p>
+                <p className="carte-prochaine-cuisson-titre">{prochaineCuisson.titre}</p>
+              </div>
             </div>
           )}
         </div>
