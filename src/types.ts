@@ -47,7 +47,11 @@ export interface Recipe {
   tags: string[]
   ingredients: RecipeIngredient[]
   etapes: string[]
-  /** URL d'une photo du plat. Absente la plupart du temps : une vignette générée prend le relais. */
+  /**
+   * Photo du plat, servie avec l'app (`/plats/<id>.webp`). Facultative : une
+   * recette collée depuis l'app n'en a pas, et la vignette teintée prend
+   * alors le relais.
+   */
   image?: string
   /** Une phrase qui donne envie, affichée sous le titre sur la fiche. */
   description?: string

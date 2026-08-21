@@ -24,7 +24,10 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg,woff2,ttf}'],
+        // Les photos des plats sont précachées avec le reste : sans elles,
+        // l'app hors ligne retombait sur la vignette teintée alors que le
+        // catalogue, lui, est embarqué au build.
+        globPatterns: ['**/*.{js,css,html,png,svg,webp,woff2,ttf}'],
       },
     }),
   ],

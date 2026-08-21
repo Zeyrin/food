@@ -46,9 +46,17 @@ export async function lireListe(foyer: string): Promise<ListState> {
   return (data?.etat as ListState) ?? VIDE
 }
 
+/**
+ * L'échec n'interrompt pas l'utilisateur : cocher un produit en rayon
+ * ne doit jamais ouvrir une alerte, et la copie locale fait foi le
+ * temps que le réseau revienne (l'écran affiche déjà le bandeau « hors
+ * ligne »). Mais il est journalisé — sans ça, une policy mal réglée
+ * ressemble à une app qui marche et ne synchronise simplement jamais.
+ */
 export async function ecrireListe(foyer: string, etat: ListState): Promise<void> {
   if (!supabase) return
-  await supabase.from('listes').upsert({ foyer, etat, maj: new Date().toISOString() })
+  const { error } = await supabase.from('listes').upsert({ foyer, etat, maj: new Date().toISOString() })
+  if (error) console.warn(`Écriture de la liste refusée : ${error.message}`)
 }
 
 export function suivreListe(foyer: string, onChange: (etat: ListState) => void): () => void {
@@ -82,12 +90,17 @@ export async function lireRecettes(foyer: string): Promise<Recipe[]> {
 }
 
 export async function ajouterRecette(foyer: string, recette: Recipe): Promise<void> {
-  if (!supabase) throw new Error('Supabase non configuré : impossible de partager la recette entre téléphones.')
-  await supabase.from('recettes').insert({ foyer, recette })
+  if (!supabase) throw new Error("Le partage n'est pas configuré : impossible d'enregistrer la recette.")
+  // Le résultat était ignoré : un insert refusé (policy, réseau coupé
+  // au mauvais moment) laissait l'app annoncer « Recette ajoutée » et
+  // l'afficher dans le catalogue, jusqu'au rechargement où elle avait
+  // disparu. Une écriture qui échoue doit se dire.
+  const { error } = await supabase.from('recettes').insert({ foyer, recette })
+  if (error) throw new Error(error.message)
 }
 
 export async function modifierRecette(foyer: string, recette: Recipe): Promise<void> {
-  if (!supabase) throw new Error('Supabase non configuré.')
+  if (!supabase) throw new Error("Le partage n'est pas configuré : impossible d'enregistrer la modification.")
   const { error } = await supabase
     .from('recettes')
     .update({ recette })
@@ -97,7 +110,7 @@ export async function modifierRecette(foyer: string, recette: Recipe): Promise<v
 }
 
 export async function supprimerRecette(foyer: string, recipeId: string): Promise<void> {
-  if (!supabase) throw new Error('Supabase non configuré.')
+  if (!supabase) throw new Error("Le partage n'est pas configuré : impossible de supprimer la recette.")
   const { error } = await supabase
     .from('recettes')
     .delete()
@@ -150,9 +163,10 @@ export async function lireHistoriqueFoyer(foyer: string): Promise<Historique | n
 
 export async function ecrireHistoriqueFoyer(foyer: string, historique: Historique): Promise<void> {
   if (!supabase) return
-  await supabase
+  const { error } = await supabase
     .from('historiques')
     .upsert({ foyer, historique, maj: new Date().toISOString() })
+  if (error) console.warn(`Écriture de l'historique refusée : ${error.message}`)
 }
 
 export function suivreHistorique(foyer: string, onChange: (h: Historique) => void): () => void {

@@ -146,6 +146,13 @@ p.aide {
   margin: 0 0 16px;
 }
 
+/* Le bleu souligné du navigateur détonne dans une palette qui n'en a pas :
+   même trait que `.lien-discret`, à la couleur du texte accentué. */
+p.aide a {
+  color: var(--accent);
+  text-underline-offset: 3px;
+}
+
 /* --- En-tête d'écran ------------------------------------------------------ */
 
 .entete-app {
@@ -305,6 +312,7 @@ nav.onglets button[aria-current='page'] {
 /* --- Cartes et rangées --------------------------------------------------- */
 
 .carte {
+  display: block;
   background: var(--carte-basse);
   border-radius: var(--rayon);
   padding: 16px;
@@ -337,6 +345,12 @@ button.carte:active {
   overflow: hidden;
   background: var(--carte-basse);
   box-shadow: var(--ombre);
+  /* Les cartes d'une même rangée de grille sont étirées à la plus haute :
+     sans ce partage, un titre d'une ligne laissait le bas de la carte à nu
+     sous le corps — visible dès que celui-ci a son propre fond (recette
+     retenue au panier). */
+  display: flex;
+  flex-direction: column;
 }
 
 .vignette {
@@ -352,6 +366,11 @@ button.carte:active {
   color: hsl(var(--teinte) 35% 30% / 0.32);
   background: hsl(var(--teinte) 65% 87%);
   padding-bottom: 8px;
+}
+
+/* La vignette garde sa hauteur : c'est le corps qui absorbe l'étirement. */
+.carte-recette > .vignette {
+  flex: none;
 }
 
 .vignette img {
@@ -387,8 +406,29 @@ button.carte:active {
   backdrop-filter: blur(6px);
 }
 
+/* Pourquoi cette recette remonte alors que son titre ne contient pas
+   le mot cherché : l'ingrédient (ou le tag) qui a fait la
+   correspondance. */
+.motif-recherche {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
 .carte-recette-corps {
+  flex: 1;
   padding: 20px;
+}
+
+/* Plat déjà passé en cuisine cette semaine : présent, mais visiblement
+   derrière ceux qui restent à faire. */
+.carte-recette[data-fait='true'] {
+  opacity: 0.55;
+}
+
+.carte-recette[data-fait='true'] .carte-cuisson-pied {
+  color: var(--accent);
 }
 
 /* Pied de carte (écran Cuisson) : parts à gauche, chevron à droite —
@@ -478,6 +518,32 @@ button.carte:active {
 .recherche-propose .champ-recherche {
   margin: 0;
   padding-left: 44px;
+  padding-right: 48px;
+}
+
+/* Sinon deux croix se superposent là où WebKit dessine la sienne. */
+.champ-recherche::-webkit-search-cancel-button {
+  display: none;
+}
+
+.bouton-effacer-recherche {
+  position: absolute;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--carte-haute);
+  color: var(--encre-douce);
+  cursor: pointer;
+}
+
+/* Les icônes de ce bloc sont posées en absolu (la loupe, à gauche) —
+   celle-ci vit dans son bouton. */
+.bouton-effacer-recherche svg {
+  position: static;
 }
 
 .detail-vignette {
@@ -551,6 +617,17 @@ button.discret.danger {
   background: var(--terracotta);
 }
 
+/* Une recette déjà retenue se repère en parcourant la grille, pas
+   seulement à l'icône du petit rond posé dessus. */
+.carte-recette[data-panier='true'] {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.carte-recette[data-panier='true'] .carte-recette-corps {
+  background: var(--accent-doux);
+}
+
 .bouton-ajout-flottant {
   position: absolute;
   bottom: 12px;
@@ -559,6 +636,34 @@ button.discret.danger {
   height: 52px;
   flex: none;
   box-shadow: var(--ombre-nette);
+}
+
+/* Réglage des parts sur la fiche : le compteur du panier, réutilisé là
+   où on lit la recette. */
+.reglage-parts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Poussé au bout de la ligne : collé au compteur, « revenir à 4 » se
+   lisait dans la foulée de « Parts ». */
+.reglage-parts .lien-discret {
+  margin-left: auto;
+}
+
+.lien-discret {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--encre-douce);
+  font: inherit;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
 }
 
 .puces-info {
@@ -731,6 +836,16 @@ button.discret.danger {
   color: var(--accent);
 }
 
+/* Sortie de secours quand un filtre a vidé la grille : on la met en
+   tête du nuage, avant les filtres qu'elle annule. */
+.puce-effacer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--terracotta-doux);
+  color: var(--terracotta);
+}
+
 /* Tiroir des filtres (écran Proposer) : replié une ligne, déplié la
    liste entière — même logique que .tiroir-ingredients (Cuisson), sur
    une surface claire plutôt que le fond sombre du mode cuisson. */
@@ -810,9 +925,13 @@ button.principal:disabled {
   box-shadow: none;
 }
 
-/* Bouton "carte" cliquable en bloc (`button.carte`, reset natif). */
+/* Bouton "carte" cliquable en bloc (`button.carte`, reset natif). Le
+   `display` vient de `.carte` : posé ici, il l'emportait sur celui des
+   cartes qui se disposent autrement (`.carte-recette`), et un bouton plus
+   haut que son contenu centre ce dernier verticalement — la carte de
+   l'écran Cuisson se retrouvait avec un bandeau vide au-dessus de sa
+   photo. */
 button.carte {
-  display: block;
   width: 100%;
   text-align: left;
   cursor: pointer;
@@ -924,13 +1043,24 @@ button.discret.accent:active:not(:disabled) {
   filter: blur(32px);
 }
 
+.carte-resume-detail {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--encre-douce);
+}
+
 .pastille-etat {
   padding: 8px 16px;
   border-radius: 999px;
-  background: var(--accent-doux);
-  color: var(--accent);
+  background: var(--terracotta-doux);
+  color: var(--terracotta);
   font-size: 14px;
   font-weight: 600;
+}
+
+.pastille-etat[data-fini='true'] {
+  background: var(--accent-doux);
+  color: var(--accent);
 }
 
 /* Bandeau hors-ligne : rassure que rien ne se perd quand le réseau
@@ -1121,6 +1251,23 @@ button.carte-panier-bouton .carte-panier-corps {
   min-width: 0;
 }
 
+/* Rattrapage d'un retrait, à la place de la carte disparue. */
+.carte-annulation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--carte-haute);
+  animation: confirmation-entree 0.16s ease;
+}
+
+.carte-annulation p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--encre-douce);
+}
+
 .carte-bento {
   display: flex;
   flex-direction: column;
@@ -1308,17 +1455,38 @@ button.carte-panier-bouton .carte-panier-corps {
   gap: 6px;
 }
 
-.progression i {
+/* Zone de touche de 44 px de haut sur un trait de 6 px : le padding
+   déborde au-dessus et en dessous, la marge négative empêche la barre
+   de pousser le reste de l'en-tête. */
+.progression button {
   width: 26px;
+  height: 6px;
+  padding: 19px 0;
+  margin: -19px 0;
+  border: 0;
+  background: none;
+  box-sizing: content-box;
+  cursor: pointer;
+}
+
+.progression button::before {
+  content: '';
+  display: block;
   height: 6px;
   border-radius: 999px;
   background: rgb(255 248 239 / 0.18);
   transition: background-color 0.2s ease;
 }
 
-.progression i[data-fait='true'] {
+.progression button[data-fait='true']::before {
   background: #a6d47e;
 }
+
+.progression button[aria-current='step']::before {
+  background: #fff8ef;
+}
+
+
 
 /* Tiroir des doses. Replié : une ligne. Déplié : la liste entière, qui
    défile pour son propre compte sans jamais dépasser 40 % de la hauteur
@@ -1545,6 +1713,85 @@ button.carte-panier-bouton .carte-panier-corps {
   background: #0c2000;
 }
 
+/* Hors mode cuisson : même bandeau, mais posé sur le fond clair de
+   l'app et fixé au-dessus de la barre d'onglets. Un minuteur qui tourne
+   ne doit jamais demander de retourner le chercher. */
+.bandeau-minuteur-global {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  z-index: 9;
+  width: auto;
+  max-width: 616px;
+  margin: 0 auto;
+  padding: 12px 18px;
+  background: var(--accent);
+  color: var(--sur-accent);
+  box-shadow: var(--ombre-nette);
+}
+
+.bandeau-minuteur-global .bandeau-minuteur-nom,
+.bandeau-minuteur-global .bandeau-minuteur-valeur {
+  color: var(--sur-accent);
+}
+
+.bandeau-minuteur-global .bandeau-minuteur-valeur {
+  font-size: 26px;
+}
+
+.bandeau-minuteur-global .bandeau-minuteur-jauge {
+  background: color-mix(in srgb, var(--sur-accent) 25%, transparent);
+}
+
+.bandeau-minuteur-global .bandeau-minuteur-jauge i {
+  background: var(--sur-accent);
+}
+
+.bandeau-minuteur-global[data-sonne='true'] {
+  background: var(--terracotta);
+}
+
+/* Les boutons flottants lui cèdent la place plutôt que de le
+   chevaucher — l'attribut est posé sur la racine par App.tsx. */
+[data-minuteur='true'] .bouton-flottant {
+  bottom: calc(168px + env(safe-area-inset-bottom));
+}
+
+[data-minuteur='true'] .action-flottante {
+  bottom: calc(152px + env(safe-area-inset-bottom));
+}
+
+[data-minuteur='true'] .espaceur-action-flottante {
+  height: 160px;
+}
+
+/* De quel plat vient ce minuteur, et comment y retourner. */
+.panneau-minuteurs-plat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #bcefc0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.panneau-minuteurs-tout {
+  background: transparent;
+  border: 0;
+  color: rgb(255 248 239 / 0.7);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 @keyframes pulsation-bandeau {
   50% {
     background: #bcefc0;
@@ -1635,6 +1882,9 @@ button.carte-panier-bouton .carte-panier-corps {
 }
 
 .panneau-minuteurs li span {
+  /* En bloc : le décompte et le lien « revenir au plat » ajouté
+     au-dessous se chevauchaient sur la même ligne. */
+  display: block;
   font-size: 22px;
   font-family: var(--affichage);
   font-variant-numeric: tabular-nums;
@@ -1772,6 +2022,10 @@ button.carte-panier-bouton .carte-panier-corps {
   text-align: center;
 }
 
+.vide p {
+  margin: 0;
+}
+
 .bouton-flottant {
   position: fixed;
   right: 20px;
@@ -1792,6 +2046,11 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .bouton-flottant:active {
   transform: scale(0.92);
+}
+
+/* Bouton d'envoi, entre l'aperçu et les rayons. */
+.corps-liste > .discret.pleine-largeur {
+  margin: 4px 0 20px;
 }
 
 .rangee-avec-suppr {
@@ -1854,6 +2113,21 @@ button.carte-panier-bouton .carte-panier-corps {
   text-transform: uppercase;
 }
 
+/* Recettes écartées parce que déjà là : une information, pas une
+   erreur — d'où une surface neutre plutôt que le rouge du bloc voisin. */
+.bloc-doublons {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: var(--rayon);
+  background: var(--carte-haute);
+  color: var(--encre-douce);
+}
+
+.bloc-doublons p {
+  margin: 0;
+  font-size: 14px;
+}
+
 .bloc-erreurs {
   margin-top: 12px;
   padding: 14px 16px;
@@ -1869,6 +2143,136 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .bloc-erreurs p + p {
   margin-top: 6px;
+}
+
+/* --- Composeur d'article (écran Liste) -----------------------------------
+   Remplace le `window.prompt` d'avant : un champ dans la page, ouvert
+   par le bouton flottant, qui reste ouvert après validation — on ajoute
+   rarement une seule chose à la liste. */
+
+.composeur-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 20px;
+}
+
+.composeur-item .champ-texte {
+  flex: 1;
+  min-width: 0;
+}
+
+.composeur-valider {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--rayon);
+  background: var(--accent);
+  color: var(--sur-accent);
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.composeur-valider:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.composeur-valider:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* --- Confirmation en place -----------------------------------------------
+   Une action qu'on ne rattrape pas (supprimer une recette, vider la
+   semaine, quitter le foyer) se confirme dans la page : `window.confirm`
+   s'affiche hors du thème de l'app, et pose son « OK » exactement sous
+   le doigt qui vient de cliquer. */
+
+.bloc-confirmation {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: var(--rayon);
+  background: var(--terracotta-doux);
+  color: var(--encre);
+  animation: confirmation-entree 0.16s ease;
+}
+
+.bloc-confirmation p {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+
+.bloc-confirmation .rangee-boutons .discret {
+  background: var(--carte);
+  border-color: transparent;
+}
+
+.bloc-confirmation .rangee-boutons .discret.danger {
+  background: var(--terracotta);
+  border-color: transparent;
+  color: var(--papier);
+}
+
+@keyframes confirmation-entree {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* --- Liste bouclée --------------------------------------------------------
+   Le 0 restant méritait mieux qu'un compteur : c'est le moment où on
+   quitte le magasin. */
+
+.carte-fini {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 4px 0 8px;
+  padding: 16px;
+  border-radius: var(--rayon);
+  background: var(--accent-doux);
+}
+
+.carte-fini-texte {
+  flex: 1;
+  min-width: 160px;
+}
+
+/* Le bouton passe sous le texte dès que la carte se resserre — un
+   « Cuisson » écrasé à 60 px n'est plus une cible de pouce. */
+.carte-fini .discret {
+  flex: 1 0 100%;
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--sur-accent);
+}
+
+.carte-fini-coche {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--sur-accent);
+}
+
+.carte-fini h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--accent);
+}
+
+.carte-fini p {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--encre-douce);
 }
 
 /* --- Utilitaires de mise en page ----------------------------------------- */
@@ -2108,6 +2512,22 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   .ecran-fin {
     width: 100%;
     max-width: 720px;
+  }
+
+  /* Le rail vertical libère le bas de l'écran : le bandeau minuteur s'y
+     pose au ras, décalé de la largeur du rail. */
+  .bandeau-minuteur-global {
+    left: 128px;
+    right: 40px;
+    bottom: 24px;
+  }
+
+  [data-minuteur='true'] .bouton-flottant {
+    bottom: calc(112px + env(safe-area-inset-bottom));
+  }
+
+  [data-minuteur='true'] .action-flottante {
+    bottom: 96px;
   }
 }
 

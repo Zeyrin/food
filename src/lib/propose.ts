@@ -19,6 +19,23 @@ export interface Historique {
 const JOUR = 86_400_000
 
 /**
+ * Le « hasard » du classement, en fait déterministe : `Math.random()`
+ * retirait un nombre neuf à chaque calcul, donc à chaque remontage de
+ * l'écran. Passer au Panier et revenir rebattait toute la grille — on
+ * cherchait une recette repérée trente secondes plus tôt et elle avait
+ * changé de place.
+ *
+ * Le tirage dépend donc de la recette et du jour : l'ordre tient pendant
+ * qu'on compose sa semaine, et change quand même d'un jour à l'autre —
+ * ce que le hasard servait à obtenir.
+ */
+function tirage(recipeId: string, jour: number): number {
+  let h = jour * 2654435761
+  for (let i = 0; i < recipeId.length; i++) h = (Math.imul(h, 31) + recipeId.charCodeAt(i)) >>> 0
+  return (h % 100000) / 100000
+}
+
+/**
  * Choisit des recettes dans le corpus.
  *
  * Ce n'est pas de la recommandation savante : trois signaux
@@ -29,6 +46,7 @@ const JOUR = 86_400_000
 export function proposer(recipes: Recipe[], historique: Historique, criteres: Criteres = {}): Recipe[] {
   const { tempsMax, tags = [], nombre = 8 } = criteres
   const maintenant = Date.now()
+  const jour = Math.floor(maintenant / JOUR)
 
   const candidats = recipes
     .filter((r) => historique.verdicts[r.id] !== 'jamais')
@@ -36,7 +54,7 @@ export function proposer(recipes: Recipe[], historique: Historique, criteres: Cr
     .filter((r) => (tags.length ? tags.some((t) => r.tags.includes(t)) : true))
 
   const scored = candidats.map((r) => {
-    let score = Math.random()
+    let score = tirage(r.id, jour)
 
     const derniere = historique.derniereFois[r.id]
     if (derniere !== undefined) {
@@ -51,9 +69,23 @@ export function proposer(recipes: Recipe[], historique: Historique, criteres: Cr
   })
 
   return scored
-    .sort((a, b) => b.score - a.score)
+    // À score égal (deux recettes jamais cuisinées peuvent tomber sur le
+    // même tirage), l'identifiant tranche : sans ça l'ordre dépendrait de
+    // la stabilité du tri, donc du moteur.
+    .sort((a, b) => b.score - a.score || a.recipe.id.localeCompare(b.recipe.id))
     .slice(0, nombre)
     .map((s) => s.recipe)
+}
+
+/**
+ * Cuisiné dans les derniers jours. Le panier couvre une semaine : au
+ * sein de cette fenêtre, « déjà fait » est une information utile (quel
+ * plat reste-t-il à cuisiner ?) alors que le mois dernier ne dit plus
+ * rien sur la semaine en cours.
+ */
+export function cuisineRecemment(historique: Historique, recipeId: string, jours = 7): boolean {
+  const derniere = historique.derniereFois[recipeId]
+  return derniere !== undefined && Date.now() - derniere < jours * JOUR
 }
 
 /** Tous les tags présents dans le corpus, pour construire les filtres. */
