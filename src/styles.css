@@ -406,6 +406,24 @@ button.carte:active {
   backdrop-filter: blur(6px);
 }
 
+/* Marque de favori : plat aimé après cuisson, ou recette écrite par le
+   foyer. Sur la vignette, en vis-à-vis du badge temps — le corps de carte
+   n'a que la place du titre, et un pictogramme de plus l'y aurait rogné à
+   une ligne. */
+.badge-favori {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  display: inline-flex;
+  padding: 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--carte) 90%, transparent);
+  color: var(--terracotta);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
 /* Pourquoi cette recette remonte alors que son titre ne contient pas
    le mot cherché : l'ingrédient (ou le tag) qui a fait la
    correspondance. */
@@ -469,6 +487,12 @@ button.carte:active {
   left: 8px;
   padding: 4px 10px;
   font-size: 12px;
+}
+
+.grille-recettes .badge-favori {
+  top: 8px;
+  right: 8px;
+  padding: 5px;
 }
 
 .grille-recettes .bouton-ajout-flottant {
@@ -683,6 +707,16 @@ button.discret.danger {
   white-space: nowrap;
 }
 
+/* Même forme que les tags de la fiche, la couleur en plus : c'en est un
+   de plus, simplement pas écrit dans la recette. */
+.puce-favori {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--terracotta-doux);
+  color: var(--terracotta);
+}
+
 .meta {
   color: var(--encre-douce);
   font-size: 14px;
@@ -834,6 +868,18 @@ button.discret.danger {
 .puce[aria-pressed='true'] {
   background: var(--accent-doux);
   color: var(--accent);
+}
+
+/* La puce des favoris porte son cœur : dans un nuage de tags tous
+   écrits pareil, le mot seul se serait fondu dans la liste. */
+.puce-favoris {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.puce-favoris[aria-pressed='false'] {
+  color: var(--terracotta);
 }
 
 /* Sortie de secours quand un filtre a vidé la grille : on la met en

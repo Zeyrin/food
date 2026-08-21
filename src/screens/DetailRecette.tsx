@@ -11,6 +11,8 @@ interface Props {
   /** Parts retenues au panier, ou celles du catalogue si le plat n'y est pas. */
   portions: number
   dansPanier: boolean
+  /** Aimée après cuisson, ou écrite par le foyer (voir lib/favoris.ts). */
+  favori: boolean
   /** Ajoute (avec le nombre de parts choisi ici) ou retire du panier. */
   onBasculerPanier: (portions: number) => void
   /** Change les parts d'un plat déjà au panier. */
@@ -25,6 +27,7 @@ export default function DetailRecette({
   recette,
   portions,
   dansPanier,
+  favori,
   onBasculerPanier,
   onPortions,
   onCuisiner,
@@ -106,6 +109,11 @@ export default function DetailRecette({
       </div>
 
       <div className="puces-info">
+        {favori && (
+          <span className="puce-info puce-favori">
+            <Icone nom="coeur" taille={13} /> {t('detail.favori')}
+          </span>
+        )}
         {recette.tags.map((t) => (
           <span className="puce-info" key={t}>
             {t}
