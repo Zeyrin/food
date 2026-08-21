@@ -21,6 +21,7 @@ export type Nom =
   | 'precedent'
   | 'suivant'
   | 'recherche'
+  | 'rafraichir'
 
 const TRACES: Record<Nom, string> = {
   menu: 'M4 6h16M4 12h16M4 18h16',
@@ -41,6 +42,8 @@ const TRACES: Record<Nom, string> = {
   precedent: 'M15 5l-7 7 7 7',
   suivant: 'M9 5l7 7-7 7',
   recherche: 'M11 4a7 7 0 100 14 7 7 0 000-14z M21 21l-4.3-4.3',
+  rafraichir:
+    'M20 12a8 8 0 11-2.3-5.7 M20 4v5h-5',
 }
 
 export default function Icone({ nom, taille = 24 }: { nom: Nom; taille?: number }) {

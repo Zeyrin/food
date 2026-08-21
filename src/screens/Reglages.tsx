@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { useInstallation } from '../hooks/useInstallation'
+import type { MiseAJour } from '../hooks/useMiseAJour'
+import { reinitialiserCache, VERSION_APP } from '../lib/miseAJour'
 import Icone from '../components/Icone'
 
 interface Props {
   codeFoyer: string | null
+  miseAJour: MiseAJour
   onRejoindre: (code: string) => Promise<boolean>
   onQuitter: () => void
   onFermer: () => void
@@ -12,6 +15,7 @@ interface Props {
 
 export default function Reglages({
   codeFoyer,
+  miseAJour,
   onRejoindre,
   onQuitter,
   onFermer,
@@ -22,6 +26,7 @@ export default function Reglages({
   const [enCours, setEnCours] = useState(false)
   const [erreur, setErreur] = useState<string | null>(null)
   const [confirmationQuitter, setConfirmationQuitter] = useState(false)
+  const [reinitialisation, setReinitialisation] = useState(false)
 
   // La résolution d'un code passe par le réseau : un échec (hors ligne,
   // Supabase injoignable) n'est pas un « code introuvable » et ne doit
@@ -90,6 +95,55 @@ export default function Reglages({
             <p className="carte-code-foyer-valeur">{codeFoyer}</p>
           </div>
         </>
+      )}
+
+      <h2>Version de l'app</h2>
+      <p className="aide">
+        L'app se met à jour toute seule : au démarrage, elle vérifie s'il y a du neuf et l'installe.
+        Ce bouton force la vérification tout de suite.
+      </p>
+      <p className="version-app">Version installée : <b>{VERSION_APP}</b></p>
+      {miseAJour.disponible ? (
+        <button className="discret suite pleine-largeur" onClick={miseAJour.appliquer}>
+          <Icone nom="rafraichir" taille={18} /> Installer la nouvelle version
+        </button>
+      ) : (
+        <button
+          className="discret suite pleine-largeur"
+          onClick={miseAJour.verifier}
+          disabled={miseAJour.verification === 'en-cours'}
+        >
+          <Icone nom="rafraichir" taille={18} />
+          {miseAJour.verification === 'en-cours'
+            ? 'Vérification…'
+            : miseAJour.verification === 'a-jour'
+              ? 'Vous avez la dernière version'
+              : 'Vérifier les mises à jour'}
+        </button>
+      )}
+
+      {/* Le cas où le cache s'entête malgré tout : jusqu'ici il fallait
+          supprimer les données de l'app — ce qui emportait le foyer, le
+          panier et la liste avec. Ici, seuls les fichiers en cache
+          partent, les données restent. */}
+      {reinitialisation ? (
+        <div className="bloc-confirmation" role="alertdialog" aria-label="Confirmer la réinstallation">
+          <p>
+            Recharger l'app depuis le réseau ? Vos recettes, votre panier et votre liste sont conservés.
+          </p>
+          <div className="rangee-boutons">
+            <button className="discret" onClick={() => setReinitialisation(false)}>
+              Annuler
+            </button>
+            <button className="discret" onClick={() => void reinitialiserCache()}>
+              Recharger
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button className="lien-discret lien-maj" onClick={() => setReinitialisation(true)}>
+          Un souci d'affichage ? Réinstaller la dernière version
+        </button>
       )}
 
       <h2>Rejoindre un autre foyer</h2>
