@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import corpus from './data/recipes.json'
 import type { BasketEntry, ListState, Onglet, Recipe, Verdict } from './types'
 import { buildList, redimensionnerRecette } from './lib/aggregate'
-import { type Historique } from './lib/propose'
+import { cuisineRecemment, type Historique } from './lib/propose'
 import {
   ecrireBasket,
   lireBasket,
@@ -39,6 +39,9 @@ import CuissonListe from './screens/CuissonListe'
 import AjouterRecette from './screens/AjouterRecette'
 import Bienvenue from './screens/Bienvenue'
 import TourGuide from './components/TourGuide'
+import BandeauMinuteur from './components/BandeauMinuteur'
+import PanneauMinuteurs from './components/PanneauMinuteurs'
+import { useMinuteurs } from './hooks/useMinuteurs'
 import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
@@ -90,6 +93,38 @@ export default function App() {
   const [pile, setPile] = useState<Vue[]>(lirePileSauvegardee)
   const vueActuelle = pile[pile.length - 1]!
 
+  /**
+   * Défilement mémorisé par profondeur de pile. Une SPA garde la
+   * position de la page entre deux écrans : ouvrir une recette depuis
+   * le bas de la grille arrivait au milieu de sa fiche, et revenir
+   * repartait du haut du catalogue — deux fois le mauvais endroit.
+   * Avancer remet donc en haut, reculer rend la place qu'on occupait.
+   */
+  const positions = useRef<number[]>([])
+
+  /**
+   * Deux passes : au moment où React vient de commiter, la hauteur du
+   * document est encore parfois celle de l'écran qu'on quitte, et le
+   * navigateur rogne le défilement demandé à ce maximum-là (revenir au
+   * bas d'un long catalogue depuis une fiche courte atterrissait au
+   * milieu). La seconde passe, une frame plus tard, tombe juste.
+   */
+  /**
+   * La profondeur vit déjà dans l'état d'historique : on s'en sert comme
+   * index plutôt que de lire `pile`, pour pouvoir noter la position
+   * *avant* la navigation, hors de l'updater React. Le faire dedans
+   * marchait par accident — sans `startViewTransition` (navigateur qui
+   * ne l'a pas, ou « réduire les animations »), l'updater est différé et
+   * s'exécutait après le retour en haut de page : on mémorisait zéro.
+   */
+  const profondeurActuelle = () =>
+    (history.state as { profondeur?: number } | null)?.profondeur ?? 1
+
+  const defilerVers = useCallback((y: number) => {
+    window.scrollTo(0, y)
+    if (y > 0) requestAnimationFrame(() => window.scrollTo(0, y))
+  }, [])
+
   useEffect(() => {
     try {
       sessionStorage.setItem(CLE_PILE, JSON.stringify(pile))
@@ -129,15 +164,17 @@ export default function App() {
   // d'historique en appui long sur Android, geste de bord iOS.
   const irVers = useCallback(
     (vue: Vue) => {
+      positions.current[profondeurActuelle() - 1] = window.scrollY
       avecTransition('avant', () => {
         setPile((p) => {
           const suivante = [...p, vue]
           history.pushState({ profondeur: suivante.length }, '')
           return suivante
         })
+        defilerVers(0)
       })
     },
-    [avecTransition],
+    [avecTransition, defilerVers],
   )
 
   const reculer = useCallback(() => {
@@ -149,11 +186,12 @@ export default function App() {
       const profondeur = Math.max(1, (e.state as { profondeur?: number } | null)?.profondeur ?? 1)
       avecTransition('arriere', () => {
         setPile((p) => (profondeur < p.length ? p.slice(0, profondeur) : p))
+        defilerVers(positions.current[profondeur - 1] ?? 0)
       })
     }
     window.addEventListener('popstate', surRetour)
     return () => window.removeEventListener('popstate', surRetour)
-  }, [avecTransition])
+  }, [avecTransition, defilerVers])
 
   const changerOnglet = useCallback(
     (cle: Onglet) => {
@@ -173,9 +211,10 @@ export default function App() {
           history.replaceState({ profondeur: suivante.length }, '')
           return suivante
         })
+        defilerVers(0)
       })
     },
-    [vueActuelle, irVers, avecTransition],
+    [vueActuelle, irVers, avecTransition, defilerVers],
   )
 
   const ouvrirAjout = useCallback(() => {
@@ -216,6 +255,26 @@ export default function App() {
     setOnboardingVu(false)
   }, [])
 
+  /**
+   * Au clavier ou au lecteur d'écran, changer d'écran ne déplaçait pas
+   * le focus : il restait sur le bouton d'un écran désormais démonté,
+   * donc renvoyé au début du document, et la lecture ne disait pas où
+   * on venait d'arriver. On le pose sur le titre de l'écran — pas
+   * pendant la visite guidée, dont la carte a ses propres boutons.
+   */
+  const premierRendu = useRef(true)
+  useEffect(() => {
+    if (premierRendu.current) {
+      premierRendu.current = false
+      return
+    }
+    if (!onboardingVu) return
+    const titre = document.querySelector('h1')
+    if (!titre) return
+    titre.tabIndex = -1
+    titre.focus({ preventScroll: true })
+  }, [vueActuelle, onboardingVu])
+
   const [historique, setHistorique] = useState<Historique>({ derniereFois: {}, verdicts: {} })
   const [foyer, setFoyer] = useState<string | null>(null)
   const [codeFoyer, setCodeFoyer] = useState<string | null>(null)
@@ -223,6 +282,24 @@ export default function App() {
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const enLigne = useEnLigne()
+
+  /**
+   * Les minuteurs vivent ici, pas dans l'écran de cuisson : on en lance
+   * un précisément pour aller faire autre chose, et jusqu'ici quitter
+   * cet écran les effaçait tous. Ils suivent donc l'app entière — un
+   * bandeau les rappelle sur tous les écrans, et ils survivent au
+   * rechargement (voir lib/minuteurs.ts).
+   */
+  const minuteurs = useMinuteurs()
+  const [panneauMinuteurs, setPanneauMinuteurs] = useState(false)
+
+  // Quand ça sonne, le panneau s'ouvre tout seul, où qu'on soit dans
+  // l'app. Sur `.length` et non sur le tableau : refermer le panneau
+  // pendant que ça sonne encore ne doit pas le rouvrir aussitôt.
+  const nombreQuiSonnent = minuteurs.sonnent.length
+  useEffect(() => {
+    if (nombreQuiSonnent > 0) setPanneauMinuteurs(true)
+  }, [nombreQuiSonnent])
 
   // Le panier n'a pas d'état à lui : il fait partie de la liste du foyer.
   // Une seule source de vérité, une seule écriture réseau — impossible que
@@ -336,6 +413,17 @@ export default function App() {
     return suivreHistorique(foyer, setHistorique)
   }, [foyer])
 
+  const rejoindreMinuteur = useCallback(
+    (recipeId: string) => {
+      setPanneauMinuteurs(false)
+      // Déjà sur ce plat : refermer suffit, empiler un second écran de
+      // cuisson du même plat n'apporterait qu'un « précédent » de plus.
+      if (vueActuelle.type === 'cuisson' && vueActuelle.recipeId === recipeId) return
+      irVers({ type: 'cuisson', recipeId })
+    },
+    [vueActuelle, irVers],
+  )
+
   const majListe = useCallback(
     (suivant: ListState) => {
       setEtatListe(suivant)
@@ -347,6 +435,24 @@ export default function App() {
   const majBasket = useCallback(
     (suivant: BasketEntry[]) => majListe({ ...etatListe, panier: suivant }),
     [etatListe, majListe],
+  )
+
+  /**
+   * Vider le panier vide aussi la liste : ce sont les deux faces de la
+   * même décision de foyer (« on mange ça » → « il faut acheter ça ») : ils repartent
+   * de zéro ensemble, en une seule écriture réseau. Les cases cochées
+   * comptent autant que le panier — leur clé est le nom de
+   * l'ingrédient, stable d'une semaine à l'autre, donc les garder
+   * ferait démarrer la liste suivante à moitié cochée.
+   *
+   * `panier: []` explicite plutôt que `ETAT_VIDE` : l'application d'un
+   * état distant garde le panier local quand le champ est absent (une
+   * ligne `listes` d'avant le partage du panier), donc un panier
+   * simplement omis ne se viderait pas sur l'autre téléphone.
+   */
+  const viderPanier = useCallback(
+    () => majListe({ coche: {}, dejaPossede: {}, items: [], panier: [] }),
+    [majListe],
   )
 
   const ajouter = useCallback(
@@ -398,6 +504,20 @@ export default function App() {
     return <Bienvenue onCreer={creer} onRejoindre={rejoindre} />
   }
 
+  const panneau = panneauMinuteurs && minuteurs.liste.length > 0 && (
+    <PanneauMinuteurs
+      liste={minuteurs.liste}
+      maintenant={minuteurs.maintenant}
+      onFermer={() => setPanneauMinuteurs(false)}
+      onRetirer={minuteurs.retirer}
+      onToutRetirer={() => {
+        minuteurs.toutRetirer()
+        setPanneauMinuteurs(false)
+      }}
+      onRejoindre={rejoindreMinuteur}
+    />
+  )
+
   if (vueActuelle.type === 'cuisson') {
     const recette = recipes.find((r) => r.id === vueActuelle.recipeId)
     if (recette) {
@@ -406,14 +526,19 @@ export default function App() {
       // cuisson racontent deux quantités différentes pour le même plat.
       const portionsCible = basket.find((e) => e.recipeId === recette.id)?.portions ?? recette.portions
       return (
-        <Cuisson
-          recette={redimensionnerRecette(recette, portionsCible)}
-          onVerdict={async (v) => {
-            await verdict(recette.id, v)
-            reculer()
-          }}
-          onQuitter={reculer}
-        />
+        <>
+          <Cuisson
+            recette={redimensionnerRecette(recette, portionsCible)}
+            minuteurs={minuteurs}
+            onOuvrirMinuteurs={() => setPanneauMinuteurs(true)}
+            onVerdict={async (v) => {
+              await verdict(recette.id, v)
+              reculer()
+            }}
+            onQuitter={reculer}
+          />
+          {panneau}
+        </>
       )
     }
   }
@@ -433,25 +558,36 @@ export default function App() {
     ecranPleinePage = (
       <AjouterRecette
         recetteInitiale={recette}
+        titresExistants={recipes.map((r) => r.titre)}
         onAjouter={(r) => modifier({ ...r, id: recette.id })}
         onQuitter={reculer}
       />
     )
   } else if (vueActuelle.type === 'ajout') {
-    ecranPleinePage = <AjouterRecette onAjouter={ajouter} onQuitter={reculer} />
+    ecranPleinePage = (
+      <AjouterRecette
+        titresExistants={recipes.map((r) => r.titre)}
+        onAjouter={ajouter}
+        onQuitter={reculer}
+      />
+    )
   } else if (vueActuelle.type === 'detail') {
     const recette = recipes.find((r) => r.id === vueActuelle.recipeId)
     if (recette) {
       ecranPleinePage = (
         <DetailRecette
           recette={recette}
+          portions={basket.find((e) => e.recipeId === recette.id)?.portions ?? recette.portions}
           dansPanier={basket.some((e) => e.recipeId === recette.id)}
-          onBasculerPanier={() =>
+          onBasculerPanier={(portions) =>
             majBasket(
               basket.some((e) => e.recipeId === recette.id)
                 ? basket.filter((e) => e.recipeId !== recette.id)
-                : [...basket, { recipeId: recette.id, portions: recette.portions }],
+                : [...basket, { recipeId: recette.id, portions }],
             )
+          }
+          onPortions={(portions) =>
+            majBasket(basket.map((e) => (e.recipeId === recette.id ? { ...e, portions } : e)))
           }
           onCuisiner={() => irVers({ type: 'cuisson', recipeId: recette.id })}
           onModifier={() => irVers({ type: 'edition', recette })}
@@ -475,7 +611,10 @@ export default function App() {
   const sousEcran = ecranPleinePage !== null
 
   return (
-    <div data-sous-ecran={sousEcran ? 'true' : undefined}>
+    <div
+      data-sous-ecran={sousEcran ? 'true' : undefined}
+      data-minuteur={minuteurs.liste.length > 0 ? 'true' : undefined}
+    >
       {vueActuelle.type !== 'reglages' && (
         <button
           className="bouton-rond-discret bouton-reglages-global"
@@ -509,10 +648,12 @@ export default function App() {
             <Panier
               recipes={recipes}
               basket={basket}
+              historique={historique}
               onBasket={majBasket}
               onVersPropose={() => changerOnglet('propose')}
               onVersListe={() => changerOnglet('liste')}
               onAjouterRecette={ouvrirAjout}
+              onViderPanier={viderPanier}
             />
           )}
 
@@ -521,7 +662,14 @@ export default function App() {
               items={items}
               etat={etatListe}
               onEtat={majListe}
-              prochaineCuisson={recipes.find((r) => r.id === basket[0]?.recipeId) ?? null}
+              // Le premier plat qui reste à faire, pas le premier du
+              // panier : une fois le curry cuisiné lundi, l'annoncer
+              // encore mercredi comme « prochaine cuisson » est faux.
+              prochaineCuisson={
+                basket
+                  .map((e) => recipes.find((r) => r.id === e.recipeId))
+                  .find((r): r is Recipe => !!r && !cuisineRecemment(historique, r.id)) ?? null
+              }
               onVersCuisson={() => changerOnglet('cuisson')}
             />
           )}
@@ -530,11 +678,25 @@ export default function App() {
             <CuissonListe
               recipes={recipes}
               basket={basket}
+              historique={historique}
               onCuisiner={(recipeId) => irVers({ type: 'cuisson', recipeId })}
             />
           )}
         </>
       )}
+
+      {/* Hors mode cuisson : le minuteur reste sous les yeux, au-dessus
+          de la barre d'onglets. Les boutons flottants des écrans lui
+          cèdent la place (voir `[data-minuteur]` dans styles.css). */}
+      <BandeauMinuteur
+        liste={minuteurs.liste}
+        maintenant={minuteurs.maintenant}
+        sonne={minuteurs.sonnent.length > 0}
+        onOuvrir={() => setPanneauMinuteurs(true)}
+        variante="global"
+      />
+
+      {panneau}
 
       <nav className="onglets">
         {(

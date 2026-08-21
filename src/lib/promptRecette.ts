@@ -7,11 +7,11 @@ import { UNITS } from '../types'
  * retaper à la main.
  */
 export function genererPrompt(demande: string): string {
-  return `Génère une recette de cuisine au format JSON strict, sans aucun texte autour (pas de markdown, pas de \`\`\`json, juste l'objet JSON brut).
+  return `Génère une ou plusieurs recettes de cuisine au format JSON strict, sans aucun texte autour (pas de markdown, pas de \`\`\`json, juste le JSON brut). Pour plusieurs recettes, renvoie un tableau JSON d'objets au même format.
 
 Demande : ${demande || "une recette au choix"}
 
-Format exact attendu :
+Format exact attendu (pour une recette ; plusieurs = un tableau de ces objets) :
 {
   "titre": "string",
   "temps": nombre de minutes (total, du plan de travail à l'assiette),
