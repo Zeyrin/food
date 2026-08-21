@@ -141,6 +141,19 @@ export default function Reglages({
           </button>
         </>
       )}
+
+      {/* Les photos de plats viennent en partie de Wikimedia Commons, sous
+          licences Creative Commons qui demandent de citer l'auteur : la page
+          de crédits doit donc être atteignable depuis l'app, pas seulement
+          depuis le dépôt. */}
+      <h2>Crédits photo</h2>
+      <p className="aide">
+        Les photos des plats sont de leurs auteurs, sous licence Creative Commons ou Unsplash.{' '}
+        <a href="/credits.html" target="_blank" rel="noopener noreferrer">
+          Voir la liste
+        </a>
+        .
+      </p>
     </>
   )
 }

@@ -77,6 +77,15 @@ Trois règles qui font tenir le reste :
    de courses, mais affiché en mode cuisson.
 3. Les quantités correspondent à `portions`. L'app fait la règle de trois.
 
+**Les photos aussi sont statiques.** `image` pointe sur `/plats/<id>.webp`, un
+fichier de `public/plats/` livré avec le build et précaché par le service worker :
+les photos tiennent hors ligne comme le reste, et aucun lien extérieur ne peut
+mourir en laissant un cadre vide. Le format est du 800 × 600 en WebP. La
+provenance de chacune est notée dans `public/credits.html`, page servie avec
+l'app — les licences Creative Commons imposent de citer l'auteur, une liste
+enfouie dans le dépôt n'y suffirait pas. Une recette sans photo reste valide :
+la vignette teintée prend le relais.
+
 Depuis l'app (écran « Ajouter une recette »), le prompt est fourni et la réponse se colle
 telle quelle : bloc ```` ```json ````, phrases avant/après et tableau de plusieurs recettes
 sont acceptés, et une recette invalide dans un lot n'empêche pas les autres d'entrer.
