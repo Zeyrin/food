@@ -1,4 +1,5 @@
 import type { Recipe } from '../types'
+import { traduire } from './i18n'
 import { validerRecette } from './validerRecette'
 
 /**
@@ -61,24 +62,20 @@ const normaliserTitre = (titre: string) =>
 export function validerCollage(texte: string, titresExistants: string[] = []): ResultatCollage {
   const extrait = extraire(texte)
   if (extrait === null) {
-    return { recettes: [], erreurs: ["Aucun JSON trouvé dans le texte collé."], doublons: [] }
+    return { recettes: [], erreurs: [traduire('collage.aucunJson')], doublons: [] }
   }
 
   let json: unknown
   try {
     json = JSON.parse(extrait)
   } catch {
-    return {
-      recettes: [],
-      erreurs: [
-        "Le JSON est incomplet ou mal formé — souvent une réponse d'IA coupée en route. Redemandez-la, ou collez-la en entier.",
-      ],
-      doublons: [],
-    }
+    return { recettes: [], erreurs: [traduire('collage.jsonMalForme')], doublons: [] }
   }
 
   const liste = Array.isArray(json) ? json : [json]
-  if (liste.length === 0) return { recettes: [], erreurs: ['La liste collée est vide.'], doublons: [] }
+  if (liste.length === 0) {
+    return { recettes: [], erreurs: [traduire('collage.listeVide')], doublons: [] }
+  }
 
   const recettes: Recipe[] = []
   const erreurs: string[] = []
@@ -94,7 +91,9 @@ export function validerCollage(texte: string, titresExistants: string[] = []): R
       // cinq, « Dahl de lentilles » se retrouve, « recette #3 » non.
       const nom = (item as { titre?: unknown })?.titre
       const etiquette =
-        liste.length === 1 ? '' : `${typeof nom === 'string' && nom.trim() ? nom : `Recette #${i + 1}`} : `
+        liste.length === 1
+          ? ''
+          : `${typeof nom === 'string' && nom.trim() ? nom : traduire('collage.recetteNumero', { n: i + 1 })} : `
       erreurs.push(...resultat.erreurs.map((e) => etiquette + e))
     } else if (vus.has(normaliserTitre(resultat.recette.titre))) {
       doublons.push(resultat.recette.titre)

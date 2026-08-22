@@ -17,16 +17,65 @@ const K_MAGASINS = 'magasins'
 
 const HISTORIQUE_VIDE: Historique = { derniereFois: {}, verdicts: {} }
 
+/**
+ * IndexedDB n'est pas toujours là. Navigation privée stricte, cookies
+ * tiers coupés, WebView verrouillée, quota atteint : `get` et `set`
+ * rejettent, et rien dans idb-keyval ne le rattrape. L'amorçage de
+ * l'app (App.tsx) est une suite d'`await` sur ces fonctions — une
+ * seule qui rejette laissait `foyerCharge` à `false` pour toujours,
+ * c'est-à-dire un écran blanc définitif, pour un stockage dont l'app
+ * peut très bien se passer le temps d'une session.
+ *
+ * On rend donc l'absence de stockage indistinguable d'un stockage
+ * vide : l'app démarre, elle oublie simplement d'une fois sur l'autre.
+ * Journalisé une seule fois — répéter l'avertissement à chaque lecture
+ * noierait la console sans rien apprendre de plus.
+ */
+let stockageSignale = false
+
+function signalerStockage(e: unknown): void {
+  if (stockageSignale) return
+  stockageSignale = true
+  console.warn(
+    `Stockage local indisponible : l'app fonctionne, mais ne se souviendra de rien au prochain lancement. (${e})`,
+  )
+}
+
+async function lire<T>(cle: string, defaut: T): Promise<T> {
+  try {
+    return (await get<T>(cle)) ?? defaut
+  } catch (e) {
+    signalerStockage(e)
+    return defaut
+  }
+}
+
+async function ecrire(cle: string, valeur: unknown): Promise<void> {
+  try {
+    await set(cle, valeur)
+  } catch (e) {
+    signalerStockage(e)
+  }
+}
+
+async function effacer(cle: string): Promise<void> {
+  try {
+    await del(cle)
+  } catch (e) {
+    signalerStockage(e)
+  }
+}
+
 export async function lireBasket(): Promise<BasketEntry[]> {
-  return (await get<BasketEntry[]>(K_BASKET)) ?? []
+  return lire<BasketEntry[]>(K_BASKET, [])
 }
 
 export async function ecrireBasket(basket: BasketEntry[]): Promise<void> {
-  await set(K_BASKET, basket)
+  await ecrire(K_BASKET, basket)
 }
 
 export async function lireHistorique(): Promise<Historique> {
-  return (await get<Historique>(K_HISTORIQUE)) ?? HISTORIQUE_VIDE
+  return lire<Historique>(K_HISTORIQUE, HISTORIQUE_VIDE)
 }
 
 export async function marquerCuisine(recipeId: string, verdict: Verdict): Promise<Historique> {
@@ -35,7 +84,7 @@ export async function marquerCuisine(recipeId: string, verdict: Verdict): Promis
     derniereFois: { ...h.derniereFois, [recipeId]: Date.now() },
     verdicts: { ...h.verdicts, [recipeId]: verdict },
   }
-  await set(K_HISTORIQUE, suivant)
+  await ecrire(K_HISTORIQUE, suivant)
   return suivant
 }
 
@@ -48,11 +97,11 @@ export async function marquerCuisine(recipeId: string, verdict: Verdict): Promis
  * qui ne change rien à ce qu'il y a à acheter.
  */
 export async function lireMagasins(): Promise<ConfigMagasins> {
-  return normaliserConfig((await get<ConfigMagasins>(K_MAGASINS)) ?? CONFIG_PAR_DEFAUT)
+  return normaliserConfig(await lire<ConfigMagasins>(K_MAGASINS, CONFIG_PAR_DEFAUT))
 }
 
 export async function ecrireMagasins(config: ConfigMagasins): Promise<void> {
-  await set(K_MAGASINS, config)
+  await ecrire(K_MAGASINS, config)
 }
 
 /**
@@ -61,26 +110,29 @@ export async function ecrireMagasins(config: ConfigMagasins): Promise<void> {
  * `null` — à l'appelant de proposer explicitement d'en créer un ou
  * d'en rejoindre un par code (voir écran Bienvenue), plutôt que
  * d'en générer un en douce à chaque nouvel appareil.
+ *
+ * Le lien prime même si l'enregistrement échoue : sans stockage, on
+ * ouvre quand même le foyer qu'on vient de nous partager.
  */
 export async function lireFoyer(): Promise<string | null> {
   const depuisUrl = location.hash.match(/\/f\/([0-9a-f-]{36})/i)?.[1]
   if (depuisUrl) {
-    await set(K_FOYER, depuisUrl)
+    await ecrire(K_FOYER, depuisUrl)
     return depuisUrl
   }
-  return (await get<string>(K_FOYER)) ?? null
+  return lire<string | null>(K_FOYER, null)
 }
 
 export async function rejoindreFoyer(id: string, code?: string): Promise<void> {
-  await set(K_FOYER, id)
-  if (code) await set(K_CODE_FOYER, code)
+  await ecrire(K_FOYER, id)
+  if (code) await ecrire(K_CODE_FOYER, code)
 }
 
 export async function lireCodeFoyer(): Promise<string | null> {
-  return (await get<string>(K_CODE_FOYER)) ?? null
+  return lire<string | null>(K_CODE_FOYER, null)
 }
 
 export async function quitterFoyer(): Promise<void> {
-  await del(K_FOYER)
-  await del(K_CODE_FOYER)
+  await effacer(K_FOYER)
+  await effacer(K_CODE_FOYER)
 }

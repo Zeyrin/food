@@ -29,6 +29,21 @@ et l'historique de cuisson — « on a mangé ça mardi » vaut pour les deux t�
 appareil en garde une copie locale (IndexedDB) : en magasin, l'app fonctionne sans réseau,
 et la synchro rattrape au retour.
 
+**Une app qui ne peut rien enregistrer marche quand même.** Navigation privée stricte,
+cookies tiers coupés, WebView verrouillée, quota atteint : IndexedDB rejette, et
+l'amorçage — une suite d'`await` sur ces lectures — laissait l'app sur un écran blanc
+définitif. L'absence de stockage est donc rendue indistinguable d'un stockage vide
+(`src/lib/local.ts`) : on démarre, on oublie simplement d'une fois sur l'autre. Même
+principe côté rendu, où une exception démontait tout l'arbre sans laisser un bouton :
+`src/components/LimiteErreur.tsx` affiche de quoi recharger.
+
+**Une lecture réseau qui échoue ne se déguise pas en réponse vide.** Un `select` refusé
+rendait la même chose qu'un foyer neuf, avec des conséquences qui ne ressemblaient pas à
+une panne : le catalogue entier réinséré en double à chaque ouverture, une liste décochée à
+l'écran puis republiée vide, et un code de foyer parfaitement valide déclaré « introuvable »
+parce que le téléphone était hors réseau. Les lectures de `src/lib/sync.ts` distinguent donc
+les deux — quitte à retomber sur le corpus embarqué, qui garde l'app entièrement utilisable.
+
 **Les minuteurs appartiennent à l'app, pas à l'écran de cuisson.** On lance un minuteur
 précisément pour aller faire autre chose — vérifier un ingrédient sur la liste, répondre à
 un message. Ils continuent donc de tourner quel que soit l'écran affiché, un bandeau les
@@ -49,6 +64,34 @@ npm run dev
 Pour activer la liste partagée : créer un projet sur Supabase (offre gratuite), exécuter
 `supabase/schema.sql` dans l'éditeur SQL, activer la réplication temps réel sur la table
 `listes` (Database → Replication), puis renseigner `.env`.
+
+## Vérifications
+
+Trois commandes, à passer avant de committer :
+
+```bash
+npm test           # les invariants du code
+npm run typecheck  # tests compris
+npm run lint:recipes
+```
+
+Les tests sont des scripts `node:assert` lancés par le runner de Node — pas de framework,
+pas de `describe`/`it` : un fichier qui lève est un test qui échoue. Ils portent sur les
+fonctions où une régression ne se verrait pas à l'œil nu : l'agrégation et l'annotation des
+étapes (`aggregate`), l'extraction du JSON collé (`collerRecettes`), le découpage par
+magasin (`magasins`), les minuteurs devinés dans une étape (`duree`), le classement des
+propositions (`propose`), le numéro de semaine ISO (`semaine`).
+
+`i18n.test.ts` fait pour le dictionnaire ce que `lint:recipes` fait pour le corpus : les
+deux langues portent les mêmes clés et les mêmes `{{variables}}`, et toute clé citée dans
+le code existe. Sans lui, une traduction manquante est invisible — `t` retombe sur le
+français et l'écran s'affiche.
+
+Deux langues, donc, français et anglais (`src/lib/i18n.tsx`). La première ouverture suit
+`navigator.language` ; ensuite c'est le réglage qui prime. Le texte produit hors composant
+— unités de mesure, messages de validation du JSON collé — passe par `traduire`, qui lit la
+langue courante sans contexte React : ces fonctions sont pures, appelées depuis quatre
+écrans, et laissaient sinon des « c. à s. » au milieu d'une liste en anglais.
 
 ## Écrire des recettes
 

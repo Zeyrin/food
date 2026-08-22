@@ -4,7 +4,7 @@ export type Langue = 'fr' | 'en'
 
 const CLE_LANGUE = 'fffood:langue'
 
-type Dico = { [cle: string]: string | Dico | Dico[] }
+export type Dico = { [cle: string]: string | Dico | Dico[] }
 
 const fr: Dico = {
   reglages: {
@@ -191,6 +191,8 @@ const fr: Dico = {
       'Supprimer « {{titre}} » du catalogue ? Les autres appareils du foyer la perdront aussi.',
     annuler: 'Annuler',
     supprimer: 'Supprimer',
+    suppressionEnCours: 'Suppression…',
+    suppressionEchouee: 'La suppression a échoué. Vérifiez votre connexion et réessayez.',
     supprimerDuCatalogue: 'Supprimer du catalogue',
     minutes: '{{n}} min',
   },
@@ -308,6 +310,42 @@ const fr: Dico = {
     surgeles: 'Surgelés',
     boissons: 'Boissons',
     autre: 'Ajouté à la main',
+  },
+  /**
+   * Suffixes d'unité et séparateur décimal. Ils sortent de
+   * `lib/aggregate.ts`, qui n'est pas un composant : sans dictionnaire,
+   * une liste de courses en anglais annonçait « 2 c. à s. » et
+   * « 0,5 pincée ».
+   */
+  unites: {
+    cs: 'c. à s.',
+    cc: 'c. à c.',
+    pincee: 'pincée',
+    pincees: 'pincées',
+    botte: 'botte',
+    bottes: 'bottes',
+    separateurDecimal: ',',
+  },
+  sync: {
+    partageNonConfigureAjout: "Le partage n'est pas configuré : impossible d'enregistrer la recette.",
+    partageNonConfigureModification:
+      "Le partage n'est pas configuré : impossible d'enregistrer la modification.",
+    partageNonConfigureSuppression:
+      "Le partage n'est pas configuré : impossible de supprimer la recette.",
+  },
+  collage: {
+    aucunJson: 'Aucun JSON trouvé dans le texte collé.',
+    jsonMalForme:
+      "Le JSON est incomplet ou mal formé — souvent une réponse d'IA coupée en route. Redemandez-la, ou collez-la en entier.",
+    listeVide: 'La liste collée est vide.',
+    recetteNumero: 'Recette #{{n}}',
+  },
+  erreur: {
+    titre: "L'app s'est arrêtée",
+    texte:
+      "Rien n'est perdu : vos recettes, votre panier et votre liste sont enregistrés. Rechargez pour repartir de l'accueil.",
+    recharger: "Recharger l'app",
+    details: 'Détail technique',
   },
   validation: {
     pasUnObjet: "Ce n'est pas un objet JSON valide.",
@@ -511,6 +549,8 @@ const en: Dico = {
       'Delete "{{titre}}" from the catalog? The household\'s other devices will lose it too.',
     annuler: 'Cancel',
     supprimer: 'Delete',
+    suppressionEnCours: 'Deleting…',
+    suppressionEchouee: 'Could not delete. Check your connection and try again.',
     supprimerDuCatalogue: 'Delete from catalog',
     minutes: '{{n}} min',
   },
@@ -627,6 +667,34 @@ const en: Dico = {
     boissons: 'Drinks',
     autre: 'Added by hand',
   },
+  unites: {
+    cs: 'tbsp',
+    cc: 'tsp',
+    pincee: 'pinch',
+    pincees: 'pinches',
+    botte: 'bunch',
+    bottes: 'bunches',
+    separateurDecimal: '.',
+  },
+  sync: {
+    partageNonConfigureAjout: 'Sharing is not configured: the recipe cannot be saved.',
+    partageNonConfigureModification: 'Sharing is not configured: the change cannot be saved.',
+    partageNonConfigureSuppression: 'Sharing is not configured: the recipe cannot be deleted.',
+  },
+  collage: {
+    aucunJson: 'No JSON found in the pasted text.',
+    jsonMalForme:
+      'The JSON is incomplete or malformed — often an AI answer cut off mid-way. Ask for it again, or paste it in full.',
+    listeVide: 'The pasted list is empty.',
+    recetteNumero: 'Recipe #{{n}}',
+  },
+  erreur: {
+    titre: 'The app stopped',
+    texte:
+      'Nothing is lost: your recipes, basket and list are saved. Reload to start again from the home screen.',
+    recharger: 'Reload the app',
+    details: 'Technical detail',
+  },
   validation: {
     pasUnObjet: 'This is not a valid JSON object.',
     titreManquant: '"titre" is missing.',
@@ -644,7 +712,13 @@ const en: Dico = {
   },
 }
 
-const dictionnaires: Record<Langue, Dico> = { fr, en }
+/**
+ * Exporté pour `i18n.test.ts`, qui vérifie que les deux colonnes
+ * portent exactement les mêmes clés et les mêmes `{{variables}}`.
+ * Le repli sur le français rend une traduction manquante invisible à
+ * l'usage : c'est précisément pour ça qu'un test doit la voir.
+ */
+export const dictionnaires: Record<Langue, Dico> = { fr, en }
 
 function resoudre(dico: Dico, chemin: string): string | undefined {
   const parts = chemin.split('.')
@@ -656,9 +730,64 @@ function resoudre(dico: Dico, chemin: string): string | undefined {
   return typeof cur === 'string' ? cur : undefined
 }
 
+/**
+ * Une clé, une langue, ses variables. Le français sert de filet : une
+ * clé absente de `en` s'affiche en français plutôt que de laisser son
+ * chemin technique à l'écran (`i18n.test.ts` veille à ce que le cas ne
+ * se produise pas).
+ */
+export function traduireEn(
+  langue: Langue,
+  chemin: string,
+  variables?: Record<string, string | number>,
+): string {
+  const brut = resoudre(dictionnaires[langue], chemin) ?? resoudre(dictionnaires.fr, chemin) ?? chemin
+  if (!variables) return brut
+  return brut.replace(/\{\{(\w+)\}\}/g, (_, cle: string) => String(variables[cle] ?? ''))
+}
+
 export function etapesOnboarding(langue: Langue) {
   return dictionnaires[langue].onboarding as unknown as { titre: string; texte: string }[]
 }
+
+/**
+ * La langue à la première ouverture. On ne présumait rien et on
+ * servait du français à tout le monde, alors que l'anglais est traduit
+ * de bout en bout : `navigator.language` répond à la question sans
+ * jamais rien demander. Un choix déjà fait dans les réglages prime,
+ * évidemment — c'est la seule valeur qu'on écrit.
+ */
+function lireLangueSauvegardee(): Langue {
+  try {
+    const v = localStorage.getItem(CLE_LANGUE)
+    if (v === 'fr' || v === 'en') return v
+  } catch {
+    /* stockage indisponible : on continue avec la langue du navigateur */
+  }
+  // `window` et non `navigator` : Node en expose un, avec sa propre
+  // locale (« en-US »), et les tests basculeraient en anglais sans le
+  // vouloir. La détection n'a de sens que dans un navigateur.
+  if (typeof window !== 'undefined') {
+    // `startsWith` plutôt qu'une égalité : « en-GB », « en-US » et
+    // « en » désignent la même colonne du dictionnaire.
+    if (window.navigator?.language?.toLowerCase().startsWith('en')) return 'en'
+  }
+  return 'fr'
+}
+
+/**
+ * La langue courante, hors React. `aggregate.ts`, `validerRecette.ts`
+ * et `collerRecettes.ts` produisent du texte lu par un humain — des
+ * unités (« c. à s. »), des messages de validation — sans être des
+ * composants : ils n'ont ni contexte ni hook à leur disposition. Une
+ * app n'affiche qu'une langue à la fois, donc un module en suffit à
+ * la porter, et `FournisseurLangue` la tient à jour.
+ */
+let langueActive: Langue = lireLangueSauvegardee()
+
+/** Traduction hors composant. Sous React, préférer `useLangue().t`. */
+export const traduire = (chemin: string, variables?: Record<string, string | number>) =>
+  traduireEn(langueActive, chemin, variables)
 
 interface ContexteLangue {
   langue: Langue
@@ -668,18 +797,14 @@ interface ContexteLangue {
 
 const Contexte = createContext<ContexteLangue | null>(null)
 
-function lireLangueSauvegardee(): Langue {
-  try {
-    const v = localStorage.getItem(CLE_LANGUE)
-    if (v === 'fr' || v === 'en') return v
-  } catch {
-    /* stockage indisponible : on retombe sur le français */
-  }
-  return 'fr'
-}
-
 export function FournisseurLangue({ children }: { children: ReactNode }) {
   const [langue, setLangue] = useState<Langue>(lireLangueSauvegardee)
+
+  // Pendant le rendu, pas dans l'effet : les fonctions pures appelées
+  // par les composants d'en dessous (formatQuantite, notamment) lisent
+  // `langueActive` au cours de ce même rendu. La mettre à jour après
+  // coup afficherait une fois les unités de l'ancienne langue.
+  langueActive = langue
 
   useEffect(() => {
     try {
@@ -690,11 +815,8 @@ export function FournisseurLangue({ children }: { children: ReactNode }) {
     document.documentElement.lang = langue
   }, [langue])
 
-  const t = (chemin: string, variables?: Record<string, string | number>) => {
-    const brut = resoudre(dictionnaires[langue], chemin) ?? resoudre(dictionnaires.fr, chemin) ?? chemin
-    if (!variables) return brut
-    return brut.replace(/\{\{(\w+)\}\}/g, (_, cle: string) => String(variables[cle] ?? ''))
-  }
+  const t = (chemin: string, variables?: Record<string, string | number>) =>
+    traduireEn(langue, chemin, variables)
 
   return <Contexte.Provider value={{ langue, definirLangue: setLangue, t }}>{children}</Contexte.Provider>
 }

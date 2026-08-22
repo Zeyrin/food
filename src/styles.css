@@ -2286,6 +2286,73 @@ button.carte-panier-bouton .carte-panier-corps {
   margin-top: 6px;
 }
 
+/* --- Écran de repli (components/LimiteErreur.tsx) ------------------------
+   Ce qui s'affiche quand un rendu React lève : avant, l'écran devenait
+   blanc et muet. Centré et sobre — on n'a rien à y faire sinon lire une
+   phrase et appuyer sur un bouton. */
+
+.ecran-erreur {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 32px 24px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.ecran-erreur-icone {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--terracotta-doux);
+  color: var(--brique);
+  display: grid;
+  place-items: center;
+}
+
+.ecran-erreur h1 {
+  font-family: var(--affichage);
+  margin: 0;
+}
+
+.ecran-erreur > p {
+  margin: 0;
+  color: var(--encre-douce);
+}
+
+.ecran-erreur .principal {
+  width: 100%;
+}
+
+.ecran-erreur-details {
+  width: 100%;
+  text-align: left;
+  color: var(--encre-douce);
+  font-size: 14px;
+}
+
+.ecran-erreur-details summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+/* Un message d'exception ne se coupe pas aux mots : sans ces deux
+   règles, une pile un peu longue déborde l'écran en largeur. */
+.ecran-erreur-details pre {
+  margin: 8px 0 0;
+  padding: 12px;
+  border-radius: var(--rayon);
+  background: var(--carte-haute);
+  color: var(--encre);
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 /* --- Composeur d'article (écran Liste) -----------------------------------
    Remplace le `window.prompt` d'avant : un champ dans la page, ouvert
    par le bouton flottant, qui reste ouvert après validation — on ajoute
