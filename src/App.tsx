@@ -40,11 +40,13 @@ import AjouterRecette from './screens/AjouterRecette'
 import Bienvenue from './screens/Bienvenue'
 import TourGuide from './components/TourGuide'
 import BandeauMinuteur from './components/BandeauMinuteur'
+import BandeauMiseAJour from './components/BandeauMiseAJour'
 import PanneauMinuteurs from './components/PanneauMinuteurs'
 import { useMinuteurs } from './hooks/useMinuteurs'
 import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
+import { useEtatSynchro } from './hooks/useEtatSynchro'
 import { useDecalageBarreOutils } from './hooks/useDecalageBarreOutils'
 import { useEnteteDefilee } from './hooks/useEnteteDefilee'
 import { useLangue } from './lib/i18n'
@@ -288,6 +290,7 @@ export default function App() {
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const enLigne = useEnLigne()
+  const { etat: etatSynchro } = useEtatSynchro()
 
   /**
    * Les minuteurs vivent ici, pas dans l'écran de cuisson : on en lance
@@ -504,7 +507,20 @@ export default function App() {
   // liste reste celle calculée sur un catalogue vide au premier rendu.
   const items = useMemo(() => buildList(basket, recipes), [basket, recipes])
 
-  if (!foyerCharge) return null
+  // Lecture d'IndexedDB : quelques dizaines de millisecondes en général,
+  // beaucoup plus sur un vieux téléphone qui sort de veille. Rendre `null`
+  // laissait un cadre crème vide sans rien dire. Le repère ne se montre
+  // qu'au bout d'un quart de seconde (retard porté par le CSS) : en deçà,
+  // il ne ferait que clignoter au lancement.
+  if (!foyerCharge) {
+    return (
+      <div className="attente" role="status" aria-label={t('app.chargement')}>
+        <span className="accueil-sceau" aria-hidden="true">
+          <Icone nom="grill" taille={30} />
+        </span>
+      </div>
+    )
+  }
 
   if (!foyer) {
     return <Bienvenue onCreer={creer} onRejoindre={rejoindre} />
@@ -632,10 +648,25 @@ export default function App() {
         </button>
       )}
 
-      {!enLigne && (
+      {/* Deux pannes, une seule pastille — elles ne peuvent pas être vraies
+          en même temps de façon utile, et deux bandeaux empilés en haut
+          d'écran se marchent dessus. Hors ligne d'abord : c'est le cas
+          normal en magasin, et il explique à lui seul pourquoi rien ne
+          remonte. Le refus de synchro, lui, survient réseau présent et ne
+          se rattrapera pas tout seul. */}
+      {!enLigne ? (
         <p className="pastille-hors-ligne" role="status">
           <Icone nom="alerte" taille={16} /> {t('app.horsLigne')}
         </p>
+      ) : (
+        etatSynchro === 'refuse' && (
+          <button
+            className="pastille-hors-ligne pastille-synchro"
+            onClick={() => irVers({ type: 'reglages' })}
+          >
+            <Icone nom="alerte" taille={16} /> {t('app.synchroRefusee')}
+          </button>
+        )
       )}
 
       {ecranPleinePage ?? (
@@ -703,6 +734,8 @@ export default function App() {
       />
 
       {panneau}
+
+      <BandeauMiseAJour />
 
       <nav className="onglets">
         {(

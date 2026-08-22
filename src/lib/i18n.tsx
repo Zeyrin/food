@@ -7,7 +7,16 @@ const CLE_LANGUE = 'fffood:langue'
 type Dico = { [cle: string]: string | Dico | Dico[] }
 
 const fr: Dico = {
+  maj: {
+    texte: 'Une nouvelle version est prête.',
+    recharger: 'Recharger',
+    plusTard: 'Plus tard',
+  },
   reglages: {
+    synchroTitre:
+      'Synchro bloquée',
+    synchroTexte:
+      "Le réseau répond, mais le serveur refuse les écritures : cet appareil garde tout en local, l'autre téléphone ne voit rien. À vérifier côté Supabase — les policies de la table, la réplication temps réel, et que la clé du fichier .env est la bonne.",
     titre: 'Réglages',
     fermer: 'Fermer les réglages',
     langue: 'Langue',
@@ -233,6 +242,8 @@ const fr: Dico = {
     toutSupprimer: 'Tout supprimer',
   },
   app: {
+    synchroRefusee: 'Synchro bloquée',
+    chargement: 'Chargement…',
     reglages: 'Réglages',
     horsLigne: 'Hors ligne — vos changements se synchroniseront au retour du réseau',
     proposer: 'Proposer',
@@ -308,7 +319,16 @@ const fr: Dico = {
 }
 
 const en: Dico = {
+  maj: {
+    texte: 'A new version is ready.',
+    recharger: 'Reload',
+    plusTard: 'Later',
+  },
   reglages: {
+    synchroTitre:
+      'Sync blocked',
+    synchroTexte:
+      'The network responds, but the server refuses writes: this device keeps everything locally and the other phone sees nothing. Check on the Supabase side — the table policies, realtime replication, and that the key in .env is the right one.',
     titre: 'Settings',
     fermer: 'Close settings',
     langue: 'Language',
@@ -534,6 +554,8 @@ const en: Dico = {
     toutSupprimer: 'Delete all',
   },
   app: {
+    synchroRefusee: 'Sync blocked',
+    chargement: 'Loading…',
     reglages: 'Settings',
     horsLigne: 'Offline — your changes will sync when the network is back',
     proposer: 'Suggest',

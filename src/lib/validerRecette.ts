@@ -6,6 +6,17 @@ import { MAGASINS_DE_RECETTE, UNITS, estMagasinDeRecette, type Recipe } from '..
  * réduites à ce qui bloque vraiment l'usage — pas la détection de
  * vocabulaire similaire, inutile sur une recette isolée.
  */
+/**
+ * Une photo doit être un fichier livré avec le build. Le champ acceptait
+ * n'importe quelle URL, ce qui démentait les deux promesses du README :
+ * les photos tiennent hors ligne, et aucun lien extérieur ne peut mourir
+ * en laissant un cadre vide. Une recette sans photo reste valide — la
+ * vignette teintée prend le relais.
+ */
+function estPhotoLivree(image: unknown): image is string {
+  return typeof image === 'string' && /^\/plats\/[a-z0-9-]+\.webp$/.test(image)
+}
+
 export function validerRecette(json: unknown): { recette: Recipe } | { erreurs: string[] } {
   const erreurs: string[] = []
 
@@ -41,6 +52,13 @@ export function validerRecette(json: unknown): { recette: Recipe } | { erreurs: 
     })
   }
 
+  // Une image écartée sans un mot laisserait croire à un bug d'affichage.
+  if (r.image !== undefined && !estPhotoLivree(r.image)) {
+    erreurs.push(
+      '« image » doit désigner une photo livrée avec l\'app (/plats/<nom>.webp). Omettez le champ pour utiliser la vignette.',
+    )
+  }
+
   if (erreurs.length > 0) return { erreurs }
 
   return {
@@ -52,7 +70,7 @@ export function validerRecette(json: unknown): { recette: Recipe } | { erreurs: 
       tags: r.tags as string[],
       ingredients: r.ingredients as Recipe['ingredients'],
       etapes: r.etapes as string[],
-      ...(typeof r.image === 'string' && r.image ? { image: r.image } : {}),
+      ...(estPhotoLivree(r.image) ? { image: r.image } : {}),
       ...(typeof r.description === 'string' && r.description ? { description: r.description } : {}),
       ...(Array.isArray(r.astuces) ? { astuces: r.astuces as string[] } : {}),
     },

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useInstallation } from '../hooks/useInstallation'
 import { useLangue } from '../lib/i18n'
+import { useEtatSynchro } from '../hooks/useEtatSynchro'
 import Icone from '../components/Icone'
 
 /**
@@ -30,6 +31,7 @@ export default function Reglages({
   onRevoirPresentation,
 }: Props) {
   const installation = useInstallation()
+  const { etat: etatSynchro, motif } = useEtatSynchro()
   const { langue, definirLangue, t } = useLangue()
   const [code, setCode] = useState('')
   const [enCours, setEnCours] = useState(false)
@@ -194,6 +196,20 @@ export default function Reglages({
           <button className="discret suite pleine-largeur" onClick={() => setConfirmationQuitter(true)}>
             {t('reglages.quitterFoyerBouton')}
           </button>
+        </>
+      )}
+
+      {/* Diagnostic de synchro. C'est ici qu'atterrit la pastille « Synchro
+          bloquée » : un refus du serveur ne se rattrape pas tout seul, et
+          le message brut de Supabase est la seule piste exploitable pour
+          savoir laquelle des trois causes habituelles s'applique. */}
+      {etatSynchro === 'refuse' && (
+        <>
+          <h2>{t('reglages.synchroTitre')}</h2>
+          <div className="bloc-erreurs" role="status">
+            <p>{t('reglages.synchroTexte')}</p>
+            {motif && <p><code>{motif}</code></p>}
+          </div>
         </>
       )}
 

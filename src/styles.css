@@ -231,6 +231,149 @@ p.aide a {
   text-underline-offset: 3px;
 }
 
+/* --- Bandeau de mise à jour ----------------------------------------------
+   Posé au-dessus de la barre d'onglets, comme le bandeau minuteur, mais
+   sur une surface neutre : ce n'est pas une urgence, c'est une offre.
+   Ignoré, il disparaît et la nouvelle version sera servie au prochain
+   lancement. */
+
+.bandeau-maj {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(80px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
+  z-index: 9;
+  max-width: 616px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  border-radius: var(--rayon);
+  background: var(--carte);
+  box-shadow: inset 0 0 0 1px var(--filet-fort), var(--ombre-haute);
+  animation: confirmation-entree 0.24s var(--sortie);
+}
+
+.bandeau-maj p {
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+
+.bandeau-maj-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.bandeau-maj-actions > * {
+  flex: 1;
+}
+
+/* Un minuteur qui tourne occupe déjà cette place : le bandeau de mise à
+   jour monte au-dessus plutôt que de le recouvrir. */
+[data-minuteur='true'] .bandeau-maj {
+  bottom: calc(168px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
+}
+
+@media (min-width: 900px) {
+  .bandeau-maj {
+    left: 128px;
+    right: 40px;
+    bottom: 24px;
+  }
+
+  [data-minuteur='true'] .bandeau-maj {
+    bottom: 128px;
+  }
+}
+
+/* --- Attente du premier rendu -------------------------------------------
+   Le repère est retardé d'un quart de seconde par l'animation : la
+   lecture d'IndexedDB est presque toujours plus rapide que ça, et un
+   indicateur qui clignote au lancement se lit comme une saccade. Passé
+   ce délai, l'attente est réelle et mérite d'être signalée. */
+
+#root:has(.attente) {
+  padding-bottom: 0;
+}
+
+.attente {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+}
+
+.attente .accueil-sceau {
+  margin: 0;
+  opacity: 0;
+  animation: attente-apparition 0.4s var(--sortie) 0.25s forwards;
+}
+
+@keyframes attente-apparition {
+  to {
+    opacity: 1;
+  }
+}
+
+/* « Réduire les animations » désactive toutes les animations de la
+   feuille : sans ce rattrapage, le repère resterait invisible pour
+   toujours au lieu d'apparaître tout de suite. */
+@media (prefers-reduced-motion: reduce) {
+  .attente .accueil-sceau {
+    opacity: 1;
+  }
+}
+
+/* --- Écran de panne ------------------------------------------------------
+   Dernier recours (voir components/LimiteErreur.tsx). Même composition
+   que l'accueil — c'est le seul autre écran qui n'a rien à afficher — et
+   surtout les mêmes couleurs : une page de panne qui sort du thème donne
+   l'impression que c'est le navigateur qui a lâché, pas l'app. */
+
+#root:has(.panne) {
+  padding-bottom: 0;
+}
+
+.panne {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: min(100%, 420px);
+  margin: 0 auto;
+  padding: max(32px, env(safe-area-inset-top)) 0 32px;
+}
+
+.panne h1 {
+  margin: 0 0 8px;
+}
+
+.panne-detail {
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--encre-douce);
+}
+
+.panne-detail summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+/* Le message d'erreur est brut et peut être long : il défile pour son
+   propre compte plutôt que d'étirer la page à sa largeur. */
+.panne-detail pre {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: var(--rayon-petit);
+  background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet);
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 /* --- Écran d'accueil -----------------------------------------------------
    Le seul écran sans données à afficher : il porte donc la marque. Trois
    rangées sur la hauteur du viewport — un vide en haut, le bloc de marque
@@ -1545,6 +1688,20 @@ button.discret.accent:active:not(:disabled) {
 
 .pastille-hors-ligne svg {
   flex: none;
+}
+
+/* Même pastille, mais cliquable : un refus de synchro ne se rattrape pas
+   tout seul, elle mène donc au diagnostic dans Réglages. Reset de bouton
+   plus le curseur qui dit qu'il y a quelque chose derrière. */
+button.pastille-synchro {
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.14s var(--ressort);
+}
+
+button.pastille-synchro:active {
+  transform: scale(0.96);
 }
 
 @media (min-width: 900px) {

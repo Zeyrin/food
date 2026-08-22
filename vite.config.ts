@@ -6,7 +6,11 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // `prompt` et non `autoUpdate` : ce dernier recharge la page dès
+      // qu'une version arrive, potentiellement en plein rayon, au milieu
+      // d'une liste qu'on est en train de cocher. Ici c'est l'utilisateur
+      // qui décide du moment (voir components/BandeauMiseAJour.tsx).
+      registerType: 'prompt',
       includeAssets: ['icon-192.png', 'icon-512.png'],
       manifest: {
         name: 'FFFood',

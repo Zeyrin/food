@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import type { ListState, Recipe } from '../types'
 import type { Historique } from './propose'
+import { signalerSynchroOk, signalerSynchroRefusee } from './etatSynchro'
 
 const url = import.meta.env.VITE_SUPABASE_URL
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -18,6 +19,9 @@ const VIDE: ListState = { coche: {}, dejaPossede: {} }
 const journaliserStatut = (nom: string) => (statut: string) => {
   if (statut === 'CHANNEL_ERROR' || statut === 'TIMED_OUT') {
     console.warn(`Realtime « ${nom} » : ${statut} — la synchro entre appareils ne remontera pas.`)
+    // Un abonnement mort est l'autre panne muette : les écritures
+    // partent, mais rien ne revient de l'autre téléphone.
+    signalerSynchroRefusee(`Realtime « ${nom} » : ${statut}`)
   } else if (statut === 'SUBSCRIBED') {
     console.info(`Realtime « ${nom} » : abonné.`)
   }
@@ -56,7 +60,10 @@ export async function lireListe(foyer: string): Promise<ListState> {
 export async function ecrireListe(foyer: string, etat: ListState): Promise<void> {
   if (!supabase) return
   const { error } = await supabase.from('listes').upsert({ foyer, etat, maj: new Date().toISOString() })
-  if (error) console.warn(`Écriture de la liste refusée : ${error.message}`)
+  if (error) {
+    console.warn(`Écriture de la liste refusée : ${error.message}`)
+    signalerSynchroRefusee(error.message)
+  } else signalerSynchroOk()
 }
 
 export function suivreListe(foyer: string, onChange: (etat: ListState) => void): () => void {
@@ -166,7 +173,10 @@ export async function ecrireHistoriqueFoyer(foyer: string, historique: Historiqu
   const { error } = await supabase
     .from('historiques')
     .upsert({ foyer, historique, maj: new Date().toISOString() })
-  if (error) console.warn(`Écriture de l'historique refusée : ${error.message}`)
+  if (error) {
+    console.warn(`Écriture de l'historique refusée : ${error.message}`)
+    signalerSynchroRefusee(error.message)
+  } else signalerSynchroOk()
 }
 
 export function suivreHistorique(foyer: string, onChange: (h: Historique) => void): () => void {
