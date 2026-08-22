@@ -66,8 +66,16 @@
   --terracotta: #bc4749;
   --terracotta-doux: #ffdad8;
 
-  --intermarche: #305e3a;
-  --primeur: #a7373b;
+  /* Une couleur par rayon, pour repérer une section d'un coup d'œil
+     dans la liste. Elle ne porte jamais l'information seule : chaque
+     rayon a aussi son icône et son intitulé. */
+  --vert: #305e3a;
+  --brique: #a7373b;
+  --bleu: #2c5d8f;
+  --ambre: #8a5a1a;
+  --brun: #6b4a2f;
+  --sarcelle: #1f6f74;
+  --prune: #6a4a8c;
 
   --ombre: 0 1px 2px rgb(32 27 12 / 0.06), 0 6px 16px rgb(32 27 12 / 0.05);
   --ombre-nette: 0 4px 14px rgb(56 94 22 / 0.18);
@@ -96,8 +104,13 @@
     --sur-accent: #0c2000;
     --terracotta: #ffb3b0;
     --terracotta-doux: #5c1a1c;
-    --intermarche: #a0d3a5;
-    --primeur: #ffb3b0;
+    --vert: #a0d3a5;
+    --brique: #ffb3b0;
+    --bleu: #a8cdf5;
+    --ambre: #e5bd7a;
+    --brun: #d9b593;
+    --sarcelle: #8fd3d7;
+    --prune: #cbb2ec;
     --ombre: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 16px rgb(0 0 0 / 0.3);
     --ombre-nette: 0 4px 16px rgb(0 0 0 / 0.45);
   }
@@ -795,14 +808,142 @@ button.discret.danger {
   border-radius: 14px;
 }
 
-.badge-section[data-magasin='intermarche'] {
-  color: var(--intermarche);
-  background: color-mix(in srgb, var(--intermarche) 16%, transparent);
+.badge-section[data-rayon='fruits-legumes'] {
+  color: var(--vert);
+  background: color-mix(in srgb, var(--vert) 16%, transparent);
 }
 
-.badge-section[data-magasin='primeur'] {
-  color: var(--primeur);
-  background: color-mix(in srgb, var(--primeur) 16%, transparent);
+.badge-section[data-rayon='viande-poisson'] {
+  color: var(--brique);
+  background: color-mix(in srgb, var(--brique) 16%, transparent);
+}
+
+.badge-section[data-rayon='cremerie'] {
+  color: var(--bleu);
+  background: color-mix(in srgb, var(--bleu) 16%, transparent);
+}
+
+.badge-section[data-rayon='boulangerie'] {
+  color: var(--ambre);
+  background: color-mix(in srgb, var(--ambre) 16%, transparent);
+}
+
+.badge-section[data-rayon='epicerie'] {
+  color: var(--brun);
+  background: color-mix(in srgb, var(--brun) 16%, transparent);
+}
+
+.badge-section[data-rayon='surgeles'] {
+  color: var(--sarcelle);
+  background: color-mix(in srgb, var(--sarcelle) 16%, transparent);
+}
+
+.badge-section[data-rayon='boissons'] {
+  color: var(--prune);
+  background: color-mix(in srgb, var(--prune) 16%, transparent);
+}
+
+.badge-section[data-rayon='autre'] {
+  color: var(--encre-douce);
+  background: color-mix(in srgb, var(--encre-douce) 14%, transparent);
+}
+
+/* L'intitulé du magasin chapeaute ses rayons : il doit se lire comme
+   une étape du parcours (« ici, puis là-bas »), pas comme un titre de
+   section de plus. D'où la pilule pleine largeur, plus haute que les
+   en-têtes de rayon qu'elle contient. */
+.entete-magasin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 32px 0 4px;
+  padding: 12px 18px;
+  border-radius: var(--rayon);
+  background: var(--carte-haute);
+  font-family: var(--affichage);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.entete-magasin svg {
+  flex: none;
+}
+
+/* Sous un magasin, le rayon est un sous-titre : même composition, un
+   cran plus discret, et collé à son magasin. */
+h3.entete-section {
+  margin: 18px 0 8px;
+  font-family: var(--affichage);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--encre-douce);
+}
+
+/* --- Réglages : magasins et rayons ---------------------------------------- */
+
+.rangee-magasin {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.titre-secondaire {
+  margin: 24px 0 8px;
+  font-family: var(--affichage);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--encre);
+}
+
+/* Le rayon à gauche, le magasin à droite : la ligne se lit comme la
+   phrase qu'on se dit en préparant ses courses (« les légumes, au
+   marché »). Elle s'empile sur les écrans étroits plutôt que de
+   comprimer le sélecteur. */
+.rangee-routage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.rangee-routage-rayon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 180px;
+  font-size: 15px;
+}
+
+.rangee-routage .badge-section {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+}
+
+.champ-select {
+  flex: 0 1 auto;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 10px 14px;
+  border: 2px solid var(--trait);
+  border-radius: 999px;
+  background: var(--carte);
+  color: var(--encre);
+  font: inherit;
+  font-size: 15px;
+}
+
+.champ-select:focus-visible {
+  border-color: var(--accent);
+}
+
+/* Le chevron « précédent » sert de flèche « monter » : une icône de
+   moins à dessiner, et la rotation est exacte au pixel près. */
+.pivot-monter svg {
+  transform: rotate(90deg);
 }
 
 /* Puces qui s'enroulent sur plusieurs lignes plutôt que de défiler à
@@ -1028,7 +1169,7 @@ button.discret.accent:active:not(:disabled) {
   font-family: var(--affichage);
   font-size: 18px;
   font-weight: 600;
-  color: var(--intermarche);
+  color: var(--vert);
 }
 
 .carte-resume-semaine::after {
@@ -1082,7 +1223,7 @@ button.discret.accent:active:not(:disabled) {
   padding: 10px 16px;
   border-radius: 999px;
   background: var(--terracotta-doux);
-  color: var(--primeur);
+  color: var(--brique);
   font-size: 13px;
   font-weight: 600;
   box-shadow: var(--ombre);
@@ -2133,7 +2274,7 @@ button.carte-panier-bouton .carte-panier-corps {
   padding: 14px 16px;
   border-radius: var(--rayon);
   background: var(--terracotta-doux);
-  color: var(--primeur);
+  color: var(--brique);
 }
 
 .bloc-erreurs p {

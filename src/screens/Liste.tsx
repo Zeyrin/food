@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import type { ItemLibre, ListItem, ListState, Recipe } from '../types'
-import { STORES } from '../types'
-import { formatQuantite, groupByStore } from '../lib/aggregate'
+import type { ItemLibre, ListItem, ListState, RayonId, Recipe } from '../types'
+import { RAYONS } from '../types'
+import type { ConfigMagasins, Magasin } from '../lib/magasins'
+import { grouperPourCourses } from '../lib/magasins'
+import { formatQuantite } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { useLangue } from '../lib/i18n'
@@ -11,8 +13,11 @@ interface Props {
   items: ListItem[]
   etat: ListState
   onEtat: (etat: ListState) => void
+  /** Les magasins du foyer et les rayons qu'on y prend (Réglages). */
+  magasins: ConfigMagasins
   prochaineCuisson: Recipe | null
   onVersCuisson: () => void
+  onVersReglages: () => void
 }
 
 const itemLibreEnListItem = (item: ItemLibre): ListItem => ({
@@ -20,11 +25,22 @@ const itemLibreEnListItem = (item: ItemLibre): ListItem => ({
   nom: item.nom,
   quantite: 1,
   unite: 'piece',
-  magasin: 'autre',
+  rayon: 'autre',
   origines: [],
 })
 
-export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCuisson }: Props) {
+/** Une ligne tapée à la main, par opposition à une ligne de recette. */
+const estLibre = (item: ListItem) => item.key.startsWith('libre|')
+
+export default function Liste({
+  items,
+  etat,
+  onEtat,
+  magasins,
+  prochaineCuisson,
+  onVersCuisson,
+  onVersReglages,
+}: Props) {
   const { t } = useLangue()
 
   /**
@@ -72,22 +88,32 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
   const retirerItem = (id: string) =>
     onEtat({ ...etat, items: (etat.items ?? []).filter((i) => i.id !== id) })
 
-  const labelMagasin = (magasin: keyof typeof STORES) => {
-    const traduit = t(`stores.${magasin}`)
-    return traduit === `stores.${magasin}` ? STORES[magasin].label : traduit
+  const labelRayon = (rayon: RayonId) => {
+    const traduit = t(`rayons.${rayon}`)
+    return traduit === `rayons.${rayon}` ? RAYONS[rayon].label : traduit
   }
 
-  /** Ce qu'il reste à acheter, groupé par magasin, en texte brut. */
-  const composerTexte = (restant: ListItem[]) =>
-    [
+  /** Un magasin sans nom, c'est celui par défaut : il n'en a besoin
+   *  que le jour où il faut le distinguer d'un second. */
+  const nomMagasin = (magasin: Magasin) => magasin.nom.trim() || t('liste.magasinSansNom')
+
+  /** Ce qu'il reste à acheter, magasin par magasin, en texte brut. */
+  const composerTexte = (restant: ListItem[]) => {
+    const groupes = grouperPourCourses(restant, magasins)
+    const plusieurs = groupes.length > 1
+    return [
       t('liste.listeDeCourses', { n: numeroSemaine() }),
-      ...groupByStore(restant).map(({ magasin, items: lignes }) =>
-        [
-          labelMagasin(magasin),
-          ...lignes.map((i) => `- ${i.nom}${i.magasin === 'autre' ? '' : ` (${formatQuantite(i)})`}`),
-        ].join('\n'),
-      ),
+      ...groupes.flatMap(({ magasin, rayons }) => [
+        ...(plusieurs ? [`— ${nomMagasin(magasin)} —`] : []),
+        ...rayons.map(({ rayon, items: lignes }) =>
+          [
+            labelRayon(rayon),
+            ...lignes.map((i) => `- ${i.nom}${estLibre(i) ? '' : ` (${formatQuantite(i)})`}`),
+          ].join('\n'),
+        ),
+      ]),
     ].join('\n\n')
+  }
 
   const envoyer = async (restant: ListItem[]) => {
     const texte = composerTexte(restant)
@@ -181,6 +207,12 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
 
   const aAcheter = tousLesItems.filter((i) => !etat.dejaPossede[i.key])
   const restants = aAcheter.filter((i) => !etat.coche[i.key]).length
+
+  // Le parcours de courses : un arrêt après l'autre, chacun rangé par
+  // rayon (voir lib/magasins.ts).
+  const groupes = grouperPourCourses(aAcheter, magasins)
+  const plusieursMagasins = groupes.length > 1
+  const TitreRayon = plusieursMagasins ? 'h3' : 'h2'
 
   const bascule = (
     <div className="bascule-mode">
@@ -316,48 +348,77 @@ export default function Liste({ items, etat, onEtat, prochaineCuisson, onVersCui
           </>
         )}
 
-        {groupByStore(aAcheter).map(({ magasin, items: lignes }) => (
-          <section key={magasin}>
-            <h2 className="entete-section">
-              <span className="badge-section" data-magasin={magasin}>
-                <Icone nom={STORES[magasin].icone} taille={20} />
-              </span>
-              {labelMagasin(magasin)}
-            </h2>
-            {lignes.map((item) => {
-              const coche = etat.coche[item.key] === true
-              const libre = item.magasin === 'autre'
-              return (
-                <div className="rangee-avec-suppr" key={item.key}>
-                  <button
-                    className="rangee"
-                    data-coche={coche}
-                    aria-pressed={coche}
-                    onClick={() => basculer('coche', item.key)}
-                  >
-                    <span className="case">{coche && <Icone nom="coche" taille={18} />}</span>
-                    <span className="nom-groupe">
-                      <span className="nom">{item.nom}</span>
-                      {item.origines.length > 1 && (
-                        <span className="nom-partage">{t('liste.pourPlats', { liste: item.origines.join(', ') })}</span>
+        {groupes.map(({ magasin, rayons }) => (
+          <section key={magasin.id}>
+            {/* L'intitulé du magasin n'apparaît qu'à partir du deuxième :
+                avec un seul, il n'y a pas de choix à rappeler, et la
+                liste doit commencer par le premier rayon. */}
+            {plusieursMagasins && (
+              <h2 className="entete-magasin">
+                <Icone nom="magasin" taille={20} />
+                {nomMagasin(magasin)}
+              </h2>
+            )}
+            {rayons.map(({ rayon, items: lignes }) => (
+              <div key={rayon}>
+                {/* Le rayon descend d'un cran quand un magasin le
+                    chapeaute : la hiérarchie annoncée au lecteur d'écran
+                    doit être celle qu'on voit. */}
+                <TitreRayon className="entete-section">
+                  <span className="badge-section" data-rayon={rayon}>
+                    <Icone nom={RAYONS[rayon].icone} taille={20} />
+                  </span>
+                  {labelRayon(rayon)}
+                </TitreRayon>
+                {lignes.map((item) => {
+                  const coche = etat.coche[item.key] === true
+                  const libre = estLibre(item)
+                  return (
+                    <div className="rangee-avec-suppr" key={item.key}>
+                      <button
+                        className="rangee"
+                        data-coche={coche}
+                        aria-pressed={coche}
+                        onClick={() => basculer('coche', item.key)}
+                      >
+                        <span className="case">{coche && <Icone nom="coche" taille={18} />}</span>
+                        <span className="nom-groupe">
+                          <span className="nom">{item.nom}</span>
+                          {item.origines.length > 1 && (
+                            <span className="nom-partage">{t('liste.pourPlats', { liste: item.origines.join(', ') })}</span>
+                          )}
+                        </span>
+                        {!libre && <span className="qte">{formatQuantite(item)}</span>}
+                      </button>
+                      {libre && (
+                        <button
+                          className="bouton-suppr"
+                          onClick={() => retirerItem(item.key.replace('libre|', ''))}
+                          aria-label={t('liste.retirer', { nom: item.nom })}
+                        >
+                          <Icone nom="fermer" taille={16} />
+                        </button>
                       )}
-                    </span>
-                    {!libre && <span className="qte">{formatQuantite(item)}</span>}
-                  </button>
-                  {libre && (
-                    <button
-                      className="bouton-suppr"
-                      onClick={() => retirerItem(item.key.replace('libre|', ''))}
-                      aria-label={t('liste.retirer', { nom: item.nom })}
-                    >
-                      <Icone nom="fermer" taille={16} />
-                    </button>
-                  )}
-                </div>
-              )
-            })}
+                    </div>
+                  )
+                })}
+              </div>
+            ))}
           </section>
         ))}
+
+        {/* Le découpage par magasin ne se devine pas : tant qu'il n'y en
+            a qu'un, l'écran ne montre que des rayons, et rien ne dit
+            qu'on peut en ajouter un deuxième. Une ligne en bas de liste,
+            là où on a fini de lire, suffit à le faire savoir. */}
+        {!plusieursMagasins && (
+          <p className="aide espace-haut">
+            {t('liste.plusieursMagasins')}{' '}
+            <button className="lien-discret" onClick={onVersReglages}>
+              {t('liste.reglerMagasins')}
+            </button>
+          </p>
+        )}
 
         <div className="rangee-boutons espace-haut">
           <button className="discret" onClick={() => setMode('tri')}>

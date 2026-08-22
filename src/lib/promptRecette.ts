@@ -1,4 +1,10 @@
-import { UNITS } from '../types'
+import { RAYONS, UNITS, type RayonId } from '../types'
+
+/** « fruits-legumes (Fruits & légumes), … » — de quoi choisir sans deviner. */
+const RAYONS_DECRITS = (Object.keys(RAYONS) as RayonId[])
+  .filter((r) => r !== 'autre')
+  .map((r) => `${r} (${RAYONS[r].label})`)
+  .join(', ')
 
 /**
  * Prompt à copier-coller dans une IA (Claude, ChatGPT…) pour obtenir
@@ -18,7 +24,7 @@ Format exact attendu (pour une recette ; plusieurs = un tableau de ces objets) :
   "portions": nombre de parts que couvrent les quantités ci-dessous,
   "tags": ["quelques mots-clés libres, ex: asiatique, végé, rapide, four"],
   "ingredients": [
-    { "nom": "string (nom canonique, sans quantité dedans)", "quantite": nombre, "unite": "une valeur parmi ${UNITS.join(', ')}", "magasin": "intermarche ou primeur (primeur = fruits/légumes/produits asiatiques frais, intermarche = le reste)" }
+    { "nom": "string (nom canonique, sans quantité dedans)", "quantite": nombre, "unite": "une valeur parmi ${UNITS.join(', ')}", "rayon": "une valeur parmi ${RAYONS_DECRITS}" }
   ],
   "etapes": ["une string par étape, dans l'ordre, texte clair et complet, avec les ingrédients entre accolades : \\"Cuire les {pâtes} dans l'eau salée\\""],
   "description": "une phrase courte qui donne envie (optionnel)",
@@ -27,7 +33,7 @@ Format exact attendu (pour une recette ; plusieurs = un tableau de ces objets) :
 
 Contraintes :
 - "unite" doit être exactement une des valeurs listées, rien d'autre.
-- "magasin" doit être exactement "intermarche" ou "primeur".
+- "rayon" est le rayon du magasin où l'ingrédient se trouve, jamais une enseigne : le même ingrédient doit recevoir le même rayon d'une recette à l'autre. Dans le doute, "epicerie".
 - Les quantités sont des nombres (pas de fractions texte comme "1/2", utilise 0.5).
 - Le sel, poivre, huile courants peuvent avoir "placard": true en plus des autres champs (optionnel).
 - Dans les étapes, entoure d'accolades chaque mention d'un ingrédient de la liste : l'app affiche la dose juste après. Écris le mot tel qu'il doit se lire — les accolades disparaissent à l'affichage, et le texte à l'intérieur peut différer du "nom" canonique : { "nom": "pâtes longues" } se cite « les {pâtes} », { "nom": "oignon nouveau" } se cite « les {oignons nouveaux} ».

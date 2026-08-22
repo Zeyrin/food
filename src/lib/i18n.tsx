@@ -19,6 +19,18 @@ const fr: Dico = {
     partager: 'Partager',
     ecranAccueil: "Sur l'écran d'accueil",
     ajouterEcranAndroid: "Installer l'application",
+    magasinsTitre: 'Vos magasins',
+    magasinsTexte:
+      "La liste suit les rayons du magasin. Si vous prenez vos légumes au marché et le reste au supermarché, ajoutez un second magasin : la liste se coupe en deux, un arrêt après l'autre, dans l'ordre où vous les faites.",
+    magasinPrincipal: 'Mon magasin',
+    magasinSansNom: 'Autre magasin',
+    nomDuMagasin: 'Nom du magasin {{n}}',
+    ajouterMagasin: 'Ajouter un magasin',
+    supprimerMagasin: 'Supprimer {{nom}}',
+    monterMagasin: 'Faire {{nom}} plus tôt',
+    routageTitre: 'Où prenez-vous quoi ?',
+    routageTexte: 'Les rayons non réglés vont au premier magasin.',
+    ouPrendreRayon: 'Magasin pour le rayon {{rayon}}',
     decouvrirTitre: "Découvrir l'app",
     decouvrirTexte: 'Revoir la présentation des fonctionnalités et comment les utiliser.',
     revoirPresentation: 'Revoir la présentation',
@@ -129,6 +141,9 @@ const fr: Dico = {
     cuisson: 'Cuisson',
     listeDeCourses: 'Liste de courses — semaine {{n}}',
     titrePartage: 'Liste de courses',
+    magasinSansNom: 'Autre magasin',
+    plusieursMagasins: 'Vous faites plusieurs magasins ?',
+    reglerMagasins: 'Dites lesquels.',
   },
   cuisson: {
     quitter: 'Quitter',
@@ -269,7 +284,7 @@ const fr: Dico = {
     },
     {
       titre: 'La Liste',
-      texte: "Générée automatiquement à partir du panier, triée par magasin. Cochez d'abord ce que vous avez déjà.",
+      texte: "Générée automatiquement à partir du panier, rangée dans l'ordre des rayons. Cochez d'abord ce que vous avez déjà.",
     },
     {
       titre: 'Le mode Cuisson',
@@ -284,9 +299,14 @@ const fr: Dico = {
       texte: "Vous savez l'essentiel. Le reste se découvre en cuisinant.",
     },
   ],
-  stores: {
-    intermarche: 'Intermarché',
-    primeur: 'Primeur & asiat',
+  rayons: {
+    'fruits-legumes': 'Fruits & légumes',
+    'viande-poisson': 'Viande & poisson',
+    cremerie: 'Crèmerie & frais',
+    boulangerie: 'Pain & pâtisserie',
+    epicerie: 'Épicerie',
+    surgeles: 'Surgelés',
+    boissons: 'Boissons',
     autre: 'Ajouté à la main',
   },
   validation: {
@@ -302,7 +322,7 @@ const fr: Dico = {
     ingredientNomManquant: '{{oi}} : « nom » manquant.',
     ingredientQuantiteInvalide: '{{oi}} : « quantite » doit être un nombre positif.',
     ingredientUniteInvalide: "{{oi}} : « unite » doit être l'une de : {{liste}}.",
-    ingredientMagasinInvalide: "{{oi}} : « magasin » doit être l'un de : {{liste}}.",
+    ingredientRayonInvalide: "{{oi}} : « rayon » doit être l'un de : {{liste}}.",
   },
 }
 
@@ -319,6 +339,18 @@ const en: Dico = {
     partager: 'Share',
     ecranAccueil: 'Add to Home Screen',
     ajouterEcranAndroid: 'Install app',
+    magasinsTitre: 'Your shops',
+    magasinsTexte:
+      'The list follows the aisles of a shop. If you get your vegetables at the market and the rest at the supermarket, add a second shop: the list splits in two, one stop after the other, in the order you do them.',
+    magasinPrincipal: 'My shop',
+    magasinSansNom: 'Other shop',
+    nomDuMagasin: 'Name of shop {{n}}',
+    ajouterMagasin: 'Add a shop',
+    supprimerMagasin: 'Remove {{nom}}',
+    monterMagasin: 'Do {{nom}} earlier',
+    routageTitre: 'Where do you get what?',
+    routageTexte: 'Aisles you leave alone go to the first shop.',
+    ouPrendreRayon: 'Shop for the {{rayon}} aisle',
     decouvrirTitre: 'Discover the app',
     decouvrirTexte: 'See the feature tour again and how to use them.',
     revoirPresentation: 'See the tour again',
@@ -429,6 +461,9 @@ const en: Dico = {
     cuisson: 'Cooking',
     listeDeCourses: 'Shopping list — week {{n}}',
     titrePartage: 'Shopping list',
+    magasinSansNom: 'Other shop',
+    plusieursMagasins: 'Shopping in more than one place?',
+    reglerMagasins: 'Tell the app where.',
   },
   cuisson: {
     quitter: 'Quit',
@@ -567,7 +602,7 @@ const en: Dico = {
     },
     {
       titre: 'The List',
-      texte: 'Generated automatically from the basket, sorted by shop. Tick off what you already have first.',
+      texte: 'Generated automatically from the basket, ordered by aisle. Tick off what you already have first.',
     },
     {
       titre: 'Cooking mode',
@@ -582,9 +617,14 @@ const en: Dico = {
       texte: 'You know the essentials. The rest you\'ll discover while cooking.',
     },
   ],
-  stores: {
-    intermarche: 'Intermarché',
-    primeur: 'Greengrocer & Asian store',
+  rayons: {
+    'fruits-legumes': 'Fruit & vegetables',
+    'viande-poisson': 'Meat & fish',
+    cremerie: 'Dairy & chilled',
+    boulangerie: 'Bread & bakery',
+    epicerie: 'Groceries',
+    surgeles: 'Frozen',
+    boissons: 'Drinks',
     autre: 'Added by hand',
   },
   validation: {
@@ -600,7 +640,7 @@ const en: Dico = {
     ingredientNomManquant: '{{oi}}: "nom" is missing.',
     ingredientQuantiteInvalide: '{{oi}}: "quantite" must be a positive number.',
     ingredientUniteInvalide: '{{oi}}: "unite" must be one of: {{liste}}.',
-    ingredientMagasinInvalide: '{{oi}}: "magasin" must be one of: {{liste}}.',
+    ingredientRayonInvalide: '{{oi}}: "rayon" must be one of: {{liste}}.',
   },
 }
 
