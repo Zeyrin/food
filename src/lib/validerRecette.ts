@@ -1,6 +1,4 @@
-import { UNITS, type Recipe } from '../types'
-
-const MAGASINS = ['intermarche', 'primeur']
+import { MAGASINS_DE_RECETTE, UNITS, estMagasinDeRecette, type Recipe } from '../types'
 
 /**
  * Valide le JSON collé par l'utilisateur (généré par une IA à partir
@@ -37,8 +35,8 @@ export function validerRecette(json: unknown): { recette: Recipe } | { erreurs: 
       if (typeof x.unite !== 'string' || !UNITS.includes(x.unite as (typeof UNITS)[number])) {
         erreurs.push(`${oi} : « unite » doit être l'une de : ${UNITS.join(', ')}.`)
       }
-      if (typeof x.magasin !== 'string' || !MAGASINS.includes(x.magasin)) {
-        erreurs.push(`${oi} : « magasin » doit être l'un de : ${MAGASINS.join(', ')}.`)
+      if (!estMagasinDeRecette(x.magasin)) {
+        erreurs.push(`${oi} : « magasin » doit être l'un de : ${MAGASINS_DE_RECETTE.join(', ')}.`)
       }
     })
   }

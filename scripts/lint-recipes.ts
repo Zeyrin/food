@@ -2,20 +2,19 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { MAGASINS_DE_RECETTE, UNITS, estMagasinDeRecette } from '../src/types'
+import type { Recipe } from '../src/types'
 
 const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
-const recipes = JSON.parse(readFileSync(join(racine, 'src/data/recipes.json'), 'utf8'))
+const recipes: Recipe[] = JSON.parse(readFileSync(join(racine, 'src/data/recipes.json'), 'utf8'))
 
-const UNITS = ['g', 'kg', 'ml', 'cl', 'l', 'cs', 'cc', 'pincee', 'piece', 'botte']
-const STORES = ['intermarche', 'primeur']
-
-const erreurs = []
-const avertissements = []
-const variantes = []
+const erreurs: string[] = []
+const avertissements: string[] = []
+const variantes: string[] = []
 
 // --- Validation de structure ------------------------------------------------
 
-const ids = new Set()
+const ids = new Set<string>()
 for (const [i, r] of recipes.entries()) {
   const ou = `recette #${i} (${r.titre ?? 'sans titre'})`
 
@@ -34,7 +33,9 @@ for (const [i, r] of recipes.entries()) {
     if (!ing.nom) erreurs.push(`${ou} : ingrédient sans nom`)
     if (!Number.isFinite(ing.quantite) || ing.quantite <= 0) erreurs.push(`${oui} : quantité invalide`)
     if (!UNITS.includes(ing.unite)) erreurs.push(`${oui} : unité inconnue « ${ing.unite} »`)
-    if (!STORES.includes(ing.magasin)) erreurs.push(`${oui} : magasin inconnu « ${ing.magasin} »`)
+    if (!estMagasinDeRecette(ing.magasin)) {
+      erreurs.push(`${oui} : magasin inconnu « ${ing.magasin} » (attendu : ${MAGASINS_DE_RECETTE.join(', ')})`)
+    }
   }
   if (!r.ingredients?.length) erreurs.push(`${ou} : aucun ingrédient`)
 }
@@ -43,7 +44,7 @@ for (const [i, r] of recipes.entries()) {
 
 const noms = [...new Set(recipes.flatMap((r) => (r.ingredients ?? []).map((i) => i.nom)))].sort()
 
-const normaliser = (s) =>
+const normaliser = (s: string) =>
   s
     .toLowerCase()
     .normalize('NFD')
@@ -52,23 +53,30 @@ const normaliser = (s) =>
     .replace(/s\b/g, '')
     .trim()
 
-function distance(a, b) {
-  const m = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)])
-  for (let j = 0; j <= b.length; j++) m[0][j] = j
-  for (let i = 1; i <= a.length; i++)
-    for (let j = 1; j <= b.length; j++)
-      m[i][j] = Math.min(
-        m[i - 1][j] + 1,
-        m[i][j - 1] + 1,
-        m[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1),
-      )
-  return m[a.length][b.length]
+/**
+ * Levenshtein sur deux lignes plutôt qu'une matrice complète : même
+ * résultat, et l'accès indexé reste dans les clous de
+ * `noUncheckedIndexedAccess` sans une pluie de `!`.
+ */
+function distance(a: string, b: string): number {
+  let precedente = Array.from({ length: b.length + 1 }, (_, j) => j)
+
+  for (let i = 1; i <= a.length; i++) {
+    const courante = [i, ...Array<number>(b.length).fill(0)]
+    for (let j = 1; j <= b.length; j++) {
+      const substitution = (precedente[j - 1] ?? 0) + (a[i - 1] === b[j - 1] ? 0 : 1)
+      courante[j] = Math.min((precedente[j] ?? 0) + 1, (courante[j - 1] ?? 0) + 1, substitution)
+    }
+    precedente = courante
+  }
+
+  return precedente[b.length] ?? 0
 }
 
 for (let i = 0; i < noms.length; i++) {
   for (let j = i + 1; j < noms.length; j++) {
-    const a = normaliser(noms[i])
-    const b = normaliser(noms[j])
+    const a = normaliser(noms[i] ?? '')
+    const b = normaliser(noms[j] ?? '')
     if (a === b) {
       avertissements.push(`vocabulaire : « ${noms[i]} » et « ${noms[j]} » sont le même nom`)
       continue
@@ -94,7 +102,7 @@ for (let i = 0; i < noms.length; i++) {
 }
 
 // Un ingrédient rangé dans deux magasins différents selon la recette.
-const magasinParNom = new Map()
+const magasinParNom = new Map<string, string>()
 for (const r of recipes)
   for (const ing of r.ingredients ?? []) {
     const connu = magasinParNom.get(ing.nom)

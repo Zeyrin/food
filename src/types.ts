@@ -14,6 +14,22 @@ export const STORES = {
 export type StoreId = keyof typeof STORES
 
 /**
+ * Les magasins qu'une recette a le droit de citer : tous sauf `autre`,
+ * réservé aux items ajoutés à la main sur la liste.
+ *
+ * Source unique de la validation, côté app (`validerRecette`) comme côté
+ * dépôt (`scripts/lint-recipes.ts`). Les deux en tenaient chacun leur
+ * copie en dur, ce qui démentait la promesse du README : « ajouter une
+ * entrée à STORES suffit à créer un magasin ».
+ */
+export const MAGASINS_DE_RECETTE = (Object.keys(STORES) as StoreId[]).filter((id) => id !== 'autre')
+
+/** Le magasin lu dans un JSON quelconque est-il citable par une recette ? */
+export function estMagasinDeRecette(magasin: unknown): magasin is StoreId {
+  return typeof magasin === 'string' && (MAGASINS_DE_RECETTE as string[]).includes(magasin)
+}
+
+/**
  * Unités autorisées. `piece` couvre tout ce qui se compte
  * (3 oignons, 2 citrons). Les unités approximatives (`cs`, `cc`,
  * `pincee`) ne sont jamais converties : elles s'additionnent
