@@ -1,8 +1,19 @@
 -- La seule chose qui traverse le réseau : l'état de la liste d'un foyer.
--- Pas de comptes, pas de sessions. L'identifiant du foyer est un UUID
--- v4 tiré côté client : le connaître, c'est avoir accès à la liste.
--- Modèle de capacité assumé — c'est une liste de courses, pas un
--- dossier médical.
+-- L'identifiant du foyer est un UUID v4 : le connaître, c'est avoir accès
+-- à la liste. Modèle de capacité assumé — c'est une liste de courses, pas
+-- un dossier médical.
+--
+-- ORDRE D'EXÉCUTION
+--
+--   1. ce fichier          → les tables et la réplication
+--   2. migration-01-…sql   → les policies, sans lesquelles TOUT est ouvert
+--
+-- Ce fichier ne crée volontairement AUCUNE policy. Les tables sortent donc
+-- d'ici en RLS active et sans règle, c'est-à-dire fermées à double tour :
+-- un projet à moitié installé refuse tout, au lieu de tout laisser passer.
+-- C'était l'erreur d'avant — des policies `using (true)` dont le
+-- commentaire prétendait contraindre par UUID, alors que le filtrage ne se
+-- faisait que côté client, avec une clé anon publique par construction.
 
 create table if not exists listes (
   foyer uuid primary key,
@@ -12,13 +23,7 @@ create table if not exists listes (
 
 alter table listes enable row level security;
 
--- Lecture et écriture ouvertes à la clé anon, mais toujours contraintes
--- à une ligne précise : sans l'UUID exact, `select` ne renvoie rien et
--- `update` ne touche rien. Aucune requête ne peut énumérer les foyers.
-create policy "acces par uuid" on listes
-  for all
-  using (true)
-  with check (true);
+-- Policies : voir migration-01-appartenance.sql
 
 -- À activer dans le tableau de bord Supabase :
 -- Database → Replication → cocher `listes`, pour que la synchro
@@ -39,10 +44,7 @@ create index if not exists recettes_foyer_idx on recettes (foyer);
 
 alter table recettes enable row level security;
 
-create policy "acces par uuid de foyer" on recettes
-  for all
-  using (true)
-  with check (true);
+-- Policies : voir migration-01-appartenance.sql
 
 -- À activer aussi dans Database → Replication → cocher `recettes`,
 -- pour que la recette ajoutée sur un téléphone apparaisse sur l'autre.
@@ -52,9 +54,9 @@ create policy "acces par uuid de foyer" on recettes
 -- code → foyer une fois, à la saisie : toutes les opérations
 -- suivantes (recettes, liste) continuent de passer par l'UUID, qui
 -- reste la vraie clé d'accès. Un code à 6 caractères est bien plus
--- court à deviner qu'un UUID — la policy ci-dessous n'autorise que
--- la lecture du foyer correspondant à un code exact, jamais
--- l'énumération de tous les codes.
+-- court à deviner qu'un UUID : la table n'est donc jamais lisible en
+-- direct. On ne l'atteint que par `rejoindre_foyer(code)`, qui exige une
+-- correspondance exacte et compte les essais (migration-01).
 create table if not exists foyers (
   foyer uuid primary key,
   code  text not null unique,
@@ -63,13 +65,7 @@ create table if not exists foyers (
 
 alter table foyers enable row level security;
 
-create policy "resoudre un code precis" on foyers
-  for select
-  using (true);
-
-create policy "creer son propre foyer" on foyers
-  for insert
-  with check (true);
+-- Policies : voir migration-01-appartenance.sql
 
 -- Ce qui a été cuisiné et ce qu'on en a pensé. Partagé par foyer :
 -- « on a mangé ça mardi » et « on ne veut plus de ce plat » valent
@@ -83,10 +79,7 @@ create table if not exists historiques (
 
 alter table historiques enable row level security;
 
-create policy "acces par uuid de foyer" on historiques
-  for all
-  using (true)
-  with check (true);
+-- Policies : voir migration-01-appartenance.sql
 
 -- À cocher aussi dans Database → Replication → `historiques`.
 

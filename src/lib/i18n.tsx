@@ -53,6 +53,8 @@ const fr: Dico = {
     voirListe: 'Voir la liste',
   },
   bienvenue: {
+    partageInactif:
+      "Le partage n'est pas configuré sur cette installation : l'app fonctionne seule sur cet appareil.",
     titre: 'Bienvenue',
     intro: 'Décider les repas de la semaine, en tirer la liste, et cuisiner. À deux, sans compte.',
     ou: 'ou',
@@ -365,6 +367,8 @@ const en: Dico = {
     voirListe: 'See the list',
   },
   bienvenue: {
+    partageInactif:
+      "Sharing is not configured on this install: the app works on this device alone.",
     titre: 'Welcome',
     intro: 'Decide the week\'s meals, turn them into a list, and cook. Together, no account.',
     ou: 'or',

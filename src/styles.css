@@ -481,6 +481,14 @@ p.aide a {
   color: var(--encre-douce);
 }
 
+.accueil-note {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--encre-douce);
+  text-wrap: pretty;
+}
+
 /* --- En-tête d'écran ------------------------------------------------------ */
 
 .entete-app {

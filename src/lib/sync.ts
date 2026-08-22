@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type RealtimeChannel } from '@supabase/supabase-js'
 import type { ListState, Recipe } from '../types'
 import type { Historique } from './propose'
 import { signalerSynchroOk, signalerSynchroRefusee } from './etatSynchro'
@@ -8,7 +8,105 @@ const key = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export const supabase = url && key ? createClient(url, key) : null
 
+/**
+ * Le partage entre appareils demande un projet Supabase. Sans lui, l'app
+ * marche entièrement — catalogue, panier, liste, cuisson — mais seule sur
+ * cet appareil. L'écran d'accueil a besoin de le savoir : jusqu'ici, saisir
+ * un code répondait « code introuvable », ce qui envoyait chercher une
+ * faute de frappe alors que le problème est ailleurs.
+ */
+export const partageActif = supabase !== null
+
+/**
+ * Session anonyme : invisible pour l'utilisateur — pas de compte, rien à
+ * saisir — mais indispensable depuis que les policies raisonnent sur une
+ * appartenance (`membres`) plutôt que sur un `using (true)` qui
+ * n'appliquait rien. Sans session, `auth.uid()` est nul et la base refuse
+ * tout, ce qui est le comportement voulu.
+ *
+ * Une seule promesse partagée : cinquante appels au démarrage ne doivent
+ * pas ouvrir cinquante sessions. `getSession` d'abord, parce que la
+ * session précédente est déjà en localStorage la plupart du temps.
+ *
+ * Si Supabase a fait le ménage des utilisateurs anonymes entre-temps, la
+ * session stockée ne vaut plus rien : on en ouvre une neuve, et
+ * `assurerAcces` ci-dessous rétablit l'appartenance à partir de l'UUID que
+ * l'appareil garde en local. La panne se répare toute seule.
+ */
+let sessionEnCours: Promise<boolean> | null = null
+
+export function assurerSession(): Promise<boolean> {
+  if (!supabase) return Promise.resolve(false)
+  sessionEnCours ??= (async () => {
+    const { data } = await supabase.auth.getSession()
+    if (data.session) return true
+
+    const { error } = await supabase.auth.signInAnonymously()
+    if (!error) return true
+
+    // Réessayable au prochain appel plutôt que bloqué à vie sur une
+    // coupure réseau passagère.
+    sessionEnCours = null
+    console.warn(`Session anonyme impossible : ${error.message}`)
+    // Hors ligne, c'est normal et le bandeau dédié le dit déjà. En ligne,
+    // c'est une panne de configuration (connexions anonymes désactivées
+    // dans le tableau de bord) qui ne se réglera pas toute seule.
+    if (navigator.onLine) {
+      signalerSynchroRefusee(`Connexion anonyme refusée : ${error.message}`)
+    }
+    return false
+  })()
+  return sessionEnCours
+}
+
 const VIDE: ListState = { coche: {}, dejaPossede: {} }
+
+/**
+ * Session *et* appartenance au foyer, mémorisées par foyer.
+ *
+ * Toutes les fonctions ci-dessous passent par ici plutôt que par
+ * `assurerSession` seule, et c'est délibéré : depuis que les policies
+ * raisonnent sur `membres`, une requête envoyée avant que l'appartenance
+ * existe ne renvoie rien — sans erreur, juste zéro ligne. Faire réclamer
+ * le foyer par l'écran d'accueil aurait marché la plupart du temps et
+ * échoué à la moindre course entre effets React. Ici, l'ordre ne peut plus
+ * être faux : aucun appel réseau ne part avant que l'accès soit établi.
+ *
+ * `reclamer_foyer` est rappelé à chaque démarrage, pas une seule fois :
+ * Supabase fait le ménage des utilisateurs anonymes inactifs, et
+ * l'appartenance s'en va avec eux. L'appareil connaît toujours son UUID,
+ * donc la session suivante la rétablit sans que personne ne le voie.
+ */
+const accesParFoyer = new Map<string, Promise<boolean>>()
+
+export function assurerAcces(foyer: string): Promise<boolean> {
+  if (!supabase) return Promise.resolve(false)
+
+  let acces = accesParFoyer.get(foyer)
+  if (!acces) {
+    acces = (async () => {
+      if (!(await assurerSession())) return false
+      const { error } = await supabase!.rpc('reclamer_foyer', { uuid_foyer: foyer })
+      if (error) {
+        accesParFoyer.delete(foyer)
+        console.warn(`Accès au foyer refusé : ${error.message}`)
+        signalerSynchroRefusee(`Accès au foyer refusé : ${error.message}`)
+        return false
+      }
+      return true
+    })()
+    accesParFoyer.set(foyer, acces)
+  }
+  return acces
+}
+
+/**
+ * Créer un foyer ou le rejoindre par code inscrit déjà l'appareil : inutile
+ * de repasser par `reclamer_foyer` juste après.
+ */
+export function marquerAccesObtenu(foyer: string): void {
+  accesParFoyer.set(foyer, Promise.resolve(true))
+}
 
 /**
  * Sans ça, un abonnement qui échoue (table absente de la publication
@@ -38,6 +136,39 @@ const journaliserStatut = (nom: string) => (statut: string) => {
 const topic = (prefixe: string) => `${prefixe}:${crypto.randomUUID().slice(0, 8)}`
 
 /**
+ * Ouvre un canal temps réel une fois la session obtenue, et rend de quoi le
+ * refermer tout de suite.
+ *
+ * L'attente est le point important : Realtime évalue la RLS avec le jeton
+ * de la connexion, et depuis que les policies raisonnent sur une
+ * appartenance, un abonnement ouvert avant la session serait celui d'un
+ * anonyme sans droits — il resterait muet pour toujours, sans erreur.
+ *
+ * Le démontage peut arriver pendant l'attente (React StrictMode monte et
+ * démonte chaque effet en développement) : `annule` évite d'ouvrir un canal
+ * dont plus personne ne veut.
+ */
+function abonner(
+  foyer: string,
+  construire: (client: NonNullable<typeof supabase>) => RealtimeChannel,
+): () => void {
+  if (!supabase) return () => {}
+  const client = supabase
+  let canal: RealtimeChannel | null = null
+  let annule = false
+
+  void assurerAcces(foyer).then((pret) => {
+    if (!pret || annule) return
+    canal = construire(client)
+  })
+
+  return () => {
+    annule = true
+    if (canal) void client.removeChannel(canal)
+  }
+}
+
+/**
  * La seule donnée synchronisée : l'état de la liste du foyer.
  * Une ligne, un JSON, dernier écrivain gagne. Deux personnes qui
  * cochent des produits différents ne se marchent pas dessus ;
@@ -45,7 +176,7 @@ const topic = (prefixe: string) => `${prefixe}:${crypto.randomUUID().slice(0, 8)
  * même résultat. Ça suffit pour des courses.
  */
 export async function lireListe(foyer: string): Promise<ListState> {
-  if (!supabase) return VIDE
+  if (!supabase || !(await assurerAcces(foyer))) return VIDE
   const { data } = await supabase.from('listes').select('etat').eq('foyer', foyer).maybeSingle()
   return (data?.etat as ListState) ?? VIDE
 }
@@ -58,7 +189,7 @@ export async function lireListe(foyer: string): Promise<ListState> {
  * ressemble à une app qui marche et ne synchronise simplement jamais.
  */
 export async function ecrireListe(foyer: string, etat: ListState): Promise<void> {
-  if (!supabase) return
+  if (!supabase || !(await assurerAcces(foyer))) return
   const { error } = await supabase.from('listes').upsert({ foyer, etat, maj: new Date().toISOString() })
   if (error) {
     console.warn(`Écriture de la liste refusée : ${error.message}`)
@@ -67,22 +198,19 @@ export async function ecrireListe(foyer: string, etat: ListState): Promise<void>
 }
 
 export function suivreListe(foyer: string, onChange: (etat: ListState) => void): () => void {
-  if (!supabase) return () => {}
-  const canal = supabase
-    .channel(topic(`liste:${foyer}`))
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'listes', filter: `foyer=eq.${foyer}` },
-      (payload) => {
-        const etat = (payload.new as { etat?: ListState })?.etat
-        if (etat) onChange(etat)
-      },
-    )
-    .subscribe(journaliserStatut('liste'))
-
-  return () => {
-    void supabase.removeChannel(canal)
-  }
+  return abonner(foyer, (client) =>
+    client
+      .channel(topic(`liste:${foyer}`))
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'listes', filter: `foyer=eq.${foyer}` },
+        (payload) => {
+          const etat = (payload.new as { etat?: ListState })?.etat
+          if (etat) onChange(etat)
+        },
+      )
+      .subscribe(journaliserStatut('liste')),
+  )
 }
 
 /**
@@ -91,13 +219,14 @@ export function suivreListe(foyer: string, onChange: (etat: ListState) => void):
  * (voir semerCorpusInitial et App.tsx).
  */
 export async function lireRecettes(foyer: string): Promise<Recipe[]> {
-  if (!supabase) return []
+  if (!supabase || !(await assurerAcces(foyer))) return []
   const { data } = await supabase.from('recettes').select('recette').eq('foyer', foyer)
   return (data ?? []).map((ligne) => ligne.recette as Recipe)
 }
 
 export async function ajouterRecette(foyer: string, recette: Recipe): Promise<void> {
   if (!supabase) throw new Error("Le partage n'est pas configuré : impossible d'enregistrer la recette.")
+  await assurerAcces(foyer)
   // Le résultat était ignoré : un insert refusé (policy, réseau coupé
   // au mauvais moment) laissait l'app annoncer « Recette ajoutée » et
   // l'afficher dans le catalogue, jusqu'au rechargement où elle avait
@@ -108,6 +237,7 @@ export async function ajouterRecette(foyer: string, recette: Recipe): Promise<vo
 
 export async function modifierRecette(foyer: string, recette: Recipe): Promise<void> {
   if (!supabase) throw new Error("Le partage n'est pas configuré : impossible d'enregistrer la modification.")
+  await assurerAcces(foyer)
   const { error } = await supabase
     .from('recettes')
     .update({ recette })
@@ -118,6 +248,7 @@ export async function modifierRecette(foyer: string, recette: Recipe): Promise<v
 
 export async function supprimerRecette(foyer: string, recipeId: string): Promise<void> {
   if (!supabase) throw new Error("Le partage n'est pas configuré : impossible de supprimer la recette.")
+  await assurerAcces(foyer)
   const { error } = await supabase
     .from('recettes')
     .delete()
@@ -134,7 +265,7 @@ export async function supprimerRecette(foyer: string, recipeId: string): Promise
  * rechargement.
  */
 export async function semerCorpusInitial(foyer: string, corpus: Recipe[]): Promise<Recipe[]> {
-  if (!supabase) return []
+  if (!supabase || !(await assurerAcces(foyer))) return []
   const { count } = await supabase
     .from('recettes')
     .select('id', { count: 'exact', head: true })
@@ -159,7 +290,7 @@ export async function semerCorpusInitial(foyer: string, corpus: Recipe[]): Promi
  * « on a mangé ça mardi » vaut pour les deux téléphones.
  */
 export async function lireHistoriqueFoyer(foyer: string): Promise<Historique | null> {
-  if (!supabase) return null
+  if (!supabase || !(await assurerAcces(foyer))) return null
   const { data } = await supabase
     .from('historiques')
     .select('historique')
@@ -169,7 +300,7 @@ export async function lireHistoriqueFoyer(foyer: string): Promise<Historique | n
 }
 
 export async function ecrireHistoriqueFoyer(foyer: string, historique: Historique): Promise<void> {
-  if (!supabase) return
+  if (!supabase || !(await assurerAcces(foyer))) return
   const { error } = await supabase
     .from('historiques')
     .upsert({ foyer, historique, maj: new Date().toISOString() })
@@ -180,36 +311,30 @@ export async function ecrireHistoriqueFoyer(foyer: string, historique: Historiqu
 }
 
 export function suivreHistorique(foyer: string, onChange: (h: Historique) => void): () => void {
-  if (!supabase) return () => {}
-  const canal = supabase
-    .channel(topic(`historique:${foyer}`))
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'historiques', filter: `foyer=eq.${foyer}` },
-      (payload) => {
-        const h = (payload.new as { historique?: Historique })?.historique
-        if (h) onChange(h)
-      },
-    )
-    .subscribe(journaliserStatut('historique'))
-
-  return () => {
-    void supabase.removeChannel(canal)
-  }
+  return abonner(foyer, (client) =>
+    client
+      .channel(topic(`historique:${foyer}`))
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'historiques', filter: `foyer=eq.${foyer}` },
+        (payload) => {
+          const h = (payload.new as { historique?: Historique })?.historique
+          if (h) onChange(h)
+        },
+      )
+      .subscribe(journaliserStatut('historique')),
+  )
 }
 
 export function suivreRecettes(foyer: string, onChangement: (recettes: Recipe[]) => void): () => void {
-  if (!supabase) return () => {}
-  const canal = supabase
-    .channel(topic(`recettes:${foyer}`))
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'recettes', filter: `foyer=eq.${foyer}` },
-      () => void lireRecettes(foyer).then(onChangement),
-    )
-    .subscribe(journaliserStatut('recettes'))
-
-  return () => {
-    void supabase.removeChannel(canal)
-  }
+  return abonner(foyer, (client) =>
+    client
+      .channel(topic(`recettes:${foyer}`))
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'recettes', filter: `foyer=eq.${foyer}` },
+        () => void lireRecettes(foyer).then(onChangement),
+      )
+      .subscribe(journaliserStatut('recettes')),
+  )
 }

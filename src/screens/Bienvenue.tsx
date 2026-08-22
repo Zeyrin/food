@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Icone from '../components/Icone'
 import { useLangue } from '../lib/i18n'
+import { partageActif } from '../lib/sync'
 
 interface Props {
   onCreer: () => Promise<void>
@@ -76,6 +77,9 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
 
         <label className="accueil-champ">
           <span className="accueil-legende">{t('bienvenue.rejoindreAvecCode')}</span>
+          {/* Dire pourquoi ça ne marchera pas, plutôt que de laisser saisir
+              six caractères pour répondre « code introuvable ». */}
+          {!partageActif && <span className="accueil-note">{t('bienvenue.partageInactif')}</span>}
           <input
             className="champ-texte champ-texte-code-court"
             placeholder="A3F9K2"
@@ -87,6 +91,7 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
             autoCorrect="off"
             spellCheck={false}
             enterKeyHint="go"
+            disabled={!partageActif}
             aria-label={t('bienvenue.codeLabel')}
           />
         </label>
@@ -100,7 +105,7 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
         <button
           className="discret suite pleine-largeur"
           onClick={rejoindre}
-          disabled={code.trim().length !== 6 || enCours !== null}
+          disabled={!partageActif || code.trim().length !== 6 || enCours !== null}
         >
           {enCours === 'jonction' ? t('bienvenue.recherche') : t('bienvenue.rejoindre')}
         </button>
