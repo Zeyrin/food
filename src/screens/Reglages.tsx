@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useInstallation } from '../hooks/useInstallation'
 import { useLangue } from '../lib/i18n'
+import type { ConfigMagasins } from '../lib/magasins'
+import { magasinDuRayon } from '../lib/magasins'
+import { RAYONS, RAYONS_ORDONNES, type RayonId } from '../types'
 import Icone from '../components/Icone'
 
 /**
@@ -15,6 +18,8 @@ const estIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent)
 const estAndroid = () => /Android/.test(navigator.userAgent)
 
 interface Props {
+  magasins: ConfigMagasins
+  onMagasins: (config: ConfigMagasins) => void
   codeFoyer: string | null
   onRejoindre: (code: string) => Promise<boolean>
   onQuitter: () => void
@@ -23,6 +28,8 @@ interface Props {
 }
 
 export default function Reglages({
+  magasins,
+  onMagasins,
   codeFoyer,
   onRejoindre,
   onQuitter,
@@ -35,6 +42,41 @@ export default function Reglages({
   const [enCours, setEnCours] = useState(false)
   const [erreur, setErreur] = useState<string | null>(null)
   const [confirmationQuitter, setConfirmationQuitter] = useState(false)
+
+  const labelRayon = (rayon: RayonId) => {
+    const traduit = t(`rayons.${rayon}`)
+    return traduit === `rayons.${rayon}` ? RAYONS[rayon].label : traduit
+  }
+
+  const nomAffiche = (nom: string, i: number) =>
+    nom.trim() || (i === 0 ? t('reglages.magasinPrincipal') : t('reglages.magasinSansNom'))
+
+  const renommer = (id: string, nom: string) =>
+    onMagasins({ ...magasins, magasins: magasins.magasins.map((m) => (m.id === id ? { ...m, nom } : m)) })
+
+  const ajouterMagasin = () =>
+    onMagasins({
+      ...magasins,
+      magasins: [...magasins.magasins, { id: crypto.randomUUID(), nom: '' }],
+    })
+
+  // Le routage n'est pas nettoyé ici : `normaliserConfig` laisse tomber
+  // les rayons qui pointaient vers ce magasin, et ils retournent au
+  // premier. Un rayon ne peut donc pas disparaître de la liste.
+  const supprimerMagasin = (id: string) =>
+    onMagasins({ ...magasins, magasins: magasins.magasins.filter((m) => m.id !== id) })
+
+  /** L'ordre des magasins est l'ordre du parcours : on doit pouvoir
+   *  remonter celui par lequel on commence. */
+  const monterMagasin = (i: number) => {
+    const suivant = [...magasins.magasins]
+    const [m] = suivant.splice(i, 1)
+    suivant.splice(i - 1, 0, m!)
+    onMagasins({ ...magasins, magasins: suivant })
+  }
+
+  const affecter = (rayon: RayonId, magasinId: string) =>
+    onMagasins({ ...magasins, routage: { ...magasins.routage, [rayon]: magasinId } })
 
   // La résolution d'un code passe par le réseau : un échec (hors ligne,
   // Supabase injoignable) n'est pas un « code introuvable » et ne doit
@@ -128,6 +170,77 @@ export default function Reglages({
           ) : (
             <p className="aide">{t('reglages.installerOrdinateur')}</p>
           )}
+        </>
+      )}
+
+      {/* Les rayons sont les mêmes pour tout le monde, les magasins non :
+          la plupart des gens font un seul magasin, certains prennent
+          leurs légumes ailleurs. D'où un magasin par défaut — la liste
+          n'est alors qu'une suite de rayons — et l'ajout d'un second qui
+          coupe la liste en autant d'arrêts. */}
+      <h2>{t('reglages.magasinsTitre')}</h2>
+      <p className="aide">{t('reglages.magasinsTexte')}</p>
+
+      {magasins.magasins.map((m, i) => (
+        <div className="rangee-magasin" key={m.id}>
+          <input
+            className="champ-texte"
+            value={m.nom}
+            placeholder={i === 0 ? t('reglages.magasinPrincipal') : t('reglages.magasinSansNom')}
+            onChange={(e) => renommer(m.id, e.target.value)}
+            aria-label={t('reglages.nomDuMagasin', { n: i + 1 })}
+          />
+          {i > 0 && (
+            <button
+              className="bouton-suppr pivot-monter"
+              onClick={() => monterMagasin(i)}
+              aria-label={t('reglages.monterMagasin', { nom: nomAffiche(m.nom, i) })}
+            >
+              <Icone nom="precedent" taille={18} />
+            </button>
+          )}
+          {magasins.magasins.length > 1 && (
+            <button
+              className="bouton-suppr"
+              onClick={() => supprimerMagasin(m.id)}
+              aria-label={t('reglages.supprimerMagasin', { nom: nomAffiche(m.nom, i) })}
+            >
+              <Icone nom="fermer" taille={16} />
+            </button>
+          )}
+        </div>
+      ))}
+
+      <button className="discret suite pleine-largeur" onClick={ajouterMagasin}>
+        <Icone nom="plus-cercle" taille={18} /> {t('reglages.ajouterMagasin')}
+      </button>
+
+      {magasins.magasins.length > 1 && (
+        <>
+          <h3 className="titre-secondaire">{t('reglages.routageTitre')}</h3>
+          <p className="aide">{t('reglages.routageTexte')}</p>
+          {RAYONS_ORDONNES.map((rayon) => (
+            <div className="rangee-routage" key={rayon}>
+              <span className="rangee-routage-rayon">
+                <span className="badge-section" data-rayon={rayon}>
+                  <Icone nom={RAYONS[rayon].icone} taille={18} />
+                </span>
+                {labelRayon(rayon)}
+              </span>
+              <select
+                className="champ-select"
+                value={magasinDuRayon(rayon, magasins).id}
+                onChange={(e) => affecter(rayon, e.target.value)}
+                aria-label={t('reglages.ouPrendreRayon', { rayon: labelRayon(rayon) })}
+              >
+                {magasins.magasins.map((m, i) => (
+                  <option key={m.id} value={m.id}>
+                    {nomAffiche(m.nom, i)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
         </>
       )}
 

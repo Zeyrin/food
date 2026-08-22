@@ -8,7 +8,7 @@ const recette = (id: string, temps = 30, tags: string[] = []): Recipe => ({
   temps,
   portions: 2,
   tags,
-  ingredients: [{ nom: 'x', quantite: 1, unite: 'piece', magasin: 'primeur' }],
+  ingredients: [{ nom: 'x', quantite: 1, unite: 'piece', rayon: 'epicerie' }],
   etapes: ['a'],
 })
 

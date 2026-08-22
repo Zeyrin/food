@@ -1,6 +1,7 @@
-import { UNITS, type Recipe } from '../types'
+import { RAYONS, UNITS, type RayonId, type Recipe } from '../types'
+import { rayonDe } from './rayons'
 
-const MAGASINS = ['intermarche', 'primeur']
+const RAYONS_VALIDES = Object.keys(RAYONS) as RayonId[]
 
 /**
  * Valide le JSON collé par l'utilisateur (généré par une IA à partir
@@ -37,8 +38,10 @@ export function validerRecette(json: unknown): { recette: Recipe } | { erreurs: 
       if (typeof x.unite !== 'string' || !UNITS.includes(x.unite as (typeof UNITS)[number])) {
         erreurs.push(`${oi} : « unite » doit être l'une de : ${UNITS.join(', ')}.`)
       }
-      if (typeof x.magasin !== 'string' || !MAGASINS.includes(x.magasin)) {
-        erreurs.push(`${oi} : « magasin » doit être l'un de : ${MAGASINS.join(', ')}.`)
+      // Un ingrédient d'une recette écrite avant les rayons nomme un
+      // magasin ; on le traduit plutôt que de refuser le collage.
+      if (!RAYONS_VALIDES.includes(x.rayon as RayonId) && typeof x.magasin !== 'string') {
+        erreurs.push(`${oi} : « rayon » doit être l'un de : ${RAYONS_VALIDES.join(', ')}.`)
       }
     })
   }
@@ -52,7 +55,15 @@ export function validerRecette(json: unknown): { recette: Recipe } | { erreurs: 
       temps: r.temps as number,
       portions: r.portions as number,
       tags: r.tags as string[],
-      ingredients: r.ingredients as Recipe['ingredients'],
+      // Le rayon est normalisé à l'entrée, une bonne fois : le reste de
+      // l'app lit une recette moderne, sans avoir à connaître l'ancien
+      // champ « magasin ».
+      ingredients: (r.ingredients as Recipe['ingredients']).map((ing) => {
+        // `magasin` est écarté au passage : la recette entre au format
+        // du jour, l'ancien champ ne se recopie pas.
+        const { magasin, ...reste } = ing
+        return { ...reste, rayon: rayonDe({ rayon: reste.rayon, magasin }) }
+      }),
       etapes: r.etapes as string[],
       ...(typeof r.image === 'string' && r.image ? { image: r.image } : {}),
       ...(typeof r.description === 'string' && r.description ? { description: r.description } : {}),

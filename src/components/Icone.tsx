@@ -21,6 +21,12 @@ export type Nom =
   | 'precedent'
   | 'suivant'
   | 'recherche'
+  | 'poisson'
+  | 'lait'
+  | 'pain'
+  | 'flocon'
+  | 'bouteille'
+  | 'magasin'
 
 const TRACES: Record<Nom, string> = {
   menu: 'M4 6h16M4 12h16M4 18h16',
@@ -41,6 +47,13 @@ const TRACES: Record<Nom, string> = {
   precedent: 'M15 5l-7 7 7 7',
   suivant: 'M9 5l7 7-7 7',
   recherche: 'M11 4a7 7 0 100 14 7 7 0 000-14z M21 21l-4.3-4.3',
+  poisson:
+    'M22 12c-2.5 3.5-5.5 5.5-9 5.5S8.5 15.5 6.5 12c2-3.5 5-5.5 6.5-5.5s6.5 2 9 5.5z M6.5 12L2 8v8l4.5-4z M17 11h.01',
+  lait: 'M8 9l4-5 4 5v10a1 1 0 01-1 1H9a1 1 0 01-1-1V9z M8 13h8',
+  pain: 'M4 13c0-4.4 3.6-7 8-7s8 2.6 8 7v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4z M9.5 6.5L8.5 18 M15 6.5L14 18',
+  flocon: 'M12 2v20 M3.6 7l16.8 10 M20.4 7L3.6 17',
+  bouteille: 'M10 2h4 M10.5 2v4L9 9.5V20a1 1 0 001 1h4a1 1 0 001-1V9.5L13.5 6V2 M9 13h6',
+  magasin: 'M4 10h16v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9z M3 10l1.5-5h15L21 10 M9.5 20v-6h5v6',
 }
 
 export default function Icone({ nom, taille = 24 }: { nom: Nom; taille?: number }) {

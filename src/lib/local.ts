@@ -1,5 +1,7 @@
 import { del, get, set } from 'idb-keyval'
 import type { BasketEntry, Verdict } from '../types'
+import type { ConfigMagasins } from './magasins'
+import { CONFIG_PAR_DEFAUT, normaliserConfig } from './magasins'
 import type { Historique } from './propose'
 
 /**
@@ -11,6 +13,7 @@ const K_BASKET = 'basket'
 const K_HISTORIQUE = 'historique'
 const K_FOYER = 'foyer'
 const K_CODE_FOYER = 'codeFoyer'
+const K_MAGASINS = 'magasins'
 
 const HISTORIQUE_VIDE: Historique = { derniereFois: {}, verdicts: {} }
 
@@ -34,6 +37,22 @@ export async function marquerCuisine(recipeId: string, verdict: Verdict): Promis
   }
   await set(K_HISTORIQUE, suivant)
   return suivant
+}
+
+/**
+ * Les magasins restent sur l'appareil, alors que la liste voyage : ce
+ * n'est pas une décision de foyer mais la façon dont *celui qui va
+ * faire les courses* range son parcours. Deux téléphones d'un même
+ * foyer peuvent légitimement ne pas passer aux mêmes endroits, et une
+ * config qui se synchronise obligerait à trancher — pour un réglage
+ * qui ne change rien à ce qu'il y a à acheter.
+ */
+export async function lireMagasins(): Promise<ConfigMagasins> {
+  return normaliserConfig((await get<ConfigMagasins>(K_MAGASINS)) ?? CONFIG_PAR_DEFAUT)
+}
+
+export async function ecrireMagasins(config: ConfigMagasins): Promise<void> {
+  await set(K_MAGASINS, config)
 }
 
 /**

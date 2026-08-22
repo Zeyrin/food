@@ -42,6 +42,7 @@ import TourGuide from './components/TourGuide'
 import BandeauMinuteur from './components/BandeauMinuteur'
 import PanneauMinuteurs from './components/PanneauMinuteurs'
 import { useMinuteurs } from './hooks/useMinuteurs'
+import { useMagasins } from './hooks/useMagasins'
 import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
@@ -295,6 +296,11 @@ export default function App() {
    * rechargement (voir lib/minuteurs.ts).
    */
   const minuteurs = useMinuteurs()
+
+  // Les magasins du foyer : combien d'arrêts, et quel rayon dans lequel.
+  // Un seul magasin par défaut — la liste n'est alors qu'une suite de
+  // rayons (voir lib/magasins.ts).
+  const magasins = useMagasins()
   const [panneauMinuteurs, setPanneauMinuteurs] = useState(false)
 
   // Quand ça sonne, le panneau s'ouvre tout seul, où qu'on soit dans
@@ -603,6 +609,8 @@ export default function App() {
   } else if (vueActuelle.type === 'reglages') {
     ecranPleinePage = (
       <Reglages
+        magasins={magasins.config}
+        onMagasins={magasins.definir}
         codeFoyer={codeFoyer}
         onRejoindre={rejoindreDepuisReglages}
         onQuitter={quitter}
@@ -674,7 +682,9 @@ export default function App() {
                   .map((e) => recipes.find((r) => r.id === e.recipeId))
                   .find((r): r is Recipe => !!r && !cuisineRecemment(historique, r.id)) ?? null
               }
+              magasins={magasins.config}
               onVersCuisson={() => changerOnglet('cuisson')}
+              onVersReglages={() => irVers({ type: 'reglages' })}
             />
           )}
 

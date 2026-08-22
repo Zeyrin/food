@@ -62,20 +62,23 @@ Le format est décrit dans `src/types.ts`. Une recette :
   "portions": 4,
   "tags": ["végé", "rapide"],
   "ingredients": [
-    { "nom": "lentilles corail", "quantite": 250, "unite": "g", "magasin": "primeur" },
-    { "nom": "cumin moulu", "quantite": 1, "unite": "cc", "magasin": "intermarche", "placard": true }
+    { "nom": "lentilles corail", "quantite": 250, "unite": "g", "rayon": "epicerie" },
+    { "nom": "cumin moulu", "quantite": 1, "unite": "cc", "rayon": "epicerie", "placard": true }
   ],
   "etapes": ["Émincer l'oignon.", "…"]
 }
 ```
 
-Trois règles qui font tenir le reste :
+Quatre règles qui font tenir le reste :
 
 1. `nom` est un nom canonique, en minuscules, au singulier, sans marque ni conditionnement.
    `crème fraîche`, pas `crème fraîche épaisse Bridélice 20 cl`.
-2. `placard: true` pour ce qu'on a toujours (sel, poivre, huile, épices). Exclu de la liste
+2. `rayon` est le rayon du magasin, jamais une enseigne : `fruits-legumes` et non
+   « chez mon primeur ». Un même ingrédient garde le même rayon partout — `npm run
+   lint:recipes` signale les désaccords.
+3. `placard: true` pour ce qu'on a toujours (sel, poivre, huile, épices). Exclu de la liste
    de courses, mais affiché en mode cuisson.
-3. Les quantités correspondent à `portions`. L'app fait la règle de trois.
+4. Les quantités correspondent à `portions`. L'app fait la règle de trois.
 
 **Les photos aussi sont statiques.** `image` pointe sur `/plats/<id>.webp`, un
 fichier de `public/plats/` livré avec le build et précaché par le service worker :
@@ -104,21 +107,29 @@ npm run lint:recipes
 ```
 
 Le lint valide la structure, signale les quasi-doublons d'ingrédients, et repère un
-ingrédient rangé dans deux magasins différents selon la recette.
+ingrédient rangé dans deux rayons différents selon la recette.
 
-## Magasins
+## Rayons et magasins
 
-Définis dans `src/types.ts` :
+**Une recette ne connaît que des rayons.** `RAYONS` (`src/types.ts`) énumère ce qu'on
+traverse dans n'importe quel magasin : fruits & légumes, viande & poisson, crèmerie,
+pain, épicerie, surgelés, boissons. C'est vrai pour tout le monde — une carotte est au
+rayon légumes à Lille comme à Marseille — donc le corpus reste partageable. Une recette
+qui dirait « Intermarché » ou « mon primeur » n'aurait de sens que pour son auteur.
 
-```ts
-export const STORES = {
-  intermarche: { label: 'Intermarché', order: 1 },
-  primeur: { label: 'Primeur & asiat', order: 2 },
-}
-```
+**Le magasin, lui, est un réglage** (`src/lib/magasins.ts`). Par défaut il y en a un
+seul, sans nom : la liste n'est alors qu'une suite de rayons, dans l'ordre où on les
+traverse, ce qui va à la majorité des gens. Qui prend ses légumes au marché ajoute un
+second magasin dans les réglages et lui affecte le rayon correspondant : la liste se
+coupe en autant d'arrêts, dans l'ordre où on les fait. Les rayons non affectés vont au
+premier magasin — on n'a donc jamais à tout router pour en déplacer un.
 
-Ajouter une entrée suffit à créer un magasin. Pas de tri par rayon — la liste est
-simplement séparée par magasin, dans l'ordre où on les fait.
+Ce réglage reste sur l'appareil et ne se synchronise pas : ce n'est pas une décision de
+foyer (« on mange ça cette semaine »), mais la façon dont celui qui va faire les courses
+organise son parcours. Ce qu'il y a à acheter, lui, reste identique des deux côtés.
+
+Les recettes écrites avant les rayons portaient un champ `magasin` ; il est relu et
+traduit à la volée (`src/lib/rayons.ts`), jamais réécrit.
 
 ## Déploiement
 
@@ -129,4 +140,4 @@ gratuits. Sur iOS, installer via Partager → Sur l'écran d'accueil.
 
 - Le planning par jour de la semaine — le panier est une liste, pas un calendrier
 - Le déstockage (« que faire avec ce qui reste »), qui suppose un stock
-- Un ordre de rayons dans le magasin
+- Un ordre de rayons réglable magasin par magasin — l'ordre est le même pour tous

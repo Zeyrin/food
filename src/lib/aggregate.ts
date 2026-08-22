@@ -1,5 +1,6 @@
-import type { BasketEntry, ListItem, Recipe, StoreId, Unit } from '../types'
-import { STORES } from '../types'
+import type { BasketEntry, ListItem, Recipe, Unit } from '../types'
+import { RAYONS } from '../types'
+import { rayonDe } from './rayons'
 
 /**
  * Unités convertibles vers une unité de base. Tout ce qui n'est pas
@@ -55,7 +56,7 @@ export function buildList(
           nom: ing.nom,
           quantite,
           unite,
-          magasin: ing.magasin,
+          rayon: rayonDe(ing),
           origines: [recipe.titre],
         })
       }
@@ -64,7 +65,7 @@ export function buildList(
 
   return [...acc.values()]
     .map((item) => ({ ...item, quantite: arrondir(item.quantite, item.unite) }))
-    .sort((a, b) => STORES[a.magasin].order - STORES[b.magasin].order || a.nom.localeCompare(b.nom, 'fr'))
+    .sort((a, b) => RAYONS[a.rayon].order - RAYONS[b.rayon].order || a.nom.localeCompare(b.nom, 'fr'))
 }
 
 /**
@@ -96,14 +97,6 @@ function arrondir(quantite: number, unite: Unit): number {
   }
   if (unite === 'piece' || unite === 'botte') return Math.ceil(quantite)
   return Math.round(quantite * 2) / 2
-}
-
-/** Regroupe la liste par magasin, dans l'ordre de STORES. */
-export function groupByStore(items: ListItem[]): Array<{ magasin: StoreId; items: ListItem[] }> {
-  const ids = (Object.keys(STORES) as StoreId[]).sort((a, b) => STORES[a].order - STORES[b].order)
-  return ids
-    .map((magasin) => ({ magasin, items: items.filter((i) => i.magasin === magasin) }))
-    .filter((g) => g.items.length > 0)
 }
 
 /** Suffixes lisibles. Les unités qui s'accordent reçoivent leur vraie

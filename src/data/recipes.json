@@ -14,76 +14,76 @@
         "nom": "tofu soyeux",
         "quantite": 400,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "cremerie"
       },
       {
         "nom": "porc haché",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "riz blanc",
         "quantite": 180,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "oignon nouveau",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "gingembre frais",
         "quantite": 20,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 3,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "doubanjiang",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "pâte miso",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "primeur"
+        "rayon": "cremerie"
       },
       {
         "nom": "sauce soja",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile de sésame",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "poivre du Sichuan",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "fécule de maïs",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -114,100 +114,100 @@
         "nom": "pois chiches",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "semoule fine",
         "quantite": 100,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "oignon",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 3,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "coriandre fraîche",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "persil plat",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "menthe fraîche",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "tomate cerise",
         "quantite": 200,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "concombre",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "citron",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "yaourt grec",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "hummus",
         "quantite": 100,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "cumin moulu",
         "quantite": 2,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "coriandre moulue",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 3,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -235,76 +235,76 @@
         "nom": "quinoa",
         "quantite": 160,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "potimarron",
         "quantite": 400,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "pois chiches",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "kale",
         "quantite": 100,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "radis",
         "quantite": 5,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "avocat",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "citron",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "tahini",
         "quantite": 3,
         "unite": "cs",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "cumin moulu",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "paprika fumé",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 3,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -334,70 +334,70 @@
         "nom": "patate douce",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "pois chiches",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "yaourt grec",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "tahini",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "oignon nouveau",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "citron",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "piment frais",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "cumin moulu",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "paprika fumé",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "curcuma",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -425,96 +425,96 @@
         "nom": "lentilles corail",
         "quantite": 250,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "lait de coco",
         "quantite": 400,
         "unite": "ml",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "tomates concassées",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "oignon",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 3,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "gingembre frais",
         "quantite": 20,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "coriandre fraîche",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "citron",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "piment frais",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "cumin moulu",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "coriandre moulue",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "curcuma",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "garam masala",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -544,95 +544,95 @@
         "nom": "pois chiches",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "épinard frais",
         "quantite": 150,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "lait de coco",
         "quantite": 200,
         "unite": "ml",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "tomates concassées",
         "quantite": 200,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "riz basmati",
         "quantite": 160,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "oignon",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 3,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "gingembre frais",
         "quantite": 15,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "coriandre fraîche",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "citron vert",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "cumin moulu",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "coriandre moulue",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "curcuma",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "garam masala",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -660,76 +660,76 @@
         "nom": "blanc de poulet",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "tortilla",
         "quantite": 6,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "avocat",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "oignon rouge",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "tomate cerise",
         "quantite": 200,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "coriandre fraîche",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "citron vert",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "crème fraîche",
         "quantite": 6,
         "unite": "cl",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "sauce sriracha",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "épices mexicaines",
         "quantite": 2,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "paprika fumé",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -759,57 +759,57 @@
         "nom": "nouilles chinoises",
         "quantite": 200,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "pois chiches",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "brocoli",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "carotte",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "gingembre frais",
         "quantite": 15,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "sauce soja",
         "quantite": 3,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "lao ganma",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile de sésame",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -839,44 +839,44 @@
         "nom": "riz blanc",
         "quantite": 300,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "œuf",
         "quantite": 3,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "oignon nouveau",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "carotte",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "sauce soja",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile de sésame",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -904,44 +904,44 @@
         "nom": "chou-fleur",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "jambon blanc",
         "quantite": 4,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "lait",
         "quantite": 500,
         "unite": "ml",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "fromage râpé",
         "quantite": 100,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "lardons",
         "quantite": 100,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "poivre noir",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -971,26 +971,26 @@
         "nom": "chou-fleur",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "lait",
         "quantite": 400,
         "unite": "ml",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "poivre noir",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -1017,37 +1017,37 @@
         "nom": "galette de riz",
         "quantite": 8,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "jambon blanc",
         "quantite": 4,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "poivron",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "carotte",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "menthe fraîche",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "sauce soja",
         "quantite": 3,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -1074,62 +1074,62 @@
         "nom": "pois chiches",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "flageolets",
         "quantite": 200,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "cœur de palmier",
         "quantite": 200,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "maïs",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "petits pois",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "surgeles"
       },
       {
         "nom": "thon en boîte",
         "quantite": 140,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "olives noires",
         "quantite": 80,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "citron",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "huile d'olive",
         "quantite": 3,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -1156,62 +1156,62 @@
         "nom": "pâtes longues",
         "quantite": 200,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "tomates concassées",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "thon en boîte",
         "quantite": 140,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "pois chiches",
         "quantite": 200,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "petits pois",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "surgeles"
       },
       {
         "nom": "olives noires",
         "quantite": 60,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "crème fraîche",
         "quantite": 5,
         "unite": "cl",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "ail",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "huile d'olive",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -1239,80 +1239,80 @@
         "nom": "pâtes longues",
         "quantite": 350,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "tomates concassées",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "pois chiches",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "flageolets",
         "quantite": 200,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "maïs",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "petits pois",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "surgeles"
       },
       {
         "nom": "thon en boîte",
         "quantite": 140,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "olives noires",
         "quantite": 80,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "crème fraîche",
         "quantite": 5,
         "unite": "cl",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "oignon",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "huile d'olive",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -1341,44 +1341,44 @@
         "nom": "pâtes longues",
         "quantite": 200,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "parmesan",
         "quantite": 60,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "crème fraîche",
         "quantite": 10,
         "unite": "cl",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "citron",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "poivre noir",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -1407,70 +1407,70 @@
         "nom": "pâtes courtes",
         "quantite": 350,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "tomate cerise",
         "quantite": 250,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "concombre",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "mozzarella",
         "quantite": 200,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "olives noires",
         "quantite": 80,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "basilic frais",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "oignon rouge",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "huile d'olive",
         "quantite": 4,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "vinaigre balsamique",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "poivre noir",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -1500,71 +1500,71 @@
         "nom": "riz à sushi",
         "quantite": 160,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "saumon frais",
         "quantite": 300,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "avocat",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "concombre",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "edamame",
         "quantite": 150,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "surgeles"
       },
       {
         "nom": "radis",
         "quantite": 4,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "sauce soja",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "vinaigre de riz",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "graines de sésame",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile de sésame",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "citron vert",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       }
     ],
     "etapes": [
@@ -1593,89 +1593,89 @@
         "nom": "haricots rouges",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "pois chiches",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "maïs",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "tomates concassées",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "poivron",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "oignon",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 3,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "riz blanc",
         "quantite": 180,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "piment frais",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "cumin moulu",
         "quantite": 2,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "paprika fumé",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "épices mexicaines",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -1706,69 +1706,69 @@
         "nom": "blanc de poulet",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "pâte de curry vert",
         "quantite": 3,
         "unite": "cs",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "lait de coco",
         "quantite": 400,
         "unite": "ml",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "riz blanc",
         "quantite": 180,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "aubergine",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "poivron",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "basilic frais",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "citron vert",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "sauce nuoc mam",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sucre roux",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -1799,70 +1799,70 @@
         "nom": "aubergine",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "courgette",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "poivron",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "tomate",
         "quantite": 4,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "oignon",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 3,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "œuf",
         "quantite": 4,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "herbes de Provence",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 4,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "poivre noir",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -1892,57 +1892,57 @@
         "nom": "pâte brisée",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "courgette",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "bûche de chèvre",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "œuf",
         "quantite": 3,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "crème fraîche",
         "quantite": 20,
         "unite": "cl",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "lait",
         "quantite": 100,
         "unite": "ml",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "poivre noir",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "muscade",
         "quantite": 1,
         "unite": "pincee",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -1971,71 +1971,71 @@
         "nom": "cuisse de poulet",
         "quantite": 4,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "carotte",
         "quantite": 3,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "courgette",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "pois chiches",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "oignon",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "semoule fine",
         "quantite": 300,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "raisins secs",
         "quantite": 50,
         "unite": "g",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "harissa",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "cumin moulu",
         "quantite": 2,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -2064,65 +2064,65 @@
         "nom": "riz rond (risotto)",
         "quantite": 320,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "champignon de Paris",
         "quantite": 400,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "oignon",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "parmesan",
         "quantite": 60,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "vin blanc",
         "quantite": 100,
         "unite": "ml",
-        "magasin": "intermarche",
+        "rayon": "boissons",
         "placard": true
       },
       {
         "nom": "bouillon (cube)",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "beurre",
         "quantite": 30,
         "unite": "g",
-        "magasin": "intermarche",
+        "rayon": "cremerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "poivre noir",
         "quantite": 1,
         "unite": "pincee",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -2151,57 +2151,57 @@
         "nom": "cuisse de poulet",
         "quantite": 4,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "poivron",
         "quantite": 3,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "oignon",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "tomates concassées",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "riz blanc",
         "quantite": 200,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "piment d'Espelette",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -2231,31 +2231,31 @@
         "nom": "tofu soyeux",
         "quantite": 200,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "cremerie"
       },
       {
         "nom": "pâte miso",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "primeur"
+        "rayon": "cremerie"
       },
       {
         "nom": "oignon nouveau",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "algue wakamé",
         "quantite": 5,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "sauce soja",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -2282,71 +2282,71 @@
         "nom": "steak haché",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "pain à burger",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "boulangerie"
       },
       {
         "nom": "cheddar",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "salade verte",
         "quantite": 4,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "tomate",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "oignon rouge",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "cornichons",
         "quantite": 4,
         "unite": "piece",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "ketchup",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "moutarde",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "pincee",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -2373,38 +2373,38 @@
         "nom": "pâte à pizza",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "tomates concassées",
         "quantite": 200,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "mozzarella",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "basilic frais",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "huile d'olive",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "pincee",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -2432,37 +2432,37 @@
         "nom": "pomme de terre",
         "quantite": 1,
         "unite": "kg",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "reblochon",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "lardons",
         "quantite": 200,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "oignon",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "crème fraîche",
         "quantite": 20,
         "unite": "cl",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "poivre noir",
         "quantite": 1,
         "unite": "pincee",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -2491,65 +2491,65 @@
         "nom": "œuf",
         "quantite": 4,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "tomates concassées",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "poivron",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "oignon",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "cumin moulu",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "paprika fumé",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "coriandre fraîche",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       }
     ],
     "etapes": [
@@ -2576,50 +2576,50 @@
         "nom": "porc haché",
         "quantite": 250,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "feuilles à gyoza",
         "quantite": 20,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "cremerie"
       },
       {
         "nom": "chou chinois",
         "quantite": 200,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "oignon nouveau",
         "quantite": 1,
         "unite": "botte",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "gingembre frais",
         "quantite": 10,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "sauce soja",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile de sésame",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -2647,57 +2647,57 @@
         "nom": "tofu ferme",
         "quantite": 300,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "cremerie"
       },
       {
         "nom": "quinoa",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "brocoli",
         "quantite": 200,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "carotte",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "avocat",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "graines de sésame",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "sauce soja",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "fécule de maïs",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -2725,37 +2725,37 @@
         "nom": "saumon frais",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "riz blanc",
         "quantite": 180,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "sauce teriyaki",
         "quantite": 3,
         "unite": "cs",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "brocoli",
         "quantite": 200,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "graines de sésame",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "huile de sésame",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
@@ -2783,67 +2783,67 @@
         "nom": "épaule d'agneau",
         "quantite": 800,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "abricots secs",
         "quantite": 150,
         "unite": "g",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "amandes effilées",
         "quantite": 40,
         "unite": "g",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "oignon",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "cannelle",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "cumin moulu",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "semoule fine",
         "quantite": 250,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       }
     ],
     "etapes": [
@@ -2872,58 +2872,58 @@
         "nom": "blanc de poulet",
         "quantite": 300,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "viande-poisson"
       },
       {
         "nom": "nouilles de riz",
         "quantite": 180,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "epicerie"
       },
       {
         "nom": "œuf",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "pousses de soja",
         "quantite": 150,
         "unite": "g",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "cacahuètes",
         "quantite": 30,
         "unite": "g",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sauce nuoc mam",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "primeur",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sucre roux",
         "quantite": 1,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "citron vert",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       }
     ],
     "etapes": [
@@ -2952,82 +2952,82 @@
         "nom": "pâtes à lasagne",
         "quantite": 12,
         "unite": "piece",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "courgette",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "aubergine",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "tomates concassées",
         "quantite": 400,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "epicerie"
       },
       {
         "nom": "oignon",
         "quantite": 1,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "ail",
         "quantite": 2,
         "unite": "piece",
-        "magasin": "primeur"
+        "rayon": "fruits-legumes"
       },
       {
         "nom": "mozzarella",
         "quantite": 125,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "parmesan",
         "quantite": 50,
         "unite": "g",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "lait",
         "quantite": 50,
         "unite": "cl",
-        "magasin": "intermarche"
+        "rayon": "cremerie"
       },
       {
         "nom": "beurre",
         "quantite": 40,
         "unite": "g",
-        "magasin": "intermarche",
+        "rayon": "cremerie",
         "placard": true
       },
       {
         "nom": "farine",
         "quantite": 40,
         "unite": "g",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "huile d'olive",
         "quantite": 2,
         "unite": "cs",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       },
       {
         "nom": "sel",
         "quantite": 1,
         "unite": "cc",
-        "magasin": "intermarche",
+        "rayon": "epicerie",
         "placard": true
       }
     ],
