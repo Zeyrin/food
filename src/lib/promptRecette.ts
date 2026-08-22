@@ -8,9 +8,9 @@ const RAYONS_DECRITS = (Object.keys(RAYONS) as RayonId[])
 
 /**
  * Prompt à copier-coller dans une IA (Claude, ChatGPT…) pour obtenir
- * une recette directement au format attendu par l'app — colle le
- * JSON de réponse dans l'écran « Saisie automatique », rien à
- * retaper à la main.
+ * une recette directement au format attendu par l'app — la réponse se
+ * recolle dans la section « Ajouter une recette » de l'écran
+ * « Proposer », rien à retaper à la main.
  */
 export function genererPrompt(demande: string): string {
   return `Génère une ou plusieurs recettes de cuisine au format JSON strict, sans aucun texte autour (pas de markdown, pas de \`\`\`json, juste le JSON brut). Pour plusieurs recettes, renvoie un tableau JSON d'objets au même format.

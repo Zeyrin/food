@@ -42,7 +42,7 @@ export interface ResultatCollage {
 }
 
 /** Comparaison de titres tolérante aux accents, à la casse, aux espaces. */
-const normaliserTitre = (titre: string) =>
+export const normaliserTitre = (titre: string) =>
   titre
     .normalize('NFD')
     .replace(/\p{M}/gu, '')

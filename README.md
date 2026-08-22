@@ -89,9 +89,21 @@ l'app — les licences Creative Commons imposent de citer l'auteur, une liste
 enfouie dans le dépôt n'y suffirait pas. Une recette sans photo reste valide :
 la vignette teintée prend le relais.
 
-Depuis l'app (écran « Ajouter une recette »), le prompt est fourni et la réponse se colle
-telle quelle : bloc ```` ```json ````, phrases avant/après et tableau de plusieurs recettes
-sont acceptés, et une recette invalide dans un lot n'empêche pas les autres d'entrer.
+**Ajouter une recette est une section de l'écran « Proposer »**, pas un écran à part.
+On y regarde son catalogue : c'est là qu'on s'aperçoit qu'il manque un plat. La section
+pose d'abord la seule question qui compte — l'écrire soi-même, ou la faire écrire — parce
+que le cinquième onglet d'avant menait droit à un champ attendant du JSON, sans jamais
+dire d'où ce JSON devait venir.
+
+Le formulaire (`src/components/FormulaireRecette.tsx`) sert aussi à modifier une recette :
+corriger « 250 g » en « 300 g » ne demande plus de retrouver la bonne accolade sur un
+téléphone.
+
+L'autre chemin (`src/components/CollageIA.tsx`) garde le collage : le prompt est fourni,
+et la réponse se colle telle quelle — bloc ```` ```json ````, phrases avant/après et
+tableau de plusieurs recettes sont acceptés, et une recette invalide dans un lot n'empêche
+pas les autres d'entrer. Ses trois étapes disent explicitement celle qui se passe hors de
+l'app : ouvrir ChatGPT ou Claude, coller, revenir.
 
 Pour constituer le corpus en ligne de commande, demander explicitement la sortie dans
 ce format, en fournissant la liste des noms déjà utilisés :
