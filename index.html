@@ -22,7 +22,20 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <title>FFFood — Repas de la semaine & liste de courses</title>
-    <script src="https://app.rybbit.io/api/script.js" data-site-id="4c5badb87633" defer></script>
+    <!-- Les écrans de l'app ont chacun leur adresse dans le fragment
+         (`#/panier`, `#/recette/<id>` — voir src/lib/chemins.ts), que
+         Rybbit lit comme un chemin. Les identifiants de recette sont
+         masqués : sans ça, chaque plat ouvert ferait une ligne à lui
+         seul dans le rapport de pages, et « combien de gens ouvrent une
+         fiche » deviendrait illisible. Quelle recette exactement voyage
+         dans l'événement `recette_ouverte`, où c'est une propriété et
+         pas une page. -->
+    <script
+      src="https://app.rybbit.io/api/script.js"
+      data-site-id="4c5badb87633"
+      data-mask-patterns='["/recette/*", "/recette/*/modifier", "/cuisson/*"]'
+      defer
+    ></script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Recipe } from '../types'
+import { suivre } from '../lib/analytique'
 import { useLangue } from '../lib/i18n'
 import Icone from './Icone'
 import FormulaireRecette from './FormulaireRecette'
@@ -32,6 +33,22 @@ export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tags
   const recommencer = () => {
     setBilan(null)
     setMethode(null)
+  }
+
+  /**
+   * Le catalogue qui grandit est l'un des deux jobs de l'app
+   * (PARCOURS.md) — et il a deux chemins qui ne coûtent pas du tout le
+   * même effort. Savoir lequel on choisit, et lequel on abandonne en
+   * route, est le seul moyen de savoir lequel mérite du travail.
+   */
+  const choisirMethode = (choix: Methode) => {
+    suivre('ajout_methode', { methode: choix })
+    setMethode(choix)
+  }
+
+  const reussi = (nombre: number, titre?: string) => {
+    suivre('recette_ajoutee', { methode: methode ?? 'inconnue', nombre })
+    setBilan({ nombre, titre })
   }
 
   return (
@@ -74,14 +91,14 @@ export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tags
         <>
           <p className="aide">{t('ajouter.choixTitre')}</p>
           <div className="choix-methodes">
-            <button className="carte-methode" onClick={() => setMethode('main')}>
+            <button className="carte-methode" onClick={() => choisirMethode('main')}>
               <span className="carte-methode-rond">
                 <Icone nom="crayon" taille={22} />
               </span>
               <b>{t('ajouter.choixMainTitre')}</b>
               <em>{t('ajouter.choixMainTexte')}</em>
             </button>
-            <button className="carte-methode" onClick={() => setMethode('ia')}>
+            <button className="carte-methode" onClick={() => choisirMethode('ia')}>
               <span className="carte-methode-rond">
                 <Icone nom="etincelle" taille={22} />
               </span>
@@ -96,7 +113,7 @@ export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tags
           tagsConnus={tagsConnus}
           onValider={async (recette) => {
             await onAjouter(recette)
-            setBilan({ nombre: 1, titre: recette.titre })
+            reussi(1, recette.titre)
           }}
           onAnnuler={() => setMethode(null)}
           libelleAnnuler={t('ajouter.retourAuChoix')}
@@ -105,7 +122,7 @@ export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tags
         <CollageIA
           titresExistants={titresExistants}
           onAjouter={onAjouter}
-          onFini={(nombre) => setBilan({ nombre })}
+          onFini={(nombre) => reussi(nombre)}
           onRetour={() => setMethode(null)}
         />
       )}

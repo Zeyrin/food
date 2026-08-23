@@ -186,6 +186,42 @@ organise son parcours. Ce qu'il y a à acheter, lui, reste identique des deux c�
 Les recettes écrites avant les rayons portaient un champ `magasin` ; il est relu et
 traduit à la volée (`src/lib/rayons.ts`), jamais réécrit.
 
+## Mesure d'usage
+
+Le script Rybbit était bien dans la page, et pourtant rien ne remontait — ni clic, ni
+écran. Deux raisons, indépendantes :
+
+**Un script d'analyse ne compte pas les clics tout seul.** En dehors des pages vues, il
+n'envoie que ce qu'on lui demande explicitement. Les gestes qui comptent appellent donc
+`suivre()` (`src/lib/analytique.ts`), à côté du code qui les déclenche : entrer dans une
+maison, ouvrir une fiche, mettre un plat au panier, demander la liste, la partager, lancer
+une cuisson, un minuteur, donner un verdict. Le suivi automatique des clics existe côté
+Rybbit ; il rend une soupe de sélecteurs CSS que le moindre changement de classe casse, et
+qui ne dit jamais ce que le clic voulait dire.
+
+**Les écrans n'avaient pas d'adresse.** L'app empile ses écrans avec `pushState` sans
+toucher à l'URL : quatre onglets, les fiches et les réglages arrivaient tous comme la page
+« / ». Chaque vue a maintenant son chemin (`src/lib/chemins.ts`) — dans le fragment
+(`#/panier`), pas dans le chemin d'URL, parce que le `dist/` est servi en statique : un
+vrai `/panier` demanderait une règle de réécriture côté hébergeur, et sans elle un
+rechargement ou un lien partagé tomberait sur un 404. En prime, un lien vers une recette
+ou un onglet s'ouvre maintenant au bon endroit.
+
+Les identifiants de recette sont masqués dans le rapport de pages (`data-mask-patterns`
+dans `index.html`) : sinon chaque plat ferait une ligne à lui seul et « combien de gens
+ouvrent une fiche » deviendrait illisible. Quel plat exactement voyage dans l'événement,
+où c'est une propriété.
+
+Ce qui n'est pas envoyé : aucun terme de recherche, aucun nom d'article ajouté à la main,
+aucun code de foyer. Une recherche remonte le nombre de résultats — c'est le zéro résultat
+qui dit quelque chose (un manque au catalogue), pas l'inventaire des envies du foyer.
+
+Rien de tout ça n'est vital : `suivre()` ne lève jamais, et un script bloqué (bloqueur de
+pub, extension de vie privée, premier lancement hors ligne) laisse l'app entièrement
+fonctionnelle. Côté tableau de bord Rybbit, une seule option est nécessaire, et elle est
+active par défaut : le suivi des applications monopages (`autoTrackSpa`) — désactivée, la
+mesure s'arrêterait au premier chargement.
+
 ## Déploiement
 
 `npm run build` produit un `dist/` statique. Cloudflare Pages ou GitHub Pages, tous deux

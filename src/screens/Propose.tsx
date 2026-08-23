@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { BasketEntry, Recipe } from '../types'
 import { type Historique, proposer, tousLesTags } from '../lib/propose'
 import { teinteRecette } from '../lib/identite'
+import { suivre } from '../lib/analytique'
 import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
@@ -119,18 +120,51 @@ export default function Propose({
     return { affichees: liste, motifs }
   }, [recipes, historique, tempsMax, tags, aRefaire, recherche])
 
+  /**
+   * Ce que la recherche a donné, une fois la frappe finie — pas à
+   * chaque lettre : « poulet » compterait sinon six recherches, dont
+   * cinq qu'on n'a jamais voulu faire. Le terme lui-même n'est pas
+   * envoyé, seulement combien de plats il a sortis : c'est le zéro
+   * résultat qui dit quelque chose (un manque au catalogue), pas
+   * l'inventaire de ce que le foyer a envie de manger.
+   */
+  useEffect(() => {
+    const q = recherche.trim()
+    if (!q) return
+    const attente = setTimeout(() => suivre('recherche', { resultats: affichees.length }), 900)
+    return () => clearTimeout(attente)
+  }, [recherche, affichees.length])
+
   const dansPanier = (id: string) => basket.some((e) => e.recipeId === id)
 
   const basculer = (recette: Recipe) => {
+    const dedans = dansPanier(recette.id)
+    suivre(dedans ? 'panier_retrait' : 'panier_ajout', {
+      titre: recette.titre,
+      depuis: 'catalogue',
+      portions: recette.portions,
+    })
     onBasket(
-      dansPanier(recette.id)
+      dedans
         ? basket.filter((e) => e.recipeId !== recette.id)
         : [...basket, { recipeId: recette.id, portions: recette.portions }],
     )
   }
 
-  const basculerTag = (t: string) =>
+  const ouvrirAjout = (depuis: string) => {
+    suivre('ajout_ouvert', { depuis })
+    onAjoutOuvert(true)
+  }
+
+  const ouvrirFiche = (recette: Recipe) => {
+    suivre('recette_ouverte', { titre: recette.titre, depuis: 'catalogue' })
+    onDetail(recette.id)
+  }
+
+  const basculerTag = (t: string) => {
+    if (!tags.includes(t)) suivre('filtre', { filtre: 'tag', valeur: t })
     setTags((prec) => (prec.includes(t) ? prec.filter((x) => x !== t) : [...prec, t]))
+  }
 
   const nombreFiltres = (tempsMax !== null ? 1 : 0) + (aRefaire ? 1 : 0) + tags.length
 
@@ -185,7 +219,7 @@ export default function Propose({
           ) : (
             <button
               className="bande-ajout"
-              onClick={() => onAjoutOuvert(true)}
+              onClick={() => ouvrirAjout('bande')}
               data-tour="ajout-propose"
             >
               <span className="bande-ajout-rond">
@@ -222,12 +256,22 @@ export default function Propose({
                 key={mn}
                 className="puce"
                 aria-pressed={tempsMax === mn}
-                onClick={() => setTempsMax(tempsMax === mn ? null : mn)}
+                onClick={() => {
+                  if (tempsMax !== mn) suivre('filtre', { filtre: 'temps', valeur: mn })
+                  setTempsMax(tempsMax === mn ? null : mn)
+                }}
               >
                 {t('propose.minutesMax', { n: mn })}
               </button>
             ))}
-            <button className="puce" aria-pressed={aRefaire} onClick={() => setARefaire(!aRefaire)}>
+            <button
+              className="puce"
+              aria-pressed={aRefaire}
+              onClick={() => {
+                if (!aRefaire) suivre('filtre', { filtre: 'a-refaire', valeur: 'oui' })
+                setARefaire(!aRefaire)
+              }}
+            >
               {t('propose.aRefaire')}
             </button>
             {tousLesTags(recipes).map((tag) => (
@@ -260,7 +304,7 @@ export default function Propose({
               // Catalogue vide, aucun filtre en cause : la seule chose à
               // faire depuis cet écran est d'y mettre une recette.
               !ajoutOuvert && (
-                <button className="principal suite" onClick={() => onAjoutOuvert(true)}>
+                <button className="principal suite" onClick={() => ouvrirAjout('catalogue-vide')}>
                   {t('ajouter.sectionTitre')}
                 </button>
               )
@@ -275,7 +319,7 @@ export default function Propose({
                 role="button"
                 tabIndex={0}
                 data-panier={dansPanier(r.id) ? 'true' : undefined}
-                onClick={() => onDetail(r.id)}
+                onClick={() => ouvrirFiche(r)}
                 // La barre d'espace ouvre aussi la fiche (un vrai bouton le
                 // ferait), mais seulement si le focus est sur la carte —
                 // sinon elle doublerait le clic du bouton « + » imbriqué.
@@ -283,7 +327,7 @@ export default function Propose({
                   if (e.target !== e.currentTarget) return
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault()
-                    onDetail(r.id)
+                    ouvrirFiche(r)
                   }
                 }}
                 style={

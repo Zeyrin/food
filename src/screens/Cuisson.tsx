@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Recipe, Verdict } from '../types'
 import { annoterEtape, formatQuantite } from '../lib/aggregate'
 import { formatDuree, minuteursDeLEtape } from '../lib/duree'
 import { useWakeLock } from '../hooks/useWakeLock'
 import type { Minuteurs } from '../hooks/useMinuteurs'
 import { ecrireProgression, lireProgression, oublierProgression } from '../lib/progressionCuisson'
+import { suivre } from '../lib/analytique'
 import { useLangue } from '../lib/i18n'
 import BandeauMinuteur from '../components/BandeauMinuteur'
 import Icone from '../components/Icone'
@@ -37,6 +38,28 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
     if (index >= 1 && !fini) ecrireProgression(recette.id, index)
     if (fini) oublierProgression(recette.id)
   }, [recette.id, index, fini])
+
+  /**
+   * Le bout du parcours : on ne mesure ni les allers-retours entre
+   * étapes ni les demi-tours, seulement le fait d'arriver au dernier
+   * pas. Un plat commencé et jamais fini, plusieurs fois, c'est une
+   * recette qui a un problème — pas une statistique de plus.
+   */
+  const platCommence = useRef(false)
+  useEffect(() => {
+    if (!fini || platCommence.current) return
+    platCommence.current = true
+    suivre('cuisson_terminee', { titre: recette.titre, etapes: recette.etapes.length })
+  }, [fini, recette.titre, recette.etapes.length])
+
+  const commencer = (depart: number) => {
+    suivre('cuisson_lancee', {
+      titre: recette.titre,
+      etapes: recette.etapes.length,
+      reprise: depart > 0 ? 'oui' : 'non',
+    })
+    setIndex(depart)
+  }
 
   if (index < 0) {
     return (
@@ -73,16 +96,16 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
                   balayée) reprend où elle en était — mais c'est un choix
                   explicite : rien de pire que de croire repartir du début
                   et sauter la moitié des étapes sans le voir. */}
-              <button className="principal" onClick={() => setIndex(reprise)}>
+              <button className="principal" onClick={() => commencer(reprise)}>
                 <Icone nom="grill" taille={20} />{' '}
                 {t('cuisson.reprendre', { n: reprise + 1, total: recette.etapes.length })}
               </button>
-              <button className="discret pleine-largeur" onClick={() => setIndex(0)}>
+              <button className="discret pleine-largeur" onClick={() => commencer(0)}>
                 {t('cuisson.repartirDuDebut')}
               </button>
             </>
           ) : (
-            <button className="principal" onClick={() => setIndex(0)}>
+            <button className="principal" onClick={() => commencer(0)}>
               <Icone nom="grill" taille={20} />{' '}
               {t('cuisson.commencer', {
                 total: recette.etapes.length,
@@ -197,7 +220,10 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
               <button
                 key={m.secondes}
                 className="bouton-minuteur"
-                onClick={() => minuteurs.lancer(m.secondes, m.nom, recette.id, recette.titre)}
+                onClick={() => {
+                  suivre('minuteur_lance', { secondes: m.secondes, etape: index + 1 })
+                  minuteurs.lancer(m.secondes, m.nom, recette.id, recette.titre)
+                }}
               >
                 <Icone nom="minuteur" taille={16} /> {t('cuisson.lancer', { duree: formatDuree(m.secondes) })}
               </button>

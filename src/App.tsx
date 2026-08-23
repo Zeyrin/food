@@ -49,25 +49,12 @@ import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
 import { useDecalageBarreOutils } from './hooks/useDecalageBarreOutils'
 import { useLangue } from './lib/i18n'
+import { chemin, normaliserChemin, pileDepuisChemin, PILE_INITIALE, type Vue } from './lib/chemins'
+import { suivre } from './lib/analytique'
 
 const CORPUS: Recipe[] = corpus as Recipe[]
 
-/**
- * Un seul écran affiché à la fois, mais empilé plutôt que dans des
- * flags séparés : « reculer » devient « dépiler », que ce soit via un
- * bouton de l'appli ou le bouton retour du téléphone/navigateur. Sans
- * ça, l'appli n'a qu'une seule page dans l'historique du navigateur —
- * retour en sort directement au lieu de reculer d'un écran.
- */
-type Vue =
-  | { type: 'onglet'; onglet: Onglet }
-  | { type: 'detail'; recipeId: string }
-  | { type: 'edition'; recette: Recipe }
-  | { type: 'cuisson'; recipeId: string }
-  | { type: 'reglages' }
-
 const ETAT_VIDE: ListState = { coche: {}, dejaPossede: {} }
-const PILE_INITIALE: Vue[] = [{ type: 'onglet', onglet: 'propose' }]
 const CLE_PILE = 'courses:pile'
 // Par appareil, pas par foyer : une présentation déjà vue ici ne doit pas
 // se redéclencher parce qu'on a rejoint un nouveau foyer sur ce téléphone.
@@ -84,16 +71,18 @@ const CLE_ONBOARDING_VU = 'fffood:onboarding-vu'
 function lirePileSauvegardee(): Vue[] {
   try {
     const brut = sessionStorage.getItem(CLE_PILE)
-    if (!brut) return PILE_INITIALE
+    // Rien en session : soit une première visite, soit un lien partagé
+    // ou un favori — dans ce cas l'URL, elle, sait où on allait.
+    if (!brut) return pileDepuisChemin(location.hash) ?? [...PILE_INITIALE]
     const pile = (JSON.parse(brut) as Vue[]).filter(
       // « ajout » était un écran à lui seul ; il vit maintenant dans
       // « Proposer ». Une session rechargée après la mise à jour ne doit
       // pas rester bloquée sur une vue qui ne s'affiche plus.
       (vue) => (vue as { type?: string }).type !== 'ajout',
     )
-    return Array.isArray(pile) && pile.length > 0 ? pile : PILE_INITIALE
+    return Array.isArray(pile) && pile.length > 0 ? pile : [...PILE_INITIALE]
   } catch {
-    return PILE_INITIALE
+    return pileDepuisChemin(location.hash) ?? [...PILE_INITIALE]
   }
 }
 
@@ -143,6 +132,27 @@ export default function App() {
     }
   }, [pile])
 
+  /**
+   * Remet l'URL d'aplomb sur une pile posée sans passer par
+   * `irVers` — un reset, une visite guidée qui se termine, une session
+   * reprise plus profonde que l'adresse rechargée.
+   *
+   * Seulement si elles diffèrent vraiment : chaque `replaceState`
+   * compte une page vue de plus, et une première visite arrive sans
+   * fragment du tout alors qu'elle est déjà exactement au bon endroit.
+   */
+  const poserChemin = useCallback((pileVisee: Vue[]) => {
+    const attendu = chemin(pileVisee[pileVisee.length - 1]!)
+    if (normaliserChemin(location.hash) === attendu) return
+    history.replaceState({ profondeur: pileVisee.length }, '', attendu)
+  }, [])
+
+  // Au montage seulement : ensuite, chaque navigation écrit l'URL
+  // elle-même, en poussant ou en remplaçant l'entrée d'historique.
+  useEffect(() => {
+    poserChemin(pile)
+  }, [])
+
   // Transition d'écran native (View Transitions API) : zéro dépendance,
   // se désactive toute seule sur les navigateurs qui ne la supportent
   // pas (retombe sur `appliquer()` direct, comportement d'avant) et sur
@@ -178,7 +188,7 @@ export default function App() {
       avecTransition('avant', () => {
         setPile((p) => {
           const suivante = [...p, vue]
-          history.pushState({ profondeur: suivante.length }, '')
+          history.pushState({ profondeur: suivante.length }, '', chemin(vue))
           return suivante
         })
         defilerVers(0)
@@ -218,7 +228,11 @@ export default function App() {
       avecTransition('avant', () => {
         setPile((p) => {
           const suivante = [...p.slice(0, -1), { type: 'onglet' as const, onglet: cle }]
-          history.replaceState({ profondeur: suivante.length }, '')
+          history.replaceState(
+            { profondeur: suivante.length },
+            '',
+            chemin({ type: 'onglet', onglet: cle }),
+          )
           return suivante
         })
         defilerVers(0)
@@ -260,16 +274,24 @@ export default function App() {
       /* stockage plein ou navigation privée stricte : tant pis, la présentation se redéclenchera */
     }
     setOnboardingVu(true)
-  }, [])
+    // La visite a promené l'écran sans toucher à l'historique (voir
+    // `forcerOnglet`) : l'URL est restée sur l'onglet de départ. On la
+    // remet d'aplomb en sortant — une fois, plutôt qu'à chaque étape,
+    // pour ne pas compter une visite guidée comme quatre pages vues.
+    poserChemin(pile)
+    suivre('visite_terminee', { ecran: vueActuelle.type })
+  }, [pile, vueActuelle, poserChemin])
   // Rouvre la visite depuis Réglages sans toucher au drapeau déjà
   // enregistré : à la fin, `terminerOnboarding` le réécrit simplement à
   // la même valeur. On repart de l'onglet Proposer — la visite y
   // commence toujours — plutôt que de laisser l'écran Réglages ouvert
   // dessous.
   const revoirOnboarding = useCallback(() => {
-    setPile([{ type: 'onglet', onglet: 'propose' }])
+    setPile([...PILE_INITIALE])
+    poserChemin(PILE_INITIALE)
     setOnboardingVu(false)
-  }, [])
+    suivre('visite_revue')
+  }, [poserChemin])
 
   /**
    * Au clavier ou au lecteur d'écran, changer d'écran ne déplaçait pas
@@ -364,14 +386,22 @@ export default function App() {
     await rejoindreFoyer(id, code)
     setFoyer(id)
     setCodeFoyer(code)
+    // La première marche de l'app : sans maison, il n'y a pas de
+    // catalogue, donc pas de semaine. C'est là que se perdent ceux
+    // qu'on perd.
+    suivre('foyer_cree')
   }, [])
 
   const rejoindre = useCallback(async (code: string) => {
     const id = await resoudreCode(code)
-    if (!id) return false
+    if (!id) {
+      suivre('foyer_rejoint', { resultat: 'code-introuvable' })
+      return false
+    }
     await rejoindreFoyer(id, code)
     setFoyer(id)
     setCodeFoyer(code)
+    suivre('foyer_rejoint', { resultat: 'ok' })
     return true
   }, [])
 
@@ -387,8 +417,10 @@ export default function App() {
     // Reset direct plutôt que `reculer()` : on quitte le foyer entier,
     // pas juste l'écran réglages — l'écran Bienvenue qui suit ne fait
     // de toute façon pas partie de cette pile.
-    setPile([{ type: 'onglet', onglet: 'propose' }])
-  }, [])
+    setPile([...PILE_INITIALE])
+    poserChemin(PILE_INITIALE)
+    suivre('foyer_quitte')
+  }, [poserChemin])
 
   const rejoindreDepuisReglages = useCallback(
     async (code: string) => {
@@ -497,10 +529,10 @@ export default function App() {
    * ligne `listes` d'avant le partage du panier), donc un panier
    * simplement omis ne se viderait pas sur l'autre téléphone.
    */
-  const viderPanier = useCallback(
-    () => majListe({ coche: {}, dejaPossede: {}, items: [], panier: [] }),
-    [majListe],
-  )
+  const viderPanier = useCallback(() => {
+    suivre('panier_vide', { plats: basket.length })
+    majListe({ coche: {}, dejaPossede: {}, items: [], panier: [] })
+  }, [majListe, basket.length])
 
   const ajouter = useCallback(
     async (recette: Recipe) => {
@@ -516,6 +548,7 @@ export default function App() {
       if (!foyer) throw new Error(t('app.foyerNonInitialise'))
       await modifierRecette(foyer, recette)
       setRecipes((prec) => prec.map((r) => (r.id === recette.id ? recette : r)))
+      suivre('recette_modifiee', { titre: recette.titre })
     },
     [foyer],
   )
@@ -526,6 +559,7 @@ export default function App() {
       await supprimerRecette(foyer, recipeId)
       setRecipes((prec) => prec.filter((r) => r.id !== recipeId))
       majBasket(basket.filter((e) => e.recipeId !== recipeId))
+      suivre('recette_supprimee')
       reculer()
     },
     [foyer, basket, majBasket, reculer],
@@ -536,6 +570,7 @@ export default function App() {
       const suivant = await marquerCuisine(recipeId, v)
       setHistorique(suivant)
       if (foyer) void ecrireHistoriqueFoyer(foyer, suivant)
+      suivre('verdict', { verdict: v })
     },
     [foyer],
   )
@@ -619,13 +654,19 @@ export default function App() {
           recette={recette}
           portions={basket.find((e) => e.recipeId === recette.id)?.portions ?? recette.portions}
           dansPanier={basket.some((e) => e.recipeId === recette.id)}
-          onBasculerPanier={(portions) =>
+          onBasculerPanier={(portions) => {
+            const dedans = basket.some((e) => e.recipeId === recette.id)
+            suivre(dedans ? 'panier_retrait' : 'panier_ajout', {
+              titre: recette.titre,
+              depuis: 'fiche',
+              portions,
+            })
             majBasket(
-              basket.some((e) => e.recipeId === recette.id)
+              dedans
                 ? basket.filter((e) => e.recipeId !== recette.id)
                 : [...basket, { recipeId: recette.id, portions }],
             )
-          }
+          }}
           onPortions={(portions) =>
             majBasket(basket.map((e) => (e.recipeId === recette.id ? { ...e, portions } : e)))
           }

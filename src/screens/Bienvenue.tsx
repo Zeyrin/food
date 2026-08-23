@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icone from '../components/Icone'
+import { suivre } from '../lib/analytique'
 import { useLangue } from '../lib/i18n'
 
 interface Props {
@@ -14,6 +15,15 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
   const [erreur, setErreur] = useState<string | null>(null)
 
   /**
+   * Cet écran n'a pas d'adresse à lui — il s'affiche à la place de
+   * toute l'app, avant qu'il y ait une pile d'écrans. Sans cet
+   * événement, ceux qui n'arrivent jamais à créer ou rejoindre une
+   * maison seraient invisibles : ils comptent pour une page vue sur
+   * l'accueil, exactement comme ceux qui sont déjà entrés.
+   */
+  useEffect(() => suivre('bienvenue_vue'), [])
+
+  /**
    * Créer une maison passe par le réseau (le code court doit être
    * unique côté Supabase) : sans état d'attente, l'écran ne bougeait
    * pas — un second appui créait une deuxième maison, et un échec
@@ -26,6 +36,7 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
     try {
       await onCreer()
     } catch {
+      suivre('foyer_cree_echec')
       setErreur(t('bienvenue.creerErreur'))
       setEnCours(null)
     }
@@ -42,6 +53,7 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
         setEnCours(null)
       }
     } catch {
+      suivre('foyer_rejoint', { resultat: 'reseau' })
       setErreur(t('bienvenue.codeErreurReseau'))
       setEnCours(null)
     }

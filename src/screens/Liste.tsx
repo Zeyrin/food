@@ -6,6 +6,7 @@ import { grouperPourCourses } from '../lib/magasins'
 import { formatQuantite } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
+import { suivre } from '../lib/analytique'
 import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 
@@ -77,10 +78,24 @@ export default function Liste({
   const basculer = (cle: 'coche' | 'dejaPossede', key: string) =>
     onEtat({ ...etat, [cle]: { ...etat[cle], [key]: !etat[cle][key] } })
 
+  /**
+   * La passe « ce qu'on a déjà » est le pari central de l'app (voir
+   * README) : si personne ne passe en mode courses, c'est qu'elle
+   * coûte plus cher qu'elle ne rapporte.
+   */
+  const changerMode = (suivant: 'tri' | 'courses') => {
+    if (suivant !== mode) suivre('liste_mode', { mode: suivant })
+    setMode(suivant)
+  }
+
   const ajouterItem = () => {
     const nom = saisie?.trim()
     if (!nom) return
     const item: ItemLibre = { id: crypto.randomUUID(), nom }
+    // Ce qu'on ajoute à la main est ce que les recettes ne couvrent pas
+    // (papier toilette, café) : le nom reste sur l'appareil, seul le
+    // fait qu'il ait fallu l'ajouter remonte.
+    suivre('article_ajoute')
     onEtat({ ...etat, items: [...(etat.items ?? []), item] })
     setSaisie('')
   }
@@ -117,18 +132,29 @@ export default function Liste({
 
   const envoyer = async (restant: ListItem[]) => {
     const texte = composerTexte(restant)
+    // Trois issues bien différentes derrière un seul bouton — et deux
+    // d'entre elles sont des replis. Savoir laquelle sert vraiment dit
+    // si le partage natif tient ses promesses sur les téléphones du
+    // foyer, ou si tout le monde finit sur le texte à recopier.
+    const fait = (voie: string) => suivre('liste_partagee', { voie, articles: restant.length })
     try {
       if (navigator.share) {
         await navigator.share({ title: t('liste.titrePartage'), text: texte })
+        fait('partage-natif')
         return
       }
       await navigator.clipboard.writeText(texte)
+      fait('presse-papier')
       setCopiee(true)
       setTimeout(() => setCopiee(false), 2000)
     } catch (e) {
       // Fermer la feuille de partage sans choisir n'est pas un échec :
       // afficher un repli à ce moment-là serait absurde.
-      if ((e as Error)?.name === 'AbortError') return
+      if ((e as Error)?.name === 'AbortError') {
+        fait('abandonne')
+        return
+      }
+      fait('texte-a-recopier')
       setTexteAPartager(texte)
     }
   }
@@ -216,13 +242,13 @@ export default function Liste({
 
   const bascule = (
     <div className="bascule-mode">
-      <button className="bascule-mode-bouton" aria-pressed={mode === 'tri'} onClick={() => setMode('tri')}>
+      <button className="bascule-mode-bouton" aria-pressed={mode === 'tri'} onClick={() => changerMode('tri')}>
         {t('liste.modeTri')}
       </button>
       <button
         className="bascule-mode-bouton"
         aria-pressed={mode === 'courses'}
-        onClick={() => setMode('courses')}
+        onClick={() => changerMode('courses')}
       >
         {t('liste.modeCourses')}
       </button>
@@ -258,7 +284,7 @@ export default function Liste({
             )
           })}
 
-          <button className="principal" onClick={() => setMode('courses')}>
+          <button className="principal" onClick={() => changerMode('courses')}>
             {t('liste.passerAuxCourses', { n: aAcheter.length })}
           </button>
 
@@ -421,7 +447,7 @@ export default function Liste({
         )}
 
         <div className="rangee-boutons espace-haut">
-          <button className="discret" onClick={() => setMode('tri')}>
+          <button className="discret" onClick={() => changerMode('tri')}>
             {t('liste.revoirLeTri')}
           </button>
           <button className="discret accent" onClick={onVersCuisson}>

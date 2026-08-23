@@ -3,6 +3,7 @@ import type { BasketEntry, Recipe } from '../types'
 import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { cuisineRecemment, type Historique } from '../lib/propose'
+import { suivre } from '../lib/analytique'
 import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
@@ -64,6 +65,7 @@ export default function Panier({
     const rang = basket.findIndex((e) => e.recipeId === recipeId)
     const entree = basket[rang]
     if (!entree) return
+    suivre('panier_retrait', { titre: byId.get(recipeId)?.titre ?? '', depuis: 'panier' })
     setRetire({ entree, rang })
     onBasket(basket.filter((e) => e.recipeId !== recipeId))
   }
@@ -72,6 +74,9 @@ export default function Panier({
   // l'ordre dans lequel on a composé la semaine.
   const annulerRetrait = () => {
     if (!retire) return
+    // Le rattrapage compte autant que le retrait : beaucoup d'annulations
+    // voudrait dire que le bouton « retirer » est trop facile à toucher.
+    suivre('panier_retrait_annule')
     const suivant = [...basket]
     suivant.splice(Math.min(retire.rang, suivant.length), 0, retire.entree)
     onBasket(suivant)
@@ -142,11 +147,23 @@ export default function Panier({
     <>
       <h2>{t('panier.completerSemaine')}</h2>
       <div className="bento-deux-colonnes">
-        <button className="carte-bento" onClick={onVersPropose}>
+        <button
+          className="carte-bento"
+          onClick={() => {
+            suivre('panier_completer', { vers: 'catalogue' })
+            onVersPropose()
+          }}
+        >
           <Icone nom="plus-cercle" taille={28} />
           <p>{t('panier.ajouterPlatRapide')}</p>
         </button>
-        <button className="carte-bento neutre" onClick={onAjouterRecette}>
+        <button
+          className="carte-bento neutre"
+          onClick={() => {
+            suivre('ajout_ouvert', { depuis: 'panier' })
+            onAjouterRecette()
+          }}
+        >
           <Icone nom="plus-cercle" taille={28} />
           <p>{t('panier.nouvelleRecette')}</p>
         </button>
@@ -250,7 +267,17 @@ export default function Panier({
       <div className="espaceur-action-flottante" aria-hidden="true" />
 
       <div className="action-flottante">
-        <button className="principal" onClick={onVersListe}>
+        <button
+          className="principal"
+          onClick={() => {
+            // Le geste qui fait passer la semaine de « ce qu'on veut
+            // manger » à « ce qu'il faut acheter » : le milieu du
+            // parcours, et le seul endroit où on sait combien de plats
+            // il a fallu pour y arriver.
+            suivre('liste_demandee', { plats: basket.length, parts })
+            onVersListe()
+          }}
+        >
           <Icone nom="panier" taille={20} /> {t('panier.genererListe')}
         </button>
       </div>
