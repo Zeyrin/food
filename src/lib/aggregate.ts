@@ -1,5 +1,6 @@
 import type { BasketEntry, ListItem, Recipe, Unit } from '../types'
 import { RAYONS } from '../types'
+import { traduire } from './i18n'
 import { rayonDe } from './rayons'
 
 /**
@@ -99,32 +100,42 @@ function arrondir(quantite: number, unite: Unit): number {
   return Math.round(quantite * 2) / 2
 }
 
-/** Suffixes lisibles. Les unités qui s'accordent reçoivent leur vraie
- *  forme plutôt qu'un « (s) » : « 1 botte », « 2 bottes ». */
+/**
+ * Suffixes lisibles. Les unités qui s'accordent reçoivent leur vraie
+ * forme plutôt qu'un « (s) » : « 1 botte », « 2 bottes ».
+ *
+ * Ils passent par le dictionnaire depuis qu'il y a deux langues : les
+ * unités métriques (g, ml…) s'écrivent pareil partout et restent
+ * telles quelles, mais « c. à s. » et « pincée » n'ont rien d'anglais.
+ * `traduire` lit la langue courante de l'app hors de React — cette
+ * fonction est appelée depuis quatre écrans et n'est pas un composant
+ * (voir lib/i18n.tsx).
+ */
 const AFFICHAGE: Partial<Record<Unit, (n: number) => string>> = {
   piece: () => '',
-  pincee: (n) => (n > 1 ? ' pincées' : ' pincée'),
-  botte: (n) => (n > 1 ? ' bottes' : ' botte'),
-  cs: () => ' c. à s.',
-  cc: () => ' c. à c.',
+  pincee: (n) => traduire(n > 1 ? 'unites.pincees' : 'unites.pincee'),
+  botte: (n) => traduire(n > 1 ? 'unites.bottes' : 'unites.botte'),
+  cs: () => traduire('unites.cs'),
+  cc: () => traduire('unites.cc'),
 }
 
 const FRACTIONS: Record<string, string> = { '0.25': '¼', '0.5': '½', '0.75': '¾' }
 
 /**
  * « 0.5 c. à c. » ne se lit pas : en cuisine on écrit ½. Le reste passe
- * en virgule décimale, comme tout nombre écrit en français.
+ * au séparateur décimal de la langue affichée — virgule en français,
+ * point en anglais.
  */
 function formatNombre(n: number): string {
   const entier = Math.floor(n)
   const fraction = FRACTIONS[String(+(n - entier).toFixed(2))]
   if (fraction) return entier > 0 ? `${entier}${fraction}` : fraction
-  return String(n).replace('.', ',')
+  return String(n).replace('.', traduire('unites.separateurDecimal'))
 }
 
 export function formatQuantite(item: Pick<ListItem, 'quantite' | 'unite'>): string {
-  const suffixe = AFFICHAGE[item.unite]?.(item.quantite) ?? ` ${item.unite}`
-  return `${formatNombre(item.quantite)}${suffixe}`.trim()
+  const suffixe = AFFICHAGE[item.unite]?.(item.quantite) ?? item.unite
+  return `${formatNombre(item.quantite)} ${suffixe}`.trim()
 }
 
 /**

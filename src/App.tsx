@@ -336,12 +336,20 @@ export default function App() {
   // pour ne pas flasher Bienvenue le temps que IndexedDB réponde.
   useEffect(() => {
     void (async () => {
-      const panier = await lireBasket()
-      setEtatListe((prec) => ({ ...prec, panier }))
-      setHistorique(await lireHistorique())
-      setFoyer(await lireFoyer())
-      setCodeFoyer(await lireCodeFoyer())
-      setFoyerCharge(true)
+      try {
+        const panier = await lireBasket()
+        setEtatListe((prec) => ({ ...prec, panier }))
+        setHistorique(await lireHistorique())
+        setFoyer(await lireFoyer())
+        setCodeFoyer(await lireCodeFoyer())
+      } finally {
+        // Quoi qu'il arrive à la lecture locale : sans ce `finally`,
+        // un seul rejet laissait `foyerCharge` à `false`, et le
+        // `return null` plus bas devenait un écran blanc définitif.
+        // `lib/local.ts` neutralise déjà l'absence de stockage ; ceci
+        // couvre le reste — l'app démarre, quitte à ne rien retrouver.
+        setFoyerCharge(true)
+      }
     })()
   }, [])
 
@@ -393,7 +401,10 @@ export default function App() {
     if (!foyer) return
     const appliquer = (distant: ListState) =>
       setEtatListe((local) => ({ ...distant, panier: distant.panier ?? local.panier }))
-    void lireListe(foyer).then(appliquer)
+    // `null` = lecture refusée (voir lib/sync.ts). On ne l'applique pas :
+    // écraser la liste locale avec un état vide décocherait tout à
+    // l'écran, et la prochaine case cochée publierait ce vide.
+    void lireListe(foyer).then((distant) => distant && appliquer(distant))
     return suivreListe(foyer, appliquer)
   }, [foyer])
 
@@ -416,8 +427,18 @@ export default function App() {
       return
     }
     void (async () => {
-      const existantes = await lireRecettes(foyer)
-      setRecipes(existantes.length > 0 ? existantes : await semerCorpusInitial(foyer, CORPUS))
+      try {
+        const existantes = await lireRecettes(foyer)
+        setRecipes(existantes.length > 0 ? existantes : await semerCorpusInitial(foyer, CORPUS))
+      } catch (e) {
+        // Lecture ou semis refusé (policy, réseau) : on affiche le
+        // corpus embarqué au build plutôt qu'un catalogue vide. L'app
+        // reste entièrement utilisable — proposer, panier, liste,
+        // cuisson — et rien n'est écrit dans le foyer tant que la
+        // lecture ne repasse pas.
+        console.warn(`Catalogue du foyer indisponible, corpus embarqué affiché : ${e}`)
+        setRecipes(CORPUS)
+      }
     })()
     return suivreRecettes(foyer, setRecipes)
   }, [foyer])
@@ -604,7 +625,7 @@ export default function App() {
           }
           onCuisiner={() => irVers({ type: 'cuisson', recipeId: recette.id })}
           onModifier={() => irVers({ type: 'edition', recette })}
-          onSupprimer={() => void supprimer(recette.id)}
+          onSupprimer={() => supprimer(recette.id)}
           onFermer={reculer}
         />
       )
