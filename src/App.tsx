@@ -42,6 +42,7 @@ import TourGuide from './components/TourGuide'
 import BandeauMinuteur from './components/BandeauMinuteur'
 import PanneauMinuteurs from './components/PanneauMinuteurs'
 import { useMinuteurs } from './hooks/useMinuteurs'
+import { ecouterClicNotification } from './lib/minuteurs'
 import { useMagasins } from './hooks/useMagasins'
 import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
@@ -320,6 +321,11 @@ export default function App() {
   useEffect(() => {
     if (nombreQuiSonnent > 0) setPanneauMinuteurs(true)
   }, [nombreQuiSonnent])
+
+  // Toucher la notification d'un minuteur ramène ici : le service worker
+  // focalise la fenêtre (ou la rouvre), et nous dit d'ouvrir le panneau —
+  // y compris s'il avait été refermé pendant que ça sonnait encore.
+  useEffect(() => ecouterClicNotification(() => setPanneauMinuteurs(true)), [])
 
   // Le panier n'a pas d'état à lui : il fait partie de la liste du foyer.
   // Une seule source de vérité, une seule écriture réseau — impossible que

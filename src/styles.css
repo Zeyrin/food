@@ -1658,16 +1658,6 @@ button.carte-panier-bouton .carte-panier-corps {
   display: none;
 }
 
-.tiroir-ingredients summary em {
-  font-style: normal;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: rgb(255 248 239 / 0.12);
-  color: rgb(255 248 239 / 0.7);
-}
-
 /* Le chevron pointe à droite replié, vers le bas déplié. */
 .tiroir-ingredients summary svg {
   margin-left: auto;

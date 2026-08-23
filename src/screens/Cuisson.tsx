@@ -41,20 +41,23 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
   if (index < 0) {
     return (
       <div className="cuisson">
+        {/* Une flèche « précédent » sur un bouton « Quitter » disait deux
+            choses à la fois : ici on n'a encore rien commencé, on revient
+            juste en arrière. */}
         <button className="discret" onClick={onQuitter}>
-          <Icone nom="precedent" taille={18} /> {t('cuisson.quitter')}
+          <Icone nom="precedent" taille={18} /> {t('cuisson.retour')}
         </button>
 
         <h1>{recette.titre}</h1>
 
-        <h2>{t('cuisson.ceQuIlFaut')}</h2>
+        <h2>{t('cuisson.titreIngredients', { n: recette.ingredients.length })}</h2>
         {recette.ingredients.map((ing) => (
           <div className="rangee rangee-lecture" key={ing.nom}>
             <span className="nom">{ing.nom}</span>
             <span className="qte">{formatQuantite(ing)}</span>
           </div>
         ))}
-        <h2>{t('cuisson.lesEtapes')}</h2>
+        <h2>{t('cuisson.titreEtapes', { n: recette.etapes.length })}</h2>
         <ol className="apercu-etapes">
           {recette.etapes.map((etape, i) => (
             <li key={i}>{etape}</li>
@@ -71,7 +74,8 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
                   explicite : rien de pire que de croire repartir du début
                   et sauter la moitié des étapes sans le voir. */}
               <button className="principal" onClick={() => setIndex(reprise)}>
-                <Icone nom="grill" taille={20} /> {t('cuisson.reprendre', { n: reprise + 1 })}
+                <Icone nom="grill" taille={20} />{' '}
+                {t('cuisson.reprendre', { n: reprise + 1, total: recette.etapes.length })}
               </button>
               <button className="discret pleine-largeur" onClick={() => setIndex(0)}>
                 {t('cuisson.repartirDuDebut')}
@@ -79,7 +83,11 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
             </>
           ) : (
             <button className="principal" onClick={() => setIndex(0)}>
-              <Icone nom="grill" taille={20} /> {t('cuisson.commencer')}
+              <Icone nom="grill" taille={20} />{' '}
+              {t('cuisson.commencer', {
+                total: recette.etapes.length,
+                s: recette.etapes.length > 1 ? 's' : '',
+              })}
             </button>
           )}
         </div>
@@ -156,8 +164,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           si le rendu React est occupé ailleurs. */}
       <details className="tiroir-ingredients">
         <summary>
-          <span>{t('cuisson.ingredients')}</span>
-          <em>{recette.ingredients.length}</em>
+          <span>{t('cuisson.titreIngredients', { n: recette.ingredients.length })}</span>
           <Icone nom="suivant" taille={18} />
         </summary>
         <ul className="liste-ingredients">

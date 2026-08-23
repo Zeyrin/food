@@ -36,7 +36,7 @@ export default function PanneauMinuteurs({
       <button className="voile-panneau" onClick={onFermer} aria-label={t('panneauMinuteurs.fermer')} />
       <div className="panneau-minuteurs" role="dialog" aria-label={t('panneauMinuteurs.dialogueLabel')}>
         <div className="panneau-minuteurs-entete">
-          <h2>{t('panneauMinuteurs.titre')}</h2>
+          <h2>{t('panneauMinuteurs.titre', { n: liste.length })}</h2>
           <button className="cuisson-rond" onClick={onFermer} aria-label={t('panneauMinuteurs.fermer')}>
             <Icone nom="fermer" taille={20} />
           </button>

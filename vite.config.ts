@@ -28,6 +28,11 @@ export default defineConfig({
         // l'app hors ligne retombait sur la vignette teintée alors que le
         // catalogue, lui, est embarqué au build.
         globPatterns: ['**/*.{js,css,html,png,svg,webp,woff2,ttf}'],
+        // Workbox génère le service worker de A à Z : le seul endroit où
+        // poser du code à nous est cet import. Il apporte le
+        // `notificationclick` qui ramène dans l'app quand on touche
+        // l'alerte d'un minuteur (voir public/sw-minuteurs.js).
+        importScripts: ['/sw-minuteurs.js'],
       },
     }),
   ],

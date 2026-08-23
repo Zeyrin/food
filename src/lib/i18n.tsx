@@ -147,22 +147,23 @@ const fr: Dico = {
     reglerMagasins: 'Dites lesquels.',
   },
   cuisson: {
-    quitter: 'Quitter',
-    ceQuIlFaut: "Ce qu'il faut",
-    lesEtapes: 'Les étapes',
-    reprendre: "Reprendre à l'étape {{n}}",
+    // Les compteurs entre parenthèses : le titre dit de quoi il s'agit,
+    // le nombre reste un détail qu'on lit en second, jamais un mot.
+    retour: 'Retour',
+    titreIngredients: 'Ingrédients ({{n}})',
+    titreEtapes: 'Étapes ({{n}})',
+    reprendre: 'Reprendre (étape {{n}} sur {{total}})',
     repartirDuDebut: 'Repartir du début',
-    commencer: 'Commencer',
+    commencer: 'Commencer ({{total}} étape{{s}})',
     cetaitComment: "C'était comment ?",
-    finTexte: 'Bon appétit ! Cuisinez-la à nouveau, ou écartez-la des prochaines idées.',
+    finTexte: 'Bon appétit ! Votre réponse affine les prochaines propositions.',
     aRefaire: 'À refaire',
-    jamais: 'Jamais',
+    jamais: 'Plus jamais',
     retourAuMenu: 'Retour au menu',
     quitterModeCuisson: 'Quitter le mode cuisson',
     etapeSur: 'Étape {{n}} sur {{total}}',
     allerAEtape: "Aller à l'étape {{n}}",
-    ingredients: 'Ingrédients',
-    lancer: 'Lancer {{duree}}',
+    lancer: 'Minuteur ({{duree}})',
     precedent: 'Précédent',
     suivant: 'Suivant',
     termine: 'Terminé',
@@ -170,10 +171,10 @@ const fr: Dico = {
   cuissonListe: {
     titre: 'Cuisson',
     videTexte: 'Ajoutez des recettes au panier pour pouvoir les cuisiner.',
-    tousFaits: "Tous les plats de la semaine sont passés en cuisine. Rien n'empêche d'en refaire un.",
-    restants: 'Choisissez le plat à cuisiner maintenant — {{restants}} sur {{total}} vous attendent encore.',
+    tousFaits: "Tous les plats de la semaine sont cuisinés — rien n'empêche d'en refaire un.",
+    restants: 'À cuisiner cette semaine ({{restants}} sur {{total}}).',
     dejaCuisine: 'Déjà cuisiné',
-    parts: '{{n}} parts',
+    parts: '{{n}} part{{s}}',
     minutes: '{{n}} min',
   },
   detail: {
@@ -292,18 +293,6 @@ const fr: Dico = {
     terminer: 'Terminer',
     annuler: 'Annuler',
   },
-  unites: {
-    g: 'g',
-    kg: 'kg',
-    ml: 'ml',
-    cl: 'cl',
-    l: 'l',
-    cs: 'c. à soupe',
-    cc: 'c. à café',
-    pincee: 'pincée',
-    piece: 'pièce',
-    botte: 'botte',
-  },
   tour: {
     passer: 'Passer',
     etapesLabel: 'Étapes de la visite',
@@ -319,12 +308,18 @@ const fr: Dico = {
   },
   panneauMinuteurs: {
     fermer: 'Fermer les minuteurs',
-    titre: 'Minuteurs',
+    titre: 'Minuteurs ({{n}})',
     dialogueLabel: 'Minuteurs en cours',
     termine: 'Terminé',
     revenirA: 'Revenir à {{titre}}',
     supprimer: 'Supprimer le minuteur {{nom}}',
     toutSupprimer: 'Tout supprimer',
+  },
+  notificationMinuteur: {
+    // Elle part du service worker, hors de tout composant : traduite par
+    // `traduire()` plutôt que par `t`, mais traduite quand même — elle
+    // sortait en français en dur, même app réglée en anglais.
+    corps: "{{titre}} — c'est prêt.",
   },
   app: {
     reglages: 'Réglages',
@@ -389,16 +384,27 @@ const fr: Dico = {
     autre: 'Ajouté à la main',
   },
   /**
-   * Suffixes d'unité et séparateur décimal. Ils sortent de
-   * `lib/aggregate.ts`, qui n'est pas un composant : sans dictionnaire,
-   * une liste de courses en anglais annonçait « 2 c. à s. » et
-   * « 0,5 pincée ».
+   * Noms d'unité et séparateur décimal, pour le formulaire de recette
+   * comme pour `lib/aggregate.ts` — qui n'est pas un composant : sans
+   * dictionnaire, une liste de courses en anglais annonçait
+   * « 2 c. à s. » et « 0,5 pincée ».
+   *
+   * Un seul bloc : il y en avait deux, et le second masquait
+   * silencieusement le premier (même clé dans le même objet). Le
+   * formulaire n'avait donc plus aucun libellé et retombait sur les
+   * codes bruts — « piece » au lieu de « pièce ».
    */
   unites: {
+    g: 'g',
+    kg: 'kg',
+    ml: 'ml',
+    cl: 'cl',
+    l: 'l',
     cs: 'c. à s.',
     cc: 'c. à c.',
     pincee: 'pincée',
     pincees: 'pincées',
+    piece: 'pièce',
     botte: 'botte',
     bottes: 'bottes',
     separateurDecimal: ',',
@@ -582,22 +588,21 @@ const en: Dico = {
     reglerMagasins: 'Tell the app where.',
   },
   cuisson: {
-    quitter: 'Quit',
-    ceQuIlFaut: 'What you need',
-    lesEtapes: 'The steps',
-    reprendre: 'Resume at step {{n}}',
+    retour: 'Back',
+    titreIngredients: 'Ingredients ({{n}})',
+    titreEtapes: 'Steps ({{n}})',
+    reprendre: 'Resume (step {{n}} of {{total}})',
     repartirDuDebut: 'Start over',
-    commencer: 'Start',
+    commencer: 'Start ({{total}} step{{s}})',
     cetaitComment: 'How was it?',
-    finTexte: 'Enjoy your meal! Cook it again, or set it aside from future ideas.',
+    finTexte: 'Enjoy your meal! Your answer sharpens the next suggestions.',
     aRefaire: 'Make again',
     jamais: 'Never again',
     retourAuMenu: 'Back to menu',
     quitterModeCuisson: 'Quit cooking mode',
     etapeSur: 'Step {{n}} of {{total}}',
     allerAEtape: 'Go to step {{n}}',
-    ingredients: 'Ingredients',
-    lancer: 'Start {{duree}}',
+    lancer: 'Timer ({{duree}})',
     precedent: 'Previous',
     suivant: 'Next',
     termine: 'Done',
@@ -605,10 +610,10 @@ const en: Dico = {
   cuissonListe: {
     titre: 'Cooking',
     videTexte: 'Add recipes to the basket to be able to cook them.',
-    tousFaits: 'All of this week\'s dishes have been cooked. Nothing stops you from making one again.',
-    restants: 'Choose the dish to cook now — {{restants}} of {{total}} are still waiting.',
+    tousFaits: 'Every dish this week has been cooked — nothing stops you from making one again.',
+    restants: 'To cook this week ({{restants}} of {{total}}).',
     dejaCuisine: 'Already cooked',
-    parts: '{{n}} servings',
+    parts: '{{n}} serving{{s}}',
     minutes: '{{n}} min',
   },
   detail: {
@@ -723,18 +728,6 @@ const en: Dico = {
     terminer: 'Done',
     annuler: 'Cancel',
   },
-  unites: {
-    g: 'g',
-    kg: 'kg',
-    ml: 'ml',
-    cl: 'cl',
-    l: 'l',
-    cs: 'tbsp',
-    cc: 'tsp',
-    pincee: 'pinch',
-    piece: 'piece',
-    botte: 'bunch',
-  },
   tour: {
     passer: 'Skip',
     etapesLabel: 'Tour steps',
@@ -750,12 +743,15 @@ const en: Dico = {
   },
   panneauMinuteurs: {
     fermer: 'Close timers',
-    titre: 'Timers',
+    titre: 'Timers ({{n}})',
     dialogueLabel: 'Running timers',
     termine: 'Done',
     revenirA: 'Back to {{titre}}',
     supprimer: 'Delete the timer {{nom}}',
     toutSupprimer: 'Delete all',
+  },
+  notificationMinuteur: {
+    corps: "{{titre}} — it's ready.",
   },
   app: {
     reglages: 'Settings',
@@ -819,10 +815,16 @@ const en: Dico = {
     autre: 'Added by hand',
   },
   unites: {
+    g: 'g',
+    kg: 'kg',
+    ml: 'ml',
+    cl: 'cl',
+    l: 'l',
     cs: 'tbsp',
     cc: 'tsp',
     pincee: 'pinch',
     pincees: 'pinches',
+    piece: 'piece',
     botte: 'bunch',
     bottes: 'bunches',
     separateurDecimal: '.',
