@@ -60,8 +60,12 @@ export default function PanneauMinuteurs({
                   </button>
                 )}
               </div>
+              {/* Croix identique à celle qui referme la feuille, deux
+                  centimètres au-dessus et dans la même colonne : on
+                  supprimait un minuteur en croyant fermer le panneau.
+                  Celle-ci porte donc la couleur de ce qui se retire. */}
               <button
-                className="cuisson-rond"
+                className="cuisson-rond cuisson-rond-retrait"
                 onClick={() => onRetirer(m.id)}
                 aria-label={t('panneauMinuteurs.supprimer', { nom: m.nom })}
               >

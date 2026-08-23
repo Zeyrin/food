@@ -107,8 +107,16 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           </div>
           <h1>{t('cuisson.cetaitComment')}</h1>
           <p>{t('cuisson.finTexte')}</p>
+          {/* Les deux verdicts n'engagent pas la même chose : « à refaire »
+              remonte le plat dans les propositions, « jamais » l'en écarte
+              pour de bon. Ils avaient exactement la même apparence, à un
+              pouce l'un de l'autre, au moment où on repose une poêle.
+              L'un porte donc l'accent, l'autre reste en retrait. */}
           <div className="ecran-fin-choix">
-            <button className="choix-verdict" onClick={() => onVerdict('refaire')}>
+            <button
+              className="choix-verdict choix-verdict-oui"
+              onClick={() => onVerdict('refaire')}
+            >
               <Icone nom="etoile" taille={26} />
               {t('cuisson.aRefaire')}
             </button>

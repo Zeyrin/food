@@ -83,7 +83,14 @@
   --accent: #385e16;
   --accent-doux: #cefda3;
   --sur-accent: #ffffff;
-  --terracotta: #bc4749;
+  /* Assombri depuis #bc4749, qui plafonnait à 4,82:1 sur le parchemin et
+     tombait à 3,93:1 sur son propre fond doux — sous le seuil de 4,5:1
+     pour du texte. Reste plus clair que `--primeur` : les deux sont
+     voisins parce qu'ils sortent de la même famille Heritage, mais leurs
+     rôles diffèrent (l'un est l'accent chaud de l'app, l'autre l'identité
+     d'un magasin) et les fondre en un seul jeton ferait dépendre la
+     couleur d'un rayon de celle d'un bouton. */
+  --terracotta: #a53c3e;
   --terracotta-doux: #ffdad8;
 
   --intermarche: #305e3a;
@@ -1376,14 +1383,23 @@ button.discret.danger {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
-/* Sortie de secours quand un filtre a vidé la grille : on la met en
-   tête du nuage, avant les filtres qu'elle annule. */
+/* Sortie de secours quand un filtre a vidé la grille : on la met en tête
+   du nuage, avant les filtres qu'elle annule. Même surface que les autres
+   puces, le rouge ne servant qu'au texte : en fond plein, elle pesait plus
+   lourd que les filtres qu'elle sert à retirer — et son rouge sur rose ne
+   tenait pas le contraste. */
 .puce-effacer {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--terracotta-doux);
   color: var(--terracotta);
+}
+
+@media (hover: hover) {
+  .puce-effacer:hover {
+    background: var(--terracotta-doux);
+    color: var(--terracotta);
+  }
 }
 
 /* Tiroir des filtres (écran Proposer) : replié une ligne, déplié la
@@ -2147,6 +2163,13 @@ button.carte-panier-bouton .carte-panier-corps {
   transform: scale(0.9);
 }
 
+/* Retirer un minuteur, pas refermer la feuille : même gabarit, teinte de
+   ce qui se retire. */
+.cuisson-rond-retrait {
+  background: rgb(255 179 176 / 0.12);
+  color: #ffb3b0;
+}
+
 .cuisson-progression {
   flex: 1;
   display: flex;
@@ -2745,6 +2768,14 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .choix-verdict:active {
   transform: scale(0.96);
+}
+
+/* Le verdict qui garde le plat au catalogue : c'est le cas courant, et
+   c'est celui dont on ne revient pas de travers. */
+.choix-verdict-oui {
+  background: rgb(166 212 126 / 0.16);
+  border-color: rgb(166 212 126 / 0.45);
+  color: #bcefc0;
 }
 
 .cuisson-focus .discret.suite {

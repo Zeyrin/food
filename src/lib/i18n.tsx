@@ -195,7 +195,9 @@ const fr: Dico = {
     titreAjout: 'Ajouter une recette',
     titreEdition: 'Modifier la recette',
     intro:
-      "Saisie automatique : demandez des recettes à une IA avec le prompt ci-dessous, puis collez sa réponse telle quelle — bloc de code, phrases autour et liste de plusieurs recettes sont acceptés. Dans les étapes, un ingrédient entre accolades — « cuire les {{exemple}} » — s'affiche avec sa dose en mode cuisson.",
+      "Demandez des recettes à une IA avec le prompt ci-dessous, puis collez sa réponse ici. Elle rejoint le catalogue du foyer immédiatement.",
+    formatAccepte:
+      "Collez tel quel : bloc de code, phrases autour et lot de plusieurs recettes sont acceptés. Dans les étapes, un ingrédient entre accolades — « cuire les {{exemple}} » — s'affiche avec sa dose en mode cuisson.",
     etape1: '1. Le prompt à copier',
     demandePlaceholder: "Ce que vous voulez (ex: 5 recettes d'été, végé, en moins de 20 min)…",
     copie: 'Copié !',
@@ -509,7 +511,9 @@ const en: Dico = {
     titreAjout: 'Add a recipe',
     titreEdition: 'Edit the recipe',
     intro:
-      'Automatic entry: ask an AI for recipes with the prompt below, then paste its reply as-is — a code block, surrounding sentences, and a list of several recipes are all accepted. In the steps, an ingredient in braces — "cook the {{exemple}}" — shows its dose in cooking mode.',
+      'Ask an AI for recipes with the prompt below, then paste its reply here. It joins the household catalogue right away.',
+    formatAccepte:
+      'Paste as-is: a code block, surrounding sentences and a batch of several recipes are all accepted. In the steps, an ingredient in braces — "cook the {{exemple}}" — shows its dose in cooking mode.',
     etape1: '1. The prompt to copy',
     demandePlaceholder: 'What you want (e.g. 5 summer recipes, vegetarian, under 20 min)…',
     copie: 'Copied!',

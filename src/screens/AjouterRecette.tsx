@@ -178,7 +178,10 @@ export default function AjouterRecette({
         </>
       )}
 
+      {/* Le détail du format vivait dans l'intro, sept lignes avant le
+          champ auquel il s'applique. Il descend là où on colle. */}
       <h2>{t('ajouter.etape2')}</h2>
+      <p className="aide">{t('ajouter.formatAccepte', { exemple: '{pâtes}' })}</p>
       <textarea
         className="champ-texte champ-texte-code"
         placeholder={t('ajouter.reponsePlaceholder')}
