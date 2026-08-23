@@ -3,7 +3,7 @@ import { flushSync } from 'react-dom'
 import corpus from './data/recipes.json'
 import type { BasketEntry, ListState, Onglet, Recipe, Verdict } from './types'
 import { buildList, redimensionnerRecette } from './lib/aggregate'
-import { cuisineRecemment, type Historique } from './lib/propose'
+import { cuisineRecemment, tousLesTags, type Historique } from './lib/propose'
 import {
   ecrireBasket,
   lireBasket,
@@ -36,7 +36,7 @@ import Panier from './screens/Panier'
 import Liste from './screens/Liste'
 import Cuisson from './screens/Cuisson'
 import CuissonListe from './screens/CuissonListe'
-import AjouterRecette from './screens/AjouterRecette'
+import ModifierRecette from './screens/ModifierRecette'
 import Bienvenue from './screens/Bienvenue'
 import TourGuide from './components/TourGuide'
 import BandeauMinuteur from './components/BandeauMinuteur'
@@ -61,7 +61,6 @@ const CORPUS: Recipe[] = corpus as Recipe[]
 type Vue =
   | { type: 'onglet'; onglet: Onglet }
   | { type: 'detail'; recipeId: string }
-  | { type: 'ajout' }
   | { type: 'edition'; recette: Recipe }
   | { type: 'cuisson'; recipeId: string }
   | { type: 'reglages' }
@@ -85,7 +84,12 @@ function lirePileSauvegardee(): Vue[] {
   try {
     const brut = sessionStorage.getItem(CLE_PILE)
     if (!brut) return PILE_INITIALE
-    const pile = JSON.parse(brut) as Vue[]
+    const pile = (JSON.parse(brut) as Vue[]).filter(
+      // « ajout » était un écran à lui seul ; il vit maintenant dans
+      // « Proposer ». Une session rechargée après la mise à jour ne doit
+      // pas rester bloquée sur une vue qui ne s'affiche plus.
+      (vue) => (vue as { type?: string }).type !== 'ajout',
+    )
     return Array.isArray(pile) && pile.length > 0 ? pile : PILE_INITIALE
   } catch {
     return PILE_INITIALE
@@ -222,10 +226,16 @@ export default function App() {
     [vueActuelle, irVers, avecTransition, defilerVers],
   )
 
+  /**
+   * Ajouter une recette n'est plus un écran : c'est une section de
+   * « Proposer », ouverte ici pour que le bouton du Panier puisse
+   * changer d'onglet et la déplier du même geste.
+   */
+  const [ajoutOuvert, setAjoutOuvert] = useState(false)
   const ouvrirAjout = useCallback(() => {
-    if (vueActuelle.type === 'ajout') return
-    irVers({ type: 'ajout' })
-  }, [vueActuelle, irVers])
+    setAjoutOuvert(true)
+    changerOnglet('propose')
+  }, [changerOnglet])
 
   // Bascule d'onglet sans empiler d'entrée d'historique — utilisée par
   // la visite guidée pour amener le bon écran derrière chaque repère.
@@ -566,18 +576,11 @@ export default function App() {
   if (vueActuelle.type === 'edition') {
     const { recette } = vueActuelle
     ecranPleinePage = (
-      <AjouterRecette
-        recetteInitiale={recette}
+      <ModifierRecette
+        recette={recette}
         titresExistants={recipes.map((r) => r.titre)}
-        onAjouter={(r) => modifier({ ...r, id: recette.id })}
-        onQuitter={reculer}
-      />
-    )
-  } else if (vueActuelle.type === 'ajout') {
-    ecranPleinePage = (
-      <AjouterRecette
-        titresExistants={recipes.map((r) => r.titre)}
-        onAjouter={ajouter}
+        tagsConnus={tousLesTags(recipes)}
+        onEnregistrer={modifier}
         onQuitter={reculer}
       />
     )
@@ -653,6 +656,9 @@ export default function App() {
               basket={basket}
               onBasket={majBasket}
               onDetail={(recipeId) => irVers({ type: 'detail', recipeId })}
+              onAjouterRecette={ajouter}
+              ajoutOuvert={ajoutOuvert}
+              onAjoutOuvert={setAjoutOuvert}
             />
           )}
 
@@ -731,14 +737,6 @@ export default function App() {
             {label}
           </button>
         ))}
-        <button
-          data-tour="nav-ajouter"
-          onClick={ouvrirAjout}
-          aria-current={vueActuelle.type === 'ajout' ? 'page' : undefined}
-        >
-          <Icone nom="plus-cercle" taille={22} />
-          {t('app.ajouter')}
-        </button>
       </nav>
 
       {!onboardingVu && estOnglet && (

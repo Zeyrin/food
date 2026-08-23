@@ -27,6 +27,8 @@ export type Nom =
   | 'flocon'
   | 'bouteille'
   | 'magasin'
+  | 'crayon'
+  | 'etincelle'
 
 const TRACES: Record<Nom, string> = {
   menu: 'M4 6h16M4 12h16M4 18h16',
@@ -54,6 +56,9 @@ const TRACES: Record<Nom, string> = {
   flocon: 'M12 2v20 M3.6 7l16.8 10 M20.4 7L3.6 17',
   bouteille: 'M10 2h4 M10.5 2v4L9 9.5V20a1 1 0 001 1h4a1 1 0 001-1V9.5L13.5 6V2 M9 13h6',
   magasin: 'M4 10h16v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9z M3 10l1.5-5h15L21 10 M9.5 20v-6h5v6',
+  crayon: 'M4 20h4L19.5 8.5a2.8 2.8 0 10-4-4L4 16v4z M14.5 5.5l4 4',
+  etincelle:
+    'M11 3l1.8 4.7L17.5 9.5 12.8 11.3 11 16l-1.8-4.7L4.5 9.5 9.2 7.7z M18 14l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z',
 }
 
 export default function Icone({ nom, taille = 24 }: { nom: Nom; taille?: number }) {

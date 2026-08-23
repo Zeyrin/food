@@ -2221,7 +2221,7 @@ button.carte-panier-bouton .carte-panier-corps {
   background: var(--carte-haute);
 }
 
-/* --- Saisie automatique --------------------------------------------------- */
+/* --- Champs de saisie ----------------------------------------------------- */
 
 .champ-texte {
   width: 100%;
@@ -2846,5 +2846,384 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   }
   .visite-carte-corps {
     animation: none;
+  }
+}
+
+/* --- Ajouter une recette (section de l'écran Proposer) --------------------
+   L'ajout n'a plus d'écran à lui : il vit dans la page où l'on regarde
+   son catalogue, puisque c'est là qu'on s'aperçoit qu'il manque un plat.
+   Replié, il tient sur une bande ; déplié, il devient un panneau posé
+   au-dessus de la grille, qui reste visible en dessous — la recette
+   ajoutée y apparaît dès qu'on referme. */
+
+.zone-ajout {
+  margin: 12px 0 16px;
+  /* L'en-tête de « Proposer » est collant : sans cette marge, la section
+     amenée sous les yeux vient se glisser dessous et on la découvre
+     décapitée, sans son titre ni sa croix de fermeture. */
+  scroll-margin-top: 130px;
+}
+
+.bande-ajout {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 2px dashed var(--trait);
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  color: var(--encre);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.12s ease, transform 0.12s ease;
+}
+
+.bande-ajout:active {
+  transform: scale(0.99);
+  border-color: var(--accent);
+}
+
+.bande-ajout-rond {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+.bande-ajout-texte {
+  flex: 1;
+  min-width: 0;
+}
+
+.bande-ajout-texte b {
+  display: block;
+  font-family: var(--affichage);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.bande-ajout-texte em {
+  display: block;
+  font-style: normal;
+  font-size: 13px;
+  color: var(--encre-douce);
+}
+
+.bande-ajout > svg {
+  flex: 0 0 auto;
+  color: var(--encre-douce);
+}
+
+.panneau-ajout {
+  padding: 16px;
+  border: 2px solid var(--accent-doux);
+  border-radius: var(--rayon-grand);
+  background: var(--carte);
+  box-shadow: var(--ombre);
+}
+
+.panneau-ajout-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.panneau-ajout-entete h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--accent);
+}
+
+/* Le choix qui manquait : « je l'écris » ou « je la fais écrire ». */
+.choix-methodes {
+  display: grid;
+  gap: 12px;
+}
+
+.carte-methode {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 18px;
+  border: 2px solid var(--trait);
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  color: var(--encre);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.12s ease, transform 0.12s ease;
+}
+
+.carte-methode:active {
+  transform: scale(0.99);
+  border-color: var(--accent);
+}
+
+.carte-methode-rond {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-doux);
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+.carte-methode b {
+  font-family: var(--affichage);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.carte-methode em {
+  font-style: normal;
+  font-size: 14px;
+  color: var(--encre-douce);
+}
+
+/* --- Formulaire de recette ----------------------------------------------
+   Le même pour écrire une recette et pour en modifier une : les titres
+   de section jalonnent une saisie longue, chaque champ porte son
+   étiquette visible plutôt qu'un simple `placeholder` qui disparaît dès
+   qu'on tape. */
+
+.titre-etape-formulaire {
+  margin: 24px 0 6px;
+  padding-top: 18px;
+  border-top: 1px solid var(--trait);
+  font-family: var(--affichage);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.formulaire-recette > .titre-etape-formulaire:first-child {
+  margin-top: 4px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.aide-champ {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--encre-douce);
+}
+
+.champ-etiquette {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.champ-etiquette > span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--encre-douce);
+}
+
+.champ-etiquette .champ-select {
+  flex: none;
+  width: 100%;
+}
+
+.rangee-champs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rangee-champs > .champ-etiquette {
+  flex: 1 1 120px;
+  min-width: 0;
+}
+
+.rangee-champs > .champ-etiquette-court {
+  flex: 1 1 90px;
+}
+
+/* Le rayon passe à la ligne sur un téléphone : son libellé est long, et
+   le couple quantité + unité se lit comme un tout. */
+.rangee-champs > .champ-etiquette-large {
+  flex: 1 1 100%;
+}
+
+.liste-champs {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.carte-champ {
+  padding: 14px;
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+}
+
+.carte-champ-entete {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.carte-champ-entete .champ-texte {
+  flex: 1;
+  min-width: 0;
+}
+
+.carte-champ-numero {
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-doux);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.carte-champ-titre {
+  flex: 1;
+  font-family: var(--affichage);
+  font-size: 15px;
+}
+
+.case-a-cocher {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--encre-douce);
+  cursor: pointer;
+}
+
+.case-a-cocher input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+}
+
+.champ-texte-secondaire {
+  margin-top: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+/* Les mêmes boutons que `.barre-actions`, mais dans le flux : en
+   section de « Proposer », une barre collée en bas flotterait par-dessus
+   le catalogue qui continue en dessous. */
+.actions-formulaire {
+  margin-top: 24px;
+}
+
+.actions-formulaire > * + * {
+  margin-top: 10px;
+}
+
+.bloc-succes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--rayon);
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+.bloc-succes p {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* --- Chemin « une IA écrit la recette » ----------------------------------
+   Trois gestes numérotés, dont celui qui se passe hors de l'app : c'est
+   son absence qui rendait l'ancien écran illisible. */
+
+.etapes-ia {
+  list-style: none;
+  display: grid;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+}
+
+.etapes-ia h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 6px;
+  font-family: var(--affichage);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.liens-ia {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lien-ia {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 18px;
+  border: 2px solid var(--trait);
+  border-radius: 999px;
+  color: var(--encre);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lien-ia:active {
+  border-color: var(--accent);
+}
+
+/* Catalogue vide : le bouton d'ajout est la seule chose à faire ici. */
+.vide .principal {
+  max-width: 320px;
+  margin: 16px auto 0;
+}
+
+@media (min-width: 560px) {
+  .choix-methodes {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .rangee-champs > .champ-etiquette-large {
+    flex: 1 1 160px;
+  }
+}
+
+@media (min-width: 900px) {
+  /* La grille de « Proposer » est en deux colonnes (filtres | recettes) :
+     la section d'ajout les traverse, en tête de page. */
+  .corps-propose .zone-ajout {
+    grid-column: 1 / -1;
+    margin: 0 0 8px;
+    /* En-tête sur une seule ligne : le titre et la recherche cohabitent. */
+    scroll-margin-top: 90px;
+  }
+
+  .panneau-ajout {
+    padding: 24px;
   }
 }
