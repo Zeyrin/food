@@ -61,12 +61,19 @@ npm run dev
 
 Pour activer la liste partagée, dans un projet Supabase (offre gratuite) :
 
-1. Éditeur SQL → `supabase/schema.sql` (les tables ; elles en sortent fermées, sans policy)
-2. Éditeur SQL → `supabase/migration-01-appartenance.sql` (les policies et les trois RPC)
-3. Authentication → Providers → **Anonymous sign-ins : activer**. Sans ça `auth.uid()` est
+1. Authentication → Providers → **Anonymous sign-ins : activer**. Sans ça `auth.uid()` est
    nul et la base refuse tout.
-4. Database → Replication → cocher `listes`, `recettes`, `historiques`
-5. Renseigner `.env`
+2. Éditeur SQL → `supabase/schema.sql` (les tables ; elles en sortent fermées, sans policy)
+3. Éditeur SQL → `supabase/verification-avant.sql` (lecture seule — noter les compteurs)
+4. Éditeur SQL → `supabase/migration-01-appartenance.sql` (les policies et les trois RPC)
+5. Éditeur SQL → `supabase/verification-apres.sql` (les compteurs doivent correspondre)
+6. Database → Replication → cocher `listes`, `recettes`, `historiques`
+7. Renseigner `.env`
+
+La migration ne touche aucune donnée existante, s'exécute dans une transaction, et se
+rejoue sans dommage. Elle a été éprouvée sur un PostgreSQL monté pour l'occasion, sur les
+deux chemins : base neuve, et base déjà peuplée avec un foyer dépourvu de code — le cas où
+un appareil aurait perdu l'accès à ses propres listes sans le rattrapage du §6.
 
 Vérification qui ne ment pas : avec la clé anon et sans session, `select * from foyers` et
 `select * from listes` doivent renvoyer zéro ligne.

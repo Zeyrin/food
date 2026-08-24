@@ -33,7 +33,26 @@
 --   Authentication → Providers → Anonymous sign-ins : activer.
 --   Sans ça, `auth.uid()` est nul et toutes les fonctions ci-dessous refusent.
 --
+-- SÛRETÉ
+--
+--   Aucun `drop table`, `truncate`, `delete` ni `update` : pas une ligne de
+--   données existante n'est touchée. Le fichier crée des tables et des
+--   fonctions, remplace des policies, et insère les codes manquants (§6).
+--
+--   Il est enveloppé dans une transaction : à la moindre erreur tout est
+--   annulé et la base reste dans l'état d'avant. NE PAS retirer le
+--   BEGIN/COMMIT — exécuté ligne à ligne, un échec au milieu laisserait les
+--   anciennes policies supprimées et les nouvelles à moitié posées, donc
+--   tout le monde verrouillé dehors.
+--
+--   Rejouable : le passer deux fois ne casse rien et ne duplique rien.
+--
+--   Éprouvé sur un PostgreSQL 16 monté pour l'occasion, avec des données
+--   imitant la production — dont un foyer sans code, le cas rattrapé au §6.
+--
 -- =============================================================================
+
+begin;
 
 -- --- 1. Appartenance ---------------------------------------------------------
 
@@ -73,9 +92,18 @@ $$;
 
 -- --- 2. Les trois tables de données -----------------------------------------
 
+-- Les anciennes policies, et les nouvelles : sans ce second jeu de `drop`,
+-- rejouer le fichier échouait sur « policy already exists » après avoir
+-- déjà supprimé les anciennes. Dans une transaction, tout est annulé et
+-- rien n'est perdu ; exécuté ligne à ligne, on restait verrouillé dehors,
+-- les anciennes règles retirées et les nouvelles à moitié posées.
 drop policy if exists "acces par uuid" on listes;
 drop policy if exists "acces par uuid de foyer" on recettes;
 drop policy if exists "acces par uuid de foyer" on historiques;
+
+drop policy if exists "foyers dont on est membre" on listes;
+drop policy if exists "foyers dont on est membre" on recettes;
+drop policy if exists "foyers dont on est membre" on historiques;
 
 create policy "foyers dont on est membre" on listes
   for all using (est_membre(foyer)) with check (est_membre(foyer));
@@ -291,3 +319,9 @@ grant execute on function creer_foyer(), rejoindre_foyer(text), reclamer_foyer(u
 -- Doit renvoyer zéro ligne, avec la clé anon et sans session :
 --   select * from foyers;
 --   select * from listes;
+
+commit;
+
+-- =============================================================================
+-- Passe ensuite verification-apres.sql.
+-- =============================================================================
