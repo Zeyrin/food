@@ -74,10 +74,37 @@ for (const fichier of readdirSync(join(racine, 'public/plats'))) {
   if (!utilisees.has(`/plats/${fichier}`)) erreurs.push(`photos : /plats/${fichier} n'est utilisée par aucune recette`)
 }
 
+// --- 3. Un seul domaine canonique -------------------------------------------
+
+// L'app tournait sur www.fffood.fr pendant que `canonical`, `og:url`,
+// `og:image`, le sitemap et robots.txt désignaient tous une URL Vercel.
+// Conséquences invisibles depuis l'app : un moteur de recherche consolide
+// vers l'URL annoncée plutôt que vers celle qu'on partage, et l'aperçu d'un
+// lien envoyé par SMS affiche ce domaine-là. Ces cinq mentions sont
+// désormais tenues d'être d'accord.
+const html = lire('index.html')
+const domaines = new Set<string>()
+
+const releve = [
+  ...[...html.matchAll(/<link rel="canonical" href="(https?:\/\/[^/"]+)/g)],
+  ...[...html.matchAll(/<meta property="og:(?:url|image)" content="(https?:\/\/[^/"]+)/g)],
+  ...[...lire('public/sitemap.xml').matchAll(/<loc>(https?:\/\/[^/<]+)/g)],
+  ...[...lire('public/robots.txt').matchAll(/Sitemap:\s*(https?:\/\/[^/\s]+)/g)],
+]
+for (const m of releve) domaines.add(m[1]!)
+
+if (releve.length < 5) {
+  erreurs.push(`domaine : ${releve.length} mention(s) trouvée(s), 5 attendues — le relevé a dû rater un fichier`)
+}
+if (domaines.size > 1) {
+  erreurs.push(`domaine : plusieurs origines annoncées — ${[...domaines].join(', ')}`)
+}
+
 // --- Rapport ----------------------------------------------------------------
 
 console.log(`i18n : ${fr.size} clés fr, ${en.size} clés en.`)
 console.log(`crédits : ${credites.size} lignes pour ${recettes.filter((r) => r.image).length} recettes avec photo.`)
+console.log(`domaine : ${[...domaines].join(', ')} (${releve.length} mentions).`)
 
 if (erreurs.length) {
   console.log('')
