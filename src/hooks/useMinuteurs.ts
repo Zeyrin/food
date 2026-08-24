@@ -9,6 +9,7 @@ import {
   notifierMinuteur,
   type Minuteur,
 } from '../lib/minuteurs'
+import { suivre } from '../lib/analytique'
 
 /** Horloge partagée : un seul intervalle pour tous les minuteurs. */
 function useMaintenant(actif: boolean): number {
@@ -68,6 +69,9 @@ export function useMinuteurs(): Minuteurs {
       // Même raison de calendrier : la permission de notifier se demande
       // sur un geste, et celui-ci dit exactement « préviens-moi ».
       demanderNotifications()
+      // Un minuteur lancé veut dire qu'on cuisine pour de bon, casserole
+      // sur le feu — bien plus net que « l'écran cuisson a été ouvert ».
+      suivre('minuteur_lance', { minutes: Math.round(secondes / 60) })
       const depart = Date.now()
       setMinuteurs((prec) => [
         ...prec,

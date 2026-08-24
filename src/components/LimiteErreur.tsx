@@ -1,6 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { useLangue } from '../lib/i18n'
 import Icone from './Icone'
+import { suivreErreur } from '../lib/analytique'
 
 /**
  * Le filet sous l'app. Une exception pendant un rendu React démonte
@@ -38,6 +39,10 @@ class Filet extends Component<Props, State> {
     // La console est le seul endroit où la pile survit : l'écran de
     // repli, lui, n'affiche que le message.
     console.error('Rendu interrompu :', erreur, infos.componentStack)
+    // Et le seul endroit d'où on l'apprend, nous : un écran blanc chez
+    // quelqu'un d'autre ne remonte nulle part. Le message seul — la
+    // pile ne se lit pas dans un tableau de bord.
+    suivreErreur(erreur.message)
   }
 
   render() {

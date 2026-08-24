@@ -217,6 +217,36 @@ Ces pages sont en français seulement. Le reste de l'app a deux langues parce qu
 réglage se lit au moment de l'affichage ; une page écrite au build n'a pas de langue
 courante à lire, et le corpus est écrit en français.
 
+## Ce qu'on mesure
+
+**L'URL ne dit pas où on est, donc les écrans s'envoient à la main.** Rybbit découpe ses
+statistiques par adresse, et l'app n'en a qu'une : ses quatre onglets, ses fiches et son
+mode cuisson étaient indistinguables d'un `/`. On savait que des gens venaient, jamais
+s'ils arrivaient jusqu'à la liste de courses. L'autre solution — faire changer l'URL au fil
+des écrans, que Rybbit aurait suivie toute seule — a été écartée : on préfère des liens
+propres. `src/lib/analytique.ts` envoie donc un événement `ecran` à chaque changement de
+vue, et une poignée d'événements aux moments qui apprennent quelque chose : un plat mis au
+panier, la dernière case de la liste cochée, un plat cuisiné jusqu'au verdict, une recette
+ajoutée, un foyer créé ou rejoint, un minuteur lancé, l'app installée.
+
+Le compteur de pages de Rybbit continue de tourner comme avant, sans y toucher : les
+chiffres restent comparables d'un mois sur l'autre.
+
+**Ce qui ne sort jamais.** L'identifiant de foyer et son code court sont le secret de
+partage : les envoyer à un service tiers reviendrait à publier la clé de la liste. Rybbit
+prend ce qui suit `#/` comme nom de page, et le lien qu'on envoie à son conjoint est
+`#/f/<uuid>` — l'identifiant partait donc tel quel, et se serait affiché dans notre propre
+rapport. `data-mask-patterns` (dans `index.html`) l'enregistre désormais comme `/f/*`. Le
+texte libre ne sort pas non plus : un item tapé à la main dit ce qu'on achète. Restent des
+identifiants de recettes, qui sont publics, et des compteurs.
+
+`Evenements` est la liste complète et fermée : un nom qui n'y figure pas ne compile pas.
+Sans ça, une faute de frappe crée un événement fantôme qu'on ne remarque qu'en cherchant,
+des semaines plus tard, pourquoi la courbe est plate. Et `analytique.test.ts` garde
+l'invariant qui compte : la mesure ne lève jamais. Le script manque chez plus de monde
+qu'on ne croit — bloqueur de publicité, réseau coupé, `npm run dev` sans la balise — et un
+compteur n'a pas le droit d'emporter un écran de cuisson.
+
 ## Déploiement
 
 `npm run build` produit un `dist/` statique. Cloudflare Pages ou GitHub Pages, tous deux

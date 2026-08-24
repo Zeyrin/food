@@ -49,6 +49,7 @@ import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
 import { useDecalageBarreOutils } from './hooks/useDecalageBarreOutils'
 import { useLangue } from './lib/i18n'
+import { suivre, type Ecran } from './lib/analytique'
 
 const CORPUS: Recipe[] = corpus as Recipe[]
 
@@ -364,6 +365,9 @@ export default function App() {
     await rejoindreFoyer(id, code)
     setFoyer(id)
     setCodeFoyer(code)
+    // Ni l'identifiant ni le code : ce sont les clés de la liste
+    // (voir lib/analytique.ts). Seul le fait compte.
+    suivre('foyer_cree')
   }, [])
 
   const rejoindre = useCallback(async (code: string) => {
@@ -372,6 +376,9 @@ export default function App() {
     await rejoindreFoyer(id, code)
     setFoyer(id)
     setCodeFoyer(code)
+    // Un second téléphone dans le foyer : l'app fait enfin ce pour
+    // quoi elle existe, et c'est invisible dans un compteur de visites.
+    suivre('foyer_rejoint')
     return true
   }, [])
 
@@ -472,6 +479,30 @@ export default function App() {
     if (recipes.some((r) => r.id === recipeId)) irVers({ type: 'detail', recipeId })
   }, [recipes, irVers])
 
+  /**
+   * L'écran courant, envoyé à la main. Rybbit découpe ses statistiques
+   * par adresse, et l'app n'en a qu'une : sans ça, « Proposer » et
+   * « Liste » sont le même `/`, et on ne peut pas savoir où les gens
+   * s'arrêtent. On a délibérément écarté l'autre solution — faire
+   * changer l'URL au fil des écrans — pour garder des liens propres.
+   */
+  const ecranCourant: Ecran | null = !foyerCharge
+    ? null
+    : !foyer
+      ? 'bienvenue'
+      : vueActuelle.type === 'onglet'
+        ? // L'onglet « cuisson » liste les plats à cuisiner ; l'écran
+          // `cuisson` est le pas-à-pas. Deux moments très différents du
+          // parcours, qu'un même nom rendrait illisibles.
+          vueActuelle.onglet === 'cuisson'
+          ? 'cuisson-liste'
+          : vueActuelle.onglet
+        : vueActuelle.type
+
+  useEffect(() => {
+    if (ecranCourant) suivre('ecran', { nom: ecranCourant })
+  }, [ecranCourant])
+
   // L'historique suit le même chemin que la liste : il vit dans le
   // foyer. Le local sert d'amorce hors ligne et de repli tant que
   // Supabase n'a pas répondu.
@@ -503,8 +534,19 @@ export default function App() {
   )
 
   const majBasket = useCallback(
-    (suivant: BasketEntry[]) => majListe({ ...etatListe, panier: suivant }),
-    [etatListe, majListe],
+    (suivant: BasketEntry[]) => {
+      // Le panier change par un tableau entier — ajout, retrait et
+      // changement de parts passent tous par ici. L'ajout se déduit
+      // donc par différence : c'est la première intention réelle de
+      // la semaine, et le seul de ces trois gestes qui l'exprime.
+      for (const e of suivant) {
+        if (!basket.some((b) => b.recipeId === e.recipeId)) {
+          suivre('panier_ajout', { recette: e.recipeId })
+        }
+      }
+      majListe({ ...etatListe, panier: suivant })
+    },
+    [basket, etatListe, majListe],
   )
 
   /**
@@ -556,11 +598,19 @@ export default function App() {
 
   const verdict = useCallback(
     async (recipeId: string, v: Verdict) => {
+      // Le verdict ne se donne qu'après la dernière étape : c'est le
+      // seul endroit qui prouve qu'un plat a été cuisiné jusqu'au bout,
+      // et pas seulement ouvert.
+      suivre('cuisson_terminee', {
+        recette: recipeId,
+        etapes: recipes.find((r) => r.id === recipeId)?.etapes.length ?? 0,
+        verdict: v,
+      })
       const suivant = await marquerCuisine(recipeId, v)
       setHistorique(suivant)
       if (foyer) void ecrireHistoriqueFoyer(foyer, suivant)
     },
-    [foyer],
+    [foyer, recipes],
   )
 
   // `recipes` compte autant que `basket` : le catalogue arrive après coup

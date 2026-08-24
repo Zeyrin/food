@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ItemLibre, ListItem, ListState, RayonId, Recipe } from '../types'
 import { RAYONS } from '../types'
 import type { ConfigMagasins, Magasin } from '../lib/magasins'
@@ -7,6 +7,7 @@ import { formatQuantite } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { useLangue } from '../lib/i18n'
+import { suivre } from '../lib/analytique'
 import Icone from '../components/Icone'
 
 interface Props {
@@ -207,6 +208,25 @@ export default function Liste({
 
   const aAcheter = tousLesItems.filter((i) => !etat.dejaPossede[i.key])
   const restants = aAcheter.filter((i) => !etat.coche[i.key]).length
+
+  /**
+   * Les courses vraiment faites — c'est le bout du parcours, et le seul
+   * chiffre qui dise si l'app sert à quelque chose une fois en magasin.
+   * On ne compte pas une liste vide : « rien à acheter » n'est pas une
+   * course terminée. Le déclenchement suit la transition vers zéro,
+   * pas l'état zéro, sinon chaque re-rendu de l'écran fini le renverrait.
+   */
+  const listeFinie = restants === 0 && aAcheter.length > 0
+  const dejaCompte = useRef(false)
+  useEffect(() => {
+    if (!listeFinie) {
+      dejaCompte.current = false
+      return
+    }
+    if (dejaCompte.current) return
+    dejaCompte.current = true
+    suivre('liste_terminee', { lignes: aAcheter.length })
+  }, [listeFinie, aAcheter.length])
 
   // Le parcours de courses : un arrêt après l'autre, chacun rangé par
   // rayon (voir lib/magasins.ts).

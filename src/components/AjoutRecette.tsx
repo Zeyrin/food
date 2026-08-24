@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Recipe } from '../types'
 import { useLangue } from '../lib/i18n'
+import { suivre } from '../lib/analytique'
 import Icone from './Icone'
 import FormulaireRecette from './FormulaireRecette'
 import CollageIA from './CollageIA'
@@ -96,6 +97,9 @@ export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tags
           tagsConnus={tagsConnus}
           onValider={async (recette) => {
             await onAjouter(recette)
+            // Après l'attente, pas avant : une recette refusée par le
+            // réseau n'a pas rejoint le catalogue.
+            suivre('recette_ajoutee', { via: 'formulaire', lot: 1 })
             setBilan({ nombre: 1, titre: recette.titre })
           }}
           onAnnuler={() => setMethode(null)}
@@ -105,7 +109,10 @@ export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tags
         <CollageIA
           titresExistants={titresExistants}
           onAjouter={onAjouter}
-          onFini={(nombre) => setBilan({ nombre })}
+          onFini={(nombre) => {
+            suivre('recette_ajoutee', { via: 'collage', lot: nombre })
+            setBilan({ nombre })
+          }}
           onRetour={() => setMethode(null)}
         />
       )}

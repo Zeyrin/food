@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { suivre } from '../lib/analytique'
 
 interface EvenementInstallation extends Event {
   prompt: () => Promise<void>
@@ -40,6 +41,10 @@ export function useInstallation(): {
       setEvenement(e as EvenementInstallation)
     }
     const surInstallation = () => {
+      // `appinstalled` couvre les deux chemins — la boîte de Chrome et
+      // le geste manuel d'iOS — là où le bouton des réglages ne voit
+      // que le premier.
+      suivre('installation_pwa')
       setInstallee(true)
       setEvenement(null)
     }
