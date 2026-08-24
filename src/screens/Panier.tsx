@@ -4,6 +4,7 @@ import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { cuisineRecemment, type Historique } from '../lib/propose'
 import { useLangue } from '../lib/i18n'
+import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 
@@ -250,7 +251,13 @@ export default function Panier({
       <div className="espaceur-action-flottante" aria-hidden="true" />
 
       <div className="action-flottante">
-        <button className="principal" onClick={onVersListe}>
+        <button
+          className="principal"
+          onClick={() => {
+            mesurer('liste_generee', { plats: basket.length, parts, minutes: tempsTotal })
+            onVersListe()
+          }}
+        >
           <Icone nom="panier" taille={20} /> {t('panier.genererListe')}
         </button>
       </div>

@@ -3,6 +3,7 @@ import type { Onglet } from '../types'
 import { VISITE_GUIDEE } from '../data/onboarding'
 import { useTourRect } from '../hooks/useTourRect'
 import { etapesOnboarding, useLangue } from '../lib/i18n'
+import { mesurer } from '../lib/mesure'
 import Icone from './Icone'
 
 interface Props {
@@ -79,12 +80,23 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
     setStyle({ top: haut, left: gauche })
   }, [rect, index])
 
-  const suivant = () => (dernier ? onTerminer() : setIndex((i) => i + 1))
+  const suivant = () => {
+    if (!dernier) return setIndex((i) => i + 1)
+    mesurer('visite_terminee', { etapes: VISITE_GUIDEE.length })
+    onTerminer()
+  }
+
+  // Abandonner n'est pas terminer : l'étape où l'on décroche dit laquelle
+  // ne vaut pas le détour.
+  const abandonner = () => {
+    mesurer('visite_passee', { etape: index + 1, etapes: VISITE_GUIDEE.length })
+    onTerminer()
+  }
   const precedent = () => setIndex((i) => Math.max(0, i - 1))
 
   useEffect(() => {
     const surTouche = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onTerminer()
+      if (e.key === 'Escape') abandonner()
       if (e.key === 'ArrowRight' || e.key === 'Enter') suivant()
       if (e.key === 'ArrowLeft') precedent()
     }
@@ -138,7 +150,7 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
           <span className="visite-compteur">
             {index + 1} / {VISITE_GUIDEE.length}
           </span>
-          <button className="discret visite-passer" onClick={onTerminer}>
+          <button className="discret visite-passer" onClick={abandonner}>
             {t('tour.passer')}
           </button>
         </div>

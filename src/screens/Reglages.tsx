@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useInstallation } from '../hooks/useInstallation'
 import { useLangue } from '../lib/i18n'
 import { useEtatSynchro } from '../hooks/useEtatSynchro'
+import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
 
 /**
@@ -74,14 +75,20 @@ export default function Reglages({
         <button
           className="discret"
           aria-pressed={langue === 'fr'}
-          onClick={() => definirLangue('fr')}
+          onClick={() => {
+            mesurer('langue_changee', { vers: 'fr' })
+            definirLangue('fr')
+          }}
         >
           Français
         </button>
         <button
           className="discret"
           aria-pressed={langue === 'en'}
-          onClick={() => definirLangue('en')}
+          onClick={() => {
+            mesurer('langue_changee', { vers: 'en' })
+            definirLangue('en')
+          }}
         >
           English
         </button>
@@ -217,6 +224,18 @@ export default function Reglages({
           licences Creative Commons qui demandent de citer l'auteur : la page
           de crédits doit donc être atteignable depuis l'app, pas seulement
           depuis le dépôt. */}
+      {/* La page de données est servie avec l'app, comme les crédits : une
+          politique de confidentialité qui n'est atteignable que depuis le
+          dépôt ne remplit pas son office. */}
+      <h2>{t('reglages.donneesTitre')}</h2>
+      <p className="aide">
+        {t('reglages.donneesTexte')}{' '}
+        <a href="/donnees.html" target="_blank" rel="noopener noreferrer">
+          {t('reglages.donneesLien')}
+        </a>
+        .
+      </p>
+
       <h2>{t('reglages.creditsPhoto')}</h2>
       <p className="aide">
         {t('reglages.creditsPhotoTexte')}{' '}

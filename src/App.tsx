@@ -50,6 +50,7 @@ import { useEtatSynchro } from './hooks/useEtatSynchro'
 import { useDecalageBarreOutils } from './hooks/useDecalageBarreOutils'
 import { useEnteteDefilee } from './hooks/useEnteteDefilee'
 import { useLangue } from './lib/i18n'
+import { mesurer } from './lib/mesure'
 
 const CORPUS: Recipe[] = corpus as Recipe[]
 
@@ -339,6 +340,7 @@ export default function App() {
     await rejoindreFoyer(id, code)
     setFoyer(id)
     setCodeFoyer(code)
+    mesurer('foyer_cree')
   }, [])
 
   const rejoindre = useCallback(async (code: string) => {
@@ -347,6 +349,7 @@ export default function App() {
     await rejoindreFoyer(id, code)
     setFoyer(id)
     setCodeFoyer(code)
+    mesurer('foyer_rejoint')
     return true
   }, [])
 
@@ -459,15 +462,16 @@ export default function App() {
    * ligne `listes` d'avant le partage du panier), donc un panier
    * simplement omis ne se viderait pas sur l'autre téléphone.
    */
-  const viderPanier = useCallback(
-    () => majListe({ coche: {}, dejaPossede: {}, items: [], panier: [] }),
-    [majListe],
-  )
+  const viderPanier = useCallback(() => {
+    mesurer('panier_vide', { plats: basket.length })
+    majListe({ coche: {}, dejaPossede: {}, items: [], panier: [] })
+  }, [majListe, basket.length])
 
   const ajouter = useCallback(
     async (recette: Recipe) => {
       if (!foyer) throw new Error(t('app.foyerNonInitialiseReessayez'))
       await ajouterRecette(foyer, recette)
+      mesurer('recette_collee', { ingredients: recette.ingredients.length, etapes: recette.etapes.length })
       setRecipes((prec) => [...prec, recette])
     },
     [foyer],
@@ -477,6 +481,7 @@ export default function App() {
     async (recette: Recipe) => {
       if (!foyer) throw new Error(t('app.foyerNonInitialise'))
       await modifierRecette(foyer, recette)
+      mesurer('recette_modifiee')
       setRecipes((prec) => prec.map((r) => (r.id === recette.id ? recette : r)))
     },
     [foyer],
@@ -486,6 +491,7 @@ export default function App() {
     async (recipeId: string) => {
       if (!foyer) return
       await supprimerRecette(foyer, recipeId)
+      mesurer('recette_supprimee')
       setRecipes((prec) => prec.filter((r) => r.id !== recipeId))
       majBasket(basket.filter((e) => e.recipeId !== recipeId))
       reculer()
@@ -495,6 +501,7 @@ export default function App() {
 
   const verdict = useCallback(
     async (recipeId: string, v: Verdict) => {
+      mesurer('cuisson_terminee', { verdict: v })
       const suivant = await marquerCuisine(recipeId, v)
       setHistorique(suivant)
       if (foyer) void ecrireHistoriqueFoyer(foyer, suivant)

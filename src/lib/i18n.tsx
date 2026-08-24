@@ -13,6 +13,12 @@ const fr: Dico = {
     plusTard: 'Plus tard',
   },
   reglages: {
+    donneesTitre:
+      "Données & vie privée",
+    donneesTexte:
+      "Ce qui reste sur ce téléphone, ce qui est partagé dans le foyer, et ce que voit la mesure d'audience.",
+    donneesLien:
+      "Lire la page",
     synchroTitre:
       'Synchro bloquée',
     synchroTexte:
@@ -329,6 +335,12 @@ const en: Dico = {
     plusTard: 'Later',
   },
   reglages: {
+    donneesTitre:
+      "Data & privacy",
+    donneesTexte:
+      "What stays on this phone, what is shared within the household, and what the audience measurement sees.",
+    donneesLien:
+      "Read the page",
     synchroTitre:
       'Sync blocked',
     synchroTexte:

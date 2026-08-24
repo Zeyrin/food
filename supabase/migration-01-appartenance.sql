@@ -226,14 +226,63 @@ begin
 end;
 $$;
 
--- --- 6. Droits d'appel -------------------------------------------------------
+-- --- 6. Rattrapage des foyers sans code --------------------------------------
+
+-- Un foyer créé pendant que l'app tournait sans Supabase configuré n'a
+-- jamais eu de ligne ici : `creerFoyerAvecCode` rendait un UUID et un code
+-- purement locaux. Ces foyers ont pourtant des listes et des recettes en
+-- base, et `reclamer_foyer` les refuserait — l'appareil perdrait l'accès à
+-- ses propres données au moment de la migration.
+--
+-- On les recrée donc à partir des identifiants réellement présents dans les
+-- trois tables de données. Le code tiré ici ne correspondra pas à celui
+-- affiché autrefois sur l'appareil, mais ce code-là ne menait nulle part :
+-- il n'avait jamais été enregistré. Réglages montrera le nouveau.
+do $$
+declare
+  f         uuid;
+  alphabet  text := 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  essai     text;
+  i         int;
+begin
+  for f in
+    select foyer from listes
+    union select foyer from recettes
+    union select foyer from historiques
+    except select foyer from foyers
+  loop
+    for _tentative in 1..10 loop
+      essai := '';
+      for i in 1..6 loop
+        essai := essai || substr(alphabet, floor(random() * length(alphabet))::int + 1, 1);
+      end loop;
+      begin
+        insert into foyers (foyer, code) values (f, essai);
+        exit;
+      exception when unique_violation then
+        -- code déjà pris, on retire
+      end;
+    end loop;
+  end loop;
+end;
+$$;
+
+-- Doit renvoyer zéro : plus aucun foyer de données sans code.
+--   select count(*) from (
+--     select foyer from listes
+--     union select foyer from recettes
+--     union select foyer from historiques
+--     except select foyer from foyers
+--   ) manquants;
+
+-- --- 7. Droits d'appel -------------------------------------------------------
 
 -- `authenticated` couvre les sessions anonymes : elles ont un vrai
 -- utilisateur. `anon` (sans session du tout) n'a rien à faire ici.
 revoke all on function creer_foyer(), rejoindre_foyer(text), reclamer_foyer(uuid) from public, anon;
 grant execute on function creer_foyer(), rejoindre_foyer(text), reclamer_foyer(uuid) to authenticated;
 
--- --- 7. Vérification ---------------------------------------------------------
+-- --- 8. Vérification ---------------------------------------------------------
 
 -- Doit renvoyer les trois tables de données (la réplication temps réel évalue
 -- la RLS ci-dessus : un non-membre ne recevra plus rien).

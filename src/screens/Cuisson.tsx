@@ -7,6 +7,7 @@ import type { Minuteurs } from '../hooks/useMinuteurs'
 import { ecrireProgression, lireProgression, oublierProgression } from '../lib/progressionCuisson'
 import { useLangue } from '../lib/i18n'
 import BandeauMinuteur from '../components/BandeauMinuteur'
+import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
 
 interface Props {
@@ -81,15 +82,37 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
                   balayée) reprend où elle en était — mais c'est un choix
                   explicite : rien de pire que de croire repartir du début
                   et sauter la moitié des étapes sans le voir. */}
-              <button className="principal" onClick={() => setIndex(reprise)}>
+              <button
+                className="principal"
+                onClick={() => {
+                  mesurer('cuisson_reprise', { etape: reprise + 1, etapes: recette.etapes.length })
+                  setIndex(reprise)
+                }}
+              >
                 <Icone nom="grill" taille={20} /> {t('cuisson.reprendre', { n: reprise + 1 })}
               </button>
-              <button className="discret pleine-largeur" onClick={() => setIndex(0)}>
+              <button
+                className="discret pleine-largeur"
+                onClick={() => {
+                  mesurer('cuisson_commencee', { etapes: recette.etapes.length, reprise: 0 })
+                  setIndex(0)
+                }}
+              >
                 {t('cuisson.repartirDuDebut')}
               </button>
             </>
           ) : (
-            <button className="principal" onClick={() => setIndex(0)}>
+            <button
+              className="principal"
+              onClick={() => {
+                mesurer('cuisson_commencee', {
+                  etapes: recette.etapes.length,
+                  minutes: recette.temps,
+                  reprise: 0,
+                })
+                setIndex(0)
+              }}
+            >
               <Icone nom="grill" taille={20} /> {t('cuisson.commencer')}
             </button>
           )}
@@ -209,7 +232,10 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
               <button
                 key={m.secondes}
                 className="bouton-minuteur"
-                onClick={() => minuteurs.lancer(m.secondes, m.nom, recette.id, recette.titre)}
+                onClick={() => {
+                  mesurer('minuteur_lance', { secondes: m.secondes })
+                  minuteurs.lancer(m.secondes, m.nom, recette.id, recette.titre)
+                }}
               >
                 <Icone nom="minuteur" taille={16} /> {t('cuisson.lancer', { duree: formatDuree(m.secondes) })}
               </button>
