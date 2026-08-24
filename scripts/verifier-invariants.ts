@@ -85,11 +85,15 @@ for (const fichier of readdirSync(join(racine, 'public/plats'))) {
 const html = lire('index.html')
 const domaines = new Set<string>()
 
+// `public/sitemap.xml` n'existe plus : il est engendré au build par
+// `scripts/prerender.mjs`, dont la constante SITE porte le commentaire
+// « doit rester identique au canonical de index.html ». C'est exactement
+// l'invariant vérifié ici, alors on la relève avec les autres.
 const releve = [
   ...[...html.matchAll(/<link rel="canonical" href="(https?:\/\/[^/"]+)/g)],
   ...[...html.matchAll(/<meta property="og:(?:url|image)" content="(https?:\/\/[^/"]+)/g)],
-  ...[...lire('public/sitemap.xml').matchAll(/<loc>(https?:\/\/[^/<]+)/g)],
   ...[...lire('public/robots.txt').matchAll(/Sitemap:\s*(https?:\/\/[^/\s]+)/g)],
+  ...[...lire('scripts/prerender.mjs').matchAll(/const SITE = '(https?:\/\/[^/']+)/g)],
 ]
 for (const m of releve) domaines.add(m[1]!)
 

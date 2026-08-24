@@ -11,13 +11,13 @@ Aujourd'hui : demander à Claude "génère-moi des recettes végé pour l'été"
 Avec l'app : la même génération, mais le résultat colle direct dans le catalogue partagé.
 
 **Flux** :
-1. Demander à une IA des recettes, avec un prompt-template fourni par l'app (qui force le format `Recipe` exact : titre, temps, portions, tags, ingrédients avec quantités/unités/magasin, étapes).
+1. Demander à une IA des recettes, avec un prompt-template fourni par l'app (qui force le format `Recipe` exact : titre, temps, portions, tags, ingrédients avec quantités/unités/rayon, étapes).
 2. Dans l'app, écran **Proposer** → bouton discret "Ajouter une recette".
 3. Coller le JSON généré. L'app valide le format, l'ajoute à Supabase.
 4. Elle rejoint immédiatement le même pool que les 16 recettes existantes — pas de statut "brouillon", pas de friction.
 
 ### Job 2 — Le run hebdomadaire (déjà construit, ne change pas)
-**Proposer** (filtrer par temps/tags, ajouter au panier) → **Panier** (ajuster les portions) → **Liste** (trier ce qu'on a déjà, cocher en rayon, groupé par magasin) → **Cuisson** (étape par étape, quantités annotées, mode focus plein écran).
+**Proposer** (filtrer par temps/tags, ajouter au panier) → **Panier** (ajuster les portions) → **Liste** (trier ce qu'on a déjà, cocher en rayon, rangé par rayon puis par magasin) → **Cuisson** (étape par étape, quantités annotées, mode focus plein écran).
 
 ## Ce qui découle de ça pour la suite du travail
 

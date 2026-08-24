@@ -6,7 +6,7 @@ const RECETTE = {
   temps: 30,
   portions: 4,
   tags: ['végé'],
-  ingredients: [{ nom: 'lentilles corail', quantite: 250, unite: 'g', magasin: 'primeur' }],
+  ingredients: [{ nom: 'lentilles corail', quantite: 250, unite: 'g', rayon: 'epicerie' }],
   etapes: ['Émincer.', 'Cuire.'],
 }
 
@@ -56,10 +56,23 @@ assert.equal(melange.recettes[0]!.titre, 'Vraiment neuve')
 // Une recette invalide dans le lot ne bloque pas les autres, et son
 // titre apparaît dans l'erreur pour qu'on sache laquelle reprendre.
 const mixte = validerCollage(
-  json([RECETTE, { ...RECETTE, titre: 'Raté', ingredients: [{ nom: 'a', quantite: 1, unite: 'litres', magasin: 'primeur' }] }]),
+  json([RECETTE, { ...RECETTE, titre: 'Raté', ingredients: [{ nom: 'a', quantite: 1, unite: 'litres', rayon: 'epicerie' }] }]),
 )
 assert.equal(mixte.recettes.length, 1)
 assert.ok(mixte.erreurs.some((e) => e.startsWith('Raté : ')))
+
+// Une recette écrite avant les rayons, quand chaque ingrédient nommait
+// un magasin : elle entre, traduite, plutôt que d'être refusée.
+const ancienne = validerCollage(
+  json({
+    ...RECETTE,
+    titre: 'Ancienne',
+    ingredients: [{ nom: 'carotte', quantite: 2, unite: 'piece', magasin: 'primeur' }],
+  }),
+)
+assert.equal(ancienne.recettes.length, 1)
+assert.equal(ancienne.recettes[0]!.ingredients[0]!.rayon, 'fruits-legumes')
+assert.equal(ancienne.recettes[0]!.ingredients[0]!.magasin, undefined)
 
 // Rien d'exploitable : un message, aucune recette.
 for (const entree of ['   ', 'Je ne peux pas faire ça.', '{"titre": "Coupé", "temps": 3']) {

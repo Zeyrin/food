@@ -1,40 +1,32 @@
-import { useRegisterSW } from 'virtual:pwa-register/react'
-import { useLangue } from '../lib/i18n'
 import Icone from './Icone'
 
+interface Props {
+  onAppliquer: () => void
+  onPlusTard: () => void
+}
+
 /**
- * Une nouvelle version est en cache et attend d'être servie.
- *
- * Le service worker était en `autoUpdate` : il prenait la main et
- * rechargeait la page tout seul, ce qui peut tomber au pire moment —
- * debout dans le rayon, au milieu d'une liste à moitié cochée. Rien
- * n'était perdu (tout vit dans IndexedDB et sur le foyer), mais l'écran
- * sautait sans explication.
- *
- * Le choix revient donc à l'utilisateur, et le bandeau ne bloque rien :
- * ignoré, l'app continue sur l'ancienne version et la nouvelle sera
- * servie au prochain lancement.
+ * Une nouvelle version est déjà téléchargée et n'attend qu'un
+ * rechargement. On le propose au lieu de l'imposer : recharger pendant
+ * qu'on suit une recette ou qu'on coche sa liste en rayon, c'est perdre
+ * sa place. Le panier, la liste et les minuteurs sont conservés — seul
+ * l'écran repart d'en haut.
  */
-export default function BandeauMiseAJour() {
-  const { t } = useLangue()
-  const {
-    needRefresh: [aJour, setAJour],
-    updateServiceWorker,
-  } = useRegisterSW()
-
-  if (!aJour) return null
-
+export default function BandeauMiseAJour({ onAppliquer, onPlusTard }: Props) {
   return (
     <div className="bandeau-maj" role="status">
-      <p>{t('maj.texte')}</p>
-      <div className="bandeau-maj-actions">
-        <button className="discret" onClick={() => setAJour(false)}>
-          {t('maj.plusTard')}
+      <span className="bandeau-maj-texte">
+        <Icone nom="rafraichir" taille={18} />
+        Nouvelle version disponible
+      </span>
+      <span className="bandeau-maj-actions">
+        <button className="bandeau-maj-plus-tard" onClick={onPlusTard}>
+          Plus tard
         </button>
-        <button className="discret accent" onClick={() => void updateServiceWorker(true)}>
-          <Icone nom="coche" taille={16} /> {t('maj.recharger')}
+        <button className="bandeau-maj-appliquer" onClick={onAppliquer}>
+          Mettre à jour
         </button>
-      </div>
+      </span>
     </div>
   )
 }

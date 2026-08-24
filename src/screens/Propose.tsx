@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { BasketEntry, Recipe } from '../types'
 import { type Historique, proposer, tousLesTags } from '../lib/propose'
 import { teinteRecette } from '../lib/identite'
@@ -6,6 +6,7 @@ import { useLangue } from '../lib/i18n'
 import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
+import AjoutRecette from '../components/AjoutRecette'
 
 interface Props {
   recipes: Recipe[]
@@ -13,6 +14,15 @@ interface Props {
   basket: BasketEntry[]
   onBasket: (basket: BasketEntry[]) => void
   onDetail: (recipeId: string) => void
+  onAjouterRecette: (recette: Recipe) => Promise<void>
+  /**
+   * L'ouverture de la section d'ajout est tenue par App, pas ici :
+   * changer d'onglet démonte cet écran, et le Panier a un bouton qui
+   * ramène ici *pour* ajouter une recette — l'état doit survivre à ce
+   * trajet, sinon on atterrit sur le catalogue sans savoir pourquoi.
+   */
+  ajoutOuvert: boolean
+  onAjoutOuvert: (ouvert: boolean) => void
 }
 
 const TEMPS = [20, 30, 45] as const
@@ -23,7 +33,16 @@ const normaliser = (s: string) =>
     .replace(/\p{M}/gu, '')
     .toLowerCase()
 
-export default function Propose({ recipes, historique, basket, onBasket, onDetail }: Props) {
+export default function Propose({
+  recipes,
+  historique,
+  basket,
+  onBasket,
+  onDetail,
+  onAjouterRecette,
+  ajoutOuvert,
+  onAjoutOuvert,
+}: Props) {
   const { t } = useLangue()
   const [recherche, setRecherche] = useState('')
   /**
@@ -40,6 +59,28 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
   const [tempsMax, setTempsMax] = useState<number | null>(null)
   const [aRefaire, setARefaire] = useState(false)
   const [tags, setTags] = useState<string[]>([])
+  /**
+   * L'ajout d'une recette vit ici, dans la page où l'on regarde son
+   * catalogue — c'est là qu'on se rend compte qu'il manque un plat.
+   * Replié, il tient en une bande ; déplié, il pousse la grille vers le
+   * bas sans la masquer, pour que la recette ajoutée apparaisse juste
+   * en dessous une fois la section refermée.
+   */
+  const ancreAjout = useRef<HTMLDivElement>(null)
+
+  // Ouverte par un bouton d'ici ou en arrivant du Panier : dans les deux
+  // cas la section doit se retrouver sous les yeux, alors qu'elle est
+  // haut de page et l'écran parfois défilé ailleurs.
+  useEffect(() => {
+    if (!ajoutOuvert) return
+    // Deux frames : la section vient à peine d'être montée.
+    const image = requestAnimationFrame(() =>
+      requestAnimationFrame(() =>
+        ancreAjout.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      ),
+    )
+    return () => cancelAnimationFrame(image)
+  }, [ajoutOuvert])
 
   // Tout le catalogue d'un coup (pas de limite à 8) : `proposer` sert
   // encore pour l'ordre — le rejeté disparaît, le récent descend, le
@@ -142,6 +183,32 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
       </header>
 
       <div className="corps-propose">
+        <div className="zone-ajout" ref={ancreAjout}>
+          {ajoutOuvert ? (
+            <AjoutRecette
+              onAjouter={onAjouterRecette}
+              onFerme={() => onAjoutOuvert(false)}
+              titresExistants={recipes.map((r) => r.titre)}
+              tagsConnus={tousLesTags(recipes)}
+            />
+          ) : (
+            <button
+              className="bande-ajout"
+              onClick={() => onAjoutOuvert(true)}
+              data-tour="ajout-propose"
+            >
+              <span className="bande-ajout-rond">
+                <Icone nom="plus" taille={22} />
+              </span>
+              <span className="bande-ajout-texte">
+                <b>{t('ajouter.sectionTitre')}</b>
+                <em>{t('ajouter.sectionSousTitre')}</em>
+              </span>
+              <Icone nom="suivant" taille={18} />
+            </button>
+          )}
+        </div>
+
         <details
           className="tiroir-filtres"
           open={filtresOuverts}
@@ -187,13 +254,25 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
 
         {affichees.length === 0 ? (
           <div className="vide">
-            <p>{t('propose.aucuneRecette')}</p>
+            <p>
+              {nombreFiltres > 0 || recherche.trim() !== ''
+                ? t('propose.aucuneRecette')
+                : t('propose.catalogueVide')}
+            </p>
             {/* Un cul-de-sac sans issue sinon : les filtres qui ont vidé
                 l'écran sont repliés dans le tiroir, hors de vue. */}
-            {(nombreFiltres > 0 || recherche.trim() !== '') && (
+            {nombreFiltres > 0 || recherche.trim() !== '' ? (
               <button className="discret suite" onClick={toutEffacer}>
                 {t('propose.effacerFiltres')}
               </button>
+            ) : (
+              // Catalogue vide, aucun filtre en cause : la seule chose à
+              // faire depuis cet écran est d'y mettre une recette.
+              !ajoutOuvert && (
+                <button className="principal suite" onClick={() => onAjoutOuvert(true)}>
+                  {t('ajouter.sectionTitre')}
+                </button>
+              )
             )}
           </div>
         ) : (

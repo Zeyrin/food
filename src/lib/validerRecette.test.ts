@@ -7,7 +7,7 @@ const base = {
   portions: 2,
   tags: [],
   etapes: ['Faire.'],
-  ingredients: [{ nom: 'riz', quantite: 200, unite: 'g', magasin: 'intermarche' }],
+  ingredients: [{ nom: 'riz', quantite: 200, unite: 'g', rayon: 'epicerie' }],
 }
 
 const ok = (json: unknown) => {
@@ -43,17 +43,19 @@ for (const image of [
   )
 }
 
-// Le magasin vient de STORES : « autre » est réservé aux items ajoutés à
-// la main, une recette n'a pas le droit de l'employer.
+// Un rayon inconnu est refusé.
 assert.ok(
-  ko({ ...base, ingredients: [{ ...base.ingredients[0], magasin: 'autre' }] }).some((e) =>
-    e.includes('magasin'),
+  ko({ ...base, ingredients: [{ ...base.ingredients[0], rayon: 'cave-a-vin' }] }).some((e) =>
+    e.includes('rayon'),
   ),
 )
-assert.ok(
-  ko({ ...base, ingredients: [{ ...base.ingredients[0], magasin: 'leclerc' }] }).some((e) =>
-    e.includes('magasin'),
-  ),
-)
+
+// Mais une recette écrite avant les rayons, qui nomme encore un magasin,
+// entre quand même : elle est traduite plutôt que refusée.
+const ancienne = ok({
+  ...base,
+  ingredients: [{ nom: 'riz', quantite: 200, unite: 'g', magasin: 'intermarche' }],
+})
+assert.ok(ancienne.ingredients[0]!.rayon, 'un magasin d\'avant doit se traduire en rayon')
 
 console.log('ok')

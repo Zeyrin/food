@@ -138,6 +138,25 @@ assert.equal(rendu('Ajouter le {wasabi}.', [ing('tofu', 400, 'g')]), 'Ajouter le
 // recette dont les autres étapes en ont.
 assert.equal(rendu('Cuire les pâtes.', [ing('pâtes longues', 200, 'g')]), 'Cuire les pâtes [200 g].')
 
+// --- Mise en forme des quantités ------------------------------------------
+
+// L'unité métrique s'écrit telle quelle, l'unité de cuisine s'accorde,
+// et « 1 pièce » ne s'écrit pas : le nom au singulier le dit déjà.
+assert.equal(formatQuantite({ quantite: 200, unite: 'g' }), '200 g')
+assert.equal(formatQuantite({ quantite: 1, unite: 'botte' }), '1 botte')
+assert.equal(formatQuantite({ quantite: 2, unite: 'botte' }), '2 bottes')
+assert.equal(formatQuantite({ quantite: 3, unite: 'cs' }), '3 c. à s.')
+assert.equal(formatQuantite({ quantite: 2, unite: 'piece' }), '2')
+
+// En cuisine on lit ½, pas 0,5 — et un demi de plus qu'un entier garde
+// l'entier devant.
+assert.equal(formatQuantite({ quantite: 0.5, unite: 'cc' }), '½ c. à c.')
+assert.equal(formatQuantite({ quantite: 1.5, unite: 'cc' }), '1½ c. à c.')
+
+// Hors fraction connue, séparateur décimal de la langue affichée
+// (français par défaut, y compris ici : voir lireLangueSauvegardee).
+assert.equal(formatQuantite({ quantite: 1.2, unite: 'l' }), '1,2 l')
+
 // Aperçus (fiche recette, écran de préparation) : le libellé reste, les
 // accolades partent — sans quoi on lisait « Couper la {tomate} ».
 assert.equal(

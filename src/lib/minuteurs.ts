@@ -8,6 +8,8 @@
  * donc à l'app, pas à l'écran, et survivent au rechargement.
  */
 
+import { traduire } from './i18n'
+
 export interface Minuteur {
   id: string
   /** « Faire dorer les lardons » — reconnaissable quand trois tournent. */
@@ -129,12 +131,17 @@ export function demanderNotifications(): void {
 export function notifierMinuteur(minuteur: Minuteur): void {
   if (!('Notification' in window) || Notification.permission !== 'granted') return
   const options: NotificationOptions = {
-    body: `${minuteur.recetteTitre} — c'est prêt.`,
+    // Traduit : ce texte partait en français en dur, même app réglée
+    // en anglais — c'est le seul libellé qui sort hors de React.
+    body: traduire('notificationMinuteur.corps', { titre: minuteur.recetteTitre }),
     // Un tag par minuteur : deux alertes du même minuteur se remplacent
     // au lieu de s'empiler dans le centre de notifications.
     tag: TAG + minuteur.id,
     icon: '/icon-192.png',
     badge: '/icon-192.png',
+    // Lu par le `notificationclick` du service worker : c'est la page à
+    // focaliser, ou à rouvrir si plus aucune fenêtre ne tourne.
+    data: { url: '/' },
   }
   try {
     // Android exige de passer par le service worker : `new Notification()`
@@ -143,13 +150,62 @@ export function notifierMinuteur(minuteur: Minuteur): void {
       void navigator.serviceWorker.ready
         .then((reg) => reg.showNotification(minuteur.nom, options))
         .catch(() => {
-          new Notification(minuteur.nom, options)
+          notifierSansServiceWorker(minuteur.nom, options)
         })
       return
     }
-    new Notification(minuteur.nom, options)
+    notifierSansServiceWorker(minuteur.nom, options)
   } catch {
     /* refusé entre-temps, ou pas de SW enregistré : le bandeau reste */
+  }
+}
+
+/**
+ * Sans service worker, le retour dans l'app ne passe pas par
+ * `notificationclick` mais par le `onclick` de l'objet notification —
+ * il faut donc le poser ici aussi, sinon toucher l'alerte sur un
+ * navigateur de bureau ne fait toujours rien.
+ */
+function notifierSansServiceWorker(titre: string, options: NotificationOptions): void {
+  const notification = new Notification(titre, options)
+  notification.onclick = () => {
+    notification.close()
+    try {
+      window.focus()
+    } catch {
+      /* fenêtre fermée entre-temps : rien à focaliser */
+    }
+    previenirDuClic()
+  }
+}
+
+/* --- Le chemin du retour ----------------------------------------------
+
+   Toucher la notification doit ramener dans l'app, panneau des minuteurs
+   ouvert. Le `notificationclick` vit dans le service worker
+   (public/sw-minuteurs.js), qui focalise la fenêtre puis lui envoie un
+   message ; ces deux fonctions sont les deux bouts du fil côté page. */
+
+const MESSAGE_CLIC = 'minuteur-notification-cliquee'
+
+const auditeurs = new Set<() => void>()
+
+function previenirDuClic(): void {
+  for (const auditeur of auditeurs) auditeur()
+}
+
+/** S'abonner au « on a touché la notification ». Rend le désabonnement. */
+export function ecouterClicNotification(quandClique: () => void): () => void {
+  auditeurs.add(quandClique)
+
+  const surMessage = (e: MessageEvent) => {
+    if ((e.data as { type?: string } | null)?.type === MESSAGE_CLIC) quandClique()
+  }
+  navigator.serviceWorker?.addEventListener('message', surMessage)
+
+  return () => {
+    auditeurs.delete(quandClique)
+    navigator.serviceWorker?.removeEventListener('message', surMessage)
   }
 }
 

@@ -7,6 +7,9 @@ interface ImportMetaEnv {
   readonly VITE_SUPABASE_ANON_KEY?: string
 }
 
+/** Estampille du build, injectée par `define` (voir `vite.config.ts`). */
+declare const __VERSION_APP__: string
+
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }

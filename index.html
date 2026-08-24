@@ -31,6 +31,19 @@
   </head>
   <body>
     <div id="root"></div>
+    <!--
+      L'app entière tient dans `#root`, que React remplace au démarrage : sans
+      JavaScript, la page est vide, et un robot d'indexation qui n'exécute rien
+      n'a aucun lien à suivre. Le catalogue prérendu (`scripts/prerender.mjs`)
+      est la seule partie du site qui existe en HTML ; ce lien est la porte
+      d'entrée vers lui, pour les robots comme pour un navigateur sans JS.
+    -->
+    <noscript>
+      <p>
+        FFFood a besoin de JavaScript. Les
+        <a href="/recette/">recettes du catalogue</a> se lisent sans.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

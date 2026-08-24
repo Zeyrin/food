@@ -17,7 +17,8 @@ interface Props {
   onPortions: (portions: number) => void
   onCuisiner: () => void
   onModifier: () => void
-  onSupprimer: () => void
+  /** Rejette si l'écriture échoue — l'écran le dit plutôt que de ne rien faire. */
+  onSupprimer: () => Promise<void>
   onFermer: () => void
 }
 
@@ -40,6 +41,26 @@ export default function DetailRecette({
    * suffisait à supprimer une recette sans l'avoir lue.
    */
   const [confirmation, setConfirmation] = useState(false)
+
+  /**
+   * Supprimer passe par le réseau. Sans état d'échec, un appui sur
+   * « Supprimer » hors ligne ne produisait rien du tout : la
+   * confirmation restait ouverte, la recette en place, et aucun mot
+   * pour expliquer pourquoi. On distingue donc l'attente de l'échec.
+   */
+  const [suppression, setSuppression] = useState(false)
+  const [erreurSuppression, setErreurSuppression] = useState<string | null>(null)
+
+  const supprimer = async () => {
+    setSuppression(true)
+    setErreurSuppression(null)
+    try {
+      await onSupprimer()
+    } catch {
+      setErreurSuppression(t('detail.suppressionEchouee'))
+      setSuppression(false)
+    }
+  }
 
   /**
    * La fiche montrait toujours les quantités du catalogue, même quand le
@@ -145,13 +166,22 @@ export default function DetailRecette({
           <div className="bloc-confirmation" role="alertdialog" aria-label={t('detail.supprimerDuCatalogue')}>
             <p>{t('detail.supprimerConfirmation', { titre: recette.titre })}</p>
             <div className="rangee-boutons">
-              <button className="discret" onClick={() => setConfirmation(false)}>
+              <button
+                className="discret"
+                onClick={() => setConfirmation(false)}
+                disabled={suppression}
+              >
                 {t('detail.annuler')}
               </button>
-              <button className="discret danger" onClick={onSupprimer}>
-                {t('detail.supprimer')}
+              <button className="discret danger" onClick={supprimer} disabled={suppression}>
+                {suppression ? t('detail.suppressionEnCours') : t('detail.supprimer')}
               </button>
             </div>
+            {erreurSuppression && (
+              <div className="bloc-erreurs" role="alert">
+                <p>{erreurSuppression}</p>
+              </div>
+            )}
           </div>
         ) : (
           <button className="discret pleine-largeur danger" onClick={() => setConfirmation(true)}>

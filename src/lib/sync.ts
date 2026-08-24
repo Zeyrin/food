@@ -1,5 +1,6 @@
 import { createClient, type RealtimeChannel } from '@supabase/supabase-js'
 import type { ListState, Recipe } from '../types'
+import { traduire } from './i18n'
 import type { Historique } from './propose'
 import { signalerSynchroOk, signalerSynchroRefusee } from './etatSynchro'
 
@@ -20,18 +21,12 @@ export const partageActif = supabase !== null
 /**
  * Session anonyme : invisible pour l'utilisateur — pas de compte, rien à
  * saisir — mais indispensable depuis que les policies raisonnent sur une
- * appartenance (`membres`) plutôt que sur un `using (true)` qui
- * n'appliquait rien. Sans session, `auth.uid()` est nul et la base refuse
- * tout, ce qui est le comportement voulu.
+ * appartenance (`membres`) plutôt que sur un `using (true)` qui n'appliquait
+ * rien. Sans session, `auth.uid()` est nul et la base refuse tout, ce qui est
+ * le comportement voulu.
  *
- * Une seule promesse partagée : cinquante appels au démarrage ne doivent
- * pas ouvrir cinquante sessions. `getSession` d'abord, parce que la
- * session précédente est déjà en localStorage la plupart du temps.
- *
- * Si Supabase a fait le ménage des utilisateurs anonymes entre-temps, la
- * session stockée ne vaut plus rien : on en ouvre une neuve, et
- * `assurerAcces` ci-dessous rétablit l'appartenance à partir de l'UUID que
- * l'appareil garde en local. La panne se répare toute seule.
+ * Une seule promesse partagée : cinquante appels au démarrage ne doivent pas
+ * ouvrir cinquante sessions.
  */
 let sessionEnCours: Promise<boolean> | null = null
 
@@ -44,13 +39,13 @@ export function assurerSession(): Promise<boolean> {
     const { error } = await supabase.auth.signInAnonymously()
     if (!error) return true
 
-    // Réessayable au prochain appel plutôt que bloqué à vie sur une
-    // coupure réseau passagère.
+    // Réessayable au prochain appel plutôt que bloqué à vie sur une coupure
+    // réseau passagère.
     sessionEnCours = null
     console.warn(`Session anonyme impossible : ${error.message}`)
     // Hors ligne, c'est normal et le bandeau dédié le dit déjà. En ligne,
-    // c'est une panne de configuration (connexions anonymes désactivées
-    // dans le tableau de bord) qui ne se réglera pas toute seule.
+    // c'est une panne de configuration (connexions anonymes désactivées dans
+    // le tableau de bord) qui ne se réglera pas toute seule.
     if (navigator.onLine) {
       signalerSynchroRefusee(`Connexion anonyme refusée : ${error.message}`)
     }
@@ -59,23 +54,20 @@ export function assurerSession(): Promise<boolean> {
   return sessionEnCours
 }
 
-const VIDE: ListState = { coche: {}, dejaPossede: {} }
-
 /**
  * Session *et* appartenance au foyer, mémorisées par foyer.
  *
- * Toutes les fonctions ci-dessous passent par ici plutôt que par
- * `assurerSession` seule, et c'est délibéré : depuis que les policies
- * raisonnent sur `membres`, une requête envoyée avant que l'appartenance
- * existe ne renvoie rien — sans erreur, juste zéro ligne. Faire réclamer
- * le foyer par l'écran d'accueil aurait marché la plupart du temps et
- * échoué à la moindre course entre effets React. Ici, l'ordre ne peut plus
- * être faux : aucun appel réseau ne part avant que l'accès soit établi.
+ * Toutes les fonctions ci-dessous passent par ici, et c'est délibéré : depuis
+ * que les policies raisonnent sur `membres`, une requête envoyée avant que
+ * l'appartenance existe ne renvoie rien — sans erreur, juste zéro ligne.
+ * Faire réclamer le foyer par l'écran d'accueil aurait marché la plupart du
+ * temps et échoué à la moindre course entre effets React. Ici, l'ordre ne
+ * peut plus être faux.
  *
- * `reclamer_foyer` est rappelé à chaque démarrage, pas une seule fois :
- * Supabase fait le ménage des utilisateurs anonymes inactifs, et
- * l'appartenance s'en va avec eux. L'appareil connaît toujours son UUID,
- * donc la session suivante la rétablit sans que personne ne le voie.
+ * `reclamer_foyer` est rappelé à chaque démarrage : Supabase fait le ménage
+ * des utilisateurs anonymes inactifs, et l'appartenance s'en va avec eux.
+ * L'appareil connaît toujours son UUID, donc la session suivante la rétablit
+ * sans que personne ne le voie.
  */
 const accesParFoyer = new Map<string, Promise<boolean>>()
 
@@ -109,44 +101,11 @@ export function marquerAccesObtenu(foyer: string): void {
 }
 
 /**
- * Sans ça, un abonnement qui échoue (table absente de la publication
- * `supabase_realtime`, policy manquante, réseau coupé) ne dit rien du
- * tout : l'app a l'air de marcher, elle ne reçoit simplement jamais
- * rien. On ignore CLOSED, qui est le statut normal au démontage.
- */
-const journaliserStatut = (nom: string) => (statut: string) => {
-  if (statut === 'CHANNEL_ERROR' || statut === 'TIMED_OUT') {
-    console.warn(`Realtime « ${nom} » : ${statut} — la synchro entre appareils ne remontera pas.`)
-    // Un abonnement mort est l'autre panne muette : les écritures
-    // partent, mais rien ne revient de l'autre téléphone.
-    signalerSynchroRefusee(`Realtime « ${nom} » : ${statut}`)
-  } else if (statut === 'SUBSCRIBED') {
-    console.info(`Realtime « ${nom} » : abonné.`)
-  }
-}
-
-/**
- * Un topic ne peut être joint qu'une fois par connexion. StrictMode
- * monte, démonte et remonte chaque effet en dev : le second abonnement
- * réclamerait un topic que le premier n'a pas encore fini de libérer
- * (removeChannel est asynchrone), et il meurt sans bruit. Un suffixe
- * unique par abonnement rend la collision impossible — le topic ne sert
- * qu'à nommer le canal, le filtrage réel se fait dans `filter`.
- */
-const topic = (prefixe: string) => `${prefixe}:${crypto.randomUUID().slice(0, 8)}`
-
-/**
- * Ouvre un canal temps réel une fois la session obtenue, et rend de quoi le
- * refermer tout de suite.
- *
- * L'attente est le point important : Realtime évalue la RLS avec le jeton
- * de la connexion, et depuis que les policies raisonnent sur une
- * appartenance, un abonnement ouvert avant la session serait celui d'un
- * anonyme sans droits — il resterait muet pour toujours, sans erreur.
- *
- * Le démontage peut arriver pendant l'attente (React StrictMode monte et
- * démonte chaque effet en développement) : `annule` évite d'ouvrir un canal
- * dont plus personne ne veut.
+ * Ouvre un canal temps réel une fois l'accès obtenu, et rend de quoi le
+ * refermer tout de suite. L'attente est le point important : Realtime évalue
+ * la RLS avec le jeton de la connexion, et un abonnement ouvert avant la
+ * session serait celui d'un anonyme sans droits — il resterait muet pour
+ * toujours, sans erreur.
  */
 function abonner(
   foyer: string,
@@ -168,16 +127,58 @@ function abonner(
   }
 }
 
+const VIDE: ListState = { coche: {}, dejaPossede: {} }
+
+/**
+ * Sans ça, un abonnement qui échoue (table absente de la publication
+ * `supabase_realtime`, policy manquante, réseau coupé) ne dit rien du
+ * tout : l'app a l'air de marcher, elle ne reçoit simplement jamais
+ * rien. On ignore CLOSED, qui est le statut normal au démontage.
+ */
+const journaliserStatut = (nom: string) => (statut: string) => {
+  if (statut === 'CHANNEL_ERROR' || statut === 'TIMED_OUT') {
+    console.warn(`Realtime « ${nom} » : ${statut} — la synchro entre appareils ne remontera pas.`)
+    signalerSynchroRefusee(`Realtime « ${nom} » : ${statut}`)
+  } else if (statut === 'SUBSCRIBED') {
+    console.info(`Realtime « ${nom} » : abonné.`)
+  }
+}
+
+/**
+ * Un topic ne peut être joint qu'une fois par connexion. StrictMode
+ * monte, démonte et remonte chaque effet en dev : le second abonnement
+ * réclamerait un topic que le premier n'a pas encore fini de libérer
+ * (removeChannel est asynchrone), et il meurt sans bruit. Un suffixe
+ * unique par abonnement rend la collision impossible — le topic ne sert
+ * qu'à nommer le canal, le filtrage réel se fait dans `filter`.
+ */
+const topic = (prefixe: string) => `${prefixe}:${crypto.randomUUID().slice(0, 8)}`
+
 /**
  * La seule donnée synchronisée : l'état de la liste du foyer.
  * Une ligne, un JSON, dernier écrivain gagne. Deux personnes qui
  * cochent des produits différents ne se marchent pas dessus ;
  * deux personnes qui cochent le même en même temps arrivent au
  * même résultat. Ça suffit pour des courses.
+ *
+ * `null` quand la lecture a échoué, et c'est tout l'intérêt : une
+ * erreur retournait `VIDE`, exactement comme un foyer qui n'a encore
+ * rien publié. L'appelant appliquait donc un état vide par-dessus le
+ * sien, décochant la liste à l'écran — puis la première case recochée
+ * réécrivait ce vide dans Supabase. Un foyer sans ligne, lui, rend
+ * bien `VIDE` : c'est une réponse, pas une panne.
  */
-export async function lireListe(foyer: string): Promise<ListState> {
+export async function lireListe(foyer: string): Promise<ListState | null> {
   if (!supabase || !(await assurerAcces(foyer))) return VIDE
-  const { data } = await supabase.from('listes').select('etat').eq('foyer', foyer).maybeSingle()
+  const { data, error } = await supabase
+    .from('listes')
+    .select('etat')
+    .eq('foyer', foyer)
+    .maybeSingle()
+  if (error) {
+    console.warn(`Lecture de la liste refusée : ${error.message}`)
+    return null
+  }
   return (data?.etat as ListState) ?? VIDE
 }
 
@@ -209,7 +210,8 @@ export function suivreListe(foyer: string, onChange: (etat: ListState) => void):
           if (etat) onChange(etat)
         },
       )
-      .subscribe(journaliserStatut('liste')),
+      .subscribe(journaliserStatut('liste'))
+,
   )
 }
 
@@ -217,15 +219,22 @@ export function suivreListe(foyer: string, onChange: (etat: ListState) => void):
  * Le catalogue du foyer. Vide si Supabase n'est pas configuré —
  * à l'appelant de retomber sur le corpus de départ dans ce cas
  * (voir semerCorpusInitial et App.tsx).
+ *
+ * Lève si la lecture échoue plutôt que de rendre une liste vide : un
+ * `select` refusé (policy mal réglée) ressemblait trait pour trait à
+ * un foyer tout neuf, et l'appelant enchaînait sur le semis — c'est
+ * l'intégralité du corpus réinséré à chaque ouverture, en double, dès
+ * lors que l'`insert`, lui, passait.
  */
 export async function lireRecettes(foyer: string): Promise<Recipe[]> {
   if (!supabase || !(await assurerAcces(foyer))) return []
-  const { data } = await supabase.from('recettes').select('recette').eq('foyer', foyer)
+  const { data, error } = await supabase.from('recettes').select('recette').eq('foyer', foyer)
+  if (error) throw new Error(`Lecture du catalogue refusée : ${error.message}`)
   return (data ?? []).map((ligne) => ligne.recette as Recipe)
 }
 
 export async function ajouterRecette(foyer: string, recette: Recipe): Promise<void> {
-  if (!supabase) throw new Error("Le partage n'est pas configuré : impossible d'enregistrer la recette.")
+  if (!supabase) throw new Error(traduire('sync.partageNonConfigureAjout'))
   await assurerAcces(foyer)
   // Le résultat était ignoré : un insert refusé (policy, réseau coupé
   // au mauvais moment) laissait l'app annoncer « Recette ajoutée » et
@@ -236,7 +245,7 @@ export async function ajouterRecette(foyer: string, recette: Recipe): Promise<vo
 }
 
 export async function modifierRecette(foyer: string, recette: Recipe): Promise<void> {
-  if (!supabase) throw new Error("Le partage n'est pas configuré : impossible d'enregistrer la modification.")
+  if (!supabase) throw new Error(traduire('sync.partageNonConfigureModification'))
   await assurerAcces(foyer)
   const { error } = await supabase
     .from('recettes')
@@ -247,7 +256,7 @@ export async function modifierRecette(foyer: string, recette: Recipe): Promise<v
 }
 
 export async function supprimerRecette(foyer: string, recipeId: string): Promise<void> {
-  if (!supabase) throw new Error("Le partage n'est pas configuré : impossible de supprimer la recette.")
+  if (!supabase) throw new Error(traduire('sync.partageNonConfigureSuppression'))
   await assurerAcces(foyer)
   const { error } = await supabase
     .from('recettes')
@@ -266,11 +275,15 @@ export async function supprimerRecette(foyer: string, recipeId: string): Promise
  */
 export async function semerCorpusInitial(foyer: string, corpus: Recipe[]): Promise<Recipe[]> {
   if (!supabase || !(await assurerAcces(foyer))) return []
-  const { count } = await supabase
+  const { count, error: erreurCompte } = await supabase
     .from('recettes')
     .select('id', { count: 'exact', head: true })
     .eq('foyer', foyer)
-  if (count && count > 0) return []
+  if (erreurCompte) throw new Error(`Lecture du catalogue refusée : ${erreurCompte.message}`)
+  // Déjà semé entre-temps — l'autre téléphone du foyer a été plus
+  // rapide. On relit ce qu'il a écrit au lieu de rendre `[]`, qui
+  // s'affichait comme un catalogue vide jusqu'au rechargement suivant.
+  if (count && count > 0) return lireRecettes(foyer)
 
   const { error } = await supabase.from('recettes').insert(corpus.map((recette) => ({ foyer, recette })))
   if (error) throw new Error(`Échec du seed initial : ${error.message}`)
@@ -291,11 +304,15 @@ export async function semerCorpusInitial(foyer: string, corpus: Recipe[]): Promi
  */
 export async function lireHistoriqueFoyer(foyer: string): Promise<Historique | null> {
   if (!supabase || !(await assurerAcces(foyer))) return null
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('historiques')
     .select('historique')
     .eq('foyer', foyer)
     .maybeSingle()
+  if (error) {
+    console.warn(`Lecture de l'historique refusée : ${error.message}`)
+    return null
+  }
   return (data?.historique as Historique) ?? null
 }
 
@@ -322,7 +339,8 @@ export function suivreHistorique(foyer: string, onChange: (h: Historique) => voi
           if (h) onChange(h)
         },
       )
-      .subscribe(journaliserStatut('historique')),
+      .subscribe(journaliserStatut('historique'))
+,
   )
 }
 
@@ -333,8 +351,15 @@ export function suivreRecettes(foyer: string, onChangement: (recettes: Recipe[])
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'recettes', filter: `foyer=eq.${foyer}` },
-        () => void lireRecettes(foyer).then(onChangement),
+        // `lireRecettes` lève désormais sur lecture refusée : sans ce
+        // `catch`, chaque notification temps réel produirait un rejet non
+        // rattrapé. On garde le catalogue déjà à l'écran.
+        () =>
+          void lireRecettes(foyer)
+            .then(onChangement)
+            .catch((e: unknown) => console.warn(`Relecture du catalogue impossible : ${e}`)),
       )
-      .subscribe(journaliserStatut('recettes')),
+      .subscribe(journaliserStatut('recettes'))
+,
   )
 }

@@ -1,33 +1,36 @@
 import type { Nom as IconeNom } from './components/Icone'
 
 /**
- * Un magasin. Ajouter une entrée ici suffit à en créer un nouveau.
- * `autre` est réservé aux items ajoutés à la main sur la liste — une
- * recette n'y range jamais un ingrédient.
+ * Les rayons d'un magasin. C'est la seule chose qu'une recette a le
+ * droit de dire sur l'endroit où s'achète un ingrédient : une carotte
+ * est au rayon fruits & légumes pour tout le monde, alors que « chez
+ * le primeur » ou « à l'Intermarché » ne vaut que pour celui qui a
+ * écrit la recette. Le magasin, lui, est un choix de foyer — il se
+ * règle dans l'app (`src/lib/magasins.ts`), et le corpus reste
+ * partageable.
+ *
+ * `autre` est réservé aux items ajoutés à la main sur la liste : on ne
+ * demande pas à quelqu'un qui tape « papier toilette » de choisir un
+ * rayon.
  */
-export const STORES = {
-  intermarche: { label: 'Intermarché', order: 1, icone: 'boite' as IconeNom },
-  primeur: { label: 'Primeur & asiat', order: 2, icone: 'feuille' as IconeNom },
-  autre: { label: 'Ajouté à la main', order: 3, icone: 'alerte' as IconeNom },
+export const RAYONS = {
+  'fruits-legumes': { label: 'Fruits & légumes', order: 1, icone: 'feuille' as IconeNom },
+  'viande-poisson': { label: 'Viande & poisson', order: 2, icone: 'poisson' as IconeNom },
+  cremerie: { label: 'Crèmerie & frais', order: 3, icone: 'lait' as IconeNom },
+  boulangerie: { label: 'Pain & pâtisserie', order: 4, icone: 'pain' as IconeNom },
+  epicerie: { label: 'Épicerie', order: 5, icone: 'boite' as IconeNom },
+  surgeles: { label: 'Surgelés', order: 6, icone: 'flocon' as IconeNom },
+  boissons: { label: 'Boissons', order: 7, icone: 'bouteille' as IconeNom },
+  autre: { label: 'Ajouté à la main', order: 8, icone: 'plus' as IconeNom },
 } as const
 
-export type StoreId = keyof typeof STORES
+export type RayonId = keyof typeof RAYONS
 
-/**
- * Les magasins qu'une recette a le droit de citer : tous sauf `autre`,
- * réservé aux items ajoutés à la main sur la liste.
- *
- * Source unique de la validation, côté app (`validerRecette`) comme côté
- * dépôt (`scripts/lint-recipes.ts`). Les deux en tenaient chacun leur
- * copie en dur, ce qui démentait la promesse du README : « ajouter une
- * entrée à STORES suffit à créer un magasin ».
- */
-export const MAGASINS_DE_RECETTE = (Object.keys(STORES) as StoreId[]).filter((id) => id !== 'autre')
+/** Les rayons dans l'ordre où on les traverse. */
+export const RAYONS_ORDONNES = (Object.keys(RAYONS) as RayonId[]).sort(
+  (a, b) => RAYONS[a].order - RAYONS[b].order,
+)
 
-/** Le magasin lu dans un JSON quelconque est-il citable par une recette ? */
-export function estMagasinDeRecette(magasin: unknown): magasin is StoreId {
-  return typeof magasin === 'string' && (MAGASINS_DE_RECETTE as string[]).includes(magasin)
-}
 
 /**
  * Unités autorisées. `piece` couvre tout ce qui se compte
@@ -47,7 +50,16 @@ export interface RecipeIngredient {
   nom: string
   quantite: number
   unite: Unit
-  magasin: StoreId
+  /** Où ça se trouve dans un magasin, pas dans quel magasin. */
+  rayon: RayonId
+  /**
+   * Ancien champ : l'app rangeait chaque ingrédient dans un magasin
+   * nommé en dur (« intermarche », « primeur »). Les recettes déjà
+   * collées par les utilisateurs le portent encore, on le relit pour
+   * en déduire un rayon (`rayonDe`), on ne l'écrit plus.
+   * @deprecated
+   */
+  magasin?: string
   /** Sel, poivre, huile — exclu de la liste par défaut. */
   placard?: boolean
 }
@@ -88,7 +100,7 @@ export interface ListItem {
   nom: string
   quantite: number
   unite: Unit
-  magasin: StoreId
+  rayon: RayonId
   /** Recettes qui ont contribué à cette ligne. */
   origines: string[]
 }

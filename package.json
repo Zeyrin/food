@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/prerender.mjs",
+    "prerender": "node scripts/prerender.mjs",
     "preview": "vite preview --host",
-    "test": "tsx --test src/lib/*.test.ts",
-    "lint:recipes": "tsx scripts/lint-recipes.ts",
+    "test": "tsx --test 'src/**/*.test.ts'",
+    "lint:recipes": "node scripts/lint-recipes.mjs",
     "verifier": "tsx scripts/verifier-invariants.ts",
     "typecheck": "tsc --noEmit",
     "ci": "npm run typecheck && npm test && npm run lint:recipes && npm run verifier && npm run build"

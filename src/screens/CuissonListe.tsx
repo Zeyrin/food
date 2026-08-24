@@ -86,7 +86,12 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
                 <h3>{r.titre}</h3>
                 <div className="carte-cuisson-pied">
                   <span className="meta">
-                    {dejaFait ? t('cuissonListe.dejaCuisine') : t('cuissonListe.parts', { n: entree.portions })}
+                    {dejaFait
+                      ? t('cuissonListe.dejaCuisine')
+                      : t('cuissonListe.parts', {
+                          n: entree.portions,
+                          s: entree.portions > 1 ? 's' : '',
+                        })}
                   </span>
                   <Icone nom={dejaFait ? 'coche' : 'suivant'} taille={16} />
                 </div>
