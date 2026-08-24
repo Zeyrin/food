@@ -33,6 +33,16 @@ export default defineConfig({
         // `notificationclick` qui ramène dans l'app quand on touche
         // l'alerte d'un minuteur (voir public/sw-minuteurs.js).
         importScripts: ['/sw-minuteurs.js'],
+        // Workbox répond `index.html` à toute navigation, ce qui est
+        // exactement ce qu'il faut pour une SPA à une seule URL — et
+        // exactement ce qu'il ne faut pas pour les pages prérendues
+        // (`scripts/prerender.mjs`) : un visiteur qui a déjà l'app
+        // installée recevait le catalogue au lieu de la recette qu'on
+        // venait de lui envoyer. Ces adresses-là repassent par le
+        // réseau. Elles n'existent pas hors ligne, et c'est cohérent :
+        // ce sont des pages d'arrivée, l'app elle-même reste servie
+        // depuis le cache à la racine.
+        navigateFallbackDenylist: [/^\/recette\//],
       },
     }),
   ],

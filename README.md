@@ -186,6 +186,37 @@ organise son parcours. Ce qu'il y a à acheter, lui, reste identique des deux c�
 Les recettes écrites avant les rayons portaient un champ `magasin` ; il est relu et
 traduit à la volée (`src/lib/rayons.ts`), jamais réécrit.
 
+## Le catalogue en HTML
+
+**L'app est une SPA à une seule URL, et ça lui coûtait tout le référencement.**
+Les écrans vivent dans une pile React (`Vue` dans `src/App.tsx`), jamais dans une adresse :
+137 recettes écrites à la main, et rien d'indexable — chercher « dahl de lentilles corail »
+ne pouvait pas mener ici, et le seul lien partageable était la racine.
+
+`scripts/prerender.mjs` écrit donc, après `vite build`, une page statique par recette
+(`/recette/<id>/`) plus l'index du catalogue (`/recette/`). Elles portent le contenu réel —
+photo, ingrédients, quantités, étapes — leurs métadonnées de partage, et le balisage
+`schema.org/Recipe` sans lequel un moteur affiche un lien bleu plutôt qu'une recette. Le
+sitemap est généré avec elles : écrit à la main, il aurait ignoré la recette suivante.
+
+Ces pages sont autonomes — pas de bundle, pas de React, style en ligne. Elles se lisent
+telles quelles et renvoient vers l'app par `/#/r/<id>`, qui ouvre la fiche correspondante :
+sans ce fragment, quelqu'un qui arrive de Google sur un plat précis atterrissait dans la
+grille entière, à chercher ce qu'il venait de lire.
+
+Deux détails les font tenir. Elles sont générées **après** `vite build`, donc elles
+n'existent pas quand Workbox calcule son manifeste : les 137 pages restent hors du
+précache, et le poids hors ligne de l'app ne bouge pas. Et `navigateFallbackDenylist`
+(`vite.config.ts`) les exclut du repli SPA du service worker — sinon un visiteur qui a déjà
+l'app installée recevait le catalogue au lieu de la recette qu'on venait de lui envoyer.
+
+Le corollaire : `/recette/…` n'existe pas hors ligne, et c'est cohérent. Ce sont des pages
+d'arrivée ; l'app, elle, reste servie depuis le cache à la racine.
+
+Ces pages sont en français seulement. Le reste de l'app a deux langues parce qu'un
+réglage se lit au moment de l'affichage ; une page écrite au build n'a pas de langue
+courante à lire, et le corpus est écrit en français.
+
 ## Déploiement
 
 `npm run build` produit un `dist/` statique. Cloudflare Pages ou GitHub Pages, tous deux
