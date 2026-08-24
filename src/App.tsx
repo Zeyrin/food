@@ -40,6 +40,7 @@ import ModifierRecette from './screens/ModifierRecette'
 import Bienvenue from './screens/Bienvenue'
 import TourGuide from './components/TourGuide'
 import BandeauMinuteur from './components/BandeauMinuteur'
+import BandeauMiseAJour from './components/BandeauMiseAJour'
 import PanneauMinuteurs from './components/PanneauMinuteurs'
 import { useMinuteurs } from './hooks/useMinuteurs'
 import { ecouterClicNotification } from './lib/minuteurs'
@@ -47,6 +48,7 @@ import { useMagasins } from './hooks/useMagasins'
 import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
+import { useMiseAJour } from './hooks/useMiseAJour'
 import { useDecalageBarreOutils } from './hooks/useDecalageBarreOutils'
 import { useLangue } from './lib/i18n'
 
@@ -298,6 +300,12 @@ export default function App() {
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const enLigne = useEnLigne()
+
+  // Le service worker garde l'app utilisable hors ligne, mais fige la
+  // version installée : sans ce qui suit, un déploiement ne se voyait
+  // qu'après avoir vidé les données du navigateur.
+  const miseAJour = useMiseAJour()
+  const [majRepoussee, setMajRepoussee] = useState(false)
 
   /**
    * Les minuteurs vivent ici, pas dans l'écran de cuisson : on en lance
@@ -665,6 +673,7 @@ export default function App() {
         magasins={magasins.config}
         onMagasins={magasins.definir}
         codeFoyer={codeFoyer}
+        miseAJour={miseAJour}
         onRejoindre={rejoindreDepuisReglages}
         onQuitter={quitter}
         onFermer={reculer}
@@ -674,6 +683,7 @@ export default function App() {
   }
 
   const sousEcran = ecranPleinePage !== null
+  const visiteEnCours = !onboardingVu && estOnglet
 
   return (
     <div
@@ -695,6 +705,16 @@ export default function App() {
         <p className="pastille-hors-ligne" role="status">
           <Icone nom="alerte" taille={16} /> {t('app.horsLigne')}
         </p>
+      )}
+
+      {/* La visite guidée est modale et couvre l'écran : le bandeau y
+          serait visible mais pas cliquable. Elle ne se joue de toute
+          façon qu'à la première ouverture, sur une version fraîche. */}
+      {miseAJour.disponible && !majRepoussee && !visiteEnCours && (
+        <BandeauMiseAJour
+          onAppliquer={miseAJour.appliquer}
+          onPlusTard={() => setMajRepoussee(true)}
+        />
       )}
 
       {ecranPleinePage ?? (
@@ -789,7 +809,7 @@ export default function App() {
         ))}
       </nav>
 
-      {!onboardingVu && estOnglet && (
+      {visiteEnCours && (
         <TourGuide ongletActuel={onglet} onOnglet={forcerOnglet} onTerminer={terminerOnboarding} />
       )}
     </div>

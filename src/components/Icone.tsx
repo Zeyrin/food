@@ -21,6 +21,7 @@ export type Nom =
   | 'precedent'
   | 'suivant'
   | 'recherche'
+  | 'rafraichir'
   | 'poisson'
   | 'lait'
   | 'pain'
@@ -49,6 +50,8 @@ const TRACES: Record<Nom, string> = {
   precedent: 'M15 5l-7 7 7 7',
   suivant: 'M9 5l7 7-7 7',
   recherche: 'M11 4a7 7 0 100 14 7 7 0 000-14z M21 21l-4.3-4.3',
+  rafraichir:
+    'M20 12a8 8 0 11-2.3-5.7 M20 4v5h-5',
   poisson:
     'M22 12c-2.5 3.5-5.5 5.5-9 5.5S8.5 15.5 6.5 12c2-3.5 5-5.5 6.5-5.5s6.5 2 9 5.5z M6.5 12L2 8v8l4.5-4z M17 11h.01',
   lait: 'M8 9l4-5 4 5v10a1 1 0 01-1 1H9a1 1 0 01-1-1V9z M8 13h8',

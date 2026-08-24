@@ -1233,6 +1233,81 @@ button.discret.accent:active:not(:disabled) {
   flex: none;
 }
 
+/* --- Nouvelle version disponible ------------------------------------------ */
+
+/* Même emplacement que la pastille hors ligne (les deux ne peuvent pas
+   s'afficher ensemble : chercher une mise à jour demande du réseau), et
+   la même marge à droite pour laisser passer le bouton des réglages. */
+.bandeau-maj {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  right: 64px;
+  z-index: 11;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  padding: 10px 12px 10px 16px;
+  border-radius: 20px;
+  background: var(--accent-doux);
+  color: var(--encre);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: var(--ombre);
+}
+
+.bandeau-maj-texte {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bandeau-maj-texte svg {
+  flex: none;
+}
+
+.bandeau-maj-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.bandeau-maj button {
+  border: 0;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.bandeau-maj-plus-tard {
+  padding: 6px 4px;
+  background: none;
+  color: var(--encre-douce);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.bandeau-maj-appliquer {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--sur-accent);
+}
+
+.lien-maj {
+  display: block;
+  margin: 14px auto 4px;
+}
+
+.version-app {
+  margin: 0 0 12px;
+  color: var(--encre-douce);
+  font-size: 14px;
+}
+
 @media (min-width: 900px) {
   .pastille-hors-ligne {
     left: 144px;

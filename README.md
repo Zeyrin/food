@@ -222,6 +222,30 @@ courante à lire, et le corpus est écrit en français.
 `npm run build` produit un `dist/` statique. Cloudflare Pages ou GitHub Pages, tous deux
 gratuits. Sur iOS, installer via Partager → Sur l'écran d'accueil.
 
+### Mises à jour
+
+Le service worker rend l'app utilisable hors ligne, mais fige la version installée :
+tant que rien ne le pousse, un déploiement reste invisible sur le téléphone. Trois
+mécanismes s'en chargent (`src/hooks/useMiseAJour.ts`) :
+
+- **Vérification régulière** : au démarrage, à chaque retour au premier plan, au retour
+  du réseau et toutes les dix minutes tant que l'app est ouverte.
+- **Bascule automatique** quand personne ne regarde — pendant les huit premières
+  secondes après un chargement (un rechargement suffit donc à passer à la dernière
+  version) ou quand l'app est en arrière-plan.
+- **Bandeau « Nouvelle version disponible »** le reste du temps : recharger l'écran en
+  pleine cuisson ou au milieu d'une liste cochée en rayon fait perdre sa place, donc on
+  propose au lieu d'imposer.
+
+Les réglages affichent la version installée, un bouton pour vérifier tout de suite, et
+en dernier recours « Réinstaller la dernière version » — qui supprime le service worker
+et ses caches sans toucher au foyer, au panier ni à la liste (contrairement à
+« supprimer les données de l'app » côté navigateur).
+
+`vercel.json` complète le dispositif côté serveur : `sw.js`, `index.html` et le manifeste
+sont revalidés à chaque requête, seuls les fichiers hachés de `assets/` sont mis en cache
+durablement.
+
 ## Ce qui n'est pas fait
 
 - Le planning par jour de la semaine — le panier est une liste, pas un calendrier
