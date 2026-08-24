@@ -449,6 +449,29 @@ export default function App() {
     return suivreRecettes(foyer, setRecipes)
   }, [foyer])
 
+  /**
+   * `/#/r/<id>` ouvre directement une fiche. C'est le lien que portent
+   * les pages prérendues du catalogue (`scripts/prerender.mjs`) : sans
+   * lui, quelqu'un qui arrive sur « Mapo tofu » depuis un moteur de
+   * recherche atterrissait dans l'app sur la grille entière, à
+   * rechercher le plat qu'il venait de lire.
+   *
+   * On passe par `irVers` plutôt que par la pile initiale pour que
+   * l'entrée d'historique existe — le bouton retour doit ramener au
+   * catalogue, pas sortir de l'app. D'où l'attente du catalogue chargé,
+   * puis le nettoyage du fragment : un rechargement ne doit pas
+   * rouvrir la fiche par-dessus l'écran où on en était.
+   */
+  const detailOuvertDepuisUrl = useRef(false)
+  useEffect(() => {
+    if (detailOuvertDepuisUrl.current || recipes.length === 0) return
+    const recipeId = location.hash.match(/^#\/r\/([a-z0-9-]+)$/i)?.[1]
+    if (!recipeId) return
+    detailOuvertDepuisUrl.current = true
+    history.replaceState(history.state, '', location.pathname + location.search)
+    if (recipes.some((r) => r.id === recipeId)) irVers({ type: 'detail', recipeId })
+  }, [recipes, irVers])
+
   // L'historique suit le même chemin que la liste : il vit dans le
   // foyer. Le local sert d'amorce hors ligne et de repli tant que
   // Supabase n'a pas répondu.

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/prerender.mjs",
+    "prerender": "node scripts/prerender.mjs",
     "preview": "vite preview --host",
     "lint:recipes": "node scripts/lint-recipes.mjs",
     "test": "tsx --test 'src/**/*.test.ts'",

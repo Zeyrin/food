@@ -9,13 +9,13 @@
     <meta name="application-name" content="FFFood" />
     <meta name="description" content="FFFood : choisissez vos repas de la semaine, générez votre liste de courses et cuisinez. Sans compte, gratuit, utilisable hors ligne en magasin." />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://fffood69.vercel.app/" />
+    <link rel="canonical" href="https://www.fffood.fr/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="FFFood" />
-    <meta property="og:url" content="https://fffood69.vercel.app/" />
+    <meta property="og:url" content="https://www.fffood.fr/" />
     <meta property="og:title" content="FFFood — repas de la semaine et liste de courses" />
     <meta property="og:description" content="Choisissez vos repas de la semaine, générez votre liste de courses et cuisinez. Sans compte, gratuit, utilisable hors ligne en magasin." />
-    <meta property="og:image" content="https://fffood69.vercel.app/icon-512.png" />
+    <meta property="og:image" content="https://www.fffood.fr/icon-512.png" />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="FFFood" />
     <meta name="twitter:description" content="Repas de la semaine, liste de courses et mode cuisson, sans compte." />
@@ -26,6 +26,19 @@
   </head>
   <body>
     <div id="root"></div>
+    <!--
+      L'app entière tient dans `#root`, que React remplace au démarrage : sans
+      JavaScript, la page est vide, et un robot d'indexation qui n'exécute rien
+      n'a aucun lien à suivre. Le catalogue prérendu (`scripts/prerender.mjs`)
+      est la seule partie du site qui existe en HTML ; ce lien est la porte
+      d'entrée vers lui, pour les robots comme pour un navigateur sans JS.
+    -->
+    <noscript>
+      <p>
+        FFFood a besoin de JavaScript. Les
+        <a href="/recette/">recettes du catalogue</a> se lisent sans.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
