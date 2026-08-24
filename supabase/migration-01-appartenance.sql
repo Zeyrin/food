@@ -316,9 +316,12 @@ grant execute on function creer_foyer(), rejoindre_foyer(text), reclamer_foyer(u
 -- la RLS ci-dessus : un non-membre ne recevra plus rien).
 --   select tablename from pg_publication_tables where pubname = 'supabase_realtime';
 --
--- Doit renvoyer zéro ligne, avec la clé anon et sans session :
---   select * from foyers;
---   select * from listes;
+-- Pour le reste, passer `verification-apres.sql`.
+--
+-- Ne pas juger la fermeture depuis cet éditeur : il s'exécute avec un rôle
+-- qui contourne la RLS, donc `select * from foyers` y renverra toujours des
+-- lignes, migration passée ou non. La preuve se fait depuis le navigateur,
+-- avec la clé anon — voir la fin de `verification-apres.sql`.
 
 commit;
 
