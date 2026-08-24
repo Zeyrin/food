@@ -1,5 +1,6 @@
 import type { Minuteur } from '../lib/minuteurs'
 import { mmss } from '../lib/minuteurs'
+import { useLangue } from '../lib/i18n'
 import Icone from './Icone'
 
 interface Props {
@@ -24,6 +25,7 @@ interface Props {
  * d'écran.
  */
 export default function BandeauMinuteur({ liste, maintenant, sonne, onOuvrir, variante = 'cuisson' }: Props) {
+  const { t } = useLangue()
   const premier = liste[0]
   if (!premier) return null
 
@@ -37,7 +39,7 @@ export default function BandeauMinuteur({ liste, maintenant, sonne, onOuvrir, va
       className={`bandeau-minuteur${variante === 'global' ? ' bandeau-minuteur-global' : ''}`}
       data-sonne={sonne}
       onClick={onOuvrir}
-      aria-label={`${liste.length} minuteur${liste.length > 1 ? 's' : ''} en cours, ouvrir la gestion`}
+      aria-label={t('bandeauMinuteur.label', { n: liste.length, s: liste.length > 1 ? 's' : '' })}
     >
       <div className="bandeau-minuteur-ligne">
         <span className="bandeau-minuteur-nom">
@@ -45,7 +47,7 @@ export default function BandeauMinuteur({ liste, maintenant, sonne, onOuvrir, va
           {premier.nom}
           {liste.length > 1 && <i className="pastille-nombre">{liste.length}</i>}
         </span>
-        <b className="bandeau-minuteur-valeur">{sonne ? 'Terminé' : mmss(restant)}</b>
+        <b className="bandeau-minuteur-valeur">{sonne ? t('bandeauMinuteur.termine') : mmss(restant)}</b>
       </div>
       <div className="bandeau-minuteur-jauge" aria-hidden="true">
         <i style={{ width: `${progression}%` }} />

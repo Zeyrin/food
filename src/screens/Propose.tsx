@@ -1,9 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { BasketEntry, Recipe } from '../types'
 import { type Historique, proposer, tousLesTags } from '../lib/propose'
 import { teinteRecette } from '../lib/identite'
+import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
+import AjoutRecette from '../components/AjoutRecette'
 
 interface Props {
   recipes: Recipe[]
@@ -11,6 +13,15 @@ interface Props {
   basket: BasketEntry[]
   onBasket: (basket: BasketEntry[]) => void
   onDetail: (recipeId: string) => void
+  onAjouterRecette: (recette: Recipe) => Promise<void>
+  /**
+   * L'ouverture de la section d'ajout est tenue par App, pas ici :
+   * changer d'onglet démonte cet écran, et le Panier a un bouton qui
+   * ramène ici *pour* ajouter une recette — l'état doit survivre à ce
+   * trajet, sinon on atterrit sur le catalogue sans savoir pourquoi.
+   */
+  ajoutOuvert: boolean
+  onAjoutOuvert: (ouvert: boolean) => void
 }
 
 const TEMPS = [20, 30, 45] as const
@@ -21,7 +32,17 @@ const normaliser = (s: string) =>
     .replace(/\p{M}/gu, '')
     .toLowerCase()
 
-export default function Propose({ recipes, historique, basket, onBasket, onDetail }: Props) {
+export default function Propose({
+  recipes,
+  historique,
+  basket,
+  onBasket,
+  onDetail,
+  onAjouterRecette,
+  ajoutOuvert,
+  onAjoutOuvert,
+}: Props) {
+  const { t } = useLangue()
   const [recherche, setRecherche] = useState('')
   /**
    * Le tiroir de filtres est une colonne latérale sur desktop (il y a la
@@ -37,6 +58,28 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
   const [tempsMax, setTempsMax] = useState<number | null>(null)
   const [aRefaire, setARefaire] = useState(false)
   const [tags, setTags] = useState<string[]>([])
+  /**
+   * L'ajout d'une recette vit ici, dans la page où l'on regarde son
+   * catalogue — c'est là qu'on se rend compte qu'il manque un plat.
+   * Replié, il tient en une bande ; déplié, il pousse la grille vers le
+   * bas sans la masquer, pour que la recette ajoutée apparaisse juste
+   * en dessous une fois la section refermée.
+   */
+  const ancreAjout = useRef<HTMLDivElement>(null)
+
+  // Ouverte par un bouton d'ici ou en arrivant du Panier : dans les deux
+  // cas la section doit se retrouver sous les yeux, alors qu'elle est
+  // haut de page et l'écran parfois défilé ailleurs.
+  useEffect(() => {
+    if (!ajoutOuvert) return
+    // Deux frames : la section vient à peine d'être montée.
+    const image = requestAnimationFrame(() =>
+      requestAnimationFrame(() =>
+        ancreAjout.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      ),
+    )
+    return () => cancelAnimationFrame(image)
+  }, [ajoutOuvert])
 
   // Tout le catalogue d'un coup (pas de limite à 8) : `proposer` sert
   // encore pour l'ordre — le rejeté disparaît, le récent descend, le
@@ -103,17 +146,17 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
       <header className="entete-app entete-propose">
         <div className="entete-app-titre">
           <Icone nom="grill" />
-          <h1>Proposer</h1>
+          <h1>{t('propose.titre')}</h1>
         </div>
         <div className="recherche-propose" data-tour="recherche-propose">
           <Icone nom="recherche" taille={18} />
           <input
             className="champ-texte champ-recherche"
             type="search"
-            placeholder="Un plat, un ingrédient…"
+            placeholder={t('propose.recherchePlaceholder')}
             value={recherche}
             onChange={(e) => setRecherche(e.target.value)}
-            aria-label="Chercher un plat ou un ingrédient"
+            aria-label={t('propose.rechercheLabel')}
           />
           {/* La croix native de `type=search` n'existe pas partout (ni sur
               Firefox, ni sur iOS) : sans elle, effacer demande d'ouvrir le
@@ -122,7 +165,7 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
             <button
               className="bouton-effacer-recherche"
               onClick={() => setRecherche('')}
-              aria-label="Effacer la recherche"
+              aria-label={t('propose.effacerRecherche')}
             >
               <Icone nom="fermer" taille={16} />
             </button>
@@ -131,6 +174,32 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
       </header>
 
       <div className="corps-propose">
+        <div className="zone-ajout" ref={ancreAjout}>
+          {ajoutOuvert ? (
+            <AjoutRecette
+              onAjouter={onAjouterRecette}
+              onFerme={() => onAjoutOuvert(false)}
+              titresExistants={recipes.map((r) => r.titre)}
+              tagsConnus={tousLesTags(recipes)}
+            />
+          ) : (
+            <button
+              className="bande-ajout"
+              onClick={() => onAjoutOuvert(true)}
+              data-tour="ajout-propose"
+            >
+              <span className="bande-ajout-rond">
+                <Icone nom="plus" taille={22} />
+              </span>
+              <span className="bande-ajout-texte">
+                <b>{t('ajouter.sectionTitre')}</b>
+                <em>{t('ajouter.sectionSousTitre')}</em>
+              </span>
+              <Icone nom="suivant" taille={18} />
+            </button>
+          )}
+        </div>
+
         <details
           className="tiroir-filtres"
           open={filtresOuverts}
@@ -138,37 +207,37 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
           data-tour="filtres-propose"
         >
           <summary>
-            <span>Filtres</span>
+            <span>{t('propose.filtres')}</span>
             {nombreFiltres > 0 && <em>{nombreFiltres}</em>}
             <Icone nom="suivant" taille={16} />
           </summary>
           <div className="puces">
             {nombreFiltres > 0 && (
               <button className="puce puce-effacer" onClick={toutEffacer}>
-                <Icone nom="fermer" taille={14} /> Tout effacer
+                <Icone nom="fermer" taille={14} /> {t('propose.toutEffacer')}
               </button>
             )}
-            {TEMPS.map((t) => (
+            {TEMPS.map((mn) => (
               <button
-                key={t}
+                key={mn}
                 className="puce"
-                aria-pressed={tempsMax === t}
-                onClick={() => setTempsMax(tempsMax === t ? null : t)}
+                aria-pressed={tempsMax === mn}
+                onClick={() => setTempsMax(tempsMax === mn ? null : mn)}
               >
-                ≤ {t} min
+                {t('propose.minutesMax', { n: mn })}
               </button>
             ))}
             <button className="puce" aria-pressed={aRefaire} onClick={() => setARefaire(!aRefaire)}>
-              À refaire
+              {t('propose.aRefaire')}
             </button>
-            {tousLesTags(recipes).map((t) => (
+            {tousLesTags(recipes).map((tag) => (
               <button
-                key={t}
+                key={tag}
                 className="puce"
-                aria-pressed={tags.includes(t)}
-                onClick={() => basculerTag(t)}
+                aria-pressed={tags.includes(tag)}
+                onClick={() => basculerTag(tag)}
               >
-                {t}
+                {tag}
               </button>
             ))}
           </div>
@@ -176,13 +245,25 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
 
         {affichees.length === 0 ? (
           <div className="vide">
-            <p>Aucune recette ne correspond.</p>
+            <p>
+              {nombreFiltres > 0 || recherche.trim() !== ''
+                ? t('propose.aucuneRecette')
+                : t('propose.catalogueVide')}
+            </p>
             {/* Un cul-de-sac sans issue sinon : les filtres qui ont vidé
                 l'écran sont repliés dans le tiroir, hors de vue. */}
-            {(nombreFiltres > 0 || recherche.trim() !== '') && (
+            {nombreFiltres > 0 || recherche.trim() !== '' ? (
               <button className="discret suite" onClick={toutEffacer}>
-                Effacer les filtres
+                {t('propose.effacerFiltres')}
               </button>
+            ) : (
+              // Catalogue vide, aucun filtre en cause : la seule chose à
+              // faire depuis cet écran est d'y mettre une recette.
+              !ajoutOuvert && (
+                <button className="principal suite" onClick={() => onAjoutOuvert(true)}>
+                  {t('ajouter.sectionTitre')}
+                </button>
+              )
             )}
           </div>
         ) : (
@@ -219,7 +300,7 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
                   {r.titre.charAt(0)}
                   <ImageRecette src={r.image} />
                   <span className="badge-temps">
-                    <Icone nom="minuteur" taille={12} /> {r.temps} min
+                    <Icone nom="minuteur" taille={12} /> {t('propose.minutes', { n: r.temps })}
                   </span>
                   <button
                     className="bouton-ajout bouton-ajout-flottant"
@@ -228,14 +309,20 @@ export default function Propose({ recipes, historique, basket, onBasket, onDetai
                       basculer(r)
                     }}
                     aria-pressed={dansPanier(r.id)}
-                    aria-label={dansPanier(r.id) ? `Retirer ${r.titre} du panier` : `Ajouter ${r.titre} au panier`}
+                    aria-label={
+                      dansPanier(r.id)
+                        ? t('propose.retirerDuPanier', { titre: r.titre })
+                        : t('propose.ajouterAuPanier', { titre: r.titre })
+                    }
                   >
                     <Icone nom={dansPanier(r.id) ? 'coche' : 'plus'} taille={20} />
                   </button>
                 </div>
                 <div className="carte-recette-corps">
                   <h3>{r.titre}</h3>
-                  {motifs.has(r.id) && <p className="motif-recherche">contient {motifs.get(r.id)}</p>}
+                  {motifs.has(r.id) && (
+                    <p className="motif-recherche">{t('propose.contient', { motif: motifs.get(r.id) ?? '' })}</p>
+                  )}
                 </div>
               </div>
             ))}

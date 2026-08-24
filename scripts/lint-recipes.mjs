@@ -7,7 +7,15 @@ const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
 const recipes = JSON.parse(readFileSync(join(racine, 'src/data/recipes.json'), 'utf8'))
 
 const UNITS = ['g', 'kg', 'ml', 'cl', 'l', 'cs', 'cc', 'pincee', 'piece', 'botte']
-const STORES = ['intermarche', 'primeur']
+const RAYONS = [
+  'fruits-legumes',
+  'viande-poisson',
+  'cremerie',
+  'boulangerie',
+  'epicerie',
+  'surgeles',
+  'boissons',
+]
 
 const erreurs = []
 const avertissements = []
@@ -34,7 +42,7 @@ for (const [i, r] of recipes.entries()) {
     if (!ing.nom) erreurs.push(`${ou} : ingrédient sans nom`)
     if (!Number.isFinite(ing.quantite) || ing.quantite <= 0) erreurs.push(`${oui} : quantité invalide`)
     if (!UNITS.includes(ing.unite)) erreurs.push(`${oui} : unité inconnue « ${ing.unite} »`)
-    if (!STORES.includes(ing.magasin)) erreurs.push(`${oui} : magasin inconnu « ${ing.magasin} »`)
+    if (!RAYONS.includes(ing.rayon)) erreurs.push(`${oui} : rayon inconnu « ${ing.rayon} »`)
   }
   if (!r.ingredients?.length) erreurs.push(`${ou} : aucun ingrédient`)
 }
@@ -93,14 +101,16 @@ for (let i = 0; i < noms.length; i++) {
   }
 }
 
-// Un ingrédient rangé dans deux magasins différents selon la recette.
-const magasinParNom = new Map()
+// Un ingrédient rangé dans deux rayons différents selon la recette :
+// la liste de courses le ferait alors apparaître à deux endroits du
+// magasin, et l'un des deux serait un détour pour rien.
+const rayonParNom = new Map()
 for (const r of recipes)
   for (const ing of r.ingredients ?? []) {
-    const connu = magasinParNom.get(ing.nom)
-    if (connu && connu !== ing.magasin) {
-      avertissements.push(`magasin : « ${ing.nom} » est tantôt ${connu}, tantôt ${ing.magasin}`)
-    } else magasinParNom.set(ing.nom, ing.magasin)
+    const connu = rayonParNom.get(ing.nom)
+    if (connu && connu !== ing.rayon) {
+      avertissements.push(`rayon : « ${ing.nom} » est tantôt ${connu}, tantôt ${ing.rayon}`)
+    } else rayonParNom.set(ing.nom, ing.rayon)
   }
 
 // --- Rapport ----------------------------------------------------------------

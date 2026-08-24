@@ -66,8 +66,16 @@
   --terracotta: #bc4749;
   --terracotta-doux: #ffdad8;
 
-  --intermarche: #305e3a;
-  --primeur: #a7373b;
+  /* Une couleur par rayon, pour repérer une section d'un coup d'œil
+     dans la liste. Elle ne porte jamais l'information seule : chaque
+     rayon a aussi son icône et son intitulé. */
+  --vert: #305e3a;
+  --brique: #a7373b;
+  --bleu: #2c5d8f;
+  --ambre: #8a5a1a;
+  --brun: #6b4a2f;
+  --sarcelle: #1f6f74;
+  --prune: #6a4a8c;
 
   --ombre: 0 1px 2px rgb(32 27 12 / 0.06), 0 6px 16px rgb(32 27 12 / 0.05);
   --ombre-nette: 0 4px 14px rgb(56 94 22 / 0.18);
@@ -96,8 +104,13 @@
     --sur-accent: #0c2000;
     --terracotta: #ffb3b0;
     --terracotta-doux: #5c1a1c;
-    --intermarche: #a0d3a5;
-    --primeur: #ffb3b0;
+    --vert: #a0d3a5;
+    --brique: #ffb3b0;
+    --bleu: #a8cdf5;
+    --ambre: #e5bd7a;
+    --brun: #d9b593;
+    --sarcelle: #8fd3d7;
+    --prune: #cbb2ec;
     --ombre: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 16px rgb(0 0 0 / 0.3);
     --ombre-nette: 0 4px 16px rgb(0 0 0 / 0.45);
   }
@@ -144,6 +157,13 @@ h2 {
 p.aide {
   color: var(--encre-douce);
   margin: 0 0 16px;
+}
+
+/* Le bleu souligné du navigateur détonne dans une palette qui n'en a pas :
+   même trait que `.lien-discret`, à la couleur du texte accentué. */
+p.aide a {
+  color: var(--accent);
+  text-underline-offset: 3px;
 }
 
 /* --- En-tête d'écran ------------------------------------------------------ */
@@ -215,7 +235,7 @@ p.aide {
    à resynchroniser quand les boutons changent. */
 .barre-actions {
   position: sticky;
-  bottom: 0;
+  bottom: var(--decalage-barre-outils, 0px);
   z-index: 9;
   margin: 24px -20px 0;
   padding: 20px 20px max(16px, env(safe-area-inset-bottom));
@@ -236,7 +256,7 @@ p.aide {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(72px + env(safe-area-inset-bottom));
+  bottom: calc(72px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
   z-index: 9;
   padding: 20px 20px 12px;
   background: linear-gradient(to top, var(--papier) 55%, transparent);
@@ -265,7 +285,7 @@ nav.onglets {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: var(--decalage-barre-outils, 0px);
   display: flex;
   justify-content: space-around;
   gap: 4px;
@@ -305,6 +325,7 @@ nav.onglets button[aria-current='page'] {
 /* --- Cartes et rangées --------------------------------------------------- */
 
 .carte {
+  display: block;
   background: var(--carte-basse);
   border-radius: var(--rayon);
   padding: 16px;
@@ -337,6 +358,12 @@ button.carte:active {
   overflow: hidden;
   background: var(--carte-basse);
   box-shadow: var(--ombre);
+  /* Les cartes d'une même rangée de grille sont étirées à la plus haute :
+     sans ce partage, un titre d'une ligne laissait le bas de la carte à nu
+     sous le corps — visible dès que celui-ci a son propre fond (recette
+     retenue au panier). */
+  display: flex;
+  flex-direction: column;
 }
 
 .vignette {
@@ -352,6 +379,11 @@ button.carte:active {
   color: hsl(var(--teinte) 35% 30% / 0.32);
   background: hsl(var(--teinte) 65% 87%);
   padding-bottom: 8px;
+}
+
+/* La vignette garde sa hauteur : c'est le corps qui absorbe l'étirement. */
+.carte-recette > .vignette {
+  flex: none;
 }
 
 .vignette img {
@@ -398,6 +430,7 @@ button.carte:active {
 }
 
 .carte-recette-corps {
+  flex: 1;
   padding: 20px;
 }
 
@@ -458,17 +491,7 @@ button.carte:active {
   right: 8px;
 }
 
-.grille-recettes /* Pourquoi cette recette remonte alors que son titre ne contient pas
-   le mot cherché : l'ingrédient (ou le tag) qui a fait la
-   correspondance. */
-.motif-recherche {
-  margin: 4px 0 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.carte-recette-corps {
+.grille-recettes .carte-recette-corps {
   padding: 12px 14px 14px;
 }
 
@@ -614,17 +637,7 @@ button.discret.danger {
   outline-offset: -3px;
 }
 
-.carte-recette[data-panier='true'] /* Pourquoi cette recette remonte alors que son titre ne contient pas
-   le mot cherché : l'ingrédient (ou le tag) qui a fait la
-   correspondance. */
-.motif-recherche {
-  margin: 4px 0 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.carte-recette-corps {
+.carte-recette[data-panier='true'] .carte-recette-corps {
   background: var(--accent-doux);
 }
 
@@ -795,14 +808,142 @@ button.discret.danger {
   border-radius: 14px;
 }
 
-.badge-section[data-magasin='intermarche'] {
-  color: var(--intermarche);
-  background: color-mix(in srgb, var(--intermarche) 16%, transparent);
+.badge-section[data-rayon='fruits-legumes'] {
+  color: var(--vert);
+  background: color-mix(in srgb, var(--vert) 16%, transparent);
 }
 
-.badge-section[data-magasin='primeur'] {
-  color: var(--primeur);
-  background: color-mix(in srgb, var(--primeur) 16%, transparent);
+.badge-section[data-rayon='viande-poisson'] {
+  color: var(--brique);
+  background: color-mix(in srgb, var(--brique) 16%, transparent);
+}
+
+.badge-section[data-rayon='cremerie'] {
+  color: var(--bleu);
+  background: color-mix(in srgb, var(--bleu) 16%, transparent);
+}
+
+.badge-section[data-rayon='boulangerie'] {
+  color: var(--ambre);
+  background: color-mix(in srgb, var(--ambre) 16%, transparent);
+}
+
+.badge-section[data-rayon='epicerie'] {
+  color: var(--brun);
+  background: color-mix(in srgb, var(--brun) 16%, transparent);
+}
+
+.badge-section[data-rayon='surgeles'] {
+  color: var(--sarcelle);
+  background: color-mix(in srgb, var(--sarcelle) 16%, transparent);
+}
+
+.badge-section[data-rayon='boissons'] {
+  color: var(--prune);
+  background: color-mix(in srgb, var(--prune) 16%, transparent);
+}
+
+.badge-section[data-rayon='autre'] {
+  color: var(--encre-douce);
+  background: color-mix(in srgb, var(--encre-douce) 14%, transparent);
+}
+
+/* L'intitulé du magasin chapeaute ses rayons : il doit se lire comme
+   une étape du parcours (« ici, puis là-bas »), pas comme un titre de
+   section de plus. D'où la pilule pleine largeur, plus haute que les
+   en-têtes de rayon qu'elle contient. */
+.entete-magasin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 32px 0 4px;
+  padding: 12px 18px;
+  border-radius: var(--rayon);
+  background: var(--carte-haute);
+  font-family: var(--affichage);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--encre);
+}
+
+.entete-magasin svg {
+  flex: none;
+}
+
+/* Sous un magasin, le rayon est un sous-titre : même composition, un
+   cran plus discret, et collé à son magasin. */
+h3.entete-section {
+  margin: 18px 0 8px;
+  font-family: var(--affichage);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--encre-douce);
+}
+
+/* --- Réglages : magasins et rayons ---------------------------------------- */
+
+.rangee-magasin {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.titre-secondaire {
+  margin: 24px 0 8px;
+  font-family: var(--affichage);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--encre);
+}
+
+/* Le rayon à gauche, le magasin à droite : la ligne se lit comme la
+   phrase qu'on se dit en préparant ses courses (« les légumes, au
+   marché »). Elle s'empile sur les écrans étroits plutôt que de
+   comprimer le sélecteur. */
+.rangee-routage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.rangee-routage-rayon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 180px;
+  font-size: 15px;
+}
+
+.rangee-routage .badge-section {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+}
+
+.champ-select {
+  flex: 0 1 auto;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 10px 14px;
+  border: 2px solid var(--trait);
+  border-radius: 999px;
+  background: var(--carte);
+  color: var(--encre);
+  font: inherit;
+  font-size: 15px;
+}
+
+.champ-select:focus-visible {
+  border-color: var(--accent);
+}
+
+/* Le chevron « précédent » sert de flèche « monter » : une icône de
+   moins à dessiner, et la rotation est exacte au pixel près. */
+.pivot-monter svg {
+  transform: rotate(90deg);
 }
 
 /* Puces qui s'enroulent sur plusieurs lignes plutôt que de défiler à
@@ -925,9 +1066,13 @@ button.principal:disabled {
   box-shadow: none;
 }
 
-/* Bouton "carte" cliquable en bloc (`button.carte`, reset natif). */
+/* Bouton "carte" cliquable en bloc (`button.carte`, reset natif). Le
+   `display` vient de `.carte` : posé ici, il l'emportait sur celui des
+   cartes qui se disposent autrement (`.carte-recette`), et un bouton plus
+   haut que son contenu centre ce dernier verticalement — la carte de
+   l'écran Cuisson se retrouvait avec un bandeau vide au-dessus de sa
+   photo. */
 button.carte {
-  display: block;
   width: 100%;
   text-align: left;
   cursor: pointer;
@@ -1024,7 +1169,7 @@ button.discret.accent:active:not(:disabled) {
   font-family: var(--affichage);
   font-size: 18px;
   font-weight: 600;
-  color: var(--intermarche);
+  color: var(--vert);
 }
 
 .carte-resume-semaine::after {
@@ -1078,7 +1223,7 @@ button.discret.accent:active:not(:disabled) {
   padding: 10px 16px;
   border-radius: 999px;
   background: var(--terracotta-doux);
-  color: var(--primeur);
+  color: var(--brique);
   font-size: 13px;
   font-weight: 600;
   box-shadow: var(--ombre);
@@ -1361,24 +1506,7 @@ button.carte-panier-bouton .carte-panier-corps {
   color: var(--encre);
 }
 
-.bento-deux-colonnes /* Rattrapage d'un retrait, à la place de la carte disparue. */
-.carte-annulation {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  background: var(--carte-haute);
-  animation: confirmation-entree 0.16s ease;
-}
-
-.carte-annulation p {
-  margin: 0;
-  font-size: 15px;
-  color: var(--encre-douce);
-}
-
-.carte-bento {
+.bento-deux-colonnes .carte-bento {
   margin-bottom: 0;
 }
 
@@ -1605,16 +1733,6 @@ button.carte-panier-bouton .carte-panier-corps {
   display: none;
 }
 
-.tiroir-ingredients summary em {
-  font-style: normal;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: rgb(255 248 239 / 0.12);
-  color: rgb(255 248 239 / 0.7);
-}
-
 /* Le chevron pointe à droite replié, vers le bas déplié. */
 .tiroir-ingredients summary svg {
   margin-left: auto;
@@ -1808,7 +1926,7 @@ button.carte-panier-bouton .carte-panier-corps {
   position: fixed;
   left: 12px;
   right: 12px;
-  bottom: calc(80px + env(safe-area-inset-bottom));
+  bottom: calc(80px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
   z-index: 9;
   width: auto;
   max-width: 616px;
@@ -1843,11 +1961,11 @@ button.carte-panier-bouton .carte-panier-corps {
 /* Les boutons flottants lui cèdent la place plutôt que de le
    chevaucher — l'attribut est posé sur la racine par App.tsx. */
 [data-minuteur='true'] .bouton-flottant {
-  bottom: calc(168px + env(safe-area-inset-bottom));
+  bottom: calc(168px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
 }
 
 [data-minuteur='true'] .action-flottante {
-  bottom: calc(152px + env(safe-area-inset-bottom));
+  bottom: calc(152px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
 }
 
 [data-minuteur='true'] .espaceur-action-flottante {
@@ -2117,7 +2235,7 @@ button.carte-panier-bouton .carte-panier-corps {
 .bouton-flottant {
   position: fixed;
   right: 20px;
-  bottom: calc(88px + env(safe-area-inset-bottom));
+  bottom: calc(88px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
   z-index: 8;
   width: 56px;
   height: 56px;
@@ -2168,7 +2286,7 @@ button.carte-panier-bouton .carte-panier-corps {
   background: var(--carte-haute);
 }
 
-/* --- Saisie automatique --------------------------------------------------- */
+/* --- Champs de saisie ----------------------------------------------------- */
 
 .champ-texte {
   width: 100%;
@@ -2221,7 +2339,7 @@ button.carte-panier-bouton .carte-panier-corps {
   padding: 14px 16px;
   border-radius: var(--rayon);
   background: var(--terracotta-doux);
-  color: var(--primeur);
+  color: var(--brique);
 }
 
 .bloc-erreurs p {
@@ -2231,6 +2349,73 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .bloc-erreurs p + p {
   margin-top: 6px;
+}
+
+/* --- Écran de repli (components/LimiteErreur.tsx) ------------------------
+   Ce qui s'affiche quand un rendu React lève : avant, l'écran devenait
+   blanc et muet. Centré et sobre — on n'a rien à y faire sinon lire une
+   phrase et appuyer sur un bouton. */
+
+.ecran-erreur {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 32px 24px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.ecran-erreur-icone {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--terracotta-doux);
+  color: var(--brique);
+  display: grid;
+  place-items: center;
+}
+
+.ecran-erreur h1 {
+  font-family: var(--affichage);
+  margin: 0;
+}
+
+.ecran-erreur > p {
+  margin: 0;
+  color: var(--encre-douce);
+}
+
+.ecran-erreur .principal {
+  width: 100%;
+}
+
+.ecran-erreur-details {
+  width: 100%;
+  text-align: left;
+  color: var(--encre-douce);
+  font-size: 14px;
+}
+
+.ecran-erreur-details summary {
+  cursor: pointer;
+  padding: 8px 0;
+}
+
+/* Un message d'exception ne se coupe pas aux mots : sans ces deux
+   règles, une pile un peu longue déborde l'écran en largeur. */
+.ecran-erreur-details pre {
+  margin: 8px 0 0;
+  padding: 12px;
+  border-radius: var(--rayon);
+  background: var(--carte-haute);
+  color: var(--encre);
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 /* --- Composeur d'article (écran Liste) -----------------------------------
@@ -2793,5 +2978,384 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   }
   .visite-carte-corps {
     animation: none;
+  }
+}
+
+/* --- Ajouter une recette (section de l'écran Proposer) --------------------
+   L'ajout n'a plus d'écran à lui : il vit dans la page où l'on regarde
+   son catalogue, puisque c'est là qu'on s'aperçoit qu'il manque un plat.
+   Replié, il tient sur une bande ; déplié, il devient un panneau posé
+   au-dessus de la grille, qui reste visible en dessous — la recette
+   ajoutée y apparaît dès qu'on referme. */
+
+.zone-ajout {
+  margin: 12px 0 16px;
+  /* L'en-tête de « Proposer » est collant : sans cette marge, la section
+     amenée sous les yeux vient se glisser dessous et on la découvre
+     décapitée, sans son titre ni sa croix de fermeture. */
+  scroll-margin-top: 130px;
+}
+
+.bande-ajout {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 2px dashed var(--trait);
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  color: var(--encre);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.12s ease, transform 0.12s ease;
+}
+
+.bande-ajout:active {
+  transform: scale(0.99);
+  border-color: var(--accent);
+}
+
+.bande-ajout-rond {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+.bande-ajout-texte {
+  flex: 1;
+  min-width: 0;
+}
+
+.bande-ajout-texte b {
+  display: block;
+  font-family: var(--affichage);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.bande-ajout-texte em {
+  display: block;
+  font-style: normal;
+  font-size: 13px;
+  color: var(--encre-douce);
+}
+
+.bande-ajout > svg {
+  flex: 0 0 auto;
+  color: var(--encre-douce);
+}
+
+.panneau-ajout {
+  padding: 16px;
+  border: 2px solid var(--accent-doux);
+  border-radius: var(--rayon-grand);
+  background: var(--carte);
+  box-shadow: var(--ombre);
+}
+
+.panneau-ajout-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.panneau-ajout-entete h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--accent);
+}
+
+/* Le choix qui manquait : « je l'écris » ou « je la fais écrire ». */
+.choix-methodes {
+  display: grid;
+  gap: 12px;
+}
+
+.carte-methode {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 18px;
+  border: 2px solid var(--trait);
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  color: var(--encre);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.12s ease, transform 0.12s ease;
+}
+
+.carte-methode:active {
+  transform: scale(0.99);
+  border-color: var(--accent);
+}
+
+.carte-methode-rond {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-doux);
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+.carte-methode b {
+  font-family: var(--affichage);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.carte-methode em {
+  font-style: normal;
+  font-size: 14px;
+  color: var(--encre-douce);
+}
+
+/* --- Formulaire de recette ----------------------------------------------
+   Le même pour écrire une recette et pour en modifier une : les titres
+   de section jalonnent une saisie longue, chaque champ porte son
+   étiquette visible plutôt qu'un simple `placeholder` qui disparaît dès
+   qu'on tape. */
+
+.titre-etape-formulaire {
+  margin: 24px 0 6px;
+  padding-top: 18px;
+  border-top: 1px solid var(--trait);
+  font-family: var(--affichage);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.formulaire-recette > .titre-etape-formulaire:first-child {
+  margin-top: 4px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.aide-champ {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--encre-douce);
+}
+
+.champ-etiquette {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.champ-etiquette > span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--encre-douce);
+}
+
+.champ-etiquette .champ-select {
+  flex: none;
+  width: 100%;
+}
+
+.rangee-champs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rangee-champs > .champ-etiquette {
+  flex: 1 1 120px;
+  min-width: 0;
+}
+
+.rangee-champs > .champ-etiquette-court {
+  flex: 1 1 90px;
+}
+
+/* Le rayon passe à la ligne sur un téléphone : son libellé est long, et
+   le couple quantité + unité se lit comme un tout. */
+.rangee-champs > .champ-etiquette-large {
+  flex: 1 1 100%;
+}
+
+.liste-champs {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.carte-champ {
+  padding: 14px;
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+}
+
+.carte-champ-entete {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.carte-champ-entete .champ-texte {
+  flex: 1;
+  min-width: 0;
+}
+
+.carte-champ-numero {
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-doux);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.carte-champ-titre {
+  flex: 1;
+  font-family: var(--affichage);
+  font-size: 15px;
+}
+
+.case-a-cocher {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--encre-douce);
+  cursor: pointer;
+}
+
+.case-a-cocher input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+}
+
+.champ-texte-secondaire {
+  margin-top: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+/* Les mêmes boutons que `.barre-actions`, mais dans le flux : en
+   section de « Proposer », une barre collée en bas flotterait par-dessus
+   le catalogue qui continue en dessous. */
+.actions-formulaire {
+  margin-top: 24px;
+}
+
+.actions-formulaire > * + * {
+  margin-top: 10px;
+}
+
+.bloc-succes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--rayon);
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+.bloc-succes p {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* --- Chemin « une IA écrit la recette » ----------------------------------
+   Trois gestes numérotés, dont celui qui se passe hors de l'app : c'est
+   son absence qui rendait l'ancien écran illisible. */
+
+.etapes-ia {
+  list-style: none;
+  display: grid;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+}
+
+.etapes-ia h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 6px;
+  font-family: var(--affichage);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.liens-ia {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.lien-ia {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 18px;
+  border: 2px solid var(--trait);
+  border-radius: 999px;
+  color: var(--encre);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lien-ia:active {
+  border-color: var(--accent);
+}
+
+/* Catalogue vide : le bouton d'ajout est la seule chose à faire ici. */
+.vide .principal {
+  max-width: 320px;
+  margin: 16px auto 0;
+}
+
+@media (min-width: 560px) {
+  .choix-methodes {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .rangee-champs > .champ-etiquette-large {
+    flex: 1 1 160px;
+  }
+}
+
+@media (min-width: 900px) {
+  /* La grille de « Proposer » est en deux colonnes (filtres | recettes) :
+     la section d'ajout les traverse, en tête de page. */
+  .corps-propose .zone-ajout {
+    grid-column: 1 / -1;
+    margin: 0 0 8px;
+    /* En-tête sur une seule ligne : le titre et la recherche cohabitent. */
+    scroll-margin-top: 90px;
+  }
+
+  .panneau-ajout {
+    padding: 24px;
   }
 }

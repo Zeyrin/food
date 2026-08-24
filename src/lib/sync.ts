@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import type { ListState, Recipe } from '../types'
+import { traduire } from './i18n'
 import type { Historique } from './propose'
 
 const url = import.meta.env.VITE_SUPABASE_URL
@@ -39,10 +40,25 @@ const topic = (prefixe: string) => `${prefixe}:${crypto.randomUUID().slice(0, 8)
  * cochent des produits différents ne se marchent pas dessus ;
  * deux personnes qui cochent le même en même temps arrivent au
  * même résultat. Ça suffit pour des courses.
+ *
+ * `null` quand la lecture a échoué, et c'est tout l'intérêt : une
+ * erreur retournait `VIDE`, exactement comme un foyer qui n'a encore
+ * rien publié. L'appelant appliquait donc un état vide par-dessus le
+ * sien, décochant la liste à l'écran — puis la première case recochée
+ * réécrivait ce vide dans Supabase. Un foyer sans ligne, lui, rend
+ * bien `VIDE` : c'est une réponse, pas une panne.
  */
-export async function lireListe(foyer: string): Promise<ListState> {
+export async function lireListe(foyer: string): Promise<ListState | null> {
   if (!supabase) return VIDE
-  const { data } = await supabase.from('listes').select('etat').eq('foyer', foyer).maybeSingle()
+  const { data, error } = await supabase
+    .from('listes')
+    .select('etat')
+    .eq('foyer', foyer)
+    .maybeSingle()
+  if (error) {
+    console.warn(`Lecture de la liste refusée : ${error.message}`)
+    return null
+  }
   return (data?.etat as ListState) ?? VIDE
 }
 
@@ -82,15 +98,22 @@ export function suivreListe(foyer: string, onChange: (etat: ListState) => void):
  * Le catalogue du foyer. Vide si Supabase n'est pas configuré —
  * à l'appelant de retomber sur le corpus de départ dans ce cas
  * (voir semerCorpusInitial et App.tsx).
+ *
+ * Lève si la lecture échoue plutôt que de rendre une liste vide : un
+ * `select` refusé (policy mal réglée) ressemblait trait pour trait à
+ * un foyer tout neuf, et l'appelant enchaînait sur le semis — c'est
+ * l'intégralité du corpus réinséré à chaque ouverture, en double, dès
+ * lors que l'`insert`, lui, passait.
  */
 export async function lireRecettes(foyer: string): Promise<Recipe[]> {
   if (!supabase) return []
-  const { data } = await supabase.from('recettes').select('recette').eq('foyer', foyer)
+  const { data, error } = await supabase.from('recettes').select('recette').eq('foyer', foyer)
+  if (error) throw new Error(`Lecture du catalogue refusée : ${error.message}`)
   return (data ?? []).map((ligne) => ligne.recette as Recipe)
 }
 
 export async function ajouterRecette(foyer: string, recette: Recipe): Promise<void> {
-  if (!supabase) throw new Error("Le partage n'est pas configuré : impossible d'enregistrer la recette.")
+  if (!supabase) throw new Error(traduire('sync.partageNonConfigureAjout'))
   // Le résultat était ignoré : un insert refusé (policy, réseau coupé
   // au mauvais moment) laissait l'app annoncer « Recette ajoutée » et
   // l'afficher dans le catalogue, jusqu'au rechargement où elle avait
@@ -100,7 +123,7 @@ export async function ajouterRecette(foyer: string, recette: Recipe): Promise<vo
 }
 
 export async function modifierRecette(foyer: string, recette: Recipe): Promise<void> {
-  if (!supabase) throw new Error("Le partage n'est pas configuré : impossible d'enregistrer la modification.")
+  if (!supabase) throw new Error(traduire('sync.partageNonConfigureModification'))
   const { error } = await supabase
     .from('recettes')
     .update({ recette })
@@ -110,7 +133,7 @@ export async function modifierRecette(foyer: string, recette: Recipe): Promise<v
 }
 
 export async function supprimerRecette(foyer: string, recipeId: string): Promise<void> {
-  if (!supabase) throw new Error("Le partage n'est pas configuré : impossible de supprimer la recette.")
+  if (!supabase) throw new Error(traduire('sync.partageNonConfigureSuppression'))
   const { error } = await supabase
     .from('recettes')
     .delete()
@@ -128,11 +151,15 @@ export async function supprimerRecette(foyer: string, recipeId: string): Promise
  */
 export async function semerCorpusInitial(foyer: string, corpus: Recipe[]): Promise<Recipe[]> {
   if (!supabase) return []
-  const { count } = await supabase
+  const { count, error: erreurCompte } = await supabase
     .from('recettes')
     .select('id', { count: 'exact', head: true })
     .eq('foyer', foyer)
-  if (count && count > 0) return []
+  if (erreurCompte) throw new Error(`Lecture du catalogue refusée : ${erreurCompte.message}`)
+  // Déjà semé entre-temps — l'autre téléphone du foyer a été plus
+  // rapide. On relit ce qu'il a écrit au lieu de rendre `[]`, qui
+  // s'affichait comme un catalogue vide jusqu'au rechargement suivant.
+  if (count && count > 0) return lireRecettes(foyer)
 
   const { error } = await supabase.from('recettes').insert(corpus.map((recette) => ({ foyer, recette })))
   if (error) throw new Error(`Échec du seed initial : ${error.message}`)
@@ -153,11 +180,15 @@ export async function semerCorpusInitial(foyer: string, corpus: Recipe[]): Promi
  */
 export async function lireHistoriqueFoyer(foyer: string): Promise<Historique | null> {
   if (!supabase) return null
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('historiques')
     .select('historique')
     .eq('foyer', foyer)
     .maybeSingle()
+  if (error) {
+    console.warn(`Lecture de l'historique refusée : ${error.message}`)
+    return null
+  }
   return (data?.historique as Historique) ?? null
 }
 
@@ -195,7 +226,13 @@ export function suivreRecettes(foyer: string, onChangement: (recettes: Recipe[])
     .on(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'recettes', filter: `foyer=eq.${foyer}` },
-      () => void lireRecettes(foyer).then(onChangement),
+      // `lireRecettes` lève désormais sur lecture refusée : sans ce
+      // `catch`, chaque notification temps réel produirait un rejet non
+      // rattrapé. On garde le catalogue déjà à l'écran.
+      () =>
+        void lireRecettes(foyer)
+          .then(onChangement)
+          .catch((e: unknown) => console.warn(`Relecture du catalogue impossible : ${e}`)),
     )
     .subscribe(journaliserStatut('recettes'))
 

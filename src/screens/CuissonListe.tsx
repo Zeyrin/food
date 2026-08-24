@@ -1,6 +1,7 @@
 import type { BasketEntry, Recipe } from '../types'
 import { teinteRecette } from '../lib/identite'
 import { cuisineRecemment, type Historique } from '../lib/propose'
+import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function CuissonListe({ recipes, basket, historique, onCuisiner }: Props) {
+  const { t } = useLangue()
   const byId = new Map(recipes.map((r) => [r.id, r]))
 
   /**
@@ -28,7 +30,7 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
     <header className="entete-app">
       <div className="entete-app-titre">
         <Icone nom="grill" />
-        <h1>Cuisson</h1>
+        <h1>{t('cuissonListe.titre')}</h1>
       </div>
     </header>
   )
@@ -37,7 +39,7 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
     return (
       <>
         {entete}
-        <p className="vide">Ajoutez des recettes au panier pour pouvoir les cuisiner.</p>
+        <p className="vide">{t('cuissonListe.videTexte')}</p>
       </>
     )
   }
@@ -47,8 +49,8 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
       {entete}
       <p className="aide">
         {restants === 0
-          ? "Tous les plats de la semaine sont passés en cuisine. Rien n'empêche d'en refaire un."
-          : `Choisissez le plat à cuisiner maintenant — ${restants} sur ${basket.length} vous attendent encore.`}
+          ? t('cuissonListe.tousFaits')
+          : t('cuissonListe.restants', { restants, total: basket.length })}
       </p>
 
       {/* Même carte-vignette que Proposer plutôt que la petite ligne
@@ -77,14 +79,19 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
                 {r.titre.charAt(0)}
                 <ImageRecette src={r.image} />
                 <span className="badge-temps">
-                  <Icone nom="minuteur" taille={12} /> {r.temps} min
+                  <Icone nom="minuteur" taille={12} /> {t('cuissonListe.minutes', { n: r.temps })}
                 </span>
               </div>
               <div className="carte-recette-corps">
                 <h3>{r.titre}</h3>
                 <div className="carte-cuisson-pied">
                   <span className="meta">
-                    {dejaFait ? 'Déjà cuisiné' : `${entree.portions} parts`}
+                    {dejaFait
+                      ? t('cuissonListe.dejaCuisine')
+                      : t('cuissonListe.parts', {
+                          n: entree.portions,
+                          s: entree.portions > 1 ? 's' : '',
+                        })}
                   </span>
                   <Icone nom={dejaFait ? 'coche' : 'suivant'} taille={16} />
                 </div>

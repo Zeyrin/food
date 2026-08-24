@@ -50,6 +50,25 @@ export default defineConfig({
         // fois la nouvelle installée — et occupaient le quota jusqu'à
         // faire échouer la mise en cache suivante sur un téléphone plein.
         cleanupOutdatedCaches: true,
+        // Les photos des plats sont précachées avec le reste : sans elles,
+        // l'app hors ligne retombait sur la vignette teintée alors que le
+        // catalogue, lui, est embarqué au build.
+        globPatterns: ['**/*.{js,css,html,png,svg,webp,woff2,ttf}'],
+        // Workbox génère le service worker de A à Z : le seul endroit où
+        // poser du code à nous est cet import. Il apporte le
+        // `notificationclick` qui ramène dans l'app quand on touche
+        // l'alerte d'un minuteur (voir public/sw-minuteurs.js).
+        importScripts: ['/sw-minuteurs.js'],
+        // Workbox répond `index.html` à toute navigation, ce qui est
+        // exactement ce qu'il faut pour une SPA à une seule URL — et
+        // exactement ce qu'il ne faut pas pour les pages prérendues
+        // (`scripts/prerender.mjs`) : un visiteur qui a déjà l'app
+        // installée recevait le catalogue au lieu de la recette qu'on
+        // venait de lui envoyer. Ces adresses-là repassent par le
+        // réseau. Elles n'existent pas hors ligne, et c'est cohérent :
+        // ce sont des pages d'arrivée, l'app elle-même reste servie
+        // depuis le cache à la racine.
+        navigateFallbackDenylist: [/^\/recette\//],
       },
     }),
   ],

@@ -3,7 +3,7 @@ import { flushSync } from 'react-dom'
 import corpus from './data/recipes.json'
 import type { BasketEntry, ListState, Onglet, Recipe, Verdict } from './types'
 import { buildList, redimensionnerRecette } from './lib/aggregate'
-import { cuisineRecemment, type Historique } from './lib/propose'
+import { cuisineRecemment, tousLesTags, type Historique } from './lib/propose'
 import {
   ecrireBasket,
   lireBasket,
@@ -36,17 +36,21 @@ import Panier from './screens/Panier'
 import Liste from './screens/Liste'
 import Cuisson from './screens/Cuisson'
 import CuissonListe from './screens/CuissonListe'
-import AjouterRecette from './screens/AjouterRecette'
+import ModifierRecette from './screens/ModifierRecette'
 import Bienvenue from './screens/Bienvenue'
 import TourGuide from './components/TourGuide'
 import BandeauMinuteur from './components/BandeauMinuteur'
 import BandeauMiseAJour from './components/BandeauMiseAJour'
 import PanneauMinuteurs from './components/PanneauMinuteurs'
 import { useMinuteurs } from './hooks/useMinuteurs'
+import { ecouterClicNotification } from './lib/minuteurs'
+import { useMagasins } from './hooks/useMagasins'
 import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
 import { useMiseAJour } from './hooks/useMiseAJour'
+import { useDecalageBarreOutils } from './hooks/useDecalageBarreOutils'
+import { useLangue } from './lib/i18n'
 
 const CORPUS: Recipe[] = corpus as Recipe[]
 
@@ -60,7 +64,6 @@ const CORPUS: Recipe[] = corpus as Recipe[]
 type Vue =
   | { type: 'onglet'; onglet: Onglet }
   | { type: 'detail'; recipeId: string }
-  | { type: 'ajout' }
   | { type: 'edition'; recette: Recipe }
   | { type: 'cuisson'; recipeId: string }
   | { type: 'reglages' }
@@ -84,7 +87,12 @@ function lirePileSauvegardee(): Vue[] {
   try {
     const brut = sessionStorage.getItem(CLE_PILE)
     if (!brut) return PILE_INITIALE
-    const pile = JSON.parse(brut) as Vue[]
+    const pile = (JSON.parse(brut) as Vue[]).filter(
+      // « ajout » était un écran à lui seul ; il vit maintenant dans
+      // « Proposer ». Une session rechargée après la mise à jour ne doit
+      // pas rester bloquée sur une vue qui ne s'affiche plus.
+      (vue) => (vue as { type?: string }).type !== 'ajout',
+    )
     return Array.isArray(pile) && pile.length > 0 ? pile : PILE_INITIALE
   } catch {
     return PILE_INITIALE
@@ -92,6 +100,8 @@ function lirePileSauvegardee(): Vue[] {
 }
 
 export default function App() {
+  const { t } = useLangue()
+  useDecalageBarreOutils()
   const [pile, setPile] = useState<Vue[]>(lirePileSauvegardee)
   const vueActuelle = pile[pile.length - 1]!
 
@@ -219,10 +229,16 @@ export default function App() {
     [vueActuelle, irVers, avecTransition, defilerVers],
   )
 
+  /**
+   * Ajouter une recette n'est plus un écran : c'est une section de
+   * « Proposer », ouverte ici pour que le bouton du Panier puisse
+   * changer d'onglet et la déplier du même geste.
+   */
+  const [ajoutOuvert, setAjoutOuvert] = useState(false)
   const ouvrirAjout = useCallback(() => {
-    if (vueActuelle.type === 'ajout') return
-    irVers({ type: 'ajout' })
-  }, [vueActuelle, irVers])
+    setAjoutOuvert(true)
+    changerOnglet('propose')
+  }, [changerOnglet])
 
   // Bascule d'onglet sans empiler d'entrée d'historique — utilisée par
   // la visite guidée pour amener le bon écran derrière chaque repère.
@@ -299,6 +315,11 @@ export default function App() {
    * rechargement (voir lib/minuteurs.ts).
    */
   const minuteurs = useMinuteurs()
+
+  // Les magasins du foyer : combien d'arrêts, et quel rayon dans lequel.
+  // Un seul magasin par défaut — la liste n'est alors qu'une suite de
+  // rayons (voir lib/magasins.ts).
+  const magasins = useMagasins()
   const [panneauMinuteurs, setPanneauMinuteurs] = useState(false)
 
   // Quand ça sonne, le panneau s'ouvre tout seul, où qu'on soit dans
@@ -308,6 +329,11 @@ export default function App() {
   useEffect(() => {
     if (nombreQuiSonnent > 0) setPanneauMinuteurs(true)
   }, [nombreQuiSonnent])
+
+  // Toucher la notification d'un minuteur ramène ici : le service worker
+  // focalise la fenêtre (ou la rouvre), et nous dit d'ouvrir le panneau —
+  // y compris s'il avait été refermé pendant que ça sonnait encore.
+  useEffect(() => ecouterClicNotification(() => setPanneauMinuteurs(true)), [])
 
   // Le panier n'a pas d'état à lui : il fait partie de la liste du foyer.
   // Une seule source de vérité, une seule écriture réseau — impossible que
@@ -324,12 +350,20 @@ export default function App() {
   // pour ne pas flasher Bienvenue le temps que IndexedDB réponde.
   useEffect(() => {
     void (async () => {
-      const panier = await lireBasket()
-      setEtatListe((prec) => ({ ...prec, panier }))
-      setHistorique(await lireHistorique())
-      setFoyer(await lireFoyer())
-      setCodeFoyer(await lireCodeFoyer())
-      setFoyerCharge(true)
+      try {
+        const panier = await lireBasket()
+        setEtatListe((prec) => ({ ...prec, panier }))
+        setHistorique(await lireHistorique())
+        setFoyer(await lireFoyer())
+        setCodeFoyer(await lireCodeFoyer())
+      } finally {
+        // Quoi qu'il arrive à la lecture locale : sans ce `finally`,
+        // un seul rejet laissait `foyerCharge` à `false`, et le
+        // `return null` plus bas devenait un écran blanc définitif.
+        // `lib/local.ts` neutralise déjà l'absence de stockage ; ceci
+        // couvre le reste — l'app démarre, quitte à ne rien retrouver.
+        setFoyerCharge(true)
+      }
     })()
   }, [])
 
@@ -381,7 +415,10 @@ export default function App() {
     if (!foyer) return
     const appliquer = (distant: ListState) =>
       setEtatListe((local) => ({ ...distant, panier: distant.panier ?? local.panier }))
-    void lireListe(foyer).then(appliquer)
+    // `null` = lecture refusée (voir lib/sync.ts). On ne l'applique pas :
+    // écraser la liste locale avec un état vide décocherait tout à
+    // l'écran, et la prochaine case cochée publierait ce vide.
+    void lireListe(foyer).then((distant) => distant && appliquer(distant))
     return suivreListe(foyer, appliquer)
   }, [foyer])
 
@@ -404,11 +441,44 @@ export default function App() {
       return
     }
     void (async () => {
-      const existantes = await lireRecettes(foyer)
-      setRecipes(existantes.length > 0 ? existantes : await semerCorpusInitial(foyer, CORPUS))
+      try {
+        const existantes = await lireRecettes(foyer)
+        setRecipes(existantes.length > 0 ? existantes : await semerCorpusInitial(foyer, CORPUS))
+      } catch (e) {
+        // Lecture ou semis refusé (policy, réseau) : on affiche le
+        // corpus embarqué au build plutôt qu'un catalogue vide. L'app
+        // reste entièrement utilisable — proposer, panier, liste,
+        // cuisson — et rien n'est écrit dans le foyer tant que la
+        // lecture ne repasse pas.
+        console.warn(`Catalogue du foyer indisponible, corpus embarqué affiché : ${e}`)
+        setRecipes(CORPUS)
+      }
     })()
     return suivreRecettes(foyer, setRecipes)
   }, [foyer])
+
+  /**
+   * `/#/r/<id>` ouvre directement une fiche. C'est le lien que portent
+   * les pages prérendues du catalogue (`scripts/prerender.mjs`) : sans
+   * lui, quelqu'un qui arrive sur « Mapo tofu » depuis un moteur de
+   * recherche atterrissait dans l'app sur la grille entière, à
+   * rechercher le plat qu'il venait de lire.
+   *
+   * On passe par `irVers` plutôt que par la pile initiale pour que
+   * l'entrée d'historique existe — le bouton retour doit ramener au
+   * catalogue, pas sortir de l'app. D'où l'attente du catalogue chargé,
+   * puis le nettoyage du fragment : un rechargement ne doit pas
+   * rouvrir la fiche par-dessus l'écran où on en était.
+   */
+  const detailOuvertDepuisUrl = useRef(false)
+  useEffect(() => {
+    if (detailOuvertDepuisUrl.current || recipes.length === 0) return
+    const recipeId = location.hash.match(/^#\/r\/([a-z0-9-]+)$/i)?.[1]
+    if (!recipeId) return
+    detailOuvertDepuisUrl.current = true
+    history.replaceState(history.state, '', location.pathname + location.search)
+    if (recipes.some((r) => r.id === recipeId)) irVers({ type: 'detail', recipeId })
+  }, [recipes, irVers])
 
   // L'historique suit le même chemin que la liste : il vit dans le
   // foyer. Le local sert d'amorce hors ligne et de repli tant que
@@ -465,7 +535,7 @@ export default function App() {
 
   const ajouter = useCallback(
     async (recette: Recipe) => {
-      if (!foyer) throw new Error('Foyer non initialisé, réessayez dans un instant.')
+      if (!foyer) throw new Error(t('app.foyerNonInitialiseReessayez'))
       await ajouterRecette(foyer, recette)
       setRecipes((prec) => [...prec, recette])
     },
@@ -474,7 +544,7 @@ export default function App() {
 
   const modifier = useCallback(
     async (recette: Recipe) => {
-      if (!foyer) throw new Error('Foyer non initialisé.')
+      if (!foyer) throw new Error(t('app.foyerNonInitialise'))
       await modifierRecette(foyer, recette)
       setRecipes((prec) => prec.map((r) => (r.id === recette.id ? recette : r)))
     },
@@ -564,18 +634,11 @@ export default function App() {
   if (vueActuelle.type === 'edition') {
     const { recette } = vueActuelle
     ecranPleinePage = (
-      <AjouterRecette
-        recetteInitiale={recette}
+      <ModifierRecette
+        recette={recette}
         titresExistants={recipes.map((r) => r.titre)}
-        onAjouter={(r) => modifier({ ...r, id: recette.id })}
-        onQuitter={reculer}
-      />
-    )
-  } else if (vueActuelle.type === 'ajout') {
-    ecranPleinePage = (
-      <AjouterRecette
-        titresExistants={recipes.map((r) => r.titre)}
-        onAjouter={ajouter}
+        tagsConnus={tousLesTags(recipes)}
+        onEnregistrer={modifier}
         onQuitter={reculer}
       />
     )
@@ -599,7 +662,7 @@ export default function App() {
           }
           onCuisiner={() => irVers({ type: 'cuisson', recipeId: recette.id })}
           onModifier={() => irVers({ type: 'edition', recette })}
-          onSupprimer={() => void supprimer(recette.id)}
+          onSupprimer={() => supprimer(recette.id)}
           onFermer={reculer}
         />
       )
@@ -607,6 +670,8 @@ export default function App() {
   } else if (vueActuelle.type === 'reglages') {
     ecranPleinePage = (
       <Reglages
+        magasins={magasins.config}
+        onMagasins={magasins.definir}
         codeFoyer={codeFoyer}
         miseAJour={miseAJour}
         onRejoindre={rejoindreDepuisReglages}
@@ -629,7 +694,7 @@ export default function App() {
         <button
           className="bouton-rond-discret bouton-reglages-global"
           onClick={() => irVers({ type: 'reglages' })}
-          aria-label="Réglages"
+          aria-label={t('app.reglages')}
           data-tour="reglages"
         >
           <Icone nom="menu" taille={20} />
@@ -638,7 +703,7 @@ export default function App() {
 
       {!enLigne && (
         <p className="pastille-hors-ligne" role="status">
-          <Icone nom="alerte" taille={16} /> Hors ligne — vos changements se synchroniseront au retour du réseau
+          <Icone nom="alerte" taille={16} /> {t('app.horsLigne')}
         </p>
       )}
 
@@ -661,6 +726,9 @@ export default function App() {
               basket={basket}
               onBasket={majBasket}
               onDetail={(recipeId) => irVers({ type: 'detail', recipeId })}
+              onAjouterRecette={ajouter}
+              ajoutOuvert={ajoutOuvert}
+              onAjoutOuvert={setAjoutOuvert}
             />
           )}
 
@@ -690,7 +758,9 @@ export default function App() {
                   .map((e) => recipes.find((r) => r.id === e.recipeId))
                   .find((r): r is Recipe => !!r && !cuisineRecemment(historique, r.id)) ?? null
               }
+              magasins={magasins.config}
               onVersCuisson={() => changerOnglet('cuisson')}
+              onVersReglages={() => irVers({ type: 'reglages' })}
             />
           )}
 
@@ -721,10 +791,10 @@ export default function App() {
       <nav className="onglets">
         {(
           [
-            ['propose', 'etoile', 'Proposer'],
-            ['panier', 'panier', `Panier${basket.length ? ` (${basket.length})` : ''}`],
-            ['liste', 'liste', 'Liste'],
-            ['cuisson', 'grill', 'Cuisson'],
+            ['propose', 'etoile', t('app.proposer')],
+            ['panier', 'panier', basket.length ? t('app.panier', { n: basket.length }) : t('panier.titre')],
+            ['liste', 'liste', t('app.liste')],
+            ['cuisson', 'grill', t('app.cuisson')],
           ] as const
         ).map(([cle, icone, label]) => (
           <button
@@ -737,14 +807,6 @@ export default function App() {
             {label}
           </button>
         ))}
-        <button
-          data-tour="nav-ajouter"
-          onClick={ouvrirAjout}
-          aria-current={vueActuelle.type === 'ajout' ? 'page' : undefined}
-        >
-          <Icone nom="plus-cercle" taille={22} />
-          Ajouter
-        </button>
       </nav>
 
       {visiteEnCours && (

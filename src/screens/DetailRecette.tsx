@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { Recipe } from '../types'
 import { formatQuantite, redimensionnerRecette } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
+import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 
@@ -16,7 +17,8 @@ interface Props {
   onPortions: (portions: number) => void
   onCuisiner: () => void
   onModifier: () => void
-  onSupprimer: () => void
+  /** Rejette si l'écriture échoue — l'écran le dit plutôt que de ne rien faire. */
+  onSupprimer: () => Promise<void>
   onFermer: () => void
 }
 
@@ -31,6 +33,7 @@ export default function DetailRecette({
   onSupprimer,
   onFermer,
 }: Props) {
+  const { t } = useLangue()
   /**
    * Confirmation dans la page plutôt qu'un `window.confirm` : la boîte
    * native s'affiche hors du thème de l'app, et son bouton « OK » est
@@ -38,6 +41,26 @@ export default function DetailRecette({
    * suffisait à supprimer une recette sans l'avoir lue.
    */
   const [confirmation, setConfirmation] = useState(false)
+
+  /**
+   * Supprimer passe par le réseau. Sans état d'échec, un appui sur
+   * « Supprimer » hors ligne ne produisait rien du tout : la
+   * confirmation restait ouverte, la recette en place, et aucun mot
+   * pour expliquer pourquoi. On distingue donc l'attente de l'échec.
+   */
+  const [suppression, setSuppression] = useState(false)
+  const [erreurSuppression, setErreurSuppression] = useState<string | null>(null)
+
+  const supprimer = async () => {
+    setSuppression(true)
+    setErreurSuppression(null)
+    try {
+      await onSupprimer()
+    } catch {
+      setErreurSuppression(t('detail.suppressionEchouee'))
+      setSuppression(false)
+    }
+  }
 
   /**
    * La fiche montrait toujours les quantités du catalogue, même quand le
@@ -64,7 +87,7 @@ export default function DetailRecette({
     <>
       <header className="entete-app">
         <div className="entete-app-titre">
-          <button className="bouton-rond-discret" onClick={onFermer} aria-label="Retour">
+          <button className="bouton-rond-discret" onClick={onFermer} aria-label={t('detail.retour')}>
             <Icone nom="precedent" taille={20} />
           </button>
           <h1>{recette.titre}</h1>
@@ -79,7 +102,7 @@ export default function DetailRecette({
         {recette.titre.charAt(0)}
         <ImageRecette src={recette.image} />
         <span className="badge-temps">
-          <Icone nom="minuteur" taille={14} /> {recette.temps} min
+          <Icone nom="minuteur" taille={14} /> {t('detail.minutes', { n: recette.temps })}
         </span>
       </div>
 
@@ -87,18 +110,18 @@ export default function DetailRecette({
 
       <div className="reglage-parts">
         <div className="compteur">
-          <button onClick={() => changerParts(choix - 1)} aria-label="Moins de parts">
+          <button onClick={() => changerParts(choix - 1)} aria-label={t('detail.moinsDeParts')}>
             <Icone nom="moins" taille={16} />
           </button>
           <span aria-live="polite">{choix}</span>
-          <button onClick={() => changerParts(choix + 1)} aria-label="Plus de parts">
+          <button onClick={() => changerParts(choix + 1)} aria-label={t('detail.plusDeParts')}>
             <Icone nom="plus" taille={16} />
           </button>
-          <span className="compteur-label">Part{choix > 1 ? 's' : ''}</span>
+          <span className="compteur-label">{t('detail.part', { s: choix > 1 ? 's' : '' })}</span>
         </div>
         {choix !== recette.portions && (
           <button className="lien-discret" onClick={() => changerParts(recette.portions)}>
-            revenir à {recette.portions}
+            {t('detail.revenirA', { n: recette.portions })}
           </button>
         )}
       </div>
@@ -111,7 +134,7 @@ export default function DetailRecette({
         ))}
       </div>
 
-      <h2>Ingrédients</h2>
+      <h2>{t('detail.ingredients')}</h2>
       {doses.map((ing) => (
         <div className="rangee rangee-lecture" key={ing.nom}>
           <span className="nom">{ing.nom}</span>
@@ -119,7 +142,7 @@ export default function DetailRecette({
         </div>
       ))}
 
-      <h2>Étapes</h2>
+      <h2>{t('detail.etapes')}</h2>
       <ol className="apercu-etapes">
         {recette.etapes.map((etape, i) => (
           <li key={i}>{etape}</li>
@@ -129,31 +152,40 @@ export default function DetailRecette({
       <div className="barre-actions">
         <button className="principal" onClick={() => onBasculerPanier(choix)}>
           <Icone nom={dansPanier ? 'coche' : 'plus'} taille={20} />
-          {dansPanier ? 'Retirer du panier' : 'Ajouter au panier'}
+          {dansPanier ? t('detail.retirerDuPanier') : t('detail.ajouterAuPanier')}
         </button>
         <div className="rangee-boutons">
           <button className="discret" onClick={onCuisiner}>
-            <Icone nom="grill" taille={18} /> Cuisiner
+            <Icone nom="grill" taille={18} /> {t('detail.cuisiner')}
           </button>
           <button className="discret" onClick={onModifier}>
-            Modifier
+            {t('detail.modifier')}
           </button>
         </div>
         {confirmation ? (
-          <div className="bloc-confirmation" role="alertdialog" aria-label="Confirmer la suppression">
-            <p>Supprimer « {recette.titre} » du catalogue ? Les autres appareils du foyer la perdront aussi.</p>
+          <div className="bloc-confirmation" role="alertdialog" aria-label={t('detail.supprimerDuCatalogue')}>
+            <p>{t('detail.supprimerConfirmation', { titre: recette.titre })}</p>
             <div className="rangee-boutons">
-              <button className="discret" onClick={() => setConfirmation(false)}>
-                Annuler
+              <button
+                className="discret"
+                onClick={() => setConfirmation(false)}
+                disabled={suppression}
+              >
+                {t('detail.annuler')}
               </button>
-              <button className="discret danger" onClick={onSupprimer}>
-                Supprimer
+              <button className="discret danger" onClick={supprimer} disabled={suppression}>
+                {suppression ? t('detail.suppressionEnCours') : t('detail.supprimer')}
               </button>
             </div>
+            {erreurSuppression && (
+              <div className="bloc-erreurs" role="alert">
+                <p>{erreurSuppression}</p>
+              </div>
+            )}
           </div>
         ) : (
           <button className="discret pleine-largeur danger" onClick={() => setConfirmation(true)}>
-            Supprimer du catalogue
+            {t('detail.supprimerDuCatalogue')}
           </button>
         )}
       </div>

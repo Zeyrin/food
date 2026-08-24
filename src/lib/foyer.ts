@@ -33,13 +33,21 @@ export async function creerFoyerAvecCode(): Promise<{ id: string; code: string }
 /**
  * Résout un code en UUID de foyer. Un seul `select` ciblé sur le
  * code exact — jamais d'énumération de la table côté app.
+ *
+ * `null` veut dire « ce code n'existe pas », et rien d'autre : une
+ * requête qui échoue lève. Les deux écrans qui appellent (Bienvenue,
+ * Réglages) distinguent déjà les deux cas dans leur message — mais
+ * l'erreur était avalée ici, si bien qu'un téléphone hors réseau
+ * s'entendait répondre « Code introuvable, vérifiez-le » et cherchait
+ * une faute de frappe dans un code parfaitement valide.
  */
 export async function resoudreCode(code: string): Promise<string | null> {
   if (!supabase) return null
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('foyers')
     .select('foyer')
     .eq('code', code.trim().toUpperCase())
     .maybeSingle()
+  if (error) throw new Error(error.message)
   return data?.foyer ?? null
 }

@@ -5,6 +5,7 @@ import { formatDuree, minuteursDeLEtape } from '../lib/duree'
 import { useWakeLock } from '../hooks/useWakeLock'
 import type { Minuteurs } from '../hooks/useMinuteurs'
 import { ecrireProgression, lireProgression, oublierProgression } from '../lib/progressionCuisson'
+import { useLangue } from '../lib/i18n'
 import BandeauMinuteur from '../components/BandeauMinuteur'
 import Icone from '../components/Icone'
 
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdict, onQuitter }: Props) {
+  const { t } = useLangue()
   const [index, setIndex] = useState(-1)
   // Lu une seule fois au montage : la valeur ne doit pas disparaître de
   // l'écran de préparation au moment où on écrit la progression suivante.
@@ -39,20 +41,23 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
   if (index < 0) {
     return (
       <div className="cuisson">
+        {/* Une flèche « précédent » sur un bouton « Quitter » disait deux
+            choses à la fois : ici on n'a encore rien commencé, on revient
+            juste en arrière. */}
         <button className="discret" onClick={onQuitter}>
-          <Icone nom="precedent" taille={18} /> Quitter
+          <Icone nom="precedent" taille={18} /> {t('cuisson.retour')}
         </button>
 
         <h1>{recette.titre}</h1>
 
-        <h2>Ce qu'il faut</h2>
+        <h2>{t('cuisson.titreIngredients', { n: recette.ingredients.length })}</h2>
         {recette.ingredients.map((ing) => (
           <div className="rangee rangee-lecture" key={ing.nom}>
             <span className="nom">{ing.nom}</span>
             <span className="qte">{formatQuantite(ing)}</span>
           </div>
         ))}
-        <h2>Les étapes</h2>
+        <h2>{t('cuisson.titreEtapes', { n: recette.etapes.length })}</h2>
         <ol className="apercu-etapes">
           {recette.etapes.map((etape, i) => (
             <li key={i}>{etape}</li>
@@ -69,15 +74,20 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
                   explicite : rien de pire que de croire repartir du début
                   et sauter la moitié des étapes sans le voir. */}
               <button className="principal" onClick={() => setIndex(reprise)}>
-                <Icone nom="grill" taille={20} /> Reprendre à l'étape {reprise + 1}
+                <Icone nom="grill" taille={20} />{' '}
+                {t('cuisson.reprendre', { n: reprise + 1, total: recette.etapes.length })}
               </button>
               <button className="discret pleine-largeur" onClick={() => setIndex(0)}>
-                Repartir du début
+                {t('cuisson.repartirDuDebut')}
               </button>
             </>
           ) : (
             <button className="principal" onClick={() => setIndex(0)}>
-              <Icone nom="grill" taille={20} /> Commencer
+              <Icone nom="grill" taille={20} />{' '}
+              {t('cuisson.commencer', {
+                total: recette.etapes.length,
+                s: recette.etapes.length > 1 ? 's' : '',
+              })}
             </button>
           )}
         </div>
@@ -92,20 +102,20 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           <div className="ecran-fin-coche" aria-hidden="true">
             <Icone nom="coche" taille={40} />
           </div>
-          <h1>C'était comment ?</h1>
-          <p>Bon appétit ! Cuisinez-la à nouveau, ou écartez-la des prochaines idées.</p>
+          <h1>{t('cuisson.cetaitComment')}</h1>
+          <p>{t('cuisson.finTexte')}</p>
           <div className="ecran-fin-choix">
             <button className="choix-verdict" onClick={() => onVerdict('refaire')}>
               <Icone nom="etoile" taille={26} />
-              À refaire
+              {t('cuisson.aRefaire')}
             </button>
             <button className="choix-verdict" onClick={() => onVerdict('jamais')}>
               <Icone nom="fermer" taille={26} />
-              Jamais
+              {t('cuisson.jamais')}
             </button>
           </div>
           <button className="discret suite" onClick={onQuitter}>
-            Retour au menu
+            {t('cuisson.retourAuMenu')}
           </button>
         </div>
       </div>
@@ -115,13 +125,11 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
   return (
     <div className="cuisson-focus">
       <header className="cuisson-entete">
-        <button className="cuisson-rond" onClick={onQuitter} aria-label="Quitter le mode cuisson">
+        <button className="cuisson-rond" onClick={onQuitter} aria-label={t('cuisson.quitterModeCuisson')}>
           <Icone nom="fermer" taille={20} />
         </button>
         <div className="cuisson-progression">
-          <span>
-            Étape {index + 1} sur {recette.etapes.length}
-          </span>
+          <span>{t('cuisson.etapeSur', { n: index + 1, total: recette.etapes.length })}</span>
           {/* Les traits n'étaient qu'un décor : relire l'étape 2 depuis la
               7 demandait cinq appuis sur « Précédent ». Ce sont des
               boutons, avec une zone de touche débordant largement les
@@ -132,7 +140,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
                 key={i}
                 data-fait={i <= index}
                 aria-current={i === index ? 'step' : undefined}
-                aria-label={`Aller à l'étape ${i + 1}`}
+                aria-label={t('cuisson.allerAEtape', { n: i + 1 })}
                 onClick={() => setIndex(i)}
               />
             ))}
@@ -156,8 +164,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           si le rendu React est occupé ailleurs. */}
       <details className="tiroir-ingredients">
         <summary>
-          <span>Ingrédients</span>
-          <em>{recette.ingredients.length}</em>
+          <span>{t('cuisson.titreIngredients', { n: recette.ingredients.length })}</span>
           <Icone nom="suivant" taille={18} />
         </summary>
         <ul className="liste-ingredients">
@@ -192,7 +199,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
                 className="bouton-minuteur"
                 onClick={() => minuteurs.lancer(m.secondes, m.nom, recette.id, recette.titre)}
               >
-                <Icone nom="minuteur" taille={16} /> Lancer {formatDuree(m.secondes)}
+                <Icone nom="minuteur" taille={16} /> {t('cuisson.lancer', { duree: formatDuree(m.secondes) })}
               </button>
             ))}
           </div>
@@ -209,13 +216,13 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
       <div className="cuisson-actions">
         {index > 0 && (
           <button className="bouton-cuisson bouton-cuisson-secondaire" onClick={() => setIndex(index - 1)}>
-            <Icone nom="precedent" taille={20} /> Précédent
+            <Icone nom="precedent" taille={20} /> {t('cuisson.precedent')}
           </button>
         )}
         <button className="bouton-cuisson bouton-cuisson-principal" onClick={() => setIndex(index + 1)}>
-          {index + 1 === recette.etapes.length ? 'Terminé' : (
+          {index + 1 === recette.etapes.length ? t('cuisson.termine') : (
             <>
-              Suivant <Icone nom="suivant" taille={20} />
+              {t('cuisson.suivant')} <Icone nom="suivant" taille={20} />
             </>
           )}
         </button>
