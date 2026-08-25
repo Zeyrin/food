@@ -310,7 +310,7 @@ export default function App() {
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const enLigne = useEnLigne()
-  const { etat: etatSynchro } = useEtatSynchro()
+  const { etat: etatSynchro, cause: causeSynchro } = useEtatSynchro()
 
   // Le service worker garde l'app utilisable hors ligne, mais fige la
   // version installée : sans ce qui suit, un déploiement ne se voyait
@@ -811,7 +811,13 @@ export default function App() {
             className="pastille-hors-ligne pastille-synchro"
             onClick={() => irVers({ type: 'reglages' })}
           >
-            <Icone nom="alerte" taille={16} /> {t('app.synchroRefusee')}
+            <Icone nom="alerte" taille={16} />{' '}
+            {/* Les deux clés sont écrites en toutes lettres : `i18n.test.ts`
+                ne repère que les appels `t('…')` littéraux, et une pastille
+                non traduite ne se verrait que le jour de la panne. */}
+            {causeSynchro === 'tempsReel'
+              ? t('app.synchroTempsReel')
+              : t('app.synchroRefusee')}
           </button>
         )
       )}

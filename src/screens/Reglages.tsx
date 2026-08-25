@@ -49,7 +49,7 @@ export default function Reglages({
   onRevoirPresentation,
 }: Props) {
   const installation = useInstallation()
-  const { etat: etatSynchro, motif } = useEtatSynchro()
+  const { etat: etatSynchro, cause: causeSynchro, motif } = useEtatSynchro()
   const { langue, definirLangue, t } = useLangue()
   const [code, setCode] = useState('')
   const [enCours, setEnCours] = useState(false)
@@ -154,6 +154,24 @@ export default function Reglages({
     const t = setTimeout(() => setCopie(false), 2000)
     return () => clearTimeout(t)
   }, [copie])
+
+  /**
+   * Le diagnostic de synchro, dans les mots de la panne qui s'est
+   * produite. Quatre clés littérales plutôt qu'un chemin composé
+   * (`reglages.synchro${cause}`) : `i18n.test.ts` ne vérifie que les clés
+   * citées en dur, et une traduction manquante ici ne se verrait que le
+   * jour où la panne arrive.
+   */
+  const SYNCHRO = {
+    session: { titre: t('reglages.synchroSessionTitre'), texte: t('reglages.synchroSessionTexte') },
+    acces: { titre: t('reglages.synchroAccesTitre'), texte: t('reglages.synchroAccesTexte') },
+    tempsReel: {
+      titre: t('reglages.synchroTempsReelTitre'),
+      texte: t('reglages.synchroTempsReelTexte'),
+    },
+    ecriture: { titre: t('reglages.synchroTitre'), texte: t('reglages.synchroTexte') },
+  }
+  const synchro = SYNCHRO[causeSynchro ?? 'ecriture']
 
   return (
     <>
@@ -487,14 +505,20 @@ export default function Reglages({
       )}
 
       {/* Diagnostic de synchro. C'est ici qu'atterrit la pastille « Synchro
-          bloquée » : un refus du serveur ne se rattrape pas tout seul, et
-          le message brut de Supabase est la seule piste exploitable pour
-          savoir laquelle des trois causes habituelles s'applique. */}
+          bloquée ». Le titre et le texte suivent la cause : les quatre
+          pannes possibles n'ont ni les mêmes conséquences ni le même
+          remède, et les dire toutes « le serveur refuse les écritures »
+          envoyait relire des policies parfaitement saines. Le message brut
+          de Supabase reste dessous — c'est lui qui tranche les cas que
+          cette page ne prévoit pas. */}
       {etatSynchro === 'refuse' && (
         <>
-          <h2>{t('reglages.synchroTitre')}</h2>
-          <div className="bloc-erreurs" role="status">
-            <p>{t('reglages.synchroTexte')}</p>
+          <h2>{synchro.titre}</h2>
+          <div
+            className={`bloc-erreurs${causeSynchro === 'tempsReel' ? ' bloc-tiede' : ''}`}
+            role="status"
+          >
+            <p>{synchro.texte}</p>
             {motif && <p><code>{motif}</code></p>}
           </div>
         </>

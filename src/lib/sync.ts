@@ -47,7 +47,7 @@ export function assurerSession(): Promise<boolean> {
     // c'est une panne de configuration (connexions anonymes désactivées dans
     // le tableau de bord) qui ne se réglera pas toute seule.
     if (navigator.onLine) {
-      signalerSynchroRefusee(`Connexion anonyme refusée : ${error.message}`)
+      signalerSynchroRefusee('session', `Connexion anonyme refusée : ${error.message}`)
     }
     return false
   })()
@@ -82,7 +82,7 @@ export function assurerAcces(foyer: string): Promise<boolean> {
       if (error) {
         accesParFoyer.delete(foyer)
         console.warn(`Accès au foyer refusé : ${error.message}`)
-        signalerSynchroRefusee(`Accès au foyer refusé : ${error.message}`)
+        signalerSynchroRefusee('acces', `Accès au foyer refusé : ${error.message}`)
         return false
       }
       return true
@@ -134,11 +134,16 @@ const VIDE: ListState = { coche: {}, dejaPossede: {} }
  * `supabase_realtime`, policy manquante, réseau coupé) ne dit rien du
  * tout : l'app a l'air de marcher, elle ne reçoit simplement jamais
  * rien. On ignore CLOSED, qui est le statut normal au démontage.
+ *
+ * Signalé comme `tempsReel` et pas comme un refus d'écriture : ce qui est
+ * coché ici part quand même, et l'autre téléphone le verra — à sa
+ * prochaine lecture plutôt qu'en direct. Le remède n'est pas dans les
+ * policies mais dans Database → Replication.
  */
 const journaliserStatut = (nom: string) => (statut: string) => {
   if (statut === 'CHANNEL_ERROR' || statut === 'TIMED_OUT') {
-    console.warn(`Realtime « ${nom} » : ${statut} — la synchro entre appareils ne remontera pas.`)
-    signalerSynchroRefusee(`Realtime « ${nom} » : ${statut}`)
+    console.warn(`Realtime « ${nom} » : ${statut} — les mises à jour vives ne remonteront pas.`)
+    signalerSynchroRefusee('tempsReel', `Realtime « ${nom} » : ${statut}`)
   } else if (statut === 'SUBSCRIBED') {
     console.info(`Realtime « ${nom} » : abonné.`)
   }
@@ -194,7 +199,7 @@ export async function ecrireListe(foyer: string, etat: ListState): Promise<void>
   const { error } = await supabase.from('listes').upsert({ foyer, etat, maj: new Date().toISOString() })
   if (error) {
     console.warn(`Écriture de la liste refusée : ${error.message}`)
-    signalerSynchroRefusee(error.message)
+    signalerSynchroRefusee('ecriture', error.message)
   } else signalerSynchroOk()
 }
 
@@ -323,7 +328,7 @@ export async function ecrireHistoriqueFoyer(foyer: string, historique: Historiqu
     .upsert({ foyer, historique, maj: new Date().toISOString() })
   if (error) {
     console.warn(`Écriture de l'historique refusée : ${error.message}`)
-    signalerSynchroRefusee(error.message)
+    signalerSynchroRefusee('ecriture', error.message)
   } else signalerSynchroOk()
 }
 

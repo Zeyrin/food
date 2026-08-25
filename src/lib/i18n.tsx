@@ -17,7 +17,16 @@ const fr: Dico = {
     synchroTitre:
       'Synchro bloquée',
     synchroTexte:
-      "Le réseau répond, mais le serveur refuse les écritures : cet appareil garde tout en local, l'autre téléphone ne voit rien. À vérifier côté Supabase — les policies de la table, la réplication temps réel, et que la clé du fichier .env est la bonne.",
+      "Le réseau répond, mais le serveur refuse les écritures : cet appareil garde tout en local, l'autre téléphone ne voit rien. À vérifier côté Supabase — les policies des tables, et que la clé du fichier .env est la bonne.",
+    synchroSessionTitre: 'Connexion au service refusée',
+    synchroSessionTexte:
+      "Le serveur a refusé d'ouvrir une session pour cet appareil : sans elle, la base rejette tout, en lecture comme en écriture. À vérifier côté Supabase — Authentication → Providers → Anonymous sign-ins doit être activé, et la clé du fichier .env être la bonne.",
+    synchroAccesTitre: 'Foyer inaccessible',
+    synchroAccesTexte:
+      "La session est ouverte, mais le serveur n'inscrit pas cet appareil dans ce foyer : rien de ce qui s'y trouve ne remontera. À vérifier côté Supabase — que la migration « migration-01-appartenance.sql » a bien été passée, et que le foyer existe encore.",
+    synchroTempsReelTitre: 'Mises à jour vives coupées',
+    synchroTempsReelTexte:
+      "Vos modifications partent bien, et l'autre téléphone les verra : à sa prochaine ouverture, plutôt qu'en direct. Seul le canal temps réel est muet. À vérifier côté Supabase — Database → Replication, où « listes », « recettes » et « historiques » doivent être cochées.",
     titre: 'Réglages',
     fermer: 'Fermer les réglages',
     langue: 'Langue',
@@ -377,6 +386,7 @@ const fr: Dico = {
   },
   app: {
     synchroRefusee: 'Synchro bloquée',
+    synchroTempsReel: 'Sans mise à jour vive',
     chargement: 'Chargement…',
     reglages: 'Réglages',
     horsLigne: 'Hors ligne — vos changements se synchroniseront au retour du réseau',
@@ -514,7 +524,16 @@ const en: Dico = {
     synchroTitre:
       'Sync blocked',
     synchroTexte:
-      'The network responds, but the server refuses writes: this device keeps everything locally and the other phone sees nothing. Check on the Supabase side — the table policies, realtime replication, and that the key in .env is the right one.',
+      'The network responds, but the server refuses writes: this device keeps everything locally and the other phone sees nothing. Check on the Supabase side — the table policies, and that the key in .env is the right one.',
+    synchroSessionTitre: 'Connection to the service refused',
+    synchroSessionTexte:
+      'The server refused to open a session for this device: without one, the database rejects everything, reads and writes alike. Check on the Supabase side — Authentication → Providers → Anonymous sign-ins must be enabled, and the key in .env must be the right one.',
+    synchroAccesTitre: 'Household unreachable',
+    synchroAccesTexte:
+      'The session is open, but the server will not enrol this device in this household: nothing in it will come through. Check on the Supabase side — that “migration-01-appartenance.sql” was actually run, and that the household still exists.',
+    synchroTempsReelTitre: 'Live updates cut off',
+    synchroTempsReelTexte:
+      'Your changes do go out, and the other phone will see them: next time it opens, rather than live. Only the realtime channel is silent. Check on the Supabase side — Database → Replication, where “listes”, “recettes” and “historiques” must be ticked.',
     titre: 'Settings',
     fermer: 'Close settings',
     langue: 'Language',
@@ -865,6 +884,7 @@ const en: Dico = {
   },
   app: {
     synchroRefusee: 'Sync blocked',
+    synchroTempsReel: 'No live updates',
     chargement: 'Loading…',
     reglages: 'Settings',
     horsLigne: 'Offline — your changes will sync when the network is back',

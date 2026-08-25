@@ -75,6 +75,22 @@ définitif. L'absence de stockage est donc rendue indistinguable d'un stockage v
 principe côté rendu, où une exception démontait tout l'arbre sans laisser un bouton :
 `src/components/LimiteErreur.tsx` affiche de quoi recharger.
 
+**Une panne de synchro dit laquelle.** Quatre choses distinctes peuvent couper le partage :
+la session anonyme refusée, l'appartenance au foyer refusée, un canal temps réel muet, une
+écriture rejetée. Elles se présentaient toutes sous la même phrase — « le serveur refuse les
+écritures » — alors qu'elles n'ont ni les mêmes conséquences ni le même remède. Le temps
+réel était le plus trompeur : un canal muet n'empêche rien d'être écrit, il empêche
+seulement l'autre téléphone de voir la liste bouger en direct. Annoncer « cet appareil garde
+tout en local » envoyait relire une policy d'écriture parfaitement saine, quand il fallait
+cocher trois cases au §6 ci-dessous. `src/lib/etatSynchro.ts` porte donc une cause, et
+Réglages nomme le remède correspondant.
+
+Deux règles y tiennent le diagnostic honnête, toutes deux couvertes par `etatSynchro.test.ts`.
+Une écriture qui passe n'efface pas un temps réel muet — REST et WebSocket sont deux chemins
+séparés, et sans ça le diagnostic disparaissait au premier produit coché. Et un refus plus
+grave remplace un refus léger : les canaux s'abonnent au montage, bien avant la première
+écriture, qu'ils masqueraient sinon pour toujours.
+
 **Une lecture réseau qui échoue ne se déguise pas en réponse vide.** Un `select` refusé
 rendait la même chose qu'un foyer neuf, avec des conséquences qui ne ressemblaient pas à
 une panne : le catalogue entier réinséré en double à chaque ouverture, une liste décochée à

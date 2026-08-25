@@ -3411,6 +3411,15 @@ button.carte-panier-bouton .carte-panier-corps {
   margin-top: 6px;
 }
 
+/* Un canal temps réel muet est à réparer, mais rien n'est perdu en
+   chemin : ce qui est coché part quand même. Le rouge du bloc voisin
+   annoncerait une panne que le texte s'emploie justement à démentir —
+   même raison que `.bloc-doublons` un peu plus haut. */
+.bloc-erreurs.bloc-tiede {
+  background: var(--carte-haute);
+  color: var(--encre-douce);
+}
+
 /* --- Écran de repli (components/LimiteErreur.tsx) ------------------------
    Ce qui s'affiche quand un rendu React lève : avant, l'écran devenait
    blanc et muet. Centré et sobre — on n'a rien à y faire sinon lire une
