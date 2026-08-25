@@ -4,6 +4,7 @@ import corpus from './data/recipes.json'
 import type { BasketEntry, ListState, Onglet, Recipe, Verdict } from './types'
 import { buildList, redimensionnerRecette } from './lib/aggregate'
 import { cuisineRecemment, tousLesTags, type Historique } from './lib/propose'
+import { estFavorite } from './lib/favoris'
 import {
   ecrireBasket,
   lireBasket,
@@ -743,6 +744,7 @@ export default function App() {
           recette={recette}
           portions={basket.find((e) => e.recipeId === recette.id)?.portions ?? recette.portions}
           dansPanier={basket.some((e) => e.recipeId === recette.id)}
+          favori={estFavorite(recette, historique)}
           onBasculerPanier={(portions) =>
             majBasket(
               basket.some((e) => e.recipeId === recette.id)
