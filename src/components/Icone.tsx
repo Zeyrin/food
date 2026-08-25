@@ -6,6 +6,7 @@
 export type Nom =
   | 'menu'
   | 'etoile'
+  | 'coeur'
   | 'panier'
   | 'liste'
   | 'grill'
@@ -36,6 +37,8 @@ const TRACES: Record<Nom, string> = {
   menu: 'M4 6h16M4 12h16M4 18h16',
   etoile:
     'M12 3l2.4 5.5L20 9l-4.6 3.8L16.9 19 12 15.8 7.1 19l1.5-6.2L4 9l5.6-.5L12 3z',
+  coeur:
+    'M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 00-7.8 7.8l1.1 1.1L12 21.2l7.8-7.8 1.1-1.1a5.5 5.5 0 000-7.8z',
   panier: 'M6 6h15l-1.5 9h-12z M6 6l-1-3H2 M9 20a1 1 0 100-2 1 1 0 000 2z M18 20a1 1 0 100-2 1 1 0 000 2z',
   liste: 'M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01',
   grill: 'M5 8h14l-1.5 11h-11z M8 8V5a4 4 0 018 0v3',

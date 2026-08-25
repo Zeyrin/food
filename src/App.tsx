@@ -4,6 +4,7 @@ import corpus from './data/recipes.json'
 import type { BasketEntry, ListState, Onglet, Recipe, Verdict } from './types'
 import { buildList, redimensionnerRecette } from './lib/aggregate'
 import { cuisineRecemment, tousLesTags, type Historique } from './lib/propose'
+import { estFavorite } from './lib/favoris'
 import {
   ecrireBasket,
   lireBasket,
@@ -33,6 +34,7 @@ import {
   suivreRecettes,
 } from './lib/sync'
 import { creerFoyerAvecCode, reclamerFoyer, reprendreFoyer, resoudreCode } from './lib/foyer'
+import { mouvementReduit } from './lib/mouvement'
 import DetailRecette from './screens/DetailRecette'
 import Propose from './screens/Propose'
 import Panier from './screens/Panier'
@@ -161,10 +163,9 @@ export default function App() {
   // par `startViewTransition` — sans lui, l'API capture l'ancien DOM
   // des deux côtés, avant que React n'ait appliqué le changement.
   const avecTransition = useCallback((direction: 'avant' | 'arriere', appliquer: () => void) => {
-    const reduitMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const demarrer = (document as Document & { startViewTransition?: (cb: () => void) => void })
       .startViewTransition
-    if (reduitMotion || !demarrer) {
+    if (mouvementReduit() || !demarrer) {
       appliquer()
       return
     }
@@ -743,6 +744,7 @@ export default function App() {
           recette={recette}
           portions={basket.find((e) => e.recipeId === recette.id)?.portions ?? recette.portions}
           dansPanier={basket.some((e) => e.recipeId === recette.id)}
+          favori={estFavorite(recette, historique)}
           onBasculerPanier={(portions) =>
             majBasket(
               basket.some((e) => e.recipeId === recette.id)

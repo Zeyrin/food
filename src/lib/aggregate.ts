@@ -181,6 +181,84 @@ const correspond = (brut: string, cible: string) =>
   brut === cible || pluriels(cible).includes(brut) || pluriels(brut).includes(cible)
 
 /**
+ * Ce qui se dit d'un ingrédient juste après l'avoir nommé, et qui
+ * appartient encore au groupe : « les feuilles de combava froissées »
+ * se lit d'un bloc. La dose posée avant le participe coupait la phrase
+ * en deux — « les feuilles de combava 3 froissées ». Liste fermée et
+ * volontairement courte : un mot qui n'y est pas ne fait rien de pire
+ * que l'ancien comportement.
+ *
+ * Les quatre accords sont dépliés au chargement depuis le radical :
+ * « froiss » couvre froissé, froissée, froissés et froissées.
+ */
+const RADICAUX_ES = [
+  'froiss', 'ecras', 'hach', 'cisel', 'eminc', 'coup', 'rap', 'pel', 'denoyaut', 'egoutt',
+  'rinc', 'concass', 'effeuill', 'equeut', 'emiett', 'essor', 'epluch', 'lav', 'tranch',
+  'detaill', 'grill', 'torrefi', 'dilu', 'delay', 'reserv',
+]
+
+/** Ceux dont le masculin singulier ne finit pas en `é` : « fondu »,
+ *  « cuit », « entier » s'accordent sans radical à reconstituer. */
+const MOTS_ACCORDES = ['fondu', 'moulu', 'battu', 'cuit', 'cru', 'entier', 'blanchi', 'revenu']
+
+const QUALIFICATIFS = new Set([
+  ...RADICAUX_ES.flatMap((r) => ['e', 'es', 'ee', 'ees'].map((f) => r + f)),
+  ...MOTS_ACCORDES.flatMap((m) => ['', 'e', 's', 'es'].map((f) => m + f)),
+])
+
+/** Les adverbes qui suivent ces participes (« hachés finement ») et la
+ *  découpe qui les complète (« coupées en dés »). */
+const ADVERBES = new Set(['finement', 'grossierement', 'legerement', 'prealablement'])
+const DECOUPES = new Set([
+  'des', 'rondelles', 'lamelles', 'morceaux', 'quartiers', 'cubes', 'batonnets',
+  'julienne', 'tranches', 'deux', 'quatre',
+])
+
+/**
+ * Prolonge la fin d'une mention jusqu'au bout de ce qui la qualifie
+ * encore. S'arrête à la première ponctuation : « les feuilles de combava
+ * froissées, le nuoc mam » n'avale pas la suite de l'énumération.
+ */
+function consommerQualificatifs(texte: string, depuis: number): number {
+  const suite = /[\p{L}\p{M}]+/gu
+  suite.lastIndex = depuis
+  let fin = depuis
+  let bord = depuis
+  let prochain: RegExpExecArray | null
+
+  while ((prochain = suite.exec(texte)) !== null) {
+    if (!/^[\s'\u2019-]*$/.test(texte.slice(bord, prochain.index))) break
+    const mot = sansAccents(prochain[0])
+    const suivant = prochain.index + prochain[0].length
+    if (QUALIFICATIFS.has(mot) || ADVERBES.has(mot)) {
+      fin = suivant
+    } else if (fin > depuis && (mot === 'en' || DECOUPES.has(mot))) {
+      // « coupées en dés » : la découpe complète le participe, elle ne
+      // s'attrape jamais seule.
+      fin = suivant
+    } else {
+      break
+    }
+    bord = suivant
+  }
+
+  return fin
+}
+
+/**
+ * Une mention partielle ne prend pas la dose entière. « Verser le reste
+ * du lait de coco » suivi de « 80 cl » se lit comme un ordre de verser
+ * les 80 cl — alors qu'on en a déjà mis la moitié à l'étape d'avant.
+ * Sans dose, la phrase reste juste : la quantité totale est dans le
+ * tiroir des ingrédients, à un doigt de là.
+ */
+const MENTION_PARTIELLE =
+  /\b(reste|restes|moitie|moities|tiers|quart|quarts|peu|partie|parties|bout|morceau|morceaux|cuillere|cuillerees?|louche|louches|filet|filets|pincee|pincees|poignee|poignees)\s+(?:de\s+la|de\s+l|du|des|de|d)['\u2019\s]*$/
+
+const estMentionPartielle = (texte: string, debut: number) =>
+  MENTION_PARTIELLE.test(sansAccents(texte.slice(0, debut)))
+
+/**
  * Depuis la fin d'un mot déjà reconnu, avale la suite du groupe nominal
  * tant qu'elle continue de nommer l'ingrédient : après « huile », les
  * mots « de » puis « sésame ». S'arrête à la première rupture — un mot
@@ -265,9 +343,10 @@ function annoterMarqueurs(
     const libelle = m[1]!
     const debut = m.index ?? 0
     const ing = ingredientDesigne(libelle, ingredients)
+    const partielle = estMentionPartielle(texte, debut)
     segments.push({
       texte: texte.slice(curseur, debut) + libelle,
-      ...(ing && !quantiteMuette(ing) ? { quantite: formatQuantite(ing) } : {}),
+      ...(ing && !partielle && !quantiteMuette(ing) ? { quantite: formatQuantite(ing) } : {}),
     })
     curseur = debut + m[0].length
   }
@@ -338,10 +417,19 @@ export function annoterEtape(
       continue
     }
 
+    // Mention partielle : on la reconnaît — donc on ne la réannotera pas
+    // plus loin dans l'étape — mais sans y accrocher la dose entière.
+    if (estMentionPartielle(texte, m.index)) {
+      vus.add(trouve.nom)
+      regex.lastIndex = trouve.fin
+      continue
+    }
+
+    const fin = consommerQualificatifs(texte, trouve.fin)
     vus.add(trouve.nom)
-    segments.push({ texte: texte.slice(curseur, trouve.fin), quantite: trouve.quantite })
-    curseur = trouve.fin
-    regex.lastIndex = trouve.fin
+    segments.push({ texte: texte.slice(curseur, fin), quantite: trouve.quantite })
+    curseur = fin
+    regex.lastIndex = fin
   }
 
   if (curseur < texte.length) segments.push({ texte: texte.slice(curseur) })

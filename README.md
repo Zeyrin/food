@@ -14,6 +14,15 @@ constituer, mais chaque recette y est parce qu'on veut la manger.
 l'agrégation regroupe. Si deux recettes écrivent `crème fraîche` et `crème épaisse`, la
 liste sort deux lignes et l'app perd son intérêt. `npm run lint:recipes` est là pour ça.
 
+**Les favoris ne se déclarent pas.** La catégorie « Favoris » de l'écran Proposer réunit
+deux gestes déjà faits : les plats notés « À refaire » à la fin d'une cuisson, et les
+recettes que le foyer a écrites lui-même. Un cœur à cocher en plus n'aurait rien appris
+de neuf — on n'ajoute pas une recette au catalogue par hasard — et aurait demandé un
+troisième endroit où l'entretenir. « Jamais » l'emporte sur les deux : une recette maison
+écartée après cuisson sort de la catégorie. Le partage suit : le verdict vit dans
+l'historique du foyer, la recette dans son catalogue, donc les deux téléphones voient les
+mêmes favoris (`src/lib/favoris.ts`).
+
 **Pas de stock.** Un inventaire du placard suppose de déclarer chaque consommation, ce que
 personne ne tient. À la place, l'écran Liste commence par une passe « ce que vous avez
 déjà » : quinze secondes devant le frigo ouvert, et on récupère l'essentiel de la

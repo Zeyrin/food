@@ -21,6 +21,15 @@ export interface TourRect {
  * Quelques essais espacés plutôt qu'un `MutationObserver` : le rendu
  * React qui suit un changement d'onglet prend un ou deux battements,
  * jamais plus.
+ *
+ * La mesure ne se fait jamais directement dans l'écouteur. `scroll` part
+ * bien plus souvent que le navigateur ne dessine, et chaque passage
+ * appelait `getBoundingClientRect()` et `getComputedStyle()` — deux
+ * lectures qui forcent le navigateur à recalculer la mise en page sur
+ * place — puis un `setState` qui redessinait toute la visite. Défiler
+ * pendant la visite guidée revenait donc à mesurer et re-rendre plusieurs
+ * fois par image. Les événements ne font plus que réserver une frame, et
+ * une mesure identique à la précédente ne déclenche aucun rendu.
  */
 export function useTourRect(cible: string | null): TourRect | null {
   const [tour, setTour] = useState<TourRect | null>(null)
@@ -33,31 +42,47 @@ export function useTourRect(cible: string | null): TourRect | null {
 
     let el: Element | null = null
     let ro: ResizeObserver | null = null
+    let frame = 0
+    // Signature du dernier rectangle publié : défiler dans une page qui
+    // ne bouge pas, ou un `ResizeObserver` qui se réveille pour rien,
+    // n'ont alors aucun coût de rendu.
+    let publiee = ''
 
     const mesurer = () => {
+      frame = 0
       if (!el) {
         el = document.querySelector(`[data-tour="${cible}"]`)
         if (el) {
-          ro = new ResizeObserver(mesurer)
+          ro = new ResizeObserver(planifier)
           ro.observe(el)
         }
       }
-      if (el) {
-        setTour({
-          rect: el.getBoundingClientRect(),
-          rayon: getComputedStyle(el).borderTopLeftRadius,
-        })
-      }
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      const rayon = getComputedStyle(el).borderTopLeftRadius
+      const signature = `${rect.top} ${rect.left} ${rect.width} ${rect.height} ${rayon}`
+      if (signature === publiee) return
+      publiee = signature
+      setTour({ rect, rayon })
     }
 
-    const essais = [0, 50, 150, 350, 600].map((delai) => window.setTimeout(mesurer, delai))
-    window.addEventListener('resize', mesurer)
-    window.addEventListener('scroll', mesurer, true)
+    /** Au plus une mesure par image, quel que soit le nombre d'événements. */
+    const planifier = () => {
+      if (frame) return
+      frame = requestAnimationFrame(mesurer)
+    }
+
+    const essais = [0, 50, 150, 350, 600].map((delai) => window.setTimeout(planifier, delai))
+    window.addEventListener('resize', planifier)
+    // `capture` pour attraper aussi les défilements d'un conteneur
+    // interne, `passive` pour ne jamais retenir le geste de l'utilisateur.
+    window.addEventListener('scroll', planifier, { capture: true, passive: true })
 
     return () => {
       essais.forEach(clearTimeout)
-      window.removeEventListener('resize', mesurer)
-      window.removeEventListener('scroll', mesurer, true)
+      if (frame) cancelAnimationFrame(frame)
+      window.removeEventListener('resize', planifier)
+      window.removeEventListener('scroll', planifier, true)
       ro?.disconnect()
     }
   }, [cible])

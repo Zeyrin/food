@@ -58,8 +58,14 @@ export default function Bienvenue({
         setErreur({ zone, texte: messages.refus })
         setEnCours(null)
       }
-    } catch {
-      setErreur({ zone, texte: messages.panne })
+    } catch (e) {
+      // Le message réel plutôt qu'un générique, quand il y en a un : « la
+      // maison n'a pas pu être créée » envoie chercher une panne de réseau
+      // là où la cause est un réglage du serveur (connexions anonymes
+      // désactivées). Cet écran est le seul endroit où on puisse encore le
+      // lire — Réglages n'est pas atteignable tant qu'aucun foyer n'existe.
+      const texte = e instanceof Error && e.message ? e.message : messages.panne
+      setErreur({ zone, texte })
       setEnCours(null)
     }
   }

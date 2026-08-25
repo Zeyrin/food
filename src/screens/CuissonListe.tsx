@@ -71,11 +71,13 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
               style={
                 {
                   '--teinte': teinteRecette(r.titre),
-                  '--rang': Math.min(i, 20),
+                  // Voir Propose.tsx : seules les huit premières cartes
+                  // s'animent, le rang n'a pas à aller plus loin.
+                  '--rang': Math.min(i, 7),
                 } as React.CSSProperties
               }
             >
-              <div className="vignette" aria-hidden="true">
+              <div className="vignette" data-sans-photo={r.image ? undefined : 'true'} aria-hidden="true">
                 {r.titre.charAt(0)}
                 <ImageRecette src={r.image} />
                 <span className="badge-temps">

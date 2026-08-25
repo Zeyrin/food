@@ -165,4 +165,51 @@ assert.equal(
 )
 assert.equal(etapeEnTexte('Cuire les pâtes.'), 'Cuire les pâtes.')
 
+// --- La dose se pose après le groupe entier, et jamais sur une part. ---
+
+// « les feuilles de combava 3 froissées » coupait la phrase en deux : le
+// participe accordé appartient encore au groupe nominal.
+assert.equal(
+  rendu('Ajouter les feuilles de combava froissées et le nuoc mam.', [
+    ing('feuilles de combava', 3, 'piece'),
+    ing('nuoc mam', 2, 'cs'),
+  ]),
+  'Ajouter les feuilles de combava froissées [3] et le nuoc mam [2 c. à s.].',
+)
+
+// L'adverbe suit le participe, la découpe le complète.
+assert.equal(
+  rendu('Faire revenir les oignons nouveaux émincés finement.', [ing('oignon nouveau', 2, 'piece')]),
+  'Faire revenir les oignons nouveaux émincés finement [2].',
+)
+
+// La virgule ferme le groupe : l'énumération qui suit n'est pas avalée.
+assert.equal(
+  rendu('Ajouter les carottes coupées, puis le reste.', [ing('carotte', 4, 'piece')]),
+  'Ajouter les carottes coupées [4], puis le reste.',
+)
+
+// Une part n'emporte pas la dose entière : « verser le reste du lait de
+// coco 80 cl » se lisait comme un ordre de verser les 80 cl, alors que la
+// moitié est déjà dans la casserole.
+assert.equal(
+  rendu('Verser le reste du lait de coco.', [ing('lait de coco', 80, 'cl')]),
+  'Verser le reste du lait de coco.',
+)
+assert.equal(
+  rendu("Ajouter un peu d'huile d'olive.", [ing("huile d'olive", 10, 'cl')]),
+  "Ajouter un peu d'huile d'olive.",
+)
+// Même règle sur la voie des marqueurs, où l'auteur a pu marquer la
+// mention partielle sans y penser.
+assert.equal(
+  rendu('Verser la moitié du {lait de coco}.', [ing('lait de coco', 80, 'cl')]),
+  'Verser la moitié du lait de coco.',
+)
+// La mention pleine, elle, garde sa dose.
+assert.equal(
+  rendu('Verser le lait de coco.', [ing('lait de coco', 80, 'cl')]),
+  'Verser le lait de coco [80 cl].',
+)
+
 console.log('ok')

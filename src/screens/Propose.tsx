@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { BasketEntry, Recipe } from '../types'
 import { type Historique, proposer, tousLesTags } from '../lib/propose'
+import { estFavorite } from '../lib/favoris'
 import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
 import { mesurer } from '../lib/mesure'
+import { comportementDefilement } from '../lib/mouvement'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 import AjoutRecette from '../components/AjoutRecette'
@@ -57,7 +59,7 @@ export default function Propose({
     () => window.matchMedia('(min-width: 900px)').matches,
   )
   const [tempsMax, setTempsMax] = useState<number | null>(null)
-  const [aRefaire, setARefaire] = useState(false)
+  const [favorisSeuls, setFavorisSeuls] = useState(false)
   const [tags, setTags] = useState<string[]>([])
   /**
    * L'ajout d'une recette vit ici, dans la page où l'on regarde son
@@ -73,13 +75,22 @@ export default function Propose({
   // haut de page et l'écran parfois défilé ailleurs.
   useEffect(() => {
     if (!ajoutOuvert) return
-    // Deux frames : la section vient à peine d'être montée.
-    const image = requestAnimationFrame(() =>
-      requestAnimationFrame(() =>
-        ancreAjout.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-      ),
-    )
-    return () => cancelAnimationFrame(image)
+    // Deux frames : la section vient à peine d'être montée. Les deux
+    // identifiants sont retenus — n'annuler que le premier laissait la
+    // seconde frame se déclencher après le démontage.
+    let interne = 0
+    const image = requestAnimationFrame(() => {
+      interne = requestAnimationFrame(() =>
+        ancreAjout.current?.scrollIntoView({
+          behavior: comportementDefilement(),
+          block: 'start',
+        }),
+      )
+    })
+    return () => {
+      cancelAnimationFrame(image)
+      cancelAnimationFrame(interne)
+    }
   }, [ajoutOuvert])
 
   // Tout le catalogue d'un coup (pas de limite à 8) : `proposer` sert
@@ -97,7 +108,7 @@ export default function Propose({
       tags,
       nombre: recipes.length,
     })
-    if (aRefaire) liste = liste.filter((r) => historique.verdicts[r.id] === 'refaire')
+    if (favorisSeuls) liste = liste.filter((r) => estFavorite(r, historique))
 
     const motifs = new Map<string, string>()
     if (recherche.trim()) {
@@ -118,7 +129,7 @@ export default function Propose({
       })
     }
     return { affichees: liste, motifs }
-  }, [recipes, historique, tempsMax, tags, aRefaire, recherche])
+  }, [recipes, historique, tempsMax, tags, favorisSeuls, recherche])
 
   const dansPanier = (id: string) => basket.some((e) => e.recipeId === id)
 
@@ -141,11 +152,11 @@ export default function Propose({
   const basculerTag = (t: string) =>
     setTags((prec) => (prec.includes(t) ? prec.filter((x) => x !== t) : [...prec, t]))
 
-  const nombreFiltres = (tempsMax !== null ? 1 : 0) + (aRefaire ? 1 : 0) + tags.length
+  const nombreFiltres = (tempsMax !== null ? 1 : 0) + (favorisSeuls ? 1 : 0) + tags.length
 
   const toutEffacer = () => {
     setTempsMax(null)
-    setARefaire(false)
+    setFavorisSeuls(false)
     setTags([])
     setRecherche('')
   }
@@ -236,8 +247,16 @@ export default function Propose({
                 {t('propose.minutesMax', { n: mn })}
               </button>
             ))}
-            <button className="puce" aria-pressed={aRefaire} onClick={() => setARefaire(!aRefaire)}>
-              {t('propose.aRefaire')}
+            {/* La catégorie tient dans une puce, au milieu des autres
+                filtres : c'est une façon de plus de trancher dans le même
+                catalogue, pas un cinquième onglet — les favoris restent des
+                recettes qu'on ajoute au panier comme les autres. */}
+            <button
+              className="puce puce-favoris"
+              aria-pressed={favorisSeuls}
+              onClick={() => setFavorisSeuls(!favorisSeuls)}
+            >
+              <Icone nom="coeur" taille={14} /> {t('propose.favoris')}
             </button>
             {tousLesTags(recipes).map((tag) => (
               <button
@@ -254,10 +273,16 @@ export default function Propose({
 
         {affichees.length === 0 ? (
           <div className="vide">
+            {/* « Aucune recette ne correspond » laisserait croire à un
+                catalogue épuisé alors que la catégorie est simplement
+                encore vide : elle se remplit toute seule, mais seulement
+                si on sait comment. */}
             <p>
-              {nombreFiltres > 0 || recherche.trim() !== ''
-                ? t('propose.aucuneRecette')
-                : t('propose.catalogueVide')}
+              {favorisSeuls
+                ? t('propose.aucunFavori')
+                : nombreFiltres > 0 || recherche.trim() !== ''
+                  ? t('propose.aucuneRecette')
+                  : t('propose.catalogueVide')}
             </p>
             {/* Un cul-de-sac sans issue sinon : les filtres qui ont vidé
                 l'écran sont repliés dans le tiroir, hors de vue. */}
@@ -298,19 +323,26 @@ export default function Propose({
                 style={
                   {
                     '--teinte': teinteRecette(r.titre),
-                    // Au-delà de la première vingtaine, plus de décalage :
-                    // ces cartes sont hors écran, l'attente serait perçue
-                    // comme une latence au scroll.
-                    '--rang': Math.min(i, 20),
+                    // Le rang n'échelonne que la première hauteur d'écran :
+                    // au-delà, `styles.css` ne joue plus l'entrée du tout
+                    // (`:nth-child(-n + 8)`) — ces cartes sont hors champ,
+                    // et les animer coûtait une couche de composition
+                    // chacune pour un effet que personne ne voit.
+                    '--rang': Math.min(i, 7),
                   } as React.CSSProperties
                 }
               >
-                <div className="vignette" aria-hidden="true">
+                <div className="vignette" data-sans-photo={r.image ? undefined : 'true'} aria-hidden="true">
                   {r.titre.charAt(0)}
                   <ImageRecette src={r.image} />
                   <span className="badge-temps">
                     <Icone nom="minuteur" taille={12} /> {t('propose.minutes', { n: r.temps })}
                   </span>
+                  {estFavorite(r, historique) && (
+                    <span className="badge-favori" title={t('propose.favori')}>
+                      <Icone nom="coeur" taille={14} />
+                    </span>
+                  )}
                   <button
                     className="bouton-ajout bouton-ajout-flottant"
                     onClick={(e) => {

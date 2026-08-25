@@ -7,6 +7,10 @@ const CLE_LANGUE = 'fffood:langue'
 export type Dico = { [cle: string]: string | Dico | Dico[] }
 
 const fr: Dico = {
+  foyer: {
+    sessionImpossible:
+      "Impossible d'ouvrir une session avec le serveur. Si vous administrez ce site : activez les connexions anonymes dans Supabase (Authentication → Providers → Anonymous sign-ins).",
+  },
   reglages: {
     donneesTitre:
       "Données & vie privée",
@@ -129,7 +133,10 @@ const fr: Dico = {
     effacerRecherche: 'Effacer la recherche',
     filtres: 'Filtres',
     toutEffacer: 'Tout effacer',
-    aRefaire: 'À refaire',
+    favoris: 'Favoris',
+    favori: 'Favori',
+    aucunFavori:
+      "Pas encore de favori. Une recette y entre quand vous l'ajoutez vous-même, ou quand vous répondez « À refaire » après l'avoir cuisinée.",
     minutesMax: '≤ {{n}} min',
     aucuneRecette: 'Aucune recette ne correspond.',
     catalogueVide: "Votre catalogue est vide : la première recette s'ajoute ici.",
@@ -233,6 +240,7 @@ const fr: Dico = {
   },
   detail: {
     retour: 'Retour',
+    favori: 'Favori',
     moinsDeParts: 'Moins de parts',
     plusDeParts: 'Plus de parts',
     part: 'Part{{s}}',
@@ -400,7 +408,8 @@ const fr: Dico = {
     },
     {
       titre: 'Filtrer le catalogue',
-      texte: "Par temps de préparation, par tag, ou juste les plats « à refaire » que vous avez aimés.",
+      texte:
+        'Par temps de préparation, par tag, ou par favoris — les plats que vous avez aimés après les avoir cuisinés, et ceux que vous avez ajoutés vous-même.',
     },
     {
       titre: 'Ajouter une recette',
@@ -504,6 +513,10 @@ const fr: Dico = {
 }
 
 const en: Dico = {
+  foyer: {
+    sessionImpossible:
+      "Could not open a session with the server. If you administer this site: enable anonymous sign-ins in Supabase (Authentication → Providers → Anonymous sign-ins).",
+  },
   reglages: {
     donneesTitre:
       "Data & privacy",
@@ -626,7 +639,10 @@ const en: Dico = {
     effacerRecherche: 'Clear search',
     filtres: 'Filters',
     toutEffacer: 'Clear all',
-    aRefaire: 'Make again',
+    favoris: 'Favorites',
+    favori: 'Favorite',
+    aucunFavori:
+      'No favorites yet. A recipe joins them when you add it yourself, or when you answer "Make again" after cooking it.',
     minutesMax: '≤ {{n}} min',
     aucuneRecette: 'No recipe matches.',
     catalogueVide: 'Your catalog is empty: the first recipe goes in here.',
@@ -728,6 +744,7 @@ const en: Dico = {
   },
   detail: {
     retour: 'Back',
+    favori: 'Favorite',
     moinsDeParts: 'Fewer servings',
     plusDeParts: 'More servings',
     part: 'Serving{{s}}',
@@ -887,7 +904,8 @@ const en: Dico = {
     },
     {
       titre: 'Filter the catalog',
-      texte: 'By prep time, by tag, or just the "make again" dishes you liked.',
+      texte:
+        'By prep time, by tag, or by favorites — the dishes you liked after cooking them, and the ones you added yourself.',
     },
     {
       titre: 'Add a recipe',
