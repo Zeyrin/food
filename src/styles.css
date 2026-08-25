@@ -954,8 +954,33 @@ button.carte:active {
   flex: none;
 }
 
+/* `aspect-ratio` n'existe pas avant Safari 15 : sans repli, la vignette
+   n'avait plus que la hauteur de sa lettre et la photo se posait à sa
+   taille naturelle dans le coin — c'est l'écran qu'on voyait sur un
+   vieil iPhone. Le padding en pourcentage se calcule sur la largeur,
+   comme le ratio, et ne coûte rien aux navigateurs qui l'ont. */
+@supports not (aspect-ratio: 4 / 3) {
+  .vignette {
+    height: 0;
+    padding-bottom: 75%;
+  }
+
+  .grille-recettes .vignette {
+    padding-bottom: 100%;
+  }
+
+  .vignette img,
+  .vignette::after {
+    height: auto;
+  }
+}
+
 .vignette img {
   position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   inset: 0;
   width: 100%;
   height: 100%;
@@ -970,6 +995,10 @@ button.carte:active {
 .vignette::after {
   content: '';
   position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   inset: 0;
   pointer-events: none;
   background: linear-gradient(to bottom, rgb(32 27 12 / 0.22), rgb(32 27 12 / 0) 38%);
@@ -1134,6 +1163,36 @@ button.carte:active {
 .grille-recettes .vignette {
   aspect-ratio: 1;
   font-size: 40px;
+}
+
+/* Les recettes sans photo — le corpus en compte cent une — réservaient
+   un carré entier pour une initiale géante sur un aplat de couleur : la
+   carte donnait l'impression d'une image qui n'a pas fini de charger.
+   Un bandeau de la hauteur du badge suffit à porter la teinte et le
+   temps de cuisson, et le titre remonte à sa place. */
+.vignette[data-sans-photo] {
+  aspect-ratio: auto;
+  min-height: 52px;
+  padding-bottom: 0;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 14px;
+  font-size: 26px;
+}
+
+.grille-recettes .vignette[data-sans-photo] {
+  aspect-ratio: auto;
+  min-height: 46px;
+  font-size: 22px;
+  padding-right: 10px;
+}
+
+@supports not (aspect-ratio: 4 / 3) {
+  .vignette[data-sans-photo],
+  .grille-recettes .vignette[data-sans-photo] {
+    height: auto;
+    padding-bottom: 0;
+  }
 }
 
 .grille-recettes .badge-temps {
@@ -1885,6 +1944,18 @@ button.principal:disabled {
    photo. */
 button.carte {
   width: 100%;
+  /* Un <button> n'hérite ni de la couleur ni de la fonte de la page : il
+     part des valeurs du navigateur. Sur un iPhone dont l'accessibilité
+     dessine les « formes de bouton », `buttontext` devient un bleu de
+     lien souligné — les titres des plats s'affichaient en bleu souligné
+     sur l'écran Cuisson, là où l'Android les rendait à l'encre. On ne
+     laisse plus le navigateur décider de la couleur d'un titre. */
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  text-decoration: none;
+  -webkit-appearance: none;
+  appearance: none;
   /* `border: 0` : une carte rendue en <button> (écran Cuisson) gardait la
      bordure biseautée par défaut du navigateur — un trait sombre sur son
      arête gauche et basse, absent des cartes rendues en <div> juste à
@@ -2266,6 +2337,10 @@ button.pastille-synchro:active {
 
 .carte-prochaine-cuisson img {
   position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   inset: 0;
   width: 100%;
   height: 100%;
@@ -2279,6 +2354,10 @@ button.pastille-synchro:active {
 .carte-prochaine-cuisson:has(img)::after {
   content: '';
   position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   inset: 0;
   /* Le bloc de texte fait deux à trois lignes : le voile doit rester
      dense sur toute la moitié basse, sinon le sur-titre remonte dans la
@@ -2390,6 +2469,10 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .vignette-mini img {
   position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   inset: 0;
   width: 100%;
   height: 100%;
@@ -2588,6 +2671,10 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .cuisson-focus {
   position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   inset: 0;
   z-index: 20;
   display: flex;
@@ -2944,6 +3031,10 @@ button.carte-panier-bouton .carte-panier-corps {
 .bandeau-minuteur[data-sonne='true']::after {
   content: '';
   position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   inset: 0;
   z-index: 0;
   border-radius: inherit;
@@ -3075,6 +3166,10 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .voile-panneau {
   position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   inset: 0;
   z-index: 30;
   border: 0;
@@ -3418,6 +3513,10 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .champ-code-saisie {
   position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   inset: 0;
   z-index: 1;
   width: 100%;
@@ -4131,6 +4230,10 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
 .visite-repere::after {
   content: '';
   position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   inset: 0;
   border-radius: inherit;
   border: 3px solid var(--accent);

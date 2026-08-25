@@ -77,7 +77,7 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
                 } as React.CSSProperties
               }
             >
-              <div className="vignette" aria-hidden="true">
+              <div className="vignette" data-sans-photo={r.image ? undefined : 'true'} aria-hidden="true">
                 {r.titre.charAt(0)}
                 <ImageRecette src={r.image} />
                 <span className="badge-temps">
