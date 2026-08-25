@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Recipe, Verdict } from '../types'
-import { annoterEtape, formatQuantite } from '../lib/aggregate'
+import { annoterEtape, etapeEnTexte, formatQuantite } from '../lib/aggregate'
 import { formatDuree, minuteursDeLEtape } from '../lib/duree'
 import { useWakeLock } from '../hooks/useWakeLock'
 import type { Minuteurs } from '../hooks/useMinuteurs'
 import { ecrireProgression, lireProgression, oublierProgression } from '../lib/progressionCuisson'
 import { useLangue } from '../lib/i18n'
 import BandeauMinuteur from '../components/BandeauMinuteur'
+import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
 
 interface Props {
@@ -60,7 +61,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
         <h2>{t('cuisson.titreEtapes', { n: recette.etapes.length })}</h2>
         <ol className="apercu-etapes">
           {recette.etapes.map((etape, i) => (
-            <li key={i}>{etape}</li>
+            <li key={i}>{etapeEnTexte(etape)}</li>
           ))}
         </ol>
 
@@ -73,16 +74,37 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
                   balayée) reprend où elle en était — mais c'est un choix
                   explicite : rien de pire que de croire repartir du début
                   et sauter la moitié des étapes sans le voir. */}
-              <button className="principal" onClick={() => setIndex(reprise)}>
+              <button
+                className="principal"
+                onClick={() => {
+                  mesurer('cuisson_reprise', { etape: reprise + 1, etapes: recette.etapes.length })
+                  setIndex(reprise)
+                }}
+              >
                 <Icone nom="grill" taille={20} />{' '}
                 {t('cuisson.reprendre', { n: reprise + 1, total: recette.etapes.length })}
               </button>
-              <button className="discret pleine-largeur" onClick={() => setIndex(0)}>
+              <button
+                className="discret pleine-largeur"
+                onClick={() => {
+                  mesurer('cuisson_commencee', { etapes: recette.etapes.length, reprise: 0 })
+                  setIndex(0)
+                }}
+              >
                 {t('cuisson.repartirDuDebut')}
               </button>
             </>
           ) : (
-            <button className="principal" onClick={() => setIndex(0)}>
+            <button
+              className="principal"
+              onClick={() => {
+                mesurer('cuisson_commencee', {
+                  etapes: recette.etapes.length,
+                  minutes: recette.temps,
+                })
+                setIndex(0)
+              }}
+            >
               <Icone nom="grill" taille={20} />{' '}
               {t('cuisson.commencer', {
                 total: recette.etapes.length,
@@ -104,8 +126,16 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           </div>
           <h1>{t('cuisson.cetaitComment')}</h1>
           <p>{t('cuisson.finTexte')}</p>
+          {/* Les deux verdicts n'engagent pas la même chose : « à refaire »
+              remonte le plat dans les propositions, « jamais » l'en écarte
+              pour de bon. Ils avaient exactement la même apparence, à un
+              pouce l'un de l'autre, au moment où on repose une poêle.
+              L'un porte donc l'accent, l'autre reste en retrait. */}
           <div className="ecran-fin-choix">
-            <button className="choix-verdict" onClick={() => onVerdict('refaire')}>
+            <button
+              className="choix-verdict choix-verdict-oui"
+              onClick={() => onVerdict('refaire')}
+            >
               <Icone nom="etoile" taille={26} />
               {t('cuisson.aRefaire')}
             </button>
@@ -197,7 +227,10 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
               <button
                 key={m.secondes}
                 className="bouton-minuteur"
-                onClick={() => minuteurs.lancer(m.secondes, m.nom, recette.id, recette.titre)}
+                onClick={() => {
+                  mesurer('minuteur_lance', { secondes: m.secondes })
+                  minuteurs.lancer(m.secondes, m.nom, recette.id, recette.titre)
+                }}
               >
                 <Icone nom="minuteur" taille={16} /> {t('cuisson.lancer', { duree: formatDuree(m.secondes) })}
               </button>

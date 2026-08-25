@@ -33,7 +33,10 @@ export default defineConfig({
         name: 'FFFood',
         short_name: 'FFFood',
         description: 'FFFood : recettes, panier de la semaine et liste de courses, sans compte.',
-        theme_color: '#385e16',
+        // La couleur du chrome navigateur est celle du haut de l'écran, pas
+        // celle de la marque : un bandeau vert foncé au-dessus d'une app
+        // couleur parchemin se lisait comme une barre d'un autre logiciel.
+        theme_color: '#fff8ef',
         background_color: '#fff8ef',
         display: 'standalone',
         orientation: 'portrait',

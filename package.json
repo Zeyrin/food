@@ -8,13 +8,14 @@
     "build": "tsc -b && vite build && node scripts/prerender.mjs",
     "prerender": "node scripts/prerender.mjs",
     "preview": "vite preview --host",
-    "lint:recipes": "node scripts/lint-recipes.mjs",
     "test": "tsx --test 'src/**/*.test.ts'",
-    "typecheck": "tsc --noEmit"
+    "lint:recipes": "node scripts/lint-recipes.mjs",
+    "verifier": "tsx scripts/verifier-invariants.ts",
+    "typecheck": "tsc --noEmit",
+    "ci": "npm run typecheck && npm test && npm run lint:recipes && npm run verifier && npm run build"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
-    "@vercel/analytics": "^2.0.1",
     "idb-keyval": "^6.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

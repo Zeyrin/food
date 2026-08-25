@@ -3,6 +3,7 @@ import type { BasketEntry, Recipe } from '../types'
 import { type Historique, proposer, tousLesTags } from '../lib/propose'
 import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
+import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 import AjoutRecette from '../components/AjoutRecette'
@@ -122,8 +123,16 @@ export default function Propose({
   const dansPanier = (id: string) => basket.some((e) => e.recipeId === id)
 
   const basculer = (recette: Recipe) => {
+    const dedans = dansPanier(recette.id)
+    // Depuis quel écran, et avec quels filtres actifs : c'est ce qui dit si
+    // le tri sert à quelque chose. Jamais le titre du plat.
+    mesurer(dedans ? 'plat_retire_du_panier' : 'plat_ajoute_au_panier', {
+      depuis: 'proposer',
+      filtres: nombreFiltres,
+      recherche: recherche.trim() ? 1 : 0,
+    })
     onBasket(
-      dansPanier(recette.id)
+      dedans
         ? basket.filter((e) => e.recipeId !== recette.id)
         : [...basket, { recipeId: recette.id, portions: recette.portions }],
     )

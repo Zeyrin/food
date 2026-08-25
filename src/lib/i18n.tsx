@@ -8,6 +8,16 @@ export type Dico = { [cle: string]: string | Dico | Dico[] }
 
 const fr: Dico = {
   reglages: {
+    donneesTitre:
+      "Données & vie privée",
+    donneesTexte:
+      "Ce qui reste sur ce téléphone, ce qui est partagé dans le foyer, et ce que voit la mesure d'audience.",
+    donneesLien:
+      "Lire la page",
+    synchroTitre:
+      'Synchro bloquée',
+    synchroTexte:
+      "Le réseau répond, mais le serveur refuse les écritures : cet appareil garde tout en local, l'autre téléphone ne voit rien. À vérifier côté Supabase — les policies de la table, la réplication temps réel, et que la clé du fichier .env est la bonne.",
     titre: 'Réglages',
     fermer: 'Fermer les réglages',
     langue: 'Langue',
@@ -56,8 +66,11 @@ const fr: Dico = {
     voirListe: 'Voir la liste',
   },
   bienvenue: {
+    partageInactif:
+      "Le partage n'est pas configuré sur cette installation : l'app fonctionne seule sur cet appareil.",
     titre: 'Bienvenue',
-    intro: 'Créez votre maison, ou rejoignez celle de quelqu\'un avec son code.',
+    intro: 'Décider les repas de la semaine, en tirer la liste, et cuisiner. À deux, sans compte.',
+    ou: 'ou',
     creation: 'Création…',
     creerMaMaison: 'Créer ma maison',
     creerErreur: "La maison n'a pas pu être créée. Vérifiez votre connexion et réessayez.",
@@ -322,6 +335,8 @@ const fr: Dico = {
     corps: "{{titre}} — c'est prêt.",
   },
   app: {
+    synchroRefusee: 'Synchro bloquée',
+    chargement: 'Chargement…',
     reglages: 'Réglages',
     horsLigne: 'Hors ligne — vos changements se synchroniseront au retour du réseau',
     proposer: 'Proposer',
@@ -449,6 +464,16 @@ const fr: Dico = {
 
 const en: Dico = {
   reglages: {
+    donneesTitre:
+      "Data & privacy",
+    donneesTexte:
+      "What stays on this phone, what is shared within the household, and what the audience measurement sees.",
+    donneesLien:
+      "Read the page",
+    synchroTitre:
+      'Sync blocked',
+    synchroTexte:
+      'The network responds, but the server refuses writes: this device keeps everything locally and the other phone sees nothing. Check on the Supabase side — the table policies, realtime replication, and that the key in .env is the right one.',
     titre: 'Settings',
     fermer: 'Close settings',
     langue: 'Language',
@@ -497,8 +522,11 @@ const en: Dico = {
     voirListe: 'See the list',
   },
   bienvenue: {
+    partageInactif:
+      "Sharing is not configured on this install: the app works on this device alone.",
     titre: 'Welcome',
-    intro: 'Create your household, or join someone else\'s with their code.',
+    intro: 'Decide the week\'s meals, turn them into a list, and cook. Together, no account.',
+    ou: 'or',
     creation: 'Creating…',
     creerMaMaison: 'Create my household',
     creerErreur: 'The household could not be created. Check your connection and try again.',
@@ -754,6 +782,8 @@ const en: Dico = {
     corps: "{{titre}} — it's ready.",
   },
   app: {
+    synchroRefusee: 'Sync blocked',
+    chargement: 'Loading…',
     reglages: 'Settings',
     horsLigne: 'Offline — your changes will sync when the network is back',
     proposer: 'Suggest',

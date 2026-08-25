@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { annoterEtape, formatQuantite } from './aggregate'
+import { annoterEtape, etapeEnTexte, formatQuantite } from './aggregate'
 import type { Unit } from '../types'
 
 const ing = (nom: string, quantite: number, unite: Unit) => ({ nom, quantite, unite })
@@ -156,5 +156,13 @@ assert.equal(formatQuantite({ quantite: 1.5, unite: 'cc' }), '1½ c. à c.')
 // Hors fraction connue, séparateur décimal de la langue affichée
 // (français par défaut, y compris ici : voir lireLangueSauvegardee).
 assert.equal(formatQuantite({ quantite: 1.2, unite: 'l' }), '1,2 l')
+
+// Aperçus (fiche recette, écran de préparation) : le libellé reste, les
+// accolades partent — sans quoi on lisait « Couper la {tomate} ».
+assert.equal(
+  etapeEnTexte('Couper la {tomate} et l\'{oignon rouge} en rondelles.'),
+  "Couper la tomate et l'oignon rouge en rondelles.",
+)
+assert.equal(etapeEnTexte('Cuire les pâtes.'), 'Cuire les pâtes.')
 
 console.log('ok')

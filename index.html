@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#385e16" />
+    <!-- La couleur du chrome navigateur (barre d'état, en-tête d'onglet)
+         est celle du haut de la page, pas celle de la marque : un bandeau
+         vert foncé au-dessus d'une app couleur parchemin se lisait comme
+         une barre d'un autre logiciel. Une valeur par thème, comme le CSS. -->
+    <meta name="theme-color" content="#fff8ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16150f" media="(prefers-color-scheme: dark)" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="FFFood" />
     <meta name="application-name" content="FFFood" />

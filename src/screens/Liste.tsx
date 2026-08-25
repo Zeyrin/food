@@ -7,7 +7,9 @@ import { formatQuantite } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { useLangue } from '../lib/i18n'
+import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
+import ImageRecette from '../components/ImageRecette'
 
 interface Props {
   items: ListItem[]
@@ -74,8 +76,24 @@ export default function Liste({
   const itemsLibres = (etat.items ?? []).map(itemLibreEnListItem)
   const tousLesItems = [...items, ...itemsLibres]
 
-  const basculer = (cle: 'coche' | 'dejaPossede', key: string) =>
-    onEtat({ ...etat, [cle]: { ...etat[cle], [key]: !etat[cle][key] } })
+  const basculer = (cle: 'coche' | 'dejaPossede', key: string) => {
+    const suivant = { ...etat, [cle]: { ...etat[cle], [key]: !etat[cle][key] } }
+
+    // Le moment où le compteur tombe à zéro : c'est la fin des courses, et
+    // c'est mesuré ici plutôt que dans un effet — `restants` n'est calculé
+    // qu'après un retour anticipé, un hook y serait conditionnel.
+    if (cle === 'coche') {
+      const aAcheterApres = [...items, ...(etat.items ?? []).map(itemLibreEnListItem)].filter(
+        (i) => !suivant.dejaPossede[i.key],
+      )
+      const restantsApres = aAcheterApres.filter((i) => !suivant.coche[i.key]).length
+      if (restantsApres === 0 && aAcheterApres.length > 0) {
+        mesurer('courses_terminees', { produits: aAcheterApres.length })
+      }
+    }
+
+    onEtat(suivant)
+  }
 
   const ajouterItem = () => {
     const nom = saisie?.trim()
@@ -117,6 +135,7 @@ export default function Liste({
 
   const envoyer = async (restant: ListItem[]) => {
     const texte = composerTexte(restant)
+    mesurer('liste_envoyee', { lignes: restant.length, partageNatif: 'share' in navigator ? 1 : 0 })
     try {
       if (navigator.share) {
         await navigator.share({ title: t('liste.titrePartage'), text: texte })
@@ -258,7 +277,18 @@ export default function Liste({
             )
           })}
 
-          <button className="principal" onClick={() => setMode('courses')}>
+          <button
+            className="principal"
+            onClick={() => {
+              // Combien la passe « ce que j'ai déjà » retire réellement :
+              // c'est la question qui juge le concept entier.
+              mesurer('tri_termine', {
+                total: tousLesItems.length,
+                ecartes: tousLesItems.length - aAcheter.length,
+              })
+              setMode('courses')
+            }}
+          >
             {t('liste.passerAuxCourses', { n: aAcheter.length })}
           </button>
 
@@ -286,13 +316,21 @@ export default function Liste({
               {aAcheter.length - restants} <span>/ {aAcheter.length}</span>
             </h2>
           </div>
+          {/* La tuile prenait pour fond une teinte tirée du titre : un
+              magenta ou un cyan tombait à côté du vert de la tuile
+              voisine, hors de la palette de l'app. Le plat a sa photo —
+              elle dit mieux ce qui attend en cuisine, et la teinte reste
+              le repli des recettes qui n'en ont pas. */}
           {prochaineCuisson && (
             <div
               className="carte-prochaine-cuisson"
               style={{ '--teinte': teinteRecette(prochaineCuisson.titre) } as React.CSSProperties}
             >
-              <p className="carte-resume-label">{t('liste.prochaineCuisson')}</p>
-              <p className="carte-prochaine-cuisson-titre">{prochaineCuisson.titre}</p>
+              <ImageRecette src={prochaineCuisson.image} />
+              <div className="carte-prochaine-cuisson-texte">
+                <p className="carte-resume-label">{t('liste.prochaineCuisson')}</p>
+                <p className="carte-prochaine-cuisson-titre">{prochaineCuisson.titre}</p>
+              </div>
             </div>
           )}
         </div>

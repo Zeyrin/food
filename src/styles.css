@@ -10,6 +10,26 @@
   Material 3 par les formes (rayons maximalistes, pilules, surfaces
   tonales), chaleur organique par la couleur (sauge/terracotta sur
   parchemin) et la typo (Bricolage Grotesque, un peu excentrique).
+
+  Trois règles de matière tiennent tout le reste ensemble :
+
+  1. Toute surface porte un filet interne d'un pixel (`--filet`). Le
+     système est crème sur crème : sans lui, une carte et le papier qui
+     la porte se confondent dès que l'écran baisse en luminosité, et
+     l'app se lit comme un document plutôt que comme des objets posés.
+  2. L'ombre se fait en couches (`--ombre-plate` / `--ombre` /
+     `--ombre-haute`) : un contact net d'un pixel qui pose l'objet, puis
+     une diffusion large et très pâle qui lui donne son poids. Une seule
+     couche large ne fait qu'un halo gris.
+  3. Le vert appartient à ce qui répond au doigt — bouton principal,
+     pastille d'onglet active, ajout au panier. Les titres d'écran sont
+     à l'encre, et le terracotta se garde pour ce qui se rattrape (un
+     retrait, une suppression), jamais pour un simple compteur.
+
+  Deux courbes seulement : `--sortie` pour tout ce qui entre ou se
+  déplace, `--ressort` pour ce qui répond à l'appui. Les états `:hover`
+  vivent tous sous `@media (hover: hover)` — sur un écran tactile ils
+  restent collés au dernier élément touché.
 */
 
 @font-face {
@@ -63,7 +83,14 @@
   --accent: #385e16;
   --accent-doux: #cefda3;
   --sur-accent: #ffffff;
-  --terracotta: #bc4749;
+  /* Assombri depuis #bc4749, qui plafonnait à 4,82:1 sur le parchemin et
+     tombait à 3,93:1 sur son propre fond doux — sous le seuil de 4,5:1
+     pour du texte. Reste plus clair que `--primeur` : les deux sont
+     voisins parce qu'ils sortent de la même famille Heritage, mais leurs
+     rôles diffèrent (l'un est l'accent chaud de l'app, l'autre l'identité
+     d'un magasin) et les fondre en un seul jeton ferait dépendre la
+     couleur d'un rayon de celle d'un bouton. */
+  --terracotta: #a53c3e;
   --terracotta-doux: #ffdad8;
 
   /* Une couleur par rayon, pour repérer une section d'un coup d'œil
@@ -77,9 +104,29 @@
   --sarcelle: #1f6f74;
   --prune: #6a4a8c;
 
-  --ombre: 0 1px 2px rgb(32 27 12 / 0.06), 0 6px 16px rgb(32 27 12 / 0.05);
-  --ombre-nette: 0 4px 14px rgb(56 94 22 / 0.18);
+  /* Ombres en couches : un contact net d'un pixel qui pose l'objet sur
+     le papier, puis une diffusion large et très pâle qui lui donne son
+     poids. Une seule couche large donne un halo gris ; deux couches
+     donnent une surface. */
+  --ombre-plate: 0 1px 1px rgb(32 27 12 / 0.04), 0 1px 3px rgb(32 27 12 / 0.04);
+  --ombre: 0 1px 2px rgb(32 27 12 / 0.05), 0 4px 10px -2px rgb(32 27 12 / 0.06),
+    0 12px 28px -8px rgb(32 27 12 / 0.07);
+  --ombre-haute: 0 2px 4px rgb(32 27 12 / 0.06), 0 10px 24px -6px rgb(32 27 12 / 0.1),
+    0 24px 48px -16px rgb(32 27 12 / 0.12);
+  --ombre-nette: 0 1px 2px rgb(56 94 22 / 0.2), 0 6px 16px -4px rgb(56 94 22 / 0.28);
 
+  /* Filet : le trait d'un pixel qui détache une carte crème d'un fond
+     crème. `--trait` reste la bordure franche des champs et boutons
+     fantômes — deux rôles, deux valeurs. */
+  --filet: rgb(32 27 12 / 0.07);
+  --filet-fort: rgb(32 27 12 / 0.12);
+
+  /* Une seule décélération pour tout ce qui entre ou se déplace, un
+     seul rebond pour ce qui répond au doigt. */
+  --sortie: cubic-bezier(0.22, 1, 0.36, 1);
+  --ressort: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --rayon-petit: 16px;
   --rayon: 24px;
   --rayon-grand: 32px;
   --pouce: 56px;
@@ -111,8 +158,17 @@
     --brun: #d9b593;
     --sarcelle: #8fd3d7;
     --prune: #cbb2ec;
-    --ombre: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 16px rgb(0 0 0 / 0.3);
-    --ombre-nette: 0 4px 16px rgb(0 0 0 / 0.45);
+    /* Dans le sombre, l'ombre ne suffit plus à détacher une surface d'une
+       autre : le filet se retourne en lumière rasante sur l'arête haute,
+       comme un objet posé sous une lampe. */
+    --filet: rgb(243 240 230 / 0.07);
+    --filet-fort: rgb(243 240 230 / 0.13);
+    --ombre-plate: 0 1px 2px rgb(0 0 0 / 0.3);
+    --ombre: 0 1px 2px rgb(0 0 0 / 0.35), 0 4px 12px -2px rgb(0 0 0 / 0.35),
+      0 14px 32px -10px rgb(0 0 0 / 0.4);
+    --ombre-haute: 0 2px 4px rgb(0 0 0 / 0.4), 0 12px 28px -6px rgb(0 0 0 / 0.45),
+      0 28px 56px -18px rgb(0 0 0 / 0.5);
+    --ombre-nette: 0 2px 4px rgb(0 0 0 / 0.4), 0 8px 20px -6px rgb(0 0 0 / 0.5);
   }
 }
 
@@ -129,6 +185,25 @@ body {
   font-size: 16px;
   line-height: 1.5;
   -webkit-tap-highlight-color: transparent;
+  /* Les deux graisses de Bricolage sont dessinées épaisses : sans
+     lissage sous-pixel désactivé, les gros titres bavent d'un demi-pixel
+     sur les écrans à haute densité. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+/* Barre de défilement discrète sur les navigateurs qui la dessinent
+   (desktop) : la barre système grise coupe le papier en deux. */
+@supports (scrollbar-width: thin) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--trait) transparent;
+  }
 }
 
 #root {
@@ -137,12 +212,16 @@ body {
   padding: 0 20px calc(96px + env(safe-area-inset-bottom));
 }
 
+/* Plus le corps est gros, plus le blanc entre les lettres paraît large :
+   le crénage se resserre à mesure que la taille monte. `balance` évite
+   le titre sur deux lignes dont la seconde ne porte qu'un mot. */
 h1 {
   font-family: var(--affichage);
   font-size: 28px;
   font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
+  letter-spacing: -0.022em;
+  line-height: 1.18;
+  text-wrap: balance;
   margin: 24px 0 4px;
 }
 
@@ -150,12 +229,18 @@ h2 {
   font-family: var(--affichage);
   font-size: 22px;
   font-weight: 600;
+  letter-spacing: -0.014em;
   color: var(--encre);
+  text-wrap: balance;
   margin: 28px 0 12px;
 }
 
 p.aide {
   color: var(--encre-douce);
+  /* Une phrase d'aide passe rarement 60 caractères par ligne sans que
+     l'œil perde la ligne suivante ; `pretty` empêche le mot orphelin. */
+  max-width: 62ch;
+  text-wrap: pretty;
   margin: 0 0 16px;
 }
 
@@ -164,6 +249,211 @@ p.aide {
 p.aide a {
   color: var(--accent);
   text-underline-offset: 3px;
+}
+
+/* --- Attente du premier rendu -------------------------------------------
+   Le repère est retardé d'un quart de seconde par l'animation : la
+   lecture d'IndexedDB est presque toujours plus rapide que ça, et un
+   indicateur qui clignote au lancement se lit comme une saccade. Passé
+   ce délai, l'attente est réelle et mérite d'être signalée. */
+
+#root:has(.attente) {
+  padding-bottom: 0;
+}
+
+.attente {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+}
+
+.attente .accueil-sceau {
+  margin: 0;
+  opacity: 0;
+  animation: attente-apparition 0.4s var(--sortie) 0.25s forwards;
+}
+
+@keyframes attente-apparition {
+  to {
+    opacity: 1;
+  }
+}
+
+/* « Réduire les animations » désactive toutes les animations de la
+   feuille : sans ce rattrapage, le repère resterait invisible pour
+   toujours au lieu d'apparaître tout de suite. */
+@media (prefers-reduced-motion: reduce) {
+  .attente .accueil-sceau {
+    opacity: 1;
+  }
+}
+
+/* --- Écran de panne ------------------------------------------------------
+   Dernier recours (voir components/LimiteErreur.tsx). Même composition
+   que l'accueil — c'est le seul autre écran qui n'a rien à afficher — et
+   surtout les mêmes couleurs : une page de panne qui sort du thème donne
+   l'impression que c'est le navigateur qui a lâché, pas l'app. */
+
+#root:has(.panne) {
+  padding-bottom: 0;
+}
+
+.panne {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: min(100%, 420px);
+  margin: 0 auto;
+  padding: max(32px, env(safe-area-inset-top)) 0 32px;
+}
+
+.panne h1 {
+  margin: 0 0 8px;
+}
+
+.panne-detail {
+  margin-top: 24px;
+  font-size: 14px;
+  color: var(--encre-douce);
+}
+
+.panne-detail summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+/* Le message d'erreur est brut et peut être long : il défile pour son
+   propre compte plutôt que d'étirer la page à sa largeur. */
+.panne-detail pre {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: var(--rayon-petit);
+  background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet);
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* --- Écran d'accueil -----------------------------------------------------
+   Le seul écran sans données à afficher : il porte donc la marque. Trois
+   rangées sur la hauteur du viewport — un vide en haut, le bloc de marque
+   au tiers supérieur (là où l'œil se pose), les actions au pouce. Le vide
+   se comprime avant le reste sur un écran court. */
+
+/* Pas de barre d'onglets sur cet écran : le fond de page réservé pour
+   elle laisserait un vide sous les actions. */
+#root:has(.accueil) {
+  padding-bottom: 0;
+}
+
+.accueil {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+  padding: max(32px, env(safe-area-inset-top)) 0 32px;
+}
+
+.accueil-marque {
+  text-align: center;
+}
+
+/* Sceau : le carré arrondi d'une icône d'application, repris ici pour
+   que l'écran d'accueil ressemble à ce qui vient d'être touché sur le
+   téléphone. */
+.accueil-sceau {
+  display: inline-grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 20px;
+  border-radius: 22px;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--accent) 90%, white), var(--accent));
+  color: var(--sur-accent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), var(--ombre-nette);
+}
+
+.accueil-surtitre {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+}
+
+.accueil-nom {
+  margin: 6px 0 0;
+  font-size: clamp(40px, 13vw, 56px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.accueil-baseline {
+  max-width: 30ch;
+  margin: 14px auto 0;
+  color: var(--encre-douce);
+  font-size: 17px;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.accueil-actions {
+  /* Marge auto : sur un grand écran les actions restent groupées sous la
+     marque plutôt que plaquées en bas d'un mètre de vide. */
+  width: min(100%, 420px);
+  margin: 0 auto;
+}
+
+/* Filet coupé par le mot : deux chemins de même rang, pas une action et
+   son repli. */
+.accueil-ou {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0;
+  color: var(--encre-douce);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.accueil-ou::before,
+.accueil-ou::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--filet-fort);
+}
+
+.accueil-champ {
+  display: block;
+}
+
+.accueil-legende {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--encre-douce);
+}
+
+.accueil-note {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--encre-douce);
+  text-wrap: pretty;
 }
 
 /* --- En-tête d'écran ------------------------------------------------------ */
@@ -180,21 +470,45 @@ p.aide a {
   margin: 0 -20px;
   padding: 0 20px;
   background: color-mix(in srgb, var(--papier) 82%, transparent);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  /* Le filet n'existe que quand du contenu passe dessous : au repos, un
+     trait sous le titre ne sépare rien. `data-defile` est posé sur
+     <html> par App.tsx. */
+  box-shadow: 0 1px 0 transparent;
+  transition: box-shadow 0.2s var(--sortie), background-color 0.2s var(--sortie);
 }
 
+html[data-defile='true'] .entete-app {
+  background: color-mix(in srgb, var(--papier) 92%, transparent);
+  box-shadow: 0 1px 0 var(--filet), 0 8px 20px -16px rgb(32 27 12 / 0.5);
+}
+
+/* Le vert appartient à ce qui répond au doigt. Un titre d'écran ne
+   répond à rien : il reste à l'encre, et l'accent se garde pour la
+   pastille d'onglet, le bouton principal et l'icône qui signe l'écran. */
 .entete-app h1 {
   font-size: 22px;
+  letter-spacing: -0.018em;
   margin: 0;
-  color: var(--accent);
+  color: var(--encre);
 }
 
 .entete-app-titre {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
   color: var(--accent);
+}
+
+/* Le titre d'une fiche peut être long : il se tronque plutôt que de
+   pousser le bouton retour hors de l'écran. */
+.entete-app-titre h1 {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .bouton-rond-discret {
@@ -208,11 +522,19 @@ p.aide a {
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: transform 0.12s ease;
+  box-shadow: inset 0 0 0 1px var(--filet);
+  transition: transform 0.14s var(--ressort), background-color 0.14s ease, color 0.14s ease;
 }
 
 .bouton-rond-discret:active {
-  transform: scale(0.92);
+  transform: scale(0.9);
+}
+
+@media (hover: hover) {
+  .bouton-rond-discret:hover {
+    background: var(--accent-doux);
+    color: var(--accent);
+  }
 }
 
 .bouton-reglages-global {
@@ -289,10 +611,13 @@ nav.onglets {
   display: flex;
   justify-content: space-around;
   gap: 4px;
-  background: color-mix(in srgb, var(--papier) 85%, transparent);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
+  background: color-mix(in srgb, var(--papier) 88%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
   border-radius: 24px 24px 0 0;
+  /* Le filet dessine l'arête de la barre là où le contenu passe
+     dessous ; l'ombre inversée la décolle du papier. */
+  box-shadow: inset 0 1px 0 var(--filet), 0 -8px 24px -12px rgb(32 27 12 / 0.35);
   padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
   z-index: 10;
 }
@@ -305,7 +630,8 @@ nav.onglets button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
+  padding: 0;
   border: 0;
   border-radius: 999px;
   background: none;
@@ -313,13 +639,44 @@ nav.onglets button {
   font: inherit;
   font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: background-color 0.16s ease, color 0.16s ease;
+  transition: color 0.18s ease;
+}
+
+/* La pastille active tient sous l'icône seule, pas sous le bouton
+   entier : le libellé garde sa ligne de base d'un onglet à l'autre, et
+   la tache de couleur reste de la taille d'une cible, pas d'un pavé. */
+.onglet-pastille {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 30px;
+  border-radius: 999px;
+  background: transparent;
+  transition: background-color 0.22s var(--sortie), transform 0.22s var(--ressort);
 }
 
 nav.onglets button[aria-current='page'] {
   color: var(--accent);
+}
+
+nav.onglets button[aria-current='page'] .onglet-pastille {
   background: var(--accent-doux);
+}
+
+nav.onglets button:active .onglet-pastille {
+  transform: scale(0.9);
+}
+
+@media (hover: hover) {
+  nav.onglets button:hover {
+    color: var(--accent);
+  }
+
+  nav.onglets button:not([aria-current='page']):hover .onglet-pastille {
+    background: color-mix(in srgb, var(--accent-doux) 55%, transparent);
+  }
 }
 
 /* --- Cartes et rangées --------------------------------------------------- */
@@ -330,7 +687,13 @@ nav.onglets button[aria-current='page'] {
   border-radius: var(--rayon);
   padding: 16px;
   margin-bottom: 12px;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+  /* Crème sur crème : sans le filet, deux surfaces voisines se
+     confondent dès que l'écran baisse en luminosité. Il est posé en
+     ombre interne plutôt qu'en bordure — aucune épaisseur ajoutée à la
+     boîte, donc rien à retrancher aux paddings. */
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+  transition: transform 0.18s var(--sortie), box-shadow 0.18s var(--sortie),
+    background-color 0.14s ease;
 }
 
 /* Les cartes de « Proposer » sont des boutons : retour tactile au doigt. */
@@ -357,7 +720,7 @@ button.carte:active {
   padding: 0;
   overflow: hidden;
   background: var(--carte-basse);
-  box-shadow: var(--ombre);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre);
   /* Les cartes d'une même rangée de grille sont étirées à la plus haute :
      sans ce partage, un titre d'une ligne laissait le bas de la carte à nu
      sous le corps — visible dès que celui-ci a son propre fond (recette
@@ -394,6 +757,20 @@ button.carte:active {
   object-fit: cover;
 }
 
+/* Deux services d'un même voile. En haut, il assombrit juste assez pour
+   que le badge de temps tienne sur un plat clair comme sur un plat
+   sombre ; sur tout le pourtour, un filet interne empêche une photo très
+   lumineuse de fondre dans le crème de la carte. Posé au-dessus de
+   l'image mais sous le badge et le bouton, qui sont en `z-index: 1`. */
+.vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgb(32 27 12 / 0.22), rgb(32 27 12 / 0) 38%);
+  box-shadow: inset 0 0 0 1px var(--filet);
+}
+
 @media (prefers-color-scheme: dark) {
   .vignette {
     color: hsl(var(--teinte) 55% 78% / 0.28);
@@ -401,6 +778,9 @@ button.carte:active {
   }
 }
 
+/* Un temps de cuisson n'est ni une alerte ni une promotion : il se lit
+   à l'encre sur un verre dépoli, et c'est le bouton d'ajout qui garde
+   la couleur sur cette vignette. */
 .badge-temps {
   position: absolute;
   top: 12px;
@@ -408,15 +788,22 @@ button.carte:active {
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   padding: 6px 12px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--carte) 90%, transparent);
-  color: var(--terracotta);
-  font-size: 14px;
-  font-weight: 600;
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  background: color-mix(in srgb, var(--carte) 78%, transparent);
+  color: var(--encre);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.28), 0 2px 8px -2px rgb(32 27 12 / 0.35);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  backdrop-filter: blur(10px) saturate(160%);
+}
+
+.badge-temps svg {
+  color: var(--encre-douce);
 }
 
 /* Pourquoi cette recette remonte alors que son titre ne contient pas
@@ -429,8 +816,15 @@ button.carte:active {
   color: var(--accent);
 }
 
+/* Les cartes d'une rangée sont étirées à la plus haute : un titre d'une
+   ligne laissait sinon un fond de carte nu sous lui. Le corps centre son
+   contenu dans la hauteur qu'il reçoit — le titre reste optiquement au
+   milieu du bandeau, quelle que soit la carte voisine. */
 .carte-recette-corps {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: 20px;
 }
 
@@ -470,6 +864,30 @@ button.carte:active {
 .grille-recettes .carte-recette {
   margin-bottom: 0;
   cursor: pointer;
+}
+
+.grille-recettes .carte-recette:active {
+  transform: scale(0.985);
+}
+
+/* Souris ou trackpad seulement : sur un écran tactile, `:hover` colle
+   après le doigt et la carte reste soulevée jusqu'au prochain appui. */
+@media (hover: hover) {
+  .grille-recettes .carte-recette:hover,
+  .carte-panier:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px var(--filet-fort), var(--ombre-haute);
+  }
+
+  .grille-recettes .carte-recette:hover .vignette img {
+    transform: scale(1.04);
+  }
+}
+
+/* Le zoom vit sur l'image, pas sur la vignette : celle-ci porte le
+   badge et le bouton d'ajout, qui ne doivent pas bouger avec elle. */
+.vignette img {
+  transition: transform 0.5s var(--sortie);
 }
 
 .grille-recettes .vignette {
@@ -563,11 +981,25 @@ button.carte:active {
   border-radius: var(--rayon-grand);
   overflow: hidden;
   margin-top: 16px;
+  box-shadow: var(--ombre);
 }
 
+/* Supprimer une recette du catalogue ne se propose pas avec le poids
+   d'une action qu'on vient chercher : même cible tactile, mais sans
+   contour — la pilule rouge pleine largeur, empilée sous « Ajouter au
+   panier », attirait l'œil autant que lui. Le risque est porté par la
+   confirmation en place, pas par ce bouton. */
 button.discret.danger {
   color: var(--terracotta);
-  border-color: color-mix(in srgb, var(--terracotta) 40%, transparent);
+  border-color: transparent;
+  font-weight: 600;
+}
+
+@media (hover: hover) {
+  button.discret.danger:hover:not(:disabled) {
+    border-color: transparent;
+    background: var(--terracotta-doux);
+  }
 }
 
 .detail-description {
@@ -589,7 +1021,11 @@ button.discret.danger {
   animation-delay: calc(var(--rang, 0) * 40ms);
 }
 
-.bloc-astuce {
+/* Bloc d'astuce du mode cuisson. Ses couleurs sont écrites en dur
+   (fond et texte clairs) parce que cet écran est sombre quel que soit le
+   thème : la règle est donc portée par `.cuisson-focus`, sinon un jour
+   posé sur une surface claire, le texte vert pâle y serait illisible. */
+.cuisson-focus .bloc-astuce {
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -601,7 +1037,7 @@ button.discret.danger {
   color: #bcefc0;
 }
 
-.bloc-astuce p {
+.cuisson-focus .bloc-astuce p {
   margin: 0;
   font-size: 15px;
   font-style: italic;
@@ -619,11 +1055,21 @@ button.discret.danger {
   background: var(--accent);
   color: var(--sur-accent);
   cursor: pointer;
-  transition: transform 0.12s ease, background-color 0.12s ease;
+  /* Le liseré clair sur l'arête haute et l'ombre portée sous le rond en
+     font un bouton posé sur la photo, pas une pastille peinte dessus. */
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), var(--ombre-nette);
+  transition: transform 0.16s var(--ressort), background-color 0.16s ease,
+    box-shadow 0.16s var(--sortie);
 }
 
 .bouton-ajout:active {
-  transform: scale(0.9);
+  transform: scale(0.88);
+}
+
+@media (hover: hover) {
+  .bouton-ajout:hover {
+    transform: scale(1.06);
+  }
 }
 
 .bouton-ajout[aria-pressed='true'] {
@@ -645,10 +1091,10 @@ button.discret.danger {
   position: absolute;
   bottom: 12px;
   right: 12px;
+  z-index: 1;
   width: 52px;
   height: 52px;
   flex: none;
-  box-shadow: var(--ombre-nette);
 }
 
 /* Réglage des parts sur la fiche : le compteur du panier, réutilisé là
@@ -694,6 +1140,7 @@ button.discret.danger {
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
+  box-shadow: inset 0 0 0 1px var(--filet);
 }
 
 .meta {
@@ -715,11 +1162,31 @@ button.discret.danger {
   font: inherit;
   text-align: left;
   cursor: pointer;
+  /* Filet en ombre interne et non en bordure : la rangée garde sa
+     hauteur exacte, et le trait disparaît sous le fond au survol comme
+     à l'appui sans faire sauter la ligne suivante. */
+  box-shadow: inset 0 -1px 0 var(--filet);
+  border-radius: var(--rayon-petit);
+  transition: background-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+/* Dernière ligne d'un rayon (ou d'une fiche) : pas de trait sous le
+   dernier produit, il ne sépare plus rien. */
+.rangee:last-child,
+.rangee-avec-suppr:last-child .rangee {
+  box-shadow: none;
+}
+
+@media (hover: hover) {
+  .rangee:not(.rangee-lecture):hover {
+    background: color-mix(in srgb, var(--accent-doux) 40%, transparent);
+    box-shadow: none;
+  }
 }
 
 .rangee:active {
   background: var(--accent-doux);
-  border-radius: var(--rayon);
+  box-shadow: none;
 }
 
 .rangee-lecture {
@@ -780,8 +1247,8 @@ button.discret.danger {
   display: grid;
   place-items: center;
   color: var(--sur-accent);
-  transition: background-color 0.14s ease, border-color 0.14s ease, border-radius 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: background-color 0.14s ease, border-color 0.14s ease,
+    border-radius 0.2s var(--ressort), transform 0.14s var(--ressort);
 }
 
 .rangee[data-coche='true'] .case {
@@ -793,10 +1260,22 @@ button.discret.danger {
 
 /* --- Boutons et sections --------------------------------------------------- */
 
+/* Le rayon reste annoncé pendant qu'on le parcourt : sur dix-neuf
+   produits répartis en deux magasins, le titre sortait de l'écran au
+   troisième article et on ne savait plus dans quel rayon on cochait.
+   Collé sous l'en-tête d'écran, qui fait une hauteur de pouce. */
 .entete-section {
+  position: sticky;
+  top: var(--pouce);
+  z-index: 8;
   display: flex;
   align-items: center;
   gap: 10px;
+  margin: 28px -20px 12px;
+  padding: 6px 20px;
+  background: color-mix(in srgb, var(--papier) 90%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
 }
 
 .badge-section {
@@ -806,6 +1285,7 @@ button.discret.danger {
   height: 40px;
   flex: none;
   border-radius: 14px;
+  box-shadow: inset 0 0 0 1px var(--filet);
 }
 
 .badge-section[data-rayon='fruits-legumes'] {
@@ -969,22 +1449,45 @@ h3.entete-section {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.12s ease, color 0.12s ease;
+  box-shadow: inset 0 0 0 1px var(--filet);
+  transition: transform 0.15s var(--ressort), background-color 0.12s ease, color 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.puce:active {
+  transform: scale(0.94);
+}
+
+@media (hover: hover) {
+  .puce:hover {
+    color: var(--encre);
+    box-shadow: inset 0 0 0 1px var(--filet-fort);
+  }
 }
 
 .puce[aria-pressed='true'] {
   background: var(--accent-doux);
   color: var(--accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
-/* Sortie de secours quand un filtre a vidé la grille : on la met en
-   tête du nuage, avant les filtres qu'elle annule. */
+/* Sortie de secours quand un filtre a vidé la grille : on la met en tête
+   du nuage, avant les filtres qu'elle annule. Même surface que les autres
+   puces, le rouge ne servant qu'au texte : en fond plein, elle pesait plus
+   lourd que les filtres qu'elle sert à retirer — et son rouge sur rose ne
+   tenait pas le contraste. */
 .puce-effacer {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--terracotta-doux);
   color: var(--terracotta);
+}
+
+@media (hover: hover) {
+  .puce-effacer:hover {
+    background: var(--terracotta-doux);
+    color: var(--terracotta);
+  }
 }
 
 /* Tiroir des filtres (écran Proposer) : replié une ligne, déplié la
@@ -994,6 +1497,7 @@ h3.entete-section {
   margin: 4px 0 16px;
   border-radius: var(--rayon);
   background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
 }
 
 .tiroir-filtres summary {
@@ -1002,9 +1506,17 @@ h3.entete-section {
   gap: 10px;
   min-height: 48px;
   padding: 0 16px;
+  border-radius: var(--rayon);
   cursor: pointer;
   list-style: none;
   font-weight: 700;
+  transition: color 0.14s ease;
+}
+
+@media (hover: hover) {
+  .tiroir-filtres summary:hover {
+    color: var(--accent);
+  }
 }
 
 .tiroir-filtres summary::-webkit-details-marker {
@@ -1045,25 +1557,44 @@ button.principal {
   gap: 10px;
   border: 0;
   border-radius: 999px;
-  background: var(--accent);
+  /* Un dégradé d'un pour cent : trop faible pour se lire comme un
+     dégradé, assez pour que la pilule prenne la lumière par le haut au
+     lieu de rester un aplat découpé. */
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--accent) 92%, white), var(--accent));
   color: var(--sur-accent);
   font: inherit;
   font-size: 17px;
   font-weight: 700;
+  letter-spacing: 0.005em;
   cursor: pointer;
   margin-top: 8px;
-  box-shadow: var(--ombre-nette);
-  transition: transform 0.12s ease, opacity 0.12s ease;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), var(--ombre-nette);
+  transition: transform 0.16s var(--ressort), box-shadow 0.18s var(--sortie),
+    opacity 0.12s ease, filter 0.16s ease;
 }
 
 button.principal:active:not(:disabled) {
-  transform: scale(0.97);
+  transform: scale(0.975);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), var(--ombre-plate);
 }
 
+@media (hover: hover) {
+  button.principal:hover:not(:disabled) {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), 0 2px 4px rgb(56 94 22 / 0.22),
+      0 10px 24px -6px rgb(56 94 22 / 0.36);
+    filter: brightness(1.06);
+  }
+}
+
+/* Un bouton désactivé se lit inerte, pas délavé : à 40 % d'opacité, le
+   vert plein virait au sauge boueux sur le parchemin. Surface neutre,
+   texte encre douce — la forme reste, l'invitation disparaît. */
 button.principal:disabled {
-  opacity: 0.4;
+  background: var(--carte-haute);
+  color: var(--encre-douce);
+  opacity: 1;
   cursor: default;
-  box-shadow: none;
+  box-shadow: inset 0 0 0 1px var(--filet);
 }
 
 /* Bouton "carte" cliquable en bloc (`button.carte`, reset natif). Le
@@ -1074,6 +1605,11 @@ button.principal:disabled {
    photo. */
 button.carte {
   width: 100%;
+  /* `border: 0` : une carte rendue en <button> (écran Cuisson) gardait la
+     bordure biseautée par défaut du navigateur — un trait sombre sur son
+     arête gauche et basse, absent des cartes rendues en <div> juste à
+     côté sur Proposer. */
+  border: 0;
   text-align: left;
   cursor: pointer;
 }
@@ -1085,23 +1621,46 @@ button.discret {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 2px solid var(--trait);
+  /* Un trait de 1,5 px : à 2 px, un bouton fantôme pèse visuellement
+     autant que le bouton plein qu'il accompagne. */
+  border: 1.5px solid var(--trait);
   border-radius: 999px;
   background: transparent;
   color: var(--encre);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.12s ease;
+  transition: border-color 0.14s ease, background-color 0.14s ease, color 0.14s ease,
+    transform 0.14s var(--ressort);
 }
 
 button.discret:active:not(:disabled) {
   border-color: var(--accent);
+  transform: scale(0.975);
+}
+
+@media (hover: hover) {
+  button.discret:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent-doux) 45%, transparent);
+  }
 }
 
 button.discret:disabled {
-  opacity: 0.4;
+  border-color: var(--filet-fort);
+  color: var(--encre-douce);
+  opacity: 0.65;
   cursor: default;
+}
+
+/* Bouton fantôme en groupe de choix (la langue, dans Réglages) :
+   `aria-pressed` était bien posé côté markup, mais rien ne le
+   dessinait — les deux langues se ressemblaient trait pour trait et
+   l'écran ne disait pas laquelle était active. */
+button.discret[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent-doux);
+  color: var(--accent);
 }
 
 /* Variante pleine couleur — même gabarit que .discret, pour une
@@ -1125,6 +1684,7 @@ button.discret.accent:active:not(:disabled) {
   border-radius: var(--rayon);
   padding: 20px;
   margin-bottom: 16px;
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
 }
 
 .carte-resume-label {
@@ -1138,7 +1698,9 @@ button.discret.accent:active:not(:disabled) {
 
 .carte-resume-nombre {
   margin: 4px 0 0;
-  font-size: 32px;
+  font-size: 34px;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
 }
 
 .carte-resume-nombre span {
@@ -1190,18 +1752,25 @@ button.discret.accent:active:not(:disabled) {
   color: var(--encre-douce);
 }
 
+/* « 3 à cuisiner » n'est pas une alerte, c'est l'état normal d'un
+   lundi : surface neutre tant qu'il reste des plats, accent quand la
+   semaine est bouclée — le rouge se garde pour ce qui se rattrape. */
 .pastille-etat {
   padding: 8px 16px;
   border-radius: 999px;
-  background: var(--terracotta-doux);
-  color: var(--terracotta);
+  background: color-mix(in srgb, var(--carte) 70%, transparent);
+  color: var(--encre-douce);
   font-size: 14px;
   font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--filet);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 
 .pastille-etat[data-fini='true'] {
   background: var(--accent-doux);
   color: var(--accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 /* Bandeau hors-ligne : rassure que rien ne se perd quand le réseau
@@ -1231,6 +1800,20 @@ button.discret.accent:active:not(:disabled) {
 
 .pastille-hors-ligne svg {
   flex: none;
+}
+
+/* Même pastille, mais cliquable : un refus de synchro ne se rattrape pas
+   tout seul, elle mène donc au diagnostic dans Réglages. Reset de bouton
+   plus le curseur qui dit qu'il y a quelque chose derrière. */
+button.pastille-synchro {
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.14s var(--ressort);
+}
+
+button.pastille-synchro:active {
+  transform: scale(0.96);
 }
 
 /* --- Nouvelle version disponible ------------------------------------------ */
@@ -1321,6 +1904,7 @@ button.discret.accent:active:not(:disabled) {
   border-radius: var(--rayon);
   padding: 16px;
   margin-top: 20px;
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
 }
 
 .carte-code-foyer-valeur {
@@ -1360,12 +1944,19 @@ button.discret.accent:active:not(:disabled) {
   opacity: 0.8;
 }
 
+/* La photo du plat en fond, le titre posé dessus sur un voile qui remonte
+   du bas. Le fond teinté tiré du titre reste dessous, en repli pour les
+   recettes sans photo — mais il ne fait plus surface pleine : un magenta
+   ou un cyan tombait à côté du vert de la tuile voisine. */
 .carte-prochaine-cuisson {
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: flex-end;
   background: hsl(var(--teinte) 65% 90%);
   border-radius: var(--rayon);
   padding: 20px;
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1374,12 +1965,53 @@ button.discret.accent:active:not(:disabled) {
   }
 }
 
+.carte-prochaine-cuisson img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Voile bas, posé seulement quand il y a une photo à voiler : le titre
+   reste lisible sur un plat clair comme sur un plat sombre, sans avoir à
+   connaître la photo. Sur la teinte de repli il n'a rien à faire — le
+   texte y est déjà à l'encre. */
+.carte-prochaine-cuisson:has(img)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Le bloc de texte fait deux à trois lignes : le voile doit rester
+     dense sur toute la moitié basse, sinon le sur-titre remonte dans la
+     partie claire de la photo (un pain de burger doré, par exemple). */
+  background: linear-gradient(to top, rgb(12 9 2 / 0.88), rgb(12 9 2 / 0.62) 46%, rgb(12 9 2 / 0.1));
+}
+
+/* Sur-titre resserré : « PROCHAINE CUISSON » tenait sur deux lignes dans
+   une tuile de demi-largeur. */
+.carte-prochaine-cuisson .carte-resume-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.carte-prochaine-cuisson-texte {
+  position: relative;
+  z-index: 1;
+}
+
+.carte-prochaine-cuisson:has(img) .carte-prochaine-cuisson-titre,
+.carte-prochaine-cuisson:has(img) .carte-resume-label {
+  color: #fff8ef;
+}
+
 .carte-prochaine-cuisson-titre {
   margin: 6px 0 0;
   font-family: var(--affichage);
   font-size: 17px;
   font-weight: 700;
+  letter-spacing: -0.012em;
   line-height: 1.25;
+  text-wrap: balance;
 }
 
 .bascule-mode {
@@ -1389,6 +2021,8 @@ button.discret.accent:active:not(:disabled) {
   border-radius: 999px;
   padding: 4px;
   margin: 4px 0 20px;
+  /* Le rail est un creux, le bouton actif un curseur posé dedans. */
+  box-shadow: inset 0 1px 2px rgb(32 27 12 / 0.06), inset 0 0 0 1px var(--filet);
 }
 
 .bascule-mode-bouton {
@@ -1408,6 +2042,13 @@ button.discret.accent:active:not(:disabled) {
 .bascule-mode-bouton[aria-pressed='true'] {
   background: var(--accent-doux);
   color: var(--accent);
+  box-shadow: 0 1px 2px rgb(32 27 12 / 0.08);
+}
+
+@media (hover: hover) {
+  .bascule-mode-bouton:not([aria-pressed='true']):hover {
+    color: var(--encre);
+  }
 }
 
 .carte-panier {
@@ -1415,7 +2056,7 @@ button.discret.accent:active:not(:disabled) {
   gap: 16px;
   align-items: center;
   background: var(--carte);
-  box-shadow: var(--ombre);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre);
 }
 
 button.carte-panier-bouton {
@@ -1437,6 +2078,7 @@ button.carte-panier-bouton .carte-panier-corps {
   height: 80px;
   border-radius: 18px;
   overflow: hidden;
+  box-shadow: inset 0 0 0 1px var(--filet-fort);
   display: grid;
   place-items: center;
   font-family: var(--affichage);
@@ -1497,13 +2139,23 @@ button.carte-panier-bouton .carte-panier-corps {
   background: var(--accent-doux);
   color: var(--accent);
   cursor: pointer;
-  transition: transform 0.12s ease;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+  transition: transform 0.18s var(--sortie), box-shadow 0.18s var(--sortie);
   margin-bottom: 12px;
+}
+
+@media (hover: hover) {
+  .carte-bento:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent),
+      var(--ombre);
+  }
 }
 
 .carte-bento.neutre {
   background: var(--carte-haute);
   color: var(--encre);
+  box-shadow: inset 0 0 0 1px var(--filet);
 }
 
 .bento-deux-colonnes .carte-bento {
@@ -1523,25 +2175,43 @@ button.carte-panier-bouton .carte-panier-corps {
   line-height: 1.2;
 }
 
-/* Titre tronqué plutôt que renvoyé à la ligne : le retrait reste à la
-   même place d'une carte à l'autre. */
+/* Le retrait reste à la même place d'une carte à l'autre : il s'aligne
+   en haut, et le titre dispose de deux lignes avant d'être coupé. Sur
+   une seule ligne, « Salade méditerranéenne complète » se réduisait à
+   « Salade méditerr… » — deux plats du panier devenaient homonymes. */
 .ligne-titre-panier {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
 }
 
 .ligne-titre-panier h3 {
   flex: 1;
   min-width: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.012em;
 }
 
+/* Retirer un plat est un geste de réglage, pas une action qu'on vient
+   chercher : ni fond, ni filet, juste la croix. */
 .bouton-retirer {
   background: none;
+  box-shadow: none;
   opacity: 0.6;
+}
+
+@media (hover: hover) {
+  .bouton-retirer:hover {
+    background: var(--terracotta-doux);
+    color: var(--terracotta);
+    opacity: 1;
+  }
 }
 
 /* `wrap` : sous ~340 px, « Portions » passe à la ligne au lieu de
@@ -1563,8 +2233,8 @@ button.carte-panier-bouton .carte-panier-corps {
 }
 
 .compteur button {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border: 0;
   border-radius: 50%;
   background: var(--carte-haute);
@@ -1574,11 +2244,21 @@ button.carte-panier-bouton .carte-panier-corps {
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px var(--filet);
+  transition: background-color 0.14s ease, color 0.14s ease, transform 0.14s var(--ressort);
 }
 
 .compteur button:active {
   background: var(--accent-doux);
   color: var(--accent);
+  transform: scale(0.9);
+}
+
+@media (hover: hover) {
+  .compteur button:hover {
+    background: var(--accent-doux);
+    color: var(--accent);
+  }
 }
 
 .compteur span {
@@ -1592,10 +2272,6 @@ button.carte-panier-bouton .carte-panier-corps {
 }
 
 /* --- Écran de préparation (mode cuisson, avant "Commencer") -------------- */
-
-.cuisson button.discret:first-child {
-  margin-top: 20px;
-}
 
 .apercu-etapes {
   margin: 0 0 28px;
@@ -1648,6 +2324,13 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .cuisson-rond:active {
   transform: scale(0.9);
+}
+
+/* Retirer un minuteur, pas refermer la feuille : même gabarit, teinte de
+   ce qui se retire. */
+.cuisson-rond-retrait {
+  background: rgb(255 179 176 / 0.12);
+  color: #ffb3b0;
 }
 
 .cuisson-progression {
@@ -1781,20 +2464,28 @@ button.carte-panier-bouton .carte-panier-corps {
   overscroll-behavior-y: contain;
   display: flex;
   flex-direction: column;
-  padding: 8px 0;
+  /* Fond de 18 px : une étape plus haute que la zone (tiroir des doses
+     ouvert, minuteur en cours) est coupée dans cette réserve et non au
+     milieu d'une ligne de texte contre le filet des boutons. */
+  padding: 8px 0 18px;
 }
 
 /* Marges automatiques plutôt que `justify-content: center` : ça centre
    l'étape courte tout en laissant l'étape longue défiler sans que son
    début soit rogné en haut. */
+/* Une étape se lit à 60 cm, les mains occupées : c'est l'écran de
+   l'app qui a le plus de place et le moins de texte à y mettre. Le
+   corps monte donc franchement — 21 px laissaient un tiers d'écran vide
+   au-dessus et au-dessous d'une phrase de trois lignes. `balance`
+   répartit ces lignes au lieu de laisser un mot seul sur la dernière. */
 .etape-titre {
   margin: auto 0;
   font-family: var(--affichage);
-  font-size: clamp(21px, 5.4vw, 32px);
+  font-size: clamp(25px, 7vw, 38px);
   font-weight: 800;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-  text-wrap: pretty;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .cuisson-corps .bloc-astuce {
@@ -1862,14 +2553,29 @@ button.carte-panier-bouton .carte-panier-corps {
   gap: 12px;
 }
 
+/* Le décompte est ce qu'on vient lire : il garde sa place, et c'est le
+   nom du minuteur qui se tronque. Sur deux lignes, « Saler les steak
+   haché et les cuire dans… » écrasait les chiffres contre le bord. */
 .bandeau-minuteur-nom {
   position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
   font-size: 15px;
   font-weight: 700;
   color: #bcefc0;
+}
+
+.bandeau-minuteur-nom svg {
+  flex: none;
+}
+
+.bandeau-minuteur-libelle {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .bandeau-minuteur-nom .pastille-nombre {
@@ -1878,10 +2584,12 @@ button.carte-panier-bouton .carte-panier-corps {
 }
 
 .bandeau-minuteur-valeur {
+  flex: none;
   font-family: var(--affichage);
   font-size: 32px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
   color: #fff8ef;
 }
 
@@ -2047,6 +2755,7 @@ button.carte-panier-bouton .carte-panier-corps {
   border-radius: var(--rayon-grand) var(--rayon-grand) 0 0;
   background: #2b2411;
   color: #fff8ef;
+  box-shadow: inset 0 1px 0 rgb(255 248 239 / 0.1);
 }
 
 .panneau-minuteurs-entete {
@@ -2214,6 +2923,14 @@ button.carte-panier-bouton .carte-panier-corps {
   transform: scale(0.96);
 }
 
+/* Le verdict qui garde le plat au catalogue : c'est le cas courant, et
+   c'est celui dont on ne revient pas de travers. */
+.choix-verdict-oui {
+  background: rgb(166 212 126 / 0.16);
+  border-color: rgb(166 212 126 / 0.45);
+  color: #bcefc0;
+}
+
 .cuisson-focus .discret.suite {
   background: transparent;
   border: 0;
@@ -2224,8 +2941,15 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .vide {
   color: var(--encre-douce);
-  padding: 40px 0;
+  padding: 44px 24px;
+  margin: 8px 0;
+  border-radius: var(--rayon-grand);
+  /* Un écran vide reste un écran : la surface lui donne un cadre au lieu
+     de laisser une phrase flotter au milieu du papier. */
+  background: color-mix(in srgb, var(--carte-basse) 55%, transparent);
+  box-shadow: inset 0 0 0 1px var(--filet);
   text-align: center;
+  text-wrap: pretty;
 }
 
 .vide p {
@@ -2245,13 +2969,21 @@ button.carte-panier-bouton .carte-panier-corps {
   border-radius: var(--rayon);
   background: var(--accent);
   color: var(--sur-accent);
-  box-shadow: var(--ombre-nette);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), var(--ombre-nette);
   cursor: pointer;
-  transition: transform 0.12s ease;
+  transition: transform 0.16s var(--ressort), box-shadow 0.18s var(--sortie);
 }
 
 .bouton-flottant:active {
   transform: scale(0.92);
+}
+
+@media (hover: hover) {
+  .bouton-flottant:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), 0 2px 4px rgb(56 94 22 / 0.22),
+      0 14px 28px -8px rgb(56 94 22 / 0.4);
+  }
 }
 
 /* Bouton d'envoi, entre l'aperçu et les rayons. */
@@ -2291,22 +3023,35 @@ button.carte-panier-bouton .carte-panier-corps {
 .champ-texte {
   width: 100%;
   padding: 14px 16px;
-  border: 2px solid var(--trait);
+  border: 1.5px solid var(--trait);
   border-radius: var(--rayon);
   background: var(--carte);
   color: var(--encre);
   font: inherit;
   font-size: 15px;
   resize: vertical;
+  /* Creux d'un pixel sur l'arête haute : un champ se lit comme un
+     renfoncement, à l'inverse des boutons qui prennent la lumière. */
+  box-shadow: inset 0 1px 2px rgb(32 27 12 / 0.05);
+  transition: border-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.champ-texte::placeholder {
+  color: var(--encre-douce);
+  opacity: 0.75;
 }
 
 .champ-texte:focus-visible {
   border-color: var(--accent);
 }
 
+/* Zone de collage : une surface teintée plutôt qu'un pavé blanc de dix
+   lignes, qui dominait l'écran avant même qu'on y colle quoi que ce soit. */
 .champ-texte-code {
   font-family: ui-monospace, 'SF Mono', Consolas, monospace;
   font-size: 13px;
+  line-height: 1.6;
+  background: var(--carte-basse);
   margin-top: 12px;
 }
 
@@ -2509,6 +3254,7 @@ button.carte-panier-bouton .carte-panier-corps {
   padding: 16px;
   border-radius: var(--rayon);
   background: var(--accent-doux);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .carte-fini-texte {
@@ -2575,10 +3321,12 @@ button.discret.pleine-largeur {
   width: 100%;
 }
 
+/* Pas de `border-radius` ici : cette règle s'appliquait à l'élément
+   focalisé lui-même et carrait les pilules et les cartes au clavier.
+   L'anneau suit maintenant la forme réelle de la cible. */
 :focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
 /* --- Transitions d'écran (View Transitions API) -------------------------
@@ -2694,7 +3442,8 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
     gap: 12px;
     padding: 28px 8px;
     border-radius: 0 24px 24px 0;
-    box-shadow: var(--ombre);
+    /* Le rail est vertical : son arête est à droite, pas en haut. */
+    box-shadow: inset -1px 0 0 var(--filet), var(--ombre);
   }
 
   nav.onglets button {
@@ -2865,7 +3614,9 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   width: min(340px, calc(100vw - 32px));
   background: var(--carte);
   border-radius: var(--rayon-grand);
-  box-shadow: var(--ombre-nette);
+  /* Ombre neutre et non `--ombre-nette`, qui est teintée de vert : sous
+     une carte blanche posée sur un voile sombre, le halo vert se voyait. */
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-haute);
   padding: 20px;
   transition:
     top 0.35s cubic-bezier(0.4, 0, 0.2, 1),

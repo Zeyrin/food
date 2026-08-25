@@ -1,0 +1,41 @@
+# Ce que fait un contributeur avant de committer, fait par la machine sur
+# chaque push et chaque PR. `npm run ci` enchaîne exactement les mêmes
+# commandes en local : un échec ici se reproduit sans deviner l'ordre.
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci` et non `npm install` : le lockfile fait foi, une version
+      # transitive qui glisse ne doit pas passer inaperçue.
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests
+        run: npm test
+
+      - name: Corpus de recettes
+        run: npm run lint:recipes
+
+      - name: Invariants (parité i18n, crédits photo)
+        run: npm run verifier
+
+      # Le build en dernier : c'est le plus lent, et les étapes au-dessus
+      # attrapent l'essentiel des régressions avant d'y arriver.
+      - name: Build
+        run: npm run build

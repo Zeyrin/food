@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>FFFood — données &amp; vie privée</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fond: #fff8ef;
+        --carte: #fffdfa;
+        --encre: #241f1a;
+        --encre-douce: #6d6358;
+        --accent: #385e16;
+        --trait: #e5dccd;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fond: #17150f;
+          --carte: #211e17;
+          --encre: #f2ece1;
+          --encre-douce: #a89e90;
+          --accent: #a6d47e;
+          --trait: #38332a;
+        }
+      }
+      body {
+        margin: 0;
+        padding: 32px 20px 64px;
+        background: var(--fond);
+        color: var(--encre);
+        font: 16px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+      main { max-width: 760px; margin: 0 auto; }
+      h1 { font-size: 28px; margin: 0 0 8px; }
+      h2 { font-size: 20px; margin: 40px 0 8px; }
+      p { color: var(--encre-douce); margin: 0 0 16px; }
+      a { color: var(--accent); text-underline-offset: 3px; }
+      .cadre {
+        background: var(--carte);
+        border: 1px solid var(--trait);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      table { border-collapse: collapse; width: 100%; font-size: 15px; }
+      th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--trait); vertical-align: top; }
+      thead th { color: var(--encre-douce); font-weight: 600; white-space: nowrap; }
+      tbody th { font-weight: 600; }
+      tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+
+      /* Quatre colonnes sur la largeur d'un téléphone donnent des mots
+         coupés à la syllabe : chaque ligne devient un bloc, l'en-tête de
+         colonne passe devant la valeur. */
+      @media (max-width: 560px) {
+        thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+        tbody tr { display: block; padding: 12px 14px; border-bottom: 1px solid var(--trait); }
+        tbody tr:last-child { border-bottom: 0; }
+        tbody th, tbody td { display: block; padding: 0; border: 0; }
+        tbody th { font-size: 16px; margin-bottom: 4px; }
+        tbody td { color: var(--encre-douce); }
+        tbody td::before { content: attr(data-libelle) ' : '; }
+      }
+    </style>
+    <style>
+      /* La feuille reprise de credits.html préfixe chaque valeur par le
+         libellé de sa colonne sur mobile (`content: attr(data-libelle)`).
+         Ici les tableaux n'ont que deux colonnes, dont la première est déjà
+         l'intitulé : sans cet attribut, la règle n'affichait qu'un « : »
+         orphelin devant chaque ligne. */
+      tbody td::before { content: none; }
+      tbody td { color: var(--encre-douce); }
+
+      ul { color: var(--encre-douce); margin: 0 0 16px; padding-left: 22px; }
+      li { margin-bottom: 8px; }
+      strong { color: var(--encre); }
+      .pied { margin-top: 40px; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+
+    <main>
+      <h1>Données &amp; vie privée</h1>
+      <p>
+        FFFood n'a pas de comptes. Il n'y a rien à créer, rien à se rappeler, et
+        aucune adresse e-mail nulle part. Cette page dit ce qui reste sur votre
+        téléphone, ce qui part sur le réseau, et ce que vous devez savoir avant
+        de partager le lien de votre foyer.
+      </p>
+
+      <h2>Ce qui ne quitte jamais votre appareil</h2>
+      <div class="cadre">
+        <table>
+          <tbody>
+            <tr>
+              <th scope="row">Langue choisie</th>
+              <td>Stockée dans le navigateur. Sert à afficher l'app en français ou en anglais.</td>
+            </tr>
+            <tr>
+              <th scope="row">Minuteurs en cours</th>
+              <td>Ils survivent au rechargement pour ne pas disparaître quand vous changez d'écran.</td>
+            </tr>
+            <tr>
+              <th scope="row">Progression d'une recette</th>
+              <td>L'étape où vous en êtes, pour reprendre une séance interrompue.</td>
+            </tr>
+            <tr>
+              <th scope="row">Présentation déjà vue</th>
+              <td>Pour ne pas rejouer la visite guidée à chaque lancement.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Rien de tout cela n'est envoyé nulle part. Effacer les données du site
+        dans votre navigateur les supprime définitivement.
+      </p>
+
+      <h2>Ce qui est partagé dans votre foyer</h2>
+      <p>
+        Un foyer, ce sont les appareils qui partagent la même semaine. Quatre
+        choses y circulent, parce qu'elles se décident à deux :
+      </p>
+      <div class="cadre">
+        <table>
+          <tbody>
+            <tr>
+              <th scope="row">La liste de courses</th>
+              <td>Les produits, les cases cochées, ce que vous avez écarté.</td>
+            </tr>
+            <tr>
+              <th scope="row">Le panier de la semaine</th>
+              <td>Les plats retenus et le nombre de parts.</td>
+            </tr>
+            <tr>
+              <th scope="row">Le catalogue de recettes</th>
+              <td>Celles livrées avec l'app, et celles que vous ajoutez.</td>
+            </tr>
+            <tr>
+              <th scope="row">L'historique de cuisson</th>
+              <td>« On a mangé ça mardi » vaut pour les deux téléphones.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Ces données sont hébergées chez <strong>Supabase</strong>, qui les stocke
+        pour le compte de FFFood. Elles ne sont ni revendues, ni analysées, ni
+        croisées avec quoi que ce soit.
+      </p>
+
+      <h2 id="lien">Le point important : qui a le lien a la liste</h2>
+      <p>
+        Votre foyer est désigné par un identifiant unique, impossible à deviner.
+        Il voyage dans le lien de partage, et un code à six caractères permet de
+        le rejoindre depuis un autre téléphone. C'est tout ce qui protège votre
+        liste — il n'y a pas de mot de passe, parce qu'il n'y a pas de compte.
+      </p>
+      <p>
+        Trois conséquences à connaître&nbsp;:
+      </p>
+      <ul>
+        <li>Toute personne qui obtient ce lien ou ce code entre dans votre foyer.</li>
+        <li>
+          Elle y reste : il n'existe pas de liste de membres, donc pas de moyen
+          de révoquer un accès.
+        </li>
+        <li>
+          Si un lien vous échappe, la seule parade est de créer un nouveau foyer
+          et de repartir dessus.
+        </li>
+      </ul>
+      <p>
+        C'est un choix assumé, adapté à ce que contient l'app : des courses et
+        des recettes. Ne vous en servez pas pour autre chose.
+      </p>
+
+      <h2>Mesure d'audience</h2>
+      <p>
+        FFFood utilise <a href="https://rybbit.com">Rybbit</a> pour compter
+        combien de personnes se servent de l'app et quels écrans servent
+        vraiment. Rybbit fonctionne <strong>sans cookie</strong> et sans
+        identifiant persistant : il ne dépose rien sur votre appareil, ce qui est
+        la raison pour laquelle cette app n'affiche pas de bandeau de
+        consentement.
+      </p>
+      <div class="cadre">
+        <table>
+          <tbody>
+            <tr>
+              <th scope="row">Ce qui est mesuré</th>
+              <td>
+                Le type d'appareil, le navigateur, la taille de l'écran, la
+                langue, le pays, et des gestes anonymes dans l'app — « une liste
+                a été générée », « une cuisson a été lancée ».
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Ce qui n'est jamais envoyé</th>
+              <td>
+                Aucun contenu à vous. Ni le nom d'une recette, ni un ingrédient,
+                ni votre liste, ni votre code de foyer, ni son identifiant.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Adresse IP</th>
+              <td>
+                Utilisée le temps de déduire le pays, puis jetée. Elle n'est pas
+                conservée en base.
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Hébergement</th>
+              <td>Serveurs situés en Allemagne, dans l'Union européenne.</td>
+            </tr>
+            <tr>
+              <th scope="row">Conservation</th>
+              <td>Douze mois, puis suppression automatique.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Pour distinguer deux visiteurs sans cookie, Rybbit calcule une empreinte
+        à partir de l'adresse IP et du navigateur, renouvelée chaque jour. Elle
+        ne permet ni de vous identifier, ni de vous suivre d'un site à l'autre,
+        ni de vous reconnaître le lendemain.
+      </p>
+
+      <h2>Hors ligne</h2>
+      <p>
+        L'app est conçue pour fonctionner sans réseau — c'est le cas du rayon
+        surgelés. Vos recettes, votre panier et votre liste restent accessibles,
+        et la synchronisation rattrape au retour de la connexion. Le seul appel
+        extérieur au chargement est celui de la mesure d'audience ; s'il échoue,
+        l'app fonctionne exactement pareil.
+      </p>
+
+      <h2>Vos droits</h2>
+      <p>
+        Vous pouvez à tout moment quitter un foyer depuis
+        <strong>Réglages → Quitter ce foyer</strong>, ce qui retire ses données
+        de cet appareil. Pour toute demande d'accès, de rectification ou de
+        suppression des données d'un foyer, écrivez à l'adresse de contact du
+        site.
+      </p>
+
+      <p class="pied">
+        Dernière mise à jour&nbsp;: août 2026. FFFood est un projet personnel,
+        sans publicité et sans revente de données.
+      </p>
+    </main>
+  </body>
+</html>

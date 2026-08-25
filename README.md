@@ -19,9 +19,22 @@ personne ne tient. À la place, l'écran Liste commence par une passe « ce que 
 déjà » : quinze secondes devant le frigo ouvert, et on récupère l'essentiel de la
 soustraction sans jamais maintenir d'inventaire.
 
-**Le partage se fait par lien, sans compte.** L'identifiant du foyer est un UUID v4 tiré
-côté client. Qui a le lien a la liste. C'est un modèle de capacité assumé — le contenu est
-une liste de courses.
+**Le partage se fait par lien, sans compte.** L'identifiant du foyer est un UUID v4. Qui a
+le lien a la liste. C'est un modèle de capacité assumé — le contenu est une liste de
+courses.
+
+Ce modèle est appliqué par la base, pas par l'app. La distinction compte : les premières
+policies étaient `using (true)` et laissaient le filtrage par foyer au client, alors que la
+clé anon est publique par construction — n'importe qui pouvait donc énumérer tous les
+foyers, lire toutes les listes et les effacer. Depuis
+`supabase/migration-01-appartenance.sql`, chaque appareil ouvre une session anonyme
+(invisible, toujours pas de compte), une table `membres` la relie aux foyers auxquels elle a
+accès, et on n'y entre qu'en présentant le code court ou l'UUID exact. La table des codes
+n'est plus lisible du tout ; les essais de code sont comptés.
+
+Une conséquence à connaître avant de faire circuler un lien : **l'UUID est la clé**. Qui
+l'obtient — par le lien `#/f/<uuid>` ou par le code à six caractères — entre dans le foyer
+et y reste. Il n'y a pas de liste de membres à révoquer.
 
 **Ce qui traverse le réseau est ce qui se décide à deux** : la liste (cases cochées,
 produits écartés), le panier de la semaine qui voyage avec elle, le catalogue de recettes,
@@ -61,9 +74,24 @@ cp .env.example .env      # facultatif : sans ça, tout marche sauf le partage
 npm run dev
 ```
 
-Pour activer la liste partagée : créer un projet sur Supabase (offre gratuite), exécuter
-`supabase/schema.sql` dans l'éditeur SQL, activer la réplication temps réel sur la table
-`listes` (Database → Replication), puis renseigner `.env`.
+Pour activer la liste partagée, dans un projet Supabase (offre gratuite) :
+
+1. Authentication → Providers → **Anonymous sign-ins : activer**. Sans ça `auth.uid()` est
+   nul et la base refuse tout.
+2. Éditeur SQL → `supabase/schema.sql` (les tables ; elles en sortent fermées, sans policy)
+3. Éditeur SQL → `supabase/verification-avant.sql` (lecture seule — noter les compteurs)
+4. Éditeur SQL → `supabase/migration-01-appartenance.sql` (les policies et les trois RPC)
+5. Éditeur SQL → `supabase/verification-apres.sql` (les compteurs doivent correspondre)
+6. Database → Replication → cocher `listes`, `recettes`, `historiques`
+7. Renseigner `.env`
+
+La migration ne touche aucune donnée existante, s'exécute dans une transaction, et se
+rejoue sans dommage. Elle a été éprouvée sur un PostgreSQL monté pour l'occasion, sur les
+deux chemins : base neuve, et base déjà peuplée avec un foyer dépourvu de code — le cas où
+un appareil aurait perdu l'accès à ses propres listes sans le rattrapage du §6.
+
+Vérification qui ne ment pas : avec la clé anon et sans session, `select * from foyers` et
+`select * from listes` doivent renvoyer zéro ligne.
 
 ## Vérifications
 

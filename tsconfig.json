@@ -13,5 +13,8 @@
     "noEmit": true,
     "isolatedModules": true
   },
-  "include": ["src"]
+  // `scripts` et les tests sont du code comme le reste : les laisser hors
+  // du typecheck, c'était découvrir une faute de frappe à l'exécution —
+  // tsx retire les types sans jamais les vérifier.
+  "include": ["src", "scripts"]
 }

@@ -48,9 +48,12 @@ import { useMagasins } from './hooks/useMagasins'
 import Reglages from './screens/Reglages'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
+import { useEtatSynchro } from './hooks/useEtatSynchro'
 import { useMiseAJour } from './hooks/useMiseAJour'
 import { useDecalageBarreOutils } from './hooks/useDecalageBarreOutils'
+import { useEnteteDefilee } from './hooks/useEnteteDefilee'
 import { useLangue } from './lib/i18n'
+import { mesurer } from './lib/mesure'
 
 const CORPUS: Recipe[] = corpus as Recipe[]
 
@@ -102,6 +105,7 @@ function lirePileSauvegardee(): Vue[] {
 export default function App() {
   const { t } = useLangue()
   useDecalageBarreOutils()
+  useEnteteDefilee()
   const [pile, setPile] = useState<Vue[]>(lirePileSauvegardee)
   const vueActuelle = pile[pile.length - 1]!
 
@@ -300,6 +304,7 @@ export default function App() {
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const enLigne = useEnLigne()
+  const { etat: etatSynchro } = useEtatSynchro()
 
   // Le service worker garde l'app utilisable hors ligne, mais fige la
   // version installée : sans ce qui suit, un déploiement ne se voyait
@@ -372,6 +377,7 @@ export default function App() {
     await rejoindreFoyer(id, code)
     setFoyer(id)
     setCodeFoyer(code)
+    mesurer('foyer_cree')
   }, [])
 
   const rejoindre = useCallback(async (code: string) => {
@@ -380,6 +386,7 @@ export default function App() {
     await rejoindreFoyer(id, code)
     setFoyer(id)
     setCodeFoyer(code)
+    mesurer('foyer_rejoint')
     return true
   }, [])
 
@@ -528,15 +535,16 @@ export default function App() {
    * ligne `listes` d'avant le partage du panier), donc un panier
    * simplement omis ne se viderait pas sur l'autre téléphone.
    */
-  const viderPanier = useCallback(
-    () => majListe({ coche: {}, dejaPossede: {}, items: [], panier: [] }),
-    [majListe],
-  )
+  const viderPanier = useCallback(() => {
+    mesurer('panier_vide', { plats: basket.length })
+    majListe({ coche: {}, dejaPossede: {}, items: [], panier: [] })
+  }, [majListe, basket.length])
 
   const ajouter = useCallback(
     async (recette: Recipe) => {
       if (!foyer) throw new Error(t('app.foyerNonInitialiseReessayez'))
       await ajouterRecette(foyer, recette)
+      mesurer('recette_collee', { ingredients: recette.ingredients.length, etapes: recette.etapes.length })
       setRecipes((prec) => [...prec, recette])
     },
     [foyer],
@@ -546,6 +554,7 @@ export default function App() {
     async (recette: Recipe) => {
       if (!foyer) throw new Error(t('app.foyerNonInitialise'))
       await modifierRecette(foyer, recette)
+      mesurer('recette_modifiee')
       setRecipes((prec) => prec.map((r) => (r.id === recette.id ? recette : r)))
     },
     [foyer],
@@ -555,6 +564,7 @@ export default function App() {
     async (recipeId: string) => {
       if (!foyer) return
       await supprimerRecette(foyer, recipeId)
+      mesurer('recette_supprimee')
       setRecipes((prec) => prec.filter((r) => r.id !== recipeId))
       majBasket(basket.filter((e) => e.recipeId !== recipeId))
       reculer()
@@ -564,6 +574,7 @@ export default function App() {
 
   const verdict = useCallback(
     async (recipeId: string, v: Verdict) => {
+      mesurer('cuisson_terminee', { verdict: v })
       const suivant = await marquerCuisine(recipeId, v)
       setHistorique(suivant)
       if (foyer) void ecrireHistoriqueFoyer(foyer, suivant)
@@ -576,7 +587,20 @@ export default function App() {
   // liste reste celle calculée sur un catalogue vide au premier rendu.
   const items = useMemo(() => buildList(basket, recipes), [basket, recipes])
 
-  if (!foyerCharge) return null
+  // Lecture d'IndexedDB : quelques dizaines de millisecondes en général,
+  // beaucoup plus sur un vieux téléphone qui sort de veille. Rendre `null`
+  // laissait un cadre crème vide sans rien dire. Le repère ne se montre
+  // qu'au bout d'un quart de seconde (retard porté par le CSS) : en deçà,
+  // il ne ferait que clignoter au lancement.
+  if (!foyerCharge) {
+    return (
+      <div className="attente" role="status" aria-label={t('app.chargement')}>
+        <span className="accueil-sceau" aria-hidden="true">
+          <Icone nom="grill" taille={30} />
+        </span>
+      </div>
+    )
+  }
 
   if (!foyer) {
     return <Bienvenue onCreer={creer} onRejoindre={rejoindre} />
@@ -701,10 +725,25 @@ export default function App() {
         </button>
       )}
 
-      {!enLigne && (
+      {/* Deux pannes, une seule pastille — elles ne peuvent pas être vraies
+          en même temps de façon utile, et deux bandeaux empilés en haut
+          d'écran se marchent dessus. Hors ligne d'abord : c'est le cas
+          normal en magasin, et il explique à lui seul pourquoi rien ne
+          remonte. Le refus de synchro, lui, survient réseau présent et ne
+          se rattrapera pas tout seul. */}
+      {!enLigne ? (
         <p className="pastille-hors-ligne" role="status">
           <Icone nom="alerte" taille={16} /> {t('app.horsLigne')}
         </p>
+      ) : (
+        etatSynchro === 'refuse' && (
+          <button
+            className="pastille-hors-ligne pastille-synchro"
+            onClick={() => irVers({ type: 'reglages' })}
+          >
+            <Icone nom="alerte" taille={16} /> {t('app.synchroRefusee')}
+          </button>
+        )
       )}
 
       {/* La visite guidée est modale et couvre l'écran : le bandeau y
@@ -803,7 +842,11 @@ export default function App() {
             onClick={() => changerOnglet(cle)}
             aria-current={estOnglet && onglet === cle ? 'page' : undefined}
           >
-            <Icone nom={icone} taille={22} />
+            {/* L'icône vit dans sa propre pastille : c'est elle que la
+                sélection colore, pas le bouton entier (voir styles.css). */}
+            <span className="onglet-pastille">
+              <Icone nom={icone} taille={22} />
+            </span>
             {label}
           </button>
         ))}

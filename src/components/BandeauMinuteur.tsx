@@ -44,7 +44,9 @@ export default function BandeauMinuteur({ liste, maintenant, sonne, onOuvrir, va
       <div className="bandeau-minuteur-ligne">
         <span className="bandeau-minuteur-nom">
           <Icone nom="minuteur" taille={20} />
-          {premier.nom}
+          {/* Le nom vit dans son propre span pour pouvoir se tronquer sur
+              une ligne : c'est le décompte, à droite, qui garde sa place. */}
+          <span className="bandeau-minuteur-libelle">{premier.nom}</span>
           {liste.length > 1 && <i className="pastille-nombre">{liste.length}</i>}
         </span>
         <b className="bandeau-minuteur-valeur">{sonne ? t('bandeauMinuteur.termine') : mmss(restant)}</b>

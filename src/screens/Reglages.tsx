@@ -3,6 +3,8 @@ import { useInstallation } from '../hooks/useInstallation'
 import type { MiseAJour } from '../hooks/useMiseAJour'
 import { reinitialiserCache, VERSION_APP } from '../lib/miseAJour'
 import { useLangue } from '../lib/i18n'
+import { useEtatSynchro } from '../hooks/useEtatSynchro'
+import { mesurer } from '../lib/mesure'
 import type { ConfigMagasins } from '../lib/magasins'
 import { magasinDuRayon } from '../lib/magasins'
 import { RAYONS, RAYONS_ORDONNES, type RayonId } from '../types'
@@ -41,6 +43,7 @@ export default function Reglages({
   onRevoirPresentation,
 }: Props) {
   const installation = useInstallation()
+  const { etat: etatSynchro, motif } = useEtatSynchro()
   const { langue, definirLangue, t } = useLangue()
   const [code, setCode] = useState('')
   const [enCours, setEnCours] = useState(false)
@@ -119,14 +122,20 @@ export default function Reglages({
         <button
           className="discret"
           aria-pressed={langue === 'fr'}
-          onClick={() => definirLangue('fr')}
+          onClick={() => {
+            mesurer('langue_changee', { vers: 'fr' })
+            definirLangue('fr')
+          }}
         >
           Français
         </button>
         <button
           className="discret"
           aria-pressed={langue === 'en'}
-          onClick={() => definirLangue('en')}
+          onClick={() => {
+            mesurer('langue_changee', { vers: 'en' })
+            definirLangue('en')
+          }}
         >
           English
         </button>
@@ -366,10 +375,36 @@ export default function Reglages({
         </>
       )}
 
+      {/* Diagnostic de synchro. C'est ici qu'atterrit la pastille « Synchro
+          bloquée » : un refus du serveur ne se rattrape pas tout seul, et
+          le message brut de Supabase est la seule piste exploitable pour
+          savoir laquelle des trois causes habituelles s'applique. */}
+      {etatSynchro === 'refuse' && (
+        <>
+          <h2>{t('reglages.synchroTitre')}</h2>
+          <div className="bloc-erreurs" role="status">
+            <p>{t('reglages.synchroTexte')}</p>
+            {motif && <p><code>{motif}</code></p>}
+          </div>
+        </>
+      )}
+
       {/* Les photos de plats viennent en partie de Wikimedia Commons, sous
           licences Creative Commons qui demandent de citer l'auteur : la page
           de crédits doit donc être atteignable depuis l'app, pas seulement
           depuis le dépôt. */}
+      {/* La page de données est servie avec l'app, comme les crédits : une
+          politique de confidentialité qui n'est atteignable que depuis le
+          dépôt ne remplit pas son office. */}
+      <h2>{t('reglages.donneesTitre')}</h2>
+      <p className="aide">
+        {t('reglages.donneesTexte')}{' '}
+        <a href="/donnees.html" target="_blank" rel="noopener noreferrer">
+          {t('reglages.donneesLien')}
+        </a>
+        .
+      </p>
+
       <h2>{t('reglages.creditsPhoto')}</h2>
       <p className="aide">
         {t('reglages.creditsPhotoTexte')}{' '}
