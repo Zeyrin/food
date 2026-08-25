@@ -30,6 +30,7 @@ export type Nom =
   | 'magasin'
   | 'crayon'
   | 'etincelle'
+  | 'copier'
 
 const TRACES: Record<Nom, string> = {
   menu: 'M4 6h16M4 12h16M4 18h16',
@@ -62,6 +63,11 @@ const TRACES: Record<Nom, string> = {
   crayon: 'M4 20h4L19.5 8.5a2.8 2.8 0 10-4-4L4 16v4z M14.5 5.5l4 4',
   etincelle:
     'M11 3l1.8 4.7L17.5 9.5 12.8 11.3 11 16l-1.8-4.7L4.5 9.5 9.2 7.7z M18 14l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z',
+  // Deux feuilles décalées : la seconde est la copie de la première, et
+  // c'est le décalage qui le dit — pas un presse-papiers, qui se confond
+  // avec « liste » à 18 px.
+  copier:
+    'M9 9a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-8a2 2 0 01-2-2V9z M5 15H4a2 2 0 01-2-2V5a2 2 0 012-2h8a2 2 0 012 2v1',
 }
 
 export default function Icone({ nom, taille = 24 }: { nom: Nom; taille?: number }) {

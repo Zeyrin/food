@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import ChampCode from '../components/ChampCode'
+import { LONGUEUR_CODE } from '../lib/codeFoyer'
 import { useInstallation } from '../hooks/useInstallation'
 import type { MiseAJour } from '../hooks/useMiseAJour'
 import { reinitialiserCache, VERSION_APP } from '../lib/miseAJour'
 import { useLangue } from '../lib/i18n'
 import { useEtatSynchro } from '../hooks/useEtatSynchro'
+import { partageActif } from '../lib/sync'
 import { mesurer } from '../lib/mesure'
 import type { ConfigMagasins } from '../lib/magasins'
 import { magasinDuRayon } from '../lib/magasins'
@@ -27,6 +30,8 @@ interface Props {
   codeFoyer: string | null
   miseAJour: MiseAJour
   onRejoindre: (code: string) => Promise<boolean>
+  /** Entrée par l'UUID d'un lien de partage collé dans le champ. */
+  onRejoindreLien: (foyer: string) => Promise<boolean>
   onQuitter: () => void
   onFermer: () => void
   onRevoirPresentation: () => void
@@ -38,6 +43,7 @@ export default function Reglages({
   codeFoyer,
   miseAJour,
   onRejoindre,
+  onRejoindreLien,
   onQuitter,
   onFermer,
   onRevoirPresentation,
@@ -50,6 +56,18 @@ export default function Reglages({
   const [erreur, setErreur] = useState<string | null>(null)
   const [confirmationQuitter, setConfirmationQuitter] = useState(false)
   const [reinitialisation, setReinitialisation] = useState(false)
+  const [copie, setCopie] = useState(false)
+  /**
+   * Ce qu'on s'apprête à rejoindre, en attente de confirmation.
+   *
+   * L'écran d'accueil part dès la sixième case remplie : il n'y a rien à
+   * perdre, on n'est encore nulle part. Ici, la même frappe changerait la
+   * maison partagée — une faute de frappe malheureuse suffirait. La saisie
+   * complète ouvre donc une demande, et c'est le bouton qui l'exécute.
+   */
+  const [demande, setDemande] = useState<
+    { type: 'code'; code: string } | { type: 'lien'; foyer: string } | null
+  >(null)
 
   const labelRayon = (rayon: RayonId) => {
     const traduit = t(`rayons.${rayon}`)
@@ -90,13 +108,19 @@ export default function Reglages({
   // Supabase injoignable) n'est pas un « code introuvable » et ne doit
   // pas se dire comme tel, ni laisser le bouton bloqué sur « Recherche… ».
   const rejoindre = async () => {
-    if (code.trim().length !== 6) return
+    if (!demande || enCours) return
     setEnCours(true)
     setErreur(null)
     try {
-      const ok = await onRejoindre(code)
+      const ok =
+        demande.type === 'code' ? await onRejoindre(demande.code) : await onRejoindreLien(demande.foyer)
       if (!ok) {
-        setErreur(t('reglages.codeErreurIntrouvable'))
+        setErreur(
+          demande.type === 'code'
+            ? t('reglages.codeErreurIntrouvable')
+            : t('reglages.lienIntrouvable'),
+        )
+        setDemande(null)
         setEnCours(false)
       }
     } catch {
@@ -104,6 +128,32 @@ export default function Reglages({
       setEnCours(false)
     }
   }
+
+  /**
+   * Le code du foyer ne sert qu'à être transmis, et le lire à voix haute
+   * en est le pire moyen : `2` et `Z`, `4` et `A` se confondent. Le
+   * presse-papiers manque en contexte non sécurisé et sur quelques
+   * WebViews — le bouton disparaît alors plutôt que d'échouer en silence.
+   */
+  const copiable = typeof navigator !== 'undefined' && !!navigator.clipboard
+
+  const copier = async () => {
+    if (!codeFoyer) return
+    try {
+      await navigator.clipboard.writeText(codeFoyer)
+      setCopie(true)
+    } catch {
+      /* refusé par le navigateur : le code reste lisible à l'écran */
+    }
+  }
+
+  // Le « Copié » retombe tout seul : laissé en place, il ferait croire à
+  // un état du foyer plutôt qu'à l'écho d'un geste.
+  useEffect(() => {
+    if (!copie) return
+    const t = setTimeout(() => setCopie(false), 2000)
+    return () => clearTimeout(t)
+  }, [copie])
 
   return (
     <>
@@ -264,92 +314,103 @@ export default function Reglages({
         <Icone nom="etoile" taille={18} /> {t('reglages.revoirPresentation')}
       </button>
 
+      {/* Le foyer, d'un seul tenant : le code qu'on donne, la maison qu'on
+          rejoint, celle qu'on quitte. Ces trois-là étaient dispersés de
+          part et d'autre de la version de l'app — on lisait « Code à
+          partager » sans voir qu'un peu plus bas se trouvait de quoi en
+          changer, et la confirmation de départ parlait d'un code affiché
+          deux écrans plus haut. */}
+      <h2>{t('reglages.votreFoyer')}</h2>
+
       {codeFoyer && (
-        <>
-          <h2>{t('reglages.votreFoyer')}</h2>
-          <div className="carte-code-foyer">
-            <p className="carte-resume-label">{t('reglages.codeAPartager')}</p>
-            <p className="carte-code-foyer-valeur">{codeFoyer}</p>
-          </div>
-        </>
-      )}
-
-      <h2>Version de l'app</h2>
-      <p className="aide">
-        L'app se met à jour toute seule : au démarrage, elle vérifie s'il y a du neuf et l'installe.
-        Ce bouton force la vérification tout de suite.
-      </p>
-      <p className="version-app">Version installée : <b>{VERSION_APP}</b></p>
-      {miseAJour.disponible ? (
-        <button className="discret suite pleine-largeur" onClick={miseAJour.appliquer}>
-          <Icone nom="rafraichir" taille={18} /> Installer la nouvelle version
-        </button>
-      ) : (
-        <button
-          className="discret suite pleine-largeur"
-          onClick={miseAJour.verifier}
-          disabled={miseAJour.verification === 'en-cours'}
-        >
-          <Icone nom="rafraichir" taille={18} />
-          {miseAJour.verification === 'en-cours'
-            ? 'Vérification…'
-            : miseAJour.verification === 'a-jour'
-              ? 'Vous avez la dernière version'
-              : 'Vérifier les mises à jour'}
-        </button>
-      )}
-
-      {/* Le cas où le cache s'entête malgré tout : jusqu'ici il fallait
-          supprimer les données de l'app — ce qui emportait le foyer, le
-          panier et la liste avec. Ici, seuls les fichiers en cache
-          partent, les données restent. */}
-      {reinitialisation ? (
-        <div className="bloc-confirmation" role="alertdialog" aria-label="Confirmer la réinstallation">
-          <p>
-            Recharger l'app depuis le réseau ? Vos recettes, votre panier et votre liste sont conservés.
-          </p>
-          <div className="rangee-boutons">
-            <button className="discret" onClick={() => setReinitialisation(false)}>
-              Annuler
+        <div className="carte-code-foyer">
+          <p className="carte-resume-label">{t('reglages.codeAPartager')}</p>
+          <p className="carte-code-foyer-valeur">{codeFoyer}</p>
+          <p className="carte-code-foyer-aide">{t('reglages.codeAPartagerAide')}</p>
+          {copiable && (
+            <button
+              className="discret carte-code-foyer-copier"
+              onClick={() => void copier()}
+              aria-live="polite"
+            >
+              <Icone nom={copie ? 'coche' : 'copier'} taille={18} />
+              {copie ? t('reglages.codeCopie') : t('reglages.copierCode')}
             </button>
-            <button className="discret" onClick={() => void reinitialiserCache()}>
-              Recharger
-            </button>
-          </div>
+          )}
         </div>
-      ) : (
-        <button className="lien-discret lien-maj" onClick={() => setReinitialisation(true)}>
-          Un souci d'affichage ? Réinstaller la dernière version
-        </button>
       )}
 
-      <h2>Rejoindre un autre foyer</h2>
-      <p className="aide">Change la maison que vous partagez — vos recettes et votre liste actuelles resteront accessibles avec leur propre code.</p>
-      <h2>{t('reglages.rejoindreAutreFoyer')}</h2>
+      <h3 className="titre-secondaire">{t('reglages.rejoindreAutreFoyer')}</h3>
       <p className="aide">{t('reglages.rejoindreAutreFoyerTexte')}</p>
-      <input
-        className="champ-texte champ-texte-code-court"
-        placeholder="A3F9K2"
-        value={code}
-        onChange={(e) => setCode(e.target.value.toUpperCase().slice(0, 6))}
-        onKeyDown={(e) => e.key === 'Enter' && void rejoindre()}
-        maxLength={6}
-        autoCapitalize="characters"
-        autoCorrect="off"
-        spellCheck={false}
-        enterKeyHint="go"
-        aria-label={t('reglages.codeLabel')}
+
+      {/* Dire pourquoi ça ne marchera pas, plutôt que de laisser saisir six
+          caractères pour répondre « code introuvable » — même raison qu'à
+          l'accueil. */}
+      {!partageActif && <p className="aide">{t('reglages.partageInactif')}</p>}
+
+      <ChampCode
+        valeur={code}
+        onChange={(v) => {
+          setCode(v)
+          setErreur(null)
+          // Retoucher la saisie retire la demande qu'elle avait ouverte :
+          // sinon le bouton de confirmation porterait encore l'ancien code.
+          setDemande(null)
+        }}
+        onComplet={(c) => setDemande({ type: 'code', code: c })}
+        onLien={(foyer) => setDemande({ type: 'lien', foyer })}
+        onLienSansFoyer={() => setErreur(t('reglages.lienSansFoyer'))}
+        desactive={!partageActif}
+        invalide={erreur !== null && code.length > 0}
+        label={t('reglages.codeLabel')}
+        aideId="reglages-code-indice"
       />
+      <p className="aide-champ" id="reglages-code-indice">
+        {t('reglages.codeIndice')}
+      </p>
+
       {erreur && (
         <div className="bloc-erreurs" role="alert">
           <p>{erreur}</p>
         </div>
       )}
-      <button className="discret suite pleine-largeur" onClick={rejoindre} disabled={code.trim().length !== 6 || enCours}>
-        {enCours ? t('reglages.recherche') : t('reglages.rejoindre')}
-      </button>
 
-      <h2>{t('reglages.quitterFoyer')}</h2>
+      {demande ? (
+        <div
+          className="bloc-confirmation"
+          role="alertdialog"
+          aria-label={t('reglages.rejoindreAutreFoyer')}
+        >
+          <p>
+            {demande.type === 'code'
+              ? t('reglages.confirmerCode', { code: demande.code })
+              : t('reglages.confirmerLien')}
+          </p>
+          <p>{t('reglages.confirmerGarde')}</p>
+          <div className="rangee-boutons">
+            <button className="discret" onClick={() => setDemande(null)} disabled={enCours}>
+              {t('reglages.annuler')}
+            </button>
+            <button className="discret accent" onClick={() => void rejoindre()} disabled={enCours}>
+              {enCours ? t('reglages.recherche') : t('reglages.rejoindre')}
+            </button>
+          </div>
+        </div>
+      ) : (
+        // Sans demande ouverte, le bouton n'a rien à exécuter : il sert à
+        // rouvrir la confirmation qu'on vient d'annuler.
+        <button
+          className="discret suite pleine-largeur"
+          onClick={() => {
+            if (code.length === LONGUEUR_CODE) setDemande({ type: 'code', code })
+          }}
+          disabled={!partageActif || code.length !== LONGUEUR_CODE || enCours}
+        >
+          {t('reglages.rejoindre')}
+        </button>
+      )}
+
+      <h3 className="titre-secondaire">{t('reglages.quitterFoyer')}</h3>
       {confirmationQuitter ? (
         <div className="bloc-confirmation" role="alertdialog" aria-label={t('reglages.quitterFoyer')}>
           <p>
@@ -373,6 +434,56 @@ export default function Reglages({
             {t('reglages.quitterFoyerBouton')}
           </button>
         </>
+      )}
+
+      <h2>{t('reglages.versionTitre')}</h2>
+      <p className="aide">{t('reglages.versionTexte')}</p>
+      <p className="version-app">
+        {t('reglages.versionInstallee')} : <b>{VERSION_APP}</b>
+      </p>
+      {miseAJour.disponible ? (
+        <button className="discret suite pleine-largeur" onClick={miseAJour.appliquer}>
+          <Icone nom="rafraichir" taille={18} /> {t('reglages.majInstaller')}
+        </button>
+      ) : (
+        <button
+          className="discret suite pleine-largeur"
+          onClick={miseAJour.verifier}
+          disabled={miseAJour.verification === 'en-cours'}
+        >
+          <Icone nom="rafraichir" taille={18} />
+          {miseAJour.verification === 'en-cours'
+            ? t('reglages.majVerification')
+            : miseAJour.verification === 'a-jour'
+              ? t('reglages.majAJour')
+              : t('reglages.majVerifier')}
+        </button>
+      )}
+
+      {/* Le cas où le cache s'entête malgré tout : jusqu'ici il fallait
+          supprimer les données de l'app — ce qui emportait le foyer, le
+          panier et la liste avec. Ici, seuls les fichiers en cache
+          partent, les données restent. */}
+      {reinitialisation ? (
+        <div
+          className="bloc-confirmation"
+          role="alertdialog"
+          aria-label={t('reglages.reinstallerLabel')}
+        >
+          <p>{t('reglages.reinstallerConfirmation')}</p>
+          <div className="rangee-boutons">
+            <button className="discret" onClick={() => setReinitialisation(false)}>
+              {t('reglages.annuler')}
+            </button>
+            <button className="discret" onClick={() => void reinitialiserCache()}>
+              {t('reglages.reinstallerBouton')}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button className="lien-discret lien-maj" onClick={() => setReinitialisation(true)}>
+          {t('reglages.reinstallerLien')}
+        </button>
       )}
 
       {/* Diagnostic de synchro. C'est ici qu'atterrit la pastille « Synchro

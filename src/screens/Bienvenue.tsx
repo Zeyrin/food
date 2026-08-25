@@ -1,52 +1,110 @@
 import { useState } from 'react'
+import ChampCode from '../components/ChampCode'
 import Icone from '../components/Icone'
+import { LONGUEUR_CODE } from '../lib/codeFoyer'
 import { useLangue } from '../lib/i18n'
+import type { FoyerPrecedent } from '../lib/local'
 import { partageActif } from '../lib/sync'
 
 interface Props {
   onCreer: () => Promise<void>
   onRejoindre: (code: string) => Promise<boolean>
+  /** Entrée par l'UUID d'un lien de partage collé dans le champ. */
+  onRejoindreLien: (foyer: string) => Promise<boolean>
+  /** La maison qu'on a quittée sur cet appareil, s'il y en a une. */
+  precedent: FoyerPrecedent | null
+  onReprendre: () => Promise<boolean>
+  onOublierPrecedent: () => void
 }
 
-export default function Bienvenue({ onCreer, onRejoindre }: Props) {
+/** Là où l'attente et l'erreur s'affichent : à côté du geste qui les a produites. */
+type Zone = 'reprise' | 'creation' | 'jonction'
+
+export default function Bienvenue({
+  onCreer,
+  onRejoindre,
+  onRejoindreLien,
+  precedent,
+  onReprendre,
+  onOublierPrecedent,
+}: Props) {
   const { t } = useLangue()
   const [code, setCode] = useState('')
-  const [enCours, setEnCours] = useState<'creation' | 'jonction' | null>(null)
-  const [erreur, setErreur] = useState<string | null>(null)
+  const [enCours, setEnCours] = useState<Zone | null>(null)
+  const [erreur, setErreur] = useState<{ zone: Zone; texte: string } | null>(null)
 
   /**
-   * Créer une maison passe par le réseau (le code court doit être
-   * unique côté Supabase) : sans état d'attente, l'écran ne bougeait
-   * pas — un second appui créait une deuxième maison, et un échec
-   * réseau ne disait rien du tout. Pas de remise à zéro après succès :
-   * l'écran est démonté dans la foulée.
+   * Les trois entrées passent par ici : chacune est un aller-retour
+   * réseau, chacune peut échouer, et sans état d'attente l'écran ne
+   * bougeait pas — un second appui créait une deuxième maison, et une
+   * coupure réseau ne disait rien du tout. Pas de remise à zéro après
+   * succès : l'écran est démonté dans la foulée.
+   *
+   * Deux messages, et pas un seul : « refus » est une réponse de la base
+   * — ce code n'existe pas — quand « panne » est l'absence de réponse.
+   * Les confondre envoie chercher une faute de frappe dans un code
+   * parfaitement valide, saisi hors réseau.
    */
-  const creer = async () => {
-    setEnCours('creation')
+  const tenter = async (
+    zone: Zone,
+    geste: () => Promise<boolean>,
+    messages: { refus: string; panne: string },
+  ) => {
+    if (enCours) return
+    setEnCours(zone)
     setErreur(null)
     try {
-      await onCreer()
-    } catch {
-      setErreur(t('bienvenue.creerErreur'))
-      setEnCours(null)
-    }
-  }
-
-  const rejoindre = async () => {
-    if (code.trim().length !== 6) return
-    setEnCours('jonction')
-    setErreur(null)
-    try {
-      const ok = await onRejoindre(code)
-      if (!ok) {
-        setErreur(t('bienvenue.codeErreurIntrouvable'))
+      if (!(await geste())) {
+        setErreur({ zone, texte: messages.refus })
         setEnCours(null)
       }
     } catch {
-      setErreur(t('bienvenue.codeErreurReseau'))
+      setErreur({ zone, texte: messages.panne })
       setEnCours(null)
     }
   }
+
+  const creer = () =>
+    tenter(
+      'creation',
+      async () => {
+        await onCreer()
+        return true
+      },
+      // Créer ne se fait pas refuser : le code court est tiré côté base
+      // jusqu'à en trouver un libre. Il ne reste que la panne.
+      { refus: t('bienvenue.creerErreur'), panne: t('bienvenue.creerErreur') },
+    )
+
+  const reprendre = () =>
+    tenter('reprise', onReprendre, {
+      refus: t('bienvenue.repriseIntrouvable'),
+      panne: t('bienvenue.repriseErreur'),
+    })
+
+  // Le code saisi est passé explicitement : à la sixième frappe, l'état
+  // `code` n'a pas encore été rendu, et lire l'état enverrait cinq
+  // caractères.
+  const rejoindre = (saisi = code) => {
+    if (saisi.length !== LONGUEUR_CODE) return
+    return tenter('jonction', () => onRejoindre(saisi), {
+      refus: t('bienvenue.codeErreurIntrouvable'),
+      panne: t('bienvenue.codeErreurReseau'),
+    })
+  }
+
+  const rejoindreLien = (foyer: string) =>
+    tenter('jonction', () => onRejoindreLien(foyer), {
+      refus: t('bienvenue.lienIntrouvable'),
+      panne: t('bienvenue.codeErreurReseau'),
+    })
+
+  const messageErreur = (zone: Zone) =>
+    erreur?.zone === zone && (
+      <div className="bloc-erreurs" role="alert">
+        <p>{erreur.texte}</p>
+      </div>
+    )
 
   return (
     <main className="accueil">
@@ -65,50 +123,111 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
       </div>
 
       <div className="accueil-actions">
-        <button className="principal" onClick={creer} disabled={enCours !== null}>
-          {enCours === 'creation' ? t('bienvenue.creation') : t('bienvenue.creerMaMaison')}
-        </button>
+        {/* Quitter une maison ne l'efface pas : elle reste joignable par
+            son code, qu'il fallait jusqu'ici retrouver sur l'autre
+            téléphone. Quand cet appareil l'a noté, le retour est un
+            bouton — et l'oubli en est un autre, parce qu'on quitte aussi
+            une maison pour prêter son téléphone. */}
+        {precedent && (
+          <section className="accueil-reprise">
+            <p className="accueil-reprise-legende">{t('bienvenue.repriseTitre')}</p>
+            {precedent.code ? (
+              <p className="accueil-reprise-code">{precedent.code}</p>
+            ) : (
+              <p className="accueil-reprise-sans-code">{t('bienvenue.repriseSansCode')}</p>
+            )}
+            <p className="accueil-reprise-aide">{t('bienvenue.repriseAide')}</p>
+            {messageErreur('reprise')}
+            <button
+              className="discret accent pleine-largeur"
+              onClick={reprendre}
+              disabled={enCours !== null}
+            >
+              {enCours === 'reprise' ? t('bienvenue.repriseEnCours') : t('bienvenue.repriseBouton')}
+            </button>
+            <button
+              className="lien-discret accueil-reprise-oubli"
+              onClick={onOublierPrecedent}
+              disabled={enCours !== null}
+            >
+              {t('bienvenue.repriseOublier')}
+            </button>
+          </section>
+        )}
 
-        {/* Deux chemins de même rang, pas une action et son repli : le
-            filet les sépare au lieu d'un titre de section qui hiérarchise. */}
+        {/* Deux chemins de même rang, et non une action et son repli.
+            Chacun dit ce qu'il fait avant d'être choisi : « créer » et
+            « rejoindre » ne se distinguent que pour qui sait déjà comment
+            l'app partage — les autres ont une chance sur deux de fonder
+            une maison vide à côté de celle qu'on venait de leur ouvrir. */}
+        <section className="accueil-voie">
+          <h2 className="accueil-voie-titre">
+            <span className="accueil-voie-pastille" aria-hidden="true">
+              <Icone nom="plus" taille={16} />
+            </span>
+            {t('bienvenue.creerMaMaison')}
+          </h2>
+          <p className="accueil-voie-aide">{t('bienvenue.creerAide')}</p>
+          {messageErreur('creation')}
+          <button className="principal" onClick={creer} disabled={enCours !== null}>
+            {enCours === 'creation' ? t('bienvenue.creation') : t('bienvenue.creerMaMaison')}
+          </button>
+        </section>
+
         <p className="accueil-ou">
           <span>{t('bienvenue.ou')}</span>
         </p>
 
-        <label className="accueil-champ">
-          <span className="accueil-legende">{t('bienvenue.rejoindreAvecCode')}</span>
+        <section className="accueil-voie">
+          <h2 className="accueil-voie-titre">
+            <span className="accueil-voie-pastille" aria-hidden="true">
+              <Icone nom="magasin" taille={16} />
+            </span>
+            {t('bienvenue.rejoindreAvecCode')}
+          </h2>
+          <p className="accueil-voie-aide">{t('bienvenue.rejoindreAide')}</p>
+
           {/* Dire pourquoi ça ne marchera pas, plutôt que de laisser saisir
               six caractères pour répondre « code introuvable ». */}
-          {!partageActif && <span className="accueil-note">{t('bienvenue.partageInactif')}</span>}
-          <input
-            className="champ-texte champ-texte-code-court"
-            placeholder="A3F9K2"
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase().slice(0, 6))}
-            onKeyDown={(e) => e.key === 'Enter' && void rejoindre()}
-            maxLength={6}
-            autoCapitalize="characters"
-            autoCorrect="off"
-            spellCheck={false}
-            enterKeyHint="go"
-            disabled={!partageActif}
-            aria-label={t('bienvenue.codeLabel')}
+          {!partageActif && <p className="accueil-note">{t('bienvenue.partageInactif')}</p>}
+
+          <ChampCode
+            valeur={code}
+            onChange={(v) => {
+              setCode(v)
+              // Corriger un caractère, c'est répondre à l'erreur : la
+              // laisser sous un code qu'on est en train de réécrire la
+              // ferait passer pour le verdict de la nouvelle saisie.
+              if (erreur?.zone === 'jonction') setErreur(null)
+            }}
+            onComplet={(c) => void rejoindre(c)}
+            onLien={(f) => void rejoindreLien(f)}
+            onLienSansFoyer={() => setErreur({ zone: 'jonction', texte: t('bienvenue.lienSansFoyer') })}
+            desactive={!partageActif}
+            /* Rougir six cases vides accuse une saisie qui n'existe pas :
+               un lien collé sans foyer dedans laisse le champ vide, et
+               c'est le message qui porte l'erreur, pas les cases. */
+            invalide={erreur?.zone === 'jonction' && code.length > 0}
+            label={t('bienvenue.codeLabel')}
+            aideId="accueil-code-indice"
           />
-        </label>
+          <p className="accueil-indice" id="accueil-code-indice">
+            {t('bienvenue.codeIndice')}
+          </p>
 
-        {erreur && (
-          <div className="bloc-erreurs" role="alert">
-            <p>{erreur}</p>
-          </div>
-        )}
+          {messageErreur('jonction')}
 
-        <button
-          className="discret suite pleine-largeur"
-          onClick={rejoindre}
-          disabled={!partageActif || code.trim().length !== 6 || enCours !== null}
-        >
-          {enCours === 'jonction' ? t('bienvenue.recherche') : t('bienvenue.rejoindre')}
-        </button>
+          {/* Les six cases partent toutes seules une fois remplies ; le
+              bouton reste pour réessayer après un échec, et pour qui
+              navigue au clavier ou au lecteur d'écran. */}
+          <button
+            className="discret suite pleine-largeur"
+            onClick={() => void rejoindre()}
+            disabled={!partageActif || code.length !== LONGUEUR_CODE || enCours !== null}
+          >
+            {enCours === 'jonction' ? t('bienvenue.recherche') : t('bienvenue.rejoindre')}
+          </button>
+        </section>
       </div>
     </main>
   )

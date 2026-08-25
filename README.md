@@ -36,6 +36,31 @@ Une conséquence à connaître avant de faire circuler un lien : **l'UUID est la
 l'obtient — par le lien `#/f/<uuid>` ou par le code à six caractères — entre dans le foyer
 et y reste. Il n'y a pas de liste de membres à révoquer.
 
+**L'écran d'accueil accepte les deux, et le dit.** Le code court et l'UUID sont les deux
+seules entrées que la base reconnaît, mais un code voyage rarement nu : il arrive dans un
+lien, dans un message, en minuscules, avec un espace de trop. Le champ de l'écran Bienvenue
+prend donc la saisie telle qu'elle vient et décide de ce qu'elle est
+(`src/lib/codeFoyer.ts`) — six caractères pour `rejoindre_foyer`, un UUID trouvé dans un
+lien collé pour `reclamer_foyer`. Un lien sans foyer dedans ne se fait pas découper en un
+code d'apparence valide : « https://fffood… » donnerait « HTTPSF » et un « code
+introuvable » qui n'explique rien.
+
+**Quitter un foyer ne l'oublie pas tout de suite.** Il reste joignable par son code, ce que
+Réglages annonce déjà — mais retrouver ce code demandait d'aller le lire sur l'autre
+téléphone. L'appareil garde donc de quoi rentrer (`foyerPrecedent` dans IndexedDB), et
+l'écran d'accueil le propose en un bouton. Avec, à côté, de quoi l'effacer : on quitte aussi
+une maison pour prêter son téléphone, et la note ne doit pas survivre à cette intention-là.
+
+Basculer vers une autre maison depuis Réglages compte pour un départ : `rejoindreFoyer`
+note la maison sortante au même titre que `quitterFoyer`. Sans ça, le code de la maison
+d'avant disparaissait à l'instant précis où l'écran promettait qu'elle « resterait
+accessible ». Une seule place, cela dit : « la maison d'avant » est une, pas un historique.
+
+**Ce qui se rattrape se confirme.** Une saisie complète part toute seule sur l'écran
+d'accueil — il n'y a rien à perdre, on n'est encore nulle part. Dans Réglages, la même
+frappe changerait la maison partagée : une faute de frappe suffirait. La sixième case
+remplie y ouvre donc une demande, et c'est le bouton qui l'exécute.
+
 **Ce qui traverse le réseau est ce qui se décide à deux** : la liste (cases cochées,
 produits écartés), le panier de la semaine qui voyage avec elle, le catalogue de recettes,
 et l'historique de cuisson — « on a mangé ça mardi » vaut pour les deux téléphones. Chaque

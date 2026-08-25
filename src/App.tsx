@@ -9,10 +9,13 @@ import {
   lireBasket,
   lireCodeFoyer,
   lireFoyer,
+  lireFoyerPrecedent,
   lireHistorique,
   marquerCuisine,
+  oublierFoyerPrecedent,
   quitterFoyer,
   rejoindreFoyer,
+  type FoyerPrecedent,
 } from './lib/local'
 import {
   ajouterRecette,
@@ -29,7 +32,7 @@ import {
   suivreListe,
   suivreRecettes,
 } from './lib/sync'
-import { creerFoyerAvecCode, resoudreCode } from './lib/foyer'
+import { creerFoyerAvecCode, reclamerFoyer, reprendreFoyer, resoudreCode } from './lib/foyer'
 import DetailRecette from './screens/DetailRecette'
 import Propose from './screens/Propose'
 import Panier from './screens/Panier'
@@ -301,6 +304,9 @@ export default function App() {
   const [foyer, setFoyer] = useState<string | null>(null)
   const [codeFoyer, setCodeFoyer] = useState<string | null>(null)
   const [foyerCharge, setFoyerCharge] = useState(false)
+  // La maison quittée sur cet appareil : lue à l'amorçage comme le reste,
+  // elle n'est offerte que par l'écran d'accueil.
+  const [foyerPrecedent, setFoyerPrecedent] = useState<FoyerPrecedent | null>(null)
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const enLigne = useEnLigne()
@@ -361,6 +367,7 @@ export default function App() {
         setHistorique(await lireHistorique())
         setFoyer(await lireFoyer())
         setCodeFoyer(await lireCodeFoyer())
+        setFoyerPrecedent(await lireFoyerPrecedent())
       } finally {
         // Quoi qu'il arrive à la lecture locale : sans ce `finally`,
         // un seul rejet laissait `foyerCharge` à `false`, et le
@@ -386,12 +393,56 @@ export default function App() {
     await rejoindreFoyer(id, code)
     setFoyer(id)
     setCodeFoyer(code)
-    mesurer('foyer_rejoint')
+    // `rejoindreFoyer` vient peut-être de noter la maison qu'on quitte
+    // (bascule depuis Réglages) ou d'effacer la note (retour dans celle
+    // d'où l'on venait) : on relit plutôt que de deviner.
+    setFoyerPrecedent(await lireFoyerPrecedent())
+    mesurer('foyer_rejoint', { voie: 'code' })
     return true
+  }, [])
+
+  /**
+   * Entrer par un lien de partage collé dans l'écran d'accueil. Le code
+   * court reste inconnu : la table `foyers` n'est pas lisible et aucune
+   * fonction ne le rend depuis un UUID. Réglages n'affichera donc pas de
+   * code à partager — exactement comme pour un foyer ouvert en suivant le
+   * lien `#/f/<uuid>`, qui n'en rapportait pas davantage.
+   */
+  const rejoindreParLien = useCallback(async (id: string) => {
+    if (!(await reclamerFoyer(id))) return false
+    await rejoindreFoyer(id)
+    setFoyer(id)
+    setCodeFoyer(null)
+    setFoyerPrecedent(await lireFoyerPrecedent())
+    mesurer('foyer_rejoint', { voie: 'lien' })
+    return true
+  }, [])
+
+  const reprendre = useCallback(async () => {
+    if (!foyerPrecedent) return false
+    const id = await reprendreFoyer(foyerPrecedent)
+    if (!id) return false
+    // `rejoindreFoyer` efface la note de reprise quand on rentre là d'où
+    // l'on venait ; l'état local suit.
+    await rejoindreFoyer(id, foyerPrecedent.code ?? undefined)
+    setFoyer(id)
+    setCodeFoyer(foyerPrecedent.code)
+    setFoyerPrecedent(await lireFoyerPrecedent())
+    mesurer('foyer_rejoint', { voie: 'reprise' })
+    return true
+  }, [foyerPrecedent])
+
+  const oublierPrecedent = useCallback(() => {
+    setFoyerPrecedent(null)
+    void oublierFoyerPrecedent()
   }, [])
 
   const quitter = useCallback(async () => {
     await quitterFoyer()
+    // Écrite par `quitterFoyer` juste au-dessus : sans cette relecture,
+    // l'écran d'accueil qui suit ne proposerait de revenir qu'au
+    // prochain lancement.
+    setFoyerPrecedent(await lireFoyerPrecedent())
     setFoyer(null)
     setCodeFoyer(null)
     setRecipes([])
@@ -412,6 +463,15 @@ export default function App() {
       return ok
     },
     [rejoindre, reculer],
+  )
+
+  const rejoindreLienDepuisReglages = useCallback(
+    async (id: string) => {
+      const ok = await rejoindreParLien(id)
+      if (ok) reculer()
+      return ok
+    },
+    [rejoindreParLien, reculer],
   )
 
   // Le panier arrive avec la liste. Tant que le foyer n'en a pas publié
@@ -603,7 +663,16 @@ export default function App() {
   }
 
   if (!foyer) {
-    return <Bienvenue onCreer={creer} onRejoindre={rejoindre} />
+    return (
+      <Bienvenue
+        onCreer={creer}
+        onRejoindre={rejoindre}
+        onRejoindreLien={rejoindreParLien}
+        precedent={foyerPrecedent}
+        onReprendre={reprendre}
+        onOublierPrecedent={oublierPrecedent}
+      />
+    )
   }
 
   const panneau = panneauMinuteurs && minuteurs.liste.length > 0 && (
@@ -699,6 +768,7 @@ export default function App() {
         codeFoyer={codeFoyer}
         miseAJour={miseAJour}
         onRejoindre={rejoindreDepuisReglages}
+        onRejoindreLien={rejoindreLienDepuisReglages}
         onQuitter={quitter}
         onFermer={reculer}
         onRevoirPresentation={revoirOnboarding}
