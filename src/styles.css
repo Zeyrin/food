@@ -2073,7 +2073,26 @@ button.pastille-synchro:active {
   font-size: 24px;
   font-weight: 700;
   letter-spacing: 0.3em;
+  /* L'interlettre pose un blanc après la dernière lettre : sans ce
+     retrait, le code paraît décalé à gauche dans une carte centrée. */
+  text-indent: 0.3em;
   color: var(--accent);
+}
+
+.carte-code-foyer-aide {
+  max-width: 42ch;
+  margin: 10px auto 0;
+  color: var(--encre-douce);
+  font-size: 14px;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+/* Un code se transmet ; le lire à voix haute est le pire moyen de le
+   faire (2 et Z, 4 et A). Le bouton n'est donc pas un ornement de la
+   carte : c'est ce à quoi elle sert. */
+.carte-code-foyer-copier {
+  margin-top: 14px;
 }
 
 .bento-deux-colonnes {
@@ -3353,6 +3372,13 @@ button.carte-panier-bouton .carte-panier-corps {
   opacity: 0.55;
 }
 
+/* L'anneau de focus déborde de sept pixels sous les cases : la ligne
+   d'indication qui suit doit lui laisser la place, sinon le trait vert
+   lui barre sa première ligne. */
+.champ-code + .aide-champ {
+  margin-top: 12px;
+}
+
 /* Recettes écartées parce que déjà là : une information, pas une
    erreur — d'où une surface neutre plutôt que le rouge du bloc voisin. */
 .bloc-doublons {
@@ -3521,6 +3547,16 @@ button.carte-panier-bouton .carte-panier-corps {
   background: var(--terracotta);
   border-color: transparent;
   color: var(--papier);
+}
+
+/* Sans cette règle, la variante pleine couleur héritait du fond blanc
+   ci-dessus (plus spécifique que `button.discret.accent`) tout en gardant
+   son texte `--sur-accent` : du blanc sur du blanc, un bouton illisible
+   dans la confirmation de bascule de foyer. */
+.bloc-confirmation .rangee-boutons .discret.accent {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--sur-accent);
 }
 
 @keyframes confirmation-entree {

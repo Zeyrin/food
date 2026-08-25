@@ -51,6 +51,16 @@ téléphone. L'appareil garde donc de quoi rentrer (`foyerPrecedent` dans Indexe
 l'écran d'accueil le propose en un bouton. Avec, à côté, de quoi l'effacer : on quitte aussi
 une maison pour prêter son téléphone, et la note ne doit pas survivre à cette intention-là.
 
+Basculer vers une autre maison depuis Réglages compte pour un départ : `rejoindreFoyer`
+note la maison sortante au même titre que `quitterFoyer`. Sans ça, le code de la maison
+d'avant disparaissait à l'instant précis où l'écran promettait qu'elle « resterait
+accessible ». Une seule place, cela dit : « la maison d'avant » est une, pas un historique.
+
+**Ce qui se rattrape se confirme.** Une saisie complète part toute seule sur l'écran
+d'accueil — il n'y a rien à perdre, on n'est encore nulle part. Dans Réglages, la même
+frappe changerait la maison partagée : une faute de frappe suffirait. La sixième case
+remplie y ouvre donc une demande, et c'est le bouton qui l'exécute.
+
 **Ce qui traverse le réseau est ce qui se décide à deux** : la liste (cases cochées,
 produits écartés), le panier de la semaine qui voyage avec elle, le catalogue de recettes,
 et l'historique de cuisson — « on a mangé ça mardi » vaut pour les deux téléphones. Chaque

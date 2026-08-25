@@ -124,19 +124,6 @@ export async function lireFoyer(): Promise<string | null> {
   return lire<string | null>(K_FOYER, null)
 }
 
-export async function rejoindreFoyer(id: string, code?: string): Promise<void> {
-  await ecrire(K_FOYER, id)
-  if (code) await ecrire(K_CODE_FOYER, code)
-  // On est revenu là d'où on était parti : il n'y a plus de retour en
-  // arrière à proposer sur l'écran d'accueil.
-  const precedent = await lireFoyerPrecedent()
-  if (precedent?.id === id) await oublierFoyerPrecedent()
-}
-
-export async function lireCodeFoyer(): Promise<string | null> {
-  return lire<string | null>(K_CODE_FOYER, null)
-}
-
 /**
  * La maison qu'on vient de quitter, gardée sur l'appareil pour pouvoir y
  * revenir d'un geste.
@@ -148,12 +135,41 @@ export async function lireCodeFoyer(): Promise<string | null> {
  * ici de quoi rentrer, et l'écran d'accueil le propose — avec de quoi
  * l'oublier, parce que passer le téléphone à quelqu'un est aussi une
  * raison de quitter une maison.
+ *
+ * Une seule place : « la maison d'avant » est une, pas un historique.
  */
 export interface FoyerPrecedent {
   id: string
   /** `null` pour un foyer ouvert par lien : son code n'a jamais transité ici. */
   code: string | null
   quitteLe: number
+}
+
+/** À appeler tant que `K_CODE_FOYER` porte encore le code de ce foyer-là. */
+async function noterFoyerQuitte(id: string): Promise<void> {
+  const code = await lire<string | null>(K_CODE_FOYER, null)
+  await ecrire(K_FOYER_PRECEDENT, { id, code, quitteLe: Date.now() } satisfies FoyerPrecedent)
+}
+
+export async function rejoindreFoyer(id: string, code?: string): Promise<void> {
+  // Basculer vers une autre maison depuis Réglages, c'est quitter la
+  // précédente — l'écran le dit en toutes lettres. Sans cette note, le
+  // code de la maison d'avant partait pour de bon au moment même où
+  // l'app promettait qu'elle « resterait accessible ».
+  const actuel = await lire<string | null>(K_FOYER, null)
+  if (actuel && actuel !== id) await noterFoyerQuitte(actuel)
+
+  await ecrire(K_FOYER, id)
+  if (code) await ecrire(K_CODE_FOYER, code)
+
+  // On est revenu là d'où on était parti : il n'y a plus de retour en
+  // arrière à proposer sur l'écran d'accueil.
+  const precedent = await lireFoyerPrecedent()
+  if (precedent?.id === id) await oublierFoyerPrecedent()
+}
+
+export async function lireCodeFoyer(): Promise<string | null> {
+  return lire<string | null>(K_CODE_FOYER, null)
 }
 
 export async function lireFoyerPrecedent(): Promise<FoyerPrecedent | null> {
@@ -168,10 +184,7 @@ export async function quitterFoyer(): Promise<void> {
   // Noter où l'on était avant d'effacer, et pas après : les deux `effacer`
   // qui suivent rendraient la lecture vide.
   const id = await lire<string | null>(K_FOYER, null)
-  if (id) {
-    const code = await lire<string | null>(K_CODE_FOYER, null)
-    await ecrire(K_FOYER_PRECEDENT, { id, code, quitteLe: Date.now() } satisfies FoyerPrecedent)
-  }
+  if (id) await noterFoyerQuitte(id)
   await effacer(K_FOYER)
   await effacer(K_CODE_FOYER)
 }

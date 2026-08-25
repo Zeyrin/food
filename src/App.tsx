@@ -393,7 +393,10 @@ export default function App() {
     await rejoindreFoyer(id, code)
     setFoyer(id)
     setCodeFoyer(code)
-    setFoyerPrecedent(null)
+    // `rejoindreFoyer` vient peut-être de noter la maison qu'on quitte
+    // (bascule depuis Réglages) ou d'effacer la note (retour dans celle
+    // d'où l'on venait) : on relit plutôt que de deviner.
+    setFoyerPrecedent(await lireFoyerPrecedent())
     mesurer('foyer_rejoint', { voie: 'code' })
     return true
   }, [])
@@ -410,7 +413,7 @@ export default function App() {
     await rejoindreFoyer(id)
     setFoyer(id)
     setCodeFoyer(null)
-    setFoyerPrecedent(null)
+    setFoyerPrecedent(await lireFoyerPrecedent())
     mesurer('foyer_rejoint', { voie: 'lien' })
     return true
   }, [])
@@ -424,7 +427,7 @@ export default function App() {
     await rejoindreFoyer(id, foyerPrecedent.code ?? undefined)
     setFoyer(id)
     setCodeFoyer(foyerPrecedent.code)
-    setFoyerPrecedent(null)
+    setFoyerPrecedent(await lireFoyerPrecedent())
     mesurer('foyer_rejoint', { voie: 'reprise' })
     return true
   }, [foyerPrecedent])
@@ -460,6 +463,15 @@ export default function App() {
       return ok
     },
     [rejoindre, reculer],
+  )
+
+  const rejoindreLienDepuisReglages = useCallback(
+    async (id: string) => {
+      const ok = await rejoindreParLien(id)
+      if (ok) reculer()
+      return ok
+    },
+    [rejoindreParLien, reculer],
   )
 
   // Le panier arrive avec la liste. Tant que le foyer n'en a pas publié
@@ -756,6 +768,7 @@ export default function App() {
         codeFoyer={codeFoyer}
         miseAJour={miseAJour}
         onRejoindre={rejoindreDepuisReglages}
+        onRejoindreLien={rejoindreLienDepuisReglages}
         onQuitter={quitter}
         onFermer={reculer}
         onRevoirPresentation={revoirOnboarding}
