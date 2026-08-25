@@ -14,6 +14,7 @@ const K_HISTORIQUE = 'historique'
 const K_FOYER = 'foyer'
 const K_CODE_FOYER = 'codeFoyer'
 const K_MAGASINS = 'magasins'
+const K_FOYER_PRECEDENT = 'foyerPrecedent'
 
 const HISTORIQUE_VIDE: Historique = { derniereFois: {}, verdicts: {} }
 
@@ -126,13 +127,51 @@ export async function lireFoyer(): Promise<string | null> {
 export async function rejoindreFoyer(id: string, code?: string): Promise<void> {
   await ecrire(K_FOYER, id)
   if (code) await ecrire(K_CODE_FOYER, code)
+  // On est revenu là d'où on était parti : il n'y a plus de retour en
+  // arrière à proposer sur l'écran d'accueil.
+  const precedent = await lireFoyerPrecedent()
+  if (precedent?.id === id) await oublierFoyerPrecedent()
 }
 
 export async function lireCodeFoyer(): Promise<string | null> {
   return lire<string | null>(K_CODE_FOYER, null)
 }
 
+/**
+ * La maison qu'on vient de quitter, gardée sur l'appareil pour pouvoir y
+ * revenir d'un geste.
+ *
+ * Quitter un foyer ne le supprime pas et ne révoque rien — l'écran
+ * Réglages le dit déjà : « vos recettes et votre liste actuelles
+ * resteront accessibles avec leur propre code ». Retrouver ce code
+ * demandait pourtant d'aller le lire sur l'autre téléphone. On note donc
+ * ici de quoi rentrer, et l'écran d'accueil le propose — avec de quoi
+ * l'oublier, parce que passer le téléphone à quelqu'un est aussi une
+ * raison de quitter une maison.
+ */
+export interface FoyerPrecedent {
+  id: string
+  /** `null` pour un foyer ouvert par lien : son code n'a jamais transité ici. */
+  code: string | null
+  quitteLe: number
+}
+
+export async function lireFoyerPrecedent(): Promise<FoyerPrecedent | null> {
+  return lire<FoyerPrecedent | null>(K_FOYER_PRECEDENT, null)
+}
+
+export async function oublierFoyerPrecedent(): Promise<void> {
+  await effacer(K_FOYER_PRECEDENT)
+}
+
 export async function quitterFoyer(): Promise<void> {
+  // Noter où l'on était avant d'effacer, et pas après : les deux `effacer`
+  // qui suivent rendraient la lecture vide.
+  const id = await lire<string | null>(K_FOYER, null)
+  if (id) {
+    const code = await lire<string | null>(K_CODE_FOYER, null)
+    await ecrire(K_FOYER_PRECEDENT, { id, code, quitteLe: Date.now() } satisfies FoyerPrecedent)
+  }
   await effacer(K_FOYER)
   await effacer(K_CODE_FOYER)
 }

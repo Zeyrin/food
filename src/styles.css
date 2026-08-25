@@ -342,10 +342,16 @@ p.aide a {
 }
 
 /* --- Écran d'accueil -----------------------------------------------------
-   Le seul écran sans données à afficher : il porte donc la marque. Trois
-   rangées sur la hauteur du viewport — un vide en haut, le bloc de marque
-   au tiers supérieur (là où l'œil se pose), les actions au pouce. Le vide
-   se comprime avant le reste sur un écran court. */
+   Le seul écran sans données à afficher : il porte donc la marque. Le
+   bloc de marque se pose au tiers supérieur, là où l'œil arrive ; les
+   deux chemins d'entrée occupent le bas, au pouce.
+
+   Trois blocs, et une hiérarchie de matière qui les distingue sans un
+   mot : la maison qu'on vient de quitter est une carte — un objet qui
+   existe déjà, qu'on peut reprendre — quand créer et rejoindre sont
+   posés à plat sur le papier, parce que ce sont deux décisions et non
+   deux choses. Les mettre tous les trois en carte aurait donné trois
+   objets empilés et aucune indication de ce qui est quoi. */
 
 /* Pas de barre d'onglets sur cet écran : le fond de page réservé pour
    elle laisserait un vide sous les actions. */
@@ -354,16 +360,49 @@ p.aide a {
 }
 
 .accueil {
+  /* `min-height` et non `height` : avec la carte de reprise et les six
+     cases, le contenu peut dépasser la hauteur du viewport sur un petit
+     écran — il doit alors défiler, pas se faire rogner par le centrage. */
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 40px;
+  gap: 32px;
   padding: max(32px, env(safe-area-inset-top)) 0 32px;
 }
 
 .accueil-marque {
+  position: relative;
   text-align: center;
+}
+
+/* Une lueur derrière le sceau, seule licence prise sur un système par
+   ailleurs mat : l'écran est vide par nature, et le sceau y est la seule
+   chose à regarder. Assez pâle pour ne pas se lire comme un dégradé —
+   ce qu'on doit voir, c'est que la lumière vient de là. */
+.accueil-marque::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  width: min(360px, 92vw);
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent) 15%, transparent),
+    transparent 68%
+  );
+  pointer-events: none;
+}
+
+/* La lueur est un pseudo-élément positionné : sans cette ligne, elle se
+   peindrait *par-dessus* le nom et la baseline, qui sont dans le flux.
+   `z-index: -1` sur la lueur l'aurait au contraire envoyée derrière le
+   fond du `body`, c'est-à-dire nulle part. */
+.accueil-marque > * {
+  position: relative;
 }
 
 /* Sceau : le carré arrondi d'une icône d'application, repris ici pour
@@ -414,13 +453,136 @@ p.aide a {
   margin: 0 auto;
 }
 
+/* L'arrivée : le sceau se pose, le reste suit. Une demi-seconde en tout,
+   une seule fois — c'est le premier écran de l'app, pas une transition
+   qu'on reverra vingt fois par jour. Sous `no-preference` uniquement, et
+   `both` pour que l'état de départ tienne avant le premier temps. */
+@media (prefers-reduced-motion: no-preference) {
+  .accueil-marque .accueil-sceau {
+    animation: accueil-sceau 0.6s var(--sortie) both;
+  }
+
+  .accueil-marque > :not(.accueil-sceau) {
+    animation: accueil-entree 0.5s var(--sortie) 0.08s both;
+  }
+
+  .accueil-actions {
+    animation: accueil-entree 0.5s var(--sortie) 0.16s both;
+  }
+}
+
+@keyframes accueil-sceau {
+  from {
+    opacity: 0;
+    transform: scale(0.86) translateY(10px);
+  }
+}
+
+@keyframes accueil-entree {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* --- Reprise de la maison quittée ---------------------------------------
+   Une carte, parce que c'est la seule chose de cet écran qui existe
+   déjà : elle se reprend, elle ne se décide pas. Le code y est en gros —
+   c'est ce qui permet de reconnaître sa maison d'un coup d'œil, et c'est
+   aussi ce qu'on aurait dû aller chercher sur l'autre téléphone. */
+.accueil-reprise {
+  margin-bottom: 28px;
+  padding: 22px 20px 18px;
+  border-radius: var(--rayon-grand);
+  background: var(--carte);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre);
+  text-align: center;
+}
+
+.accueil-reprise-legende {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+}
+
+.accueil-reprise-code {
+  margin: 10px 0 0;
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  /* L'interlettre ajoute un blanc après la dernière lettre : sans ce
+     retrait, le code paraît décalé à gauche dans une carte centrée. */
+  text-indent: 0.26em;
+  line-height: 1.1;
+}
+
+/* Un foyer ouvert par lien n'a pas de code de ce côté-ci : la base ne le
+   rend pas depuis un UUID. On nomme donc ce qu'on sait plutôt que
+   d'afficher six tirets. */
+.accueil-reprise-sans-code {
+  margin: 10px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.accueil-reprise-aide {
+  margin: 10px 0 16px;
+  color: var(--encre-douce);
+  font-size: 14px;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.accueil-reprise-oubli {
+  margin-top: 14px;
+}
+
+/* --- Les deux chemins ---------------------------------------------------
+   Chacun s'annonce avant d'être choisi. « Créer » et « rejoindre » ne se
+   distinguent que pour qui sait déjà comment l'app partage : sans la
+   ligne d'explication, une personne sur deux fonde une maison vide à
+   côté de celle qu'on venait de lui ouvrir. */
+.accueil-voie-titre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 4px;
+  font-family: var(--affichage);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.012em;
+}
+
+.accueil-voie-pastille {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+.accueil-voie-aide {
+  margin: 0 0 14px;
+  color: var(--encre-douce);
+  font-size: 15px;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
 /* Filet coupé par le mot : deux chemins de même rang, pas une action et
    son repli. */
 .accueil-ou {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin: 22px 0;
+  margin: 26px 0;
   color: var(--encre-douce);
   font-size: 13px;
   font-weight: 600;
@@ -436,23 +598,21 @@ p.aide a {
   background: var(--filet-fort);
 }
 
-.accueil-champ {
-  display: block;
-}
-
-.accueil-legende {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--encre-douce);
-}
-
 .accueil-note {
-  display: block;
-  margin-bottom: 10px;
+  margin: 0 0 12px;
   font-size: 14px;
   color: var(--encre-douce);
+  text-wrap: pretty;
+}
+
+/* Ce que le champ accepte, dit sous le champ : le collage d'un lien ne
+   se devine pas, et personne n'essaie ce qu'il croit interdit. */
+.accueil-indice {
+  margin: 10px 0 0;
+  color: var(--encre-douce);
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
   text-wrap: pretty;
 }
 
@@ -3062,6 +3222,135 @@ button.carte-panier-bouton .carte-panier-corps {
   font-weight: 700;
   letter-spacing: 0.3em;
   text-transform: uppercase;
+}
+
+/* --- Code de foyer en six cases (components/ChampCode.tsx) ---------------
+   Un champ de texte unique demandait de compter les caractères pour
+   savoir s'il en manquait un ; six cases le montrent, et annoncent la
+   longueur avant qu'on ait tapé.
+
+   Ce n'est pourtant qu'un seul `<input>`, rendu transparent et posé sur
+   les cases (`position: absolute; inset: 0`) — le navigateur garde la
+   frappe, le retour arrière, le collage, la sélection et le clavier
+   mobile ; les cases ne sont qu'un dessin. Six vrais champs auraient
+   demandé de réécrire tout ça à la main, et un lecteur d'écran aurait
+   annoncé « champ 3 sur 6 » pour une valeur unique. */
+
+.champ-code {
+  position: relative;
+}
+
+.champ-code-saisie {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  /* Invisible mais bien là : c'est lui qui reçoit l'appui, le focus et le
+     menu de collage. `caret-color` en plus de l'opacité, pour les moteurs
+     qui dessinent le curseur hors de la couche du champ. */
+  opacity: 0;
+  caret-color: transparent;
+  /* 16 px : en dessous, iOS zoome sur la page à la mise au point — sur un
+     champ invisible, l'écran partirait de travers sans raison visible. */
+  font-size: 16px;
+  cursor: text;
+}
+
+.champ-code-saisie:disabled {
+  cursor: default;
+}
+
+.champ-code-cases {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(6px, 2vw, 10px);
+  border-radius: var(--rayon-petit);
+}
+
+/* L'anneau de focus se dessine ici : posé sur le champ, il hériterait de
+   son opacité nulle et ne se verrait jamais. */
+.champ-code:has(.champ-code-saisie:focus-visible) .champ-code-cases {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.champ-code-case {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
+  min-width: 0;
+  border: 1.5px solid var(--trait);
+  border-radius: var(--rayon-petit);
+  /* Vide, la case est un creux dans le papier ; remplie, elle remonte au
+     niveau de la carte. Le code se lit alors comme des jetons posés, et
+     ce qui reste à saisir garde l'aspect d'un trou à combler. */
+  background: var(--carte-basse);
+  box-shadow: inset 0 1px 2px rgb(32 27 12 / 0.05);
+  color: var(--encre);
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-size: clamp(20px, 6.5vw, 26px);
+  font-weight: 700;
+  line-height: 1;
+  transition: border-color 0.14s ease, background-color 0.14s ease, transform 0.16s var(--ressort);
+}
+
+.champ-code-case[data-remplie] {
+  border-color: var(--filet-fort);
+  background: var(--carte);
+  box-shadow: var(--ombre-plate);
+}
+
+.champ-code-case[data-curseur] {
+  border-color: var(--accent);
+  background: var(--carte);
+  transform: translateY(-1px);
+}
+
+/* Le repère de saisie, dessiné à la main : le curseur du champ est
+   invisible avec lui. Il ne se pose que sur la case à écrire. */
+.champ-code-case[data-curseur]::after {
+  content: '';
+  width: 2px;
+  height: 46%;
+  border-radius: 1px;
+  background: var(--accent);
+  animation: champ-code-curseur 1.06s steps(2, jump-none) infinite;
+}
+
+@keyframes champ-code-curseur {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* « Réduire les animations » coupe le clignotement, pas le repère : sans
+   ce rattrapage il resterait figé sur une des deux étapes — y compris la
+   transparente, c'est-à-dire invisible. */
+@media (prefers-reduced-motion: reduce) {
+  .champ-code-case[data-curseur]::after {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Le rouge se pose sur les six cases et non sur une seule : la base ne
+   dit jamais quel caractère est faux — elle répond « ce code n'existe
+   pas », ce qui met en cause la saisie entière. */
+.champ-code[data-invalide] .champ-code-case {
+  border-color: var(--terracotta);
+}
+
+.champ-code[data-invalide] .champ-code-case[data-curseur]::after {
+  background: var(--terracotta);
+}
+
+.champ-code[data-desactive] .champ-code-cases {
+  opacity: 0.55;
 }
 
 /* Recettes écartées parce que déjà là : une information, pas une

@@ -60,3 +60,45 @@ export async function resoudreCode(code: string): Promise<string | null> {
   if (id) marquerAccesObtenu(id)
   return id
 }
+
+/**
+ * Réclamer un foyer dont on connaît l'UUID — le second chemin d'entrée
+ * prévu par la base, à côté du code court. C'est ce que fait un lien de
+ * partage collé dans l'écran d'accueil, et c'est aussi comment on rentre
+ * dans une maison qu'on avait quittée sans en avoir gardé le code.
+ *
+ * `reclamer_foyer` ne lève pas quand le foyer n'existe pas : elle rend
+ * `false`. `assurerAcces` ignore ce retour — elle ne regarde que l'erreur,
+ * ce qui lui suffit puisqu'elle travaille sur un foyer déjà connu. Ici
+ * l'UUID vient d'être collé par quelqu'un : il faut donc lire la réponse,
+ * sinon un lien inventé ouvrirait une maison vide sans rien dire.
+ */
+export async function reclamerFoyer(id: string): Promise<boolean> {
+  // Sans Supabase, le foyer n'a jamais existé ailleurs que sur cet
+  // appareil : le reprendre est une écriture locale et rien d'autre.
+  // L'entrée par lien, elle, est barrée en amont (`partageActif`) —
+  // sinon n'importe quel UUID ouvrirait ici une maison vide.
+  if (!supabase) return true
+
+  await assurerSession()
+  const { data, error } = await supabase.rpc('reclamer_foyer', { uuid_foyer: id })
+  if (error) throw new Error(error.message)
+  if (data !== true) return false
+
+  marquerAccesObtenu(id)
+  return true
+}
+
+/**
+ * Revenir dans la maison qu'on venait de quitter. Par le code quand on
+ * l'a gardé — c'est le chemin normal, et il rend l'UUID à jour même si
+ * celui noté ici avait vieilli ; par l'UUID sinon, ce qui est le cas d'un
+ * foyer ouvert par lien, dont le code n'a jamais transité par l'appareil.
+ */
+export async function reprendreFoyer(precedent: { id: string; code: string | null }): Promise<string | null> {
+  if (supabase && precedent.code) {
+    const id = await resoudreCode(precedent.code)
+    if (id) return id
+  }
+  return (await reclamerFoyer(precedent.id)) ? precedent.id : null
+}
