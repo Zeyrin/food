@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   biper,
   debloquerAudio,
@@ -10,23 +10,50 @@ import {
   type Minuteur,
 } from '../lib/minuteurs'
 
-/** Horloge partagée : un seul intervalle pour tous les minuteurs. */
+/**
+ * Horloge partagée : un seul battement pour tous les minuteurs.
+ *
+ * Ce battement est monté tout en haut de l'app : chaque tic re-rend
+ * l'écran affiché en entier. Il tape donc une fois par seconde, calé sur
+ * le passage de la seconde entière, et pas deux fois par seconde à un
+ * moment quelconque comme avant. Un décompte affiché en `mm:ss` ne change
+ * qu'une fois par seconde : la seconde image ne servait à rien, et
+ * pendant une cuisson elle doublait le travail de rendu de l'app.
+ *
+ * Le calage sur la seconde entière n'est pas cosmétique : un intervalle
+ * fixe dérive (chaque tic part du précédent, en retard), alors que ce
+ * délai se recalcule depuis `Date.now()` à chaque fois et rattrape sa
+ * dérive tout seul.
+ */
 function useMaintenant(actif: boolean): number {
   const [maintenant, setMaintenant] = useState(() => Date.now())
 
   useEffect(() => {
     if (!actif) return
-    setMaintenant(Date.now())
-    const t = setInterval(() => setMaintenant(Date.now()), 500)
-    // En arrière-plan, le navigateur ralentit l'intervalle jusqu'à un par
-    // minute : au retour, le décompte affiché aurait pu être faux pendant
-    // une minute entière. On le remet à l'heure aux deux transitions — au
-    // retour pour l'affichage, au départ pour que le minuteur déjà écoulé
-    // parte en notification tout de suite plutôt qu'au prochain tic ralenti.
-    const surBascule = () => setMaintenant(Date.now())
+
+    let t = 0
+    const battre = () => {
+      const instant = Date.now()
+      setMaintenant(instant)
+      // Plancher à 16 ms : pile sur une seconde entière, le reste vaut
+      // presque zéro et on enchaînerait deux images collées.
+      t = window.setTimeout(battre, Math.max(16, 1000 - (instant % 1000)))
+    }
+    battre()
+
+    // En arrière-plan, le navigateur ralentit les minuteries jusqu'à une
+    // par minute : au retour, le décompte affiché aurait pu être faux
+    // pendant une minute entière. On le remet à l'heure aux deux
+    // transitions — au retour pour l'affichage, au départ pour que le
+    // minuteur déjà écoulé parte en notification tout de suite plutôt
+    // qu'au prochain tic ralenti.
+    const surBascule = () => {
+      clearTimeout(t)
+      battre()
+    }
     document.addEventListener('visibilitychange', surBascule)
     return () => {
-      clearInterval(t)
+      clearTimeout(t)
       document.removeEventListener('visibilitychange', surBascule)
     }
   }, [actif])
@@ -57,8 +84,16 @@ export function useMinuteurs(): Minuteurs {
 
   useEffect(() => ecrireMinuteurs(minuteurs), [minuteurs])
 
-  const liste = [...minuteurs].sort((a, b) => a.fin - b.fin)
-  const sonnent = minuteurs.filter((m) => m.fin <= maintenant)
+  // Mémoïsés : sans ça, chaque tic d'horloge fabriquait deux tableaux
+  // neufs, et les composants qui les reçoivent en props se re-rendaient
+  // même quand rien n'avait changé pour eux. `liste` ne dépend même pas
+  // de l'heure — elle ne se retrie qu'à l'ajout ou au retrait d'un
+  // minuteur.
+  const liste = useMemo(() => [...minuteurs].sort((a, b) => a.fin - b.fin), [minuteurs])
+  const sonnent = useMemo(
+    () => minuteurs.filter((m) => m.fin <= maintenant),
+    [minuteurs, maintenant],
+  )
 
   const lancer = useCallback(
     (secondes: number, nom: string, recipeId: string, recetteTitre: string) => {
@@ -104,15 +139,22 @@ export function useMinuteurs(): Minuteurs {
   // verrouillé ou autre application au premier plan, ils sont suspendus.
   // Une notification système, si. Une seule par minuteur — le `ref`
   // évite qu'elle ne se rejoue à chaque tic d'horloge.
+  //
+  // L'effet se déclenche sur la *liste des identifiants* qui sonnent, pas
+  // sur le tableau : celui-ci change d'identité à chaque tic d'horloge et
+  // relançait le corps de l'effet une fois par seconde, pour rien.
   const notifies = useRef(new Set<string>())
+  const quiSonne = sonnent.map((m) => m.id).join(' ')
+  const sonnentMaintenant = useRef(sonnent)
+  sonnentMaintenant.current = sonnent
   useEffect(() => {
     if (!document.hidden) return
-    for (const m of sonnent) {
+    for (const m of sonnentMaintenant.current) {
       if (notifies.current.has(m.id)) continue
       notifies.current.add(m.id)
       notifierMinuteur(m)
     }
-  }, [sonnent])
+  }, [quiSonne])
 
   // De retour dans l'app, le bandeau dit tout ce qu'il faut : les
   // notifications n'ont plus lieu d'être, et un minuteur relancé plus

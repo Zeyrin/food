@@ -33,6 +33,7 @@ import {
   suivreRecettes,
 } from './lib/sync'
 import { creerFoyerAvecCode, reclamerFoyer, reprendreFoyer, resoudreCode } from './lib/foyer'
+import { mouvementReduit } from './lib/mouvement'
 import DetailRecette from './screens/DetailRecette'
 import Propose from './screens/Propose'
 import Panier from './screens/Panier'
@@ -161,10 +162,9 @@ export default function App() {
   // par `startViewTransition` — sans lui, l'API capture l'ancien DOM
   // des deux côtés, avant que React n'ait appliqué le changement.
   const avecTransition = useCallback((direction: 'avant' | 'arriere', appliquer: () => void) => {
-    const reduitMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const demarrer = (document as Document & { startViewTransition?: (cb: () => void) => void })
       .startViewTransition
-    if (reduitMotion || !demarrer) {
+    if (mouvementReduit() || !demarrer) {
       appliquer()
       return
     }

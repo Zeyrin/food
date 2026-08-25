@@ -24,6 +24,17 @@
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="FFFood" />
     <meta name="twitter:description" content="Repas de la semaine, liste de courses et mode cuisson, sans compte." />
+    <!-- Les deux fontes que porte le premier écran : le corps de texte et
+         le poids des titres. Sans préchargement, le navigateur ne les
+         découvre qu'après avoir téléchargé puis analysé la feuille de
+         style, et le texte reste en fonte système le temps de ce
+         détour — on voit la page changer de typo sous les yeux. Les
+         quatre autres graisses se chargent quand elles se présentent.
+         `crossorigin` est obligatoire même pour un fichier du même
+         domaine : les fontes se demandent en mode anonyme, et sans lui
+         le fichier serait téléchargé deux fois. -->
+    <link rel="preload" href="/fonts/hanken-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/bricolage-800.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <title>FFFood — Repas de la semaine & liste de courses</title>

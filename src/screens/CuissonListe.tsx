@@ -71,7 +71,9 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
               style={
                 {
                   '--teinte': teinteRecette(r.titre),
-                  '--rang': Math.min(i, 20),
+                  // Voir Propose.tsx : seules les huit premières cartes
+                  // s'animent, le rang n'a pas à aller plus loin.
+                  '--rang': Math.min(i, 7),
                 } as React.CSSProperties
               }
             >

@@ -4,6 +4,7 @@ import { type Historique, proposer, tousLesTags } from '../lib/propose'
 import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
 import { mesurer } from '../lib/mesure'
+import { comportementDefilement } from '../lib/mouvement'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 import AjoutRecette from '../components/AjoutRecette'
@@ -73,13 +74,22 @@ export default function Propose({
   // haut de page et l'écran parfois défilé ailleurs.
   useEffect(() => {
     if (!ajoutOuvert) return
-    // Deux frames : la section vient à peine d'être montée.
-    const image = requestAnimationFrame(() =>
-      requestAnimationFrame(() =>
-        ancreAjout.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-      ),
-    )
-    return () => cancelAnimationFrame(image)
+    // Deux frames : la section vient à peine d'être montée. Les deux
+    // identifiants sont retenus — n'annuler que le premier laissait la
+    // seconde frame se déclencher après le démontage.
+    let interne = 0
+    const image = requestAnimationFrame(() => {
+      interne = requestAnimationFrame(() =>
+        ancreAjout.current?.scrollIntoView({
+          behavior: comportementDefilement(),
+          block: 'start',
+        }),
+      )
+    })
+    return () => {
+      cancelAnimationFrame(image)
+      cancelAnimationFrame(interne)
+    }
   }, [ajoutOuvert])
 
   // Tout le catalogue d'un coup (pas de limite à 8) : `proposer` sert
@@ -298,10 +308,12 @@ export default function Propose({
                 style={
                   {
                     '--teinte': teinteRecette(r.titre),
-                    // Au-delà de la première vingtaine, plus de décalage :
-                    // ces cartes sont hors écran, l'attente serait perçue
-                    // comme une latence au scroll.
-                    '--rang': Math.min(i, 20),
+                    // Le rang n'échelonne que la première hauteur d'écran :
+                    // au-delà, `styles.css` ne joue plus l'entrée du tout
+                    // (`:nth-child(-n + 8)`) — ces cartes sont hors champ,
+                    // et les animer coûtait une couche de composition
+                    // chacune pour un effet que personne ne voit.
+                    '--rang': Math.min(i, 7),
                   } as React.CSSProperties
                 }
               >

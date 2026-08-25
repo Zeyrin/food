@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import type { Minuteur } from '../lib/minuteurs'
 import { mmss } from '../lib/minuteurs'
 import { useLangue } from '../lib/i18n'
@@ -31,8 +32,10 @@ export default function BandeauMinuteur({ liste, maintenant, sonne, onOuvrir, va
 
   const restant = Math.max(0, Math.round((premier.fin - maintenant) / 1000))
   const total = premier.fin - premier.depart
+  // Fraction de 0 à 1 plutôt qu'un pourcentage : c'est le facteur d'un
+  // `scaleX` côté CSS, qui remplace l'animation de largeur d'avant.
   const progression =
-    total <= 0 ? 100 : Math.min(100, Math.max(0, ((maintenant - premier.depart) / total) * 100))
+    total <= 0 ? 1 : Math.min(1, Math.max(0, (maintenant - premier.depart) / total))
 
   return (
     <button
@@ -52,7 +55,7 @@ export default function BandeauMinuteur({ liste, maintenant, sonne, onOuvrir, va
         <b className="bandeau-minuteur-valeur">{sonne ? t('bandeauMinuteur.termine') : mmss(restant)}</b>
       </div>
       <div className="bandeau-minuteur-jauge" aria-hidden="true">
-        <i style={{ width: `${progression}%` }} />
+        <i style={{ '--progression': progression } as CSSProperties} />
       </div>
     </button>
   )
