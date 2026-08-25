@@ -29,25 +29,25 @@ première année**. **Deux concessions spectaculaires pour un écart réel de 10
 
 **Aucune relance n'a été envoyée.** Or sur 7 530 489 emails analysés (Belkins) : **les étapes 2 à
 6 génèrent 58,6 % des réponses**, et **l'étape 3 à elle seule produit 35,6 % de tous les
-rendez-vous** — plus que les étapes 1 et 2 réunies. Elle a abandonné avant la partie où les
+rendez-vous** — plus que les étapes 1 et 2 réunies. Tu as abandonné avant la partie où les
 ventes se font.
 → https://belkins.io/blog/sales-follow-up-statistics
 
-**Et surtout : elle n'a jamais qualifié.** Elle a pitché avant de savoir s'il avait un budget, un
+**Et surtout : tu n'as jamais qualifié.** Tu as pitché avant de savoir s'il avait un budget, un
 problème conscient et le pouvoir de décider. C'est la cause racine de tout le reste.
 
 ## Ce que les données disent en sa faveur
 
 - **Les campagnes de moins de 50 destinataires obtiennent 5,8 % de réponse contre 2,1 % pour les
-  grosses listes.** Son handicap (pas d'équipe, pas de volume) est en réalité son avantage : elle
-  peut personnaliser à un niveau qu'aucune agence ne peut tenir.
+  grosses listes.** Ton handicap (pas d'équipe, pas de volume) est en réalité ton avantage : tu
+  peux personnaliser à un niveau qu'aucune agence ne peut tenir.
 - **Les entreprises de 0-10 salariés répondent 3× mieux** que les grands comptes (0,72 % vs
   0,22 %), et les fondateurs/propriétaires mieux que les VP.
 - **Le secteur Food & Beverage est le n°1 de tous les secteurs à 3,47 % de réponse.** Son
   intuition d'aller vers les restaurateurs était statistiquement bonne. C'est l'exécution qui a
   manqué — mais le segment reste mauvais côté budget (voir `02-marche-freelance.md`).
 - **68,6 % de l'acquisition du marché freelance web français vient du bouche-à-oreille** (étude
-  Agences & Freelances Web 2025). Pour une introvertie, c'est une excellente nouvelle : le canal
+  Agences & Freelances Web 2025). Pour un introverti, c'est une excellente nouvelle : le canal
   dominant n'est pas un canal de vente, **c'est un canal de réputation**.
   → https://www.wp-community.fr/etude-agences-freelances-web-2025-ce-que-les-chiffres-disent-vraiment-du-marche-wordpress-francophone/
 

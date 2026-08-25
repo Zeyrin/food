@@ -8,7 +8,7 @@ ce qui a été décidé, pourquoi, et ce qu'il reste à faire.*
 
 ## 1. Le point de départ
 
-Développeuse web freelance en Île-de-France, 7+ ans d'expérience, React/TypeScript, PWA
+Développeur web freelance en Île-de-France, 7+ ans d'expérience, React/TypeScript, PWA
 offline-first, synchro temps réel. Trois applications personnelles construites par plaisir
 (Coup de Tête, une app « quoi faire cet aprem », l'app Courses de ce dépôt), aucune monétisée.
 
@@ -71,7 +71,7 @@ commission** (jobboard monétisé côté recruteur).
 
 À 600 €/jour sur **4 jours par semaine** : ~9 600 € brut, ~6 900 € net, soit **2,8× l'objectif —
 et une journée par semaine protégée pour construire.** C'est l'arbitrage recommandé, et le seul
-qui compte réellement : le temps plein résout la trésorerie mais reproduit le piège (exécutante
+qui compte réellement : le temps plein résout la trésorerie mais reproduit le piège (exécutant
 à plein temps, retour à zéro en fin de mission).
 
 ### 3.4 Les segments visés étaient les plus pauvres du marché

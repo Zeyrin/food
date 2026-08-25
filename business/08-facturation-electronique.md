@@ -137,7 +137,7 @@ d'entrepreneurs, agences web qui ont des clients e-commerce à mettre en conform
 
 ## Le plan des cinq prochaines semaines
 
-**Semaine 1 — Se rendre compétente.** Lire la documentation officielle, la liste des
+**Semaine 1 — Se rendre compétent.** Lire la documentation officielle, la liste des
 plateformes agréées d'impots.gouv.fr, la spécification Factur-X. Choisir deux ou trois
 plateformes et **tester réellement leurs API** en créant un compte d'essai. Objectif : pouvoir
 répondre à une question technique sans hésiter. Ce n'est pas un mois de travail, c'est

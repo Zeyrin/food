@@ -77,7 +77,7 @@ Autres : Restomatik 49/79/109 € HT/mois sans engagement, Resatable dès 39 €
    **logiciel partenaire certifié**. TheFork et Zenchef le sont. Un module maison ne le sera
    jamais. C'est le canal de découverte n°1 aujourd'hui.
 2. **Support téléphonique 24/7** — décisif un samedi soir en plein service. Structurellement
-   impossible seule.
+   impossible en solo.
 3. Sync temps réel multi-canaux, prédiction de no-show par IA, pré-autorisation CB.
 4. **Responsabilité RGPD** : développer un moteur de réservation maison fait de toi une
    **sous-traitante au sens de l'art. 28** — contrat obligatoire, obligations de sécurité,

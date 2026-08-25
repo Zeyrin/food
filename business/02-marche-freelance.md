@@ -120,7 +120,7 @@ jours) et l'exonération est passée de 50 % à **25 %** depuis le 1er juillet 2
 
 **Le levier Malt à coût nul, disponible aujourd'hui** : **Malt Open** permet d'importer ses
 clients existants hors plateforme et de leur faire déposer un avis vérifié. Seuil documenté :
-**3 avis pour sortir de l'anonymat**. Elle a exactement 3 clients. *« Cinq avis récents pèsent
+**3 avis pour sortir de l'anonymat**. Tu as exactement 3 clients. *« Cinq avis récents pèsent
 plus que vingt compétences sans retour client. »* Et facturer ses clients existants via Malt ne
 coûte que **2 %** — moins cher qu'une assurance impayés, et ça alimente l'historique.
 → https://lefreelance.fr/articles/optimiser-profil-malt-freelance/

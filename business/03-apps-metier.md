@@ -24,7 +24,7 @@ ne va bien.
 **Signal institutionnel fort** : le dispositif *Pays de la Loire Investissement Numérique*
 finance **30 % (40 % si éco-conçu), plafond 15 000 €**, les « applications métier
 personnalisées » — et **exclut explicitement le site vitrine simple**. L'État subventionne
-exactement ce vers quoi il faut aller et refuse de financer ce qu'elle vend aujourd'hui.
+exactement ce vers quoi il faut aller et refuse de financer ce que tu vends aujourd'hui.
 → https://www.paysdelaloire.fr/les-aides/pays-de-la-loire-investissement-numerique
 
 ## ❌ Correction 1 — « offline-first » n'est PAS un argument de vente

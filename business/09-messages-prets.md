@@ -11,7 +11,7 @@ la différence entre un message lu et un message supprimé.*
 
 > Bonjour [Nom],
 >
-> Je suis développeuse indépendante à [ville]. Je vous écris parce que le 1er septembre arrive
+> Je suis développeur indépendant à [ville]. Je vous écris parce que le 1er septembre arrive
 > et que vous avez probablement des clients qui ne pourront pas recevoir de factures
 > électroniques à cette date.
 >
@@ -53,7 +53,7 @@ la différence entre un message lu et un message supprimé.*
 
 > Bonjour [Nom],
 >
-> Développeuse indépendante à [ville], React / TypeScript, je livre des applications web
+> Développeur indépendant à [ville], React / TypeScript, je livre des applications web
 > complètes — y compris des PWA qui fonctionnent hors connexion et se resynchronisent ensuite.
 >
 > Je vous écris simplement pour me signaler : si vous avez un débordement, un projet que vous

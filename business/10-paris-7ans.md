@@ -66,7 +66,7 @@ assujettis et récupèrent.
 
 C'est le seul arbitrage réel du dossier, et il compte.
 
-Une mission à temps plein résout la trésorerie mais **te retransforme en exécutante à plein
+Une mission à temps plein résout la trésorerie mais **te retransforme en exécutant à plein
 temps** — plus de temps pour construire quoi que ce soit, et à la fin de la mission, retour à la
 case départ. C'est exactement le piège dont il faut sortir, en plus confortable.
 
@@ -87,7 +87,7 @@ disent tout de suite et on passe à la suivante. **Le pire résultat de la deman
 - **Le démarchage de commerces, quel qu'il soit.** Définitivement hors sujet.
 - **Les aides régionales franciliennes comme argument de vente.** Le Chèque Numérique
   Île-de-France (1 500 €) **a fermé le 24 octobre 2025**. PM'up existe encore avec un volet
-  numérique jusqu'à 5 000 €, mais il finance le *client*, pas la prestataire — sans objet en
+  numérique jusqu'à 5 000 €, mais il finance le *client*, pas le prestataire — sans objet en
   régie. À vérifier auprès de la CCI Paris IDF si un jour le direct redevient le canal principal.
 
 ## Ce que ça ne rend PAS caduc

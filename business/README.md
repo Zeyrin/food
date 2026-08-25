@@ -29,12 +29,12 @@ recherches vérifiées avec sources primaires, pas sur des généralités de coa
 
 ## Les 4 chiffres à retenir
 
-- **2 750 € HT** — ce qu'une agence paie déjà pour un site en sous-traitance. Elle le vend 1 000 €.
+- **2 750 € HT** — ce qu'une agence paie déjà pour un site en sous-traitance. Tu le vends 1 000 €.
 - **3 900 € HT/mois** — le CA à facturer pour 2 500 € net en micro-BNC 2026.
 - **1er septembre 2026** — obligation légale de réception des factures électroniques. 82 % des
   entrepreneurs ne sont pas prêts. Pas de report.
-- **100** — le nombre de prospects en dessous duquel aucune conclusion n'est permise. Elle en
-  avait contacté **un**.
+- **100** — le nombre de prospects en dessous duquel aucune conclusion n'est permise. Tu en
+  avais contacté **un**.
 
 ## Les trois principes qui traversent tout le dossier
 

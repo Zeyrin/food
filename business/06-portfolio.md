@@ -63,7 +63,7 @@ Un prospect ne lit pas un portfolio. Il regarde une démo.
 3. Un one-pager par app : le problème, la décision de conception la plus intéressante, le
    résultat. Pas de jargon.
 
-**Ce que ça remplace** : le CV, les références clients qu'elle n'a pas encore, et surtout
+**Ce que ça remplace** : le CV, les références clients que tu n'as pas encore, et surtout
 l'obligation de développer du sur-mesure spéculatif avant signature (l'erreur commise avec le
 restaurant).
 

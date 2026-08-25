@@ -37,10 +37,10 @@ Ces quatre actions prennent une demi-journée au total et ne demandent de convai
 **Passer de 1 000 € à 2 750 € HT minimum par projet. Sans exception, dès le prochain devis.**
 
 Ce n'est pas un pari : c'est le prix que les agences web paient déjà en sous-traitance. Le
-marché du site vitrine freelance est à 1 500-5 000 €. Elle est 40 à 60 % en dessous.
+marché du site vitrine freelance est à 1 500-5 000 €. Tu es 40 à 60 % en dessous.
 
 Et une **livraison sous 2 semaines justifie une majoration de 20 à 50 %** — livrer vite n'est pas
-un rabais, c'est un surcoût vendable, et c'est précisément ce qu'elle sait faire.
+un rabais, c'est un surcoût vendable, et c'est précisément ce que tu sais faire.
 
 **Care plan à 120-150 €/mois proposé systématiquement à la livraison** — pas trois mois après,
 quand la valeur perçue est retombée. Le retainer actuel à 100 €/mois est correctement positionné ;
@@ -187,5 +187,5 @@ séquences, donc de prospects contactés le mois précédent. **Abandonner au mo
 
 ## Une dernière chose
 
-Le restaurateur ne s'en est pas battu les couilles d'elle. **Il ne l'a jamais eue en tête assez
+Le restaurateur ne s'en est pas battu les couilles de toi. **Il ne t'a jamais eu en tête assez
 longtemps pour s'en battre les couilles.** C'est exactement le problème que ce système résout.

@@ -8,8 +8,8 @@ en une seule conversation.*
 **Ce qui s'est passé** : le prospect tique sur 150 €/mois → réponse immédiate « le site, je te
 l'offre, je l'ai déjà développé ».
 
-**Ce que le prospect a entendu** : *ce produit ne vaut rien, et elle a plus besoin de moi que
-moi d'elle.*
+**Ce que le prospect a entendu** : *ce produit ne vaut rien, et il a plus besoin de moi que
+moi de lui.*
 
 Un prix qui s'effondre à la première résistance prouve rétroactivement que le prix initial
 était arbitraire. Et un livrable gratuit n'a **ni valeur ni urgence** — c'est pour ça qu'il n'y
@@ -34,7 +34,7 @@ suite plus tard ». Le tarif par unité de travail reste intact.
 
 Deux conséquences, toutes deux mauvaises :
 1. L'investissement était consenti, donc il fallait le rentabiliser à tout prix → position de
-   demandeuse, perceptible.
+   demandeur, perceptible.
 2. Le travail déjà fait ne peut plus être vendu comme un effort à venir.
 
 **Ce qu'il faut faire à la place** : une **démo générique réutilisable**. Un faux client
