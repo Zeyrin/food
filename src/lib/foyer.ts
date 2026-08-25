@@ -1,4 +1,5 @@
 import { assurerSession, marquerAccesObtenu, supabase } from './sync'
+import { traduire } from './i18n'
 
 /**
  * Créer un foyer, en rejoindre un, ou réclamer celui qu'on connaît déjà.
@@ -31,7 +32,12 @@ export async function creerFoyerAvecCode(): Promise<{ id: string; code: string }
   // projet n'est pas branché — c'est déjà le comportement d'avant.
   if (!supabase) return { id: crypto.randomUUID(), code: codeLocal() }
 
-  await assurerSession()
+  // Le booléen était ignoré : sans session, l'appel partait quand même en
+  // tant qu'`anon` — à qui la migration a justement révoqué le droit
+  // d'exécuter ces fonctions. L'utilisateur lisait « la maison n'a pas pu
+  // être créée » là où la vraie cause est un réglage du tableau de bord.
+  if (!(await assurerSession())) throw new Error(traduire('foyer.sessionImpossible'))
+
   const { data, error } = await supabase.rpc('creer_foyer')
   if (error) throw new Error(error.message)
 
@@ -52,7 +58,7 @@ export async function creerFoyerAvecCode(): Promise<{ id: string; code: string }
  */
 export async function resoudreCode(code: string): Promise<string | null> {
   if (!supabase) return null
-  await assurerSession()
+  if (!(await assurerSession())) throw new Error(traduire('foyer.sessionImpossible'))
   const { data, error } = await supabase.rpc('rejoindre_foyer', { code_saisi: code.trim().toUpperCase() })
   if (error) throw new Error(error.message)
 

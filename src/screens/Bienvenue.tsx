@@ -26,8 +26,14 @@ export default function Bienvenue({ onCreer, onRejoindre }: Props) {
     setErreur(null)
     try {
       await onCreer()
-    } catch {
-      setErreur(t('bienvenue.creerErreur'))
+    } catch (e) {
+      // Le message réel plutôt qu'un générique : « la maison n'a pas pu
+      // être créée » envoyait chercher un problème de réseau là où la
+      // cause est un réglage du serveur, et l'écran d'accueil est le seul
+      // endroit où l'on puisse encore le lire — Réglages n'est pas
+      // atteignable tant qu'aucun foyer n'existe.
+      const message = e instanceof Error ? e.message : ''
+      setErreur(message || t('bienvenue.creerErreur'))
       setEnCours(null)
     }
   }

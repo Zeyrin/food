@@ -7,6 +7,10 @@ const CLE_LANGUE = 'fffood:langue'
 export type Dico = { [cle: string]: string | Dico | Dico[] }
 
 const fr: Dico = {
+  foyer: {
+    sessionImpossible:
+      "Impossible d'ouvrir une session avec le serveur. Si vous administrez ce site : activez les connexions anonymes dans Supabase (Authentication → Providers → Anonymous sign-ins).",
+  },
   reglages: {
     donneesTitre:
       "Données & vie privée",
@@ -463,6 +467,10 @@ const fr: Dico = {
 }
 
 const en: Dico = {
+  foyer: {
+    sessionImpossible:
+      "Could not open a session with the server. If you administer this site: enable anonymous sign-ins in Supabase (Authentication → Providers → Anonymous sign-ins).",
+  },
   reglages: {
     donneesTitre:
       "Data & privacy",
