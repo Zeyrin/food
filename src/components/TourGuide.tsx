@@ -77,7 +77,7 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
       Math.max(MARGE, rect.left + rect.width / 2 - largeurCarte / 2),
       window.innerWidth - largeurCarte - MARGE,
     )
-    setStyle({ top: haut, left: gauche })
+    setStyle({ '--x': `${gauche}px`, '--y': `${haut}px` } as CSSProperties)
   }, [rect, index])
 
   const suivant = () => {
@@ -107,41 +107,62 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
 
   const vw = window.innerWidth
   const vh = window.innerHeight
+  /**
+   * Les quatre bandes sombres autour du trou, décrites en coordonnées
+   * d'écran. Elles ne sont pas posées avec `top`/`left`/`width`/`height`
+   * mais converties en variables CSS que la feuille de style traduit en
+   * une seule `transform` (voir `.visite-bande`) : le déplacement d'une
+   * étape à l'autre se joue alors sur le compositeur, sans recalcul de
+   * mise en page.
+   */
   const bandes = rect
     ? [
-        { top: 0, left: 0, width: vw, height: Math.max(0, rect.top - MARGE) },
-        { top: rect.bottom + MARGE, left: 0, width: vw, height: Math.max(0, vh - rect.bottom - MARGE) },
+        { x: 0, y: 0, l: vw, h: Math.max(0, rect.top - MARGE) },
+        { x: 0, y: rect.bottom + MARGE, l: vw, h: Math.max(0, vh - rect.bottom - MARGE) },
         {
-          top: Math.max(0, rect.top - MARGE),
-          left: 0,
-          width: Math.max(0, rect.left - MARGE),
-          height: rect.height + MARGE * 2,
+          x: 0,
+          y: Math.max(0, rect.top - MARGE),
+          l: Math.max(0, rect.left - MARGE),
+          h: rect.height + MARGE * 2,
         },
         {
-          top: Math.max(0, rect.top - MARGE),
-          left: rect.right + MARGE,
-          width: Math.max(0, vw - rect.right - MARGE),
-          height: rect.height + MARGE * 2,
+          x: rect.right + MARGE,
+          y: Math.max(0, rect.top - MARGE),
+          l: Math.max(0, vw - rect.right - MARGE),
+          h: rect.height + MARGE * 2,
         },
       ]
-    : [{ top: 0, left: 0, width: vw, height: vh }]
+    : [{ x: 0, y: 0, l: vw, h: vh }]
 
   return (
     <div className="visite" role="dialog" aria-modal="true" aria-label={t('tour.dialogueLabel')}>
       {bandes.map((b, i) => (
-        <div key={i} className="visite-bande" style={b} />
+        <div
+          key={i}
+          className="visite-bande"
+          style={
+            {
+              '--x': `${b.x}px`,
+              '--y': `${b.y}px`,
+              '--l': b.l,
+              '--h': b.h,
+            } as CSSProperties
+          }
+        />
       ))}
 
       {rect && (
         <div
           className="visite-repere"
-          style={{
-            top: rect.top - MARGE,
-            left: rect.left - MARGE,
-            width: rect.width + MARGE * 2,
-            height: rect.height + MARGE * 2,
-            borderRadius: rayonRepere(tour?.rayon),
-          }}
+          style={
+            {
+              '--x': `${rect.left - MARGE}px`,
+              '--y': `${rect.top - MARGE}px`,
+              width: rect.width + MARGE * 2,
+              height: rect.height + MARGE * 2,
+              borderRadius: rayonRepere(tour?.rayon),
+            } as CSSProperties
+          }
         />
       )}
 

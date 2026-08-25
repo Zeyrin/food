@@ -48,7 +48,6 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg,woff2,ttf}'],
         // Les caches des versions précédentes ne servent plus à rien une
         // fois la nouvelle installée — et occupaient le quota jusqu'à
         // faire échouer la mise en cache suivante sur un téléphone plein.
@@ -56,7 +55,12 @@ export default defineConfig({
         // Les photos des plats sont précachées avec le reste : sans elles,
         // l'app hors ligne retombait sur la vignette teintée alors que le
         // catalogue, lui, est embarqué au build.
-        globPatterns: ['**/*.{js,css,html,png,svg,webp,woff2,ttf}'],
+        //
+        // Cette liste était écrite deux fois, et seule la seconde comptait
+        // — la première, sans `webp`, laissait croire que les photos ne
+        // l'étaient pas. Plus de `ttf` non plus : les fontes ne sont
+        // livrées qu'en WOFF2 (voir l'en-tête de styles.css).
+        globPatterns: ['**/*.{js,css,html,png,svg,webp,woff2}'],
         // Workbox génère le service worker de A à Z : le seul endroit où
         // poser du code à nous est cet import. Il apporte le
         // `notificationclick` qui ramène dans l'app quand on touche

@@ -21,17 +21,36 @@ export function useDecalageBarreOutils() {
     const vv = window.visualViewport
     if (!vv) return
 
+    let frame = 0
+    let pose = -1
+
     const mettreAJour = () => {
+      frame = 0
       const decalage = Math.max(0, window.innerHeight - vv.height - vv.offsetTop)
+      // Pendant un défilement à l'inertie, la barre d'outils passe la
+      // plupart du temps à la même hauteur : réécrire la variable à
+      // l'identique invaliderait quand même le style de tout le document,
+      // à chaque événement, pour rien.
+      if (decalage === pose) return
+      pose = decalage
       document.documentElement.style.setProperty('--decalage-barre-outils', `${decalage}px`)
     }
 
+    // `visualViewport` émet ses événements bien plus souvent que le
+    // navigateur ne dessine — un par image suffit, et c'est le seul
+    // moment où la valeur peut se voir.
+    const planifier = () => {
+      if (frame) return
+      frame = requestAnimationFrame(mettreAJour)
+    }
+
     mettreAJour()
-    vv.addEventListener('resize', mettreAJour)
-    vv.addEventListener('scroll', mettreAJour)
+    vv.addEventListener('resize', planifier)
+    vv.addEventListener('scroll', planifier)
     return () => {
-      vv.removeEventListener('resize', mettreAJour)
-      vv.removeEventListener('scroll', mettreAJour)
+      if (frame) cancelAnimationFrame(frame)
+      vv.removeEventListener('resize', planifier)
+      vv.removeEventListener('scroll', planifier)
     }
   }, [])
 }

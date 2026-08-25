@@ -26,47 +26,67 @@
      à l'encre, et le terracotta se garde pour ce qui se rattrape (un
      retrait, une suppression), jamais pour un simple compteur.
 
-  Deux courbes seulement : `--sortie` pour tout ce qui entre ou se
-  déplace, `--ressort` pour ce qui répond à l'appui. Les états `:hover`
-  vivent tous sous `@media (hover: hover)` — sur un écran tactile ils
-  restent collés au dernier élément touché.
+  Le mouvement suit l'échelle Material 3 : quatre courbes et sept durées,
+  toutes en jetons (voir le bloc « Mouvement » de `:root`). Aucune durée
+  ne s'écrit en dur, et deux transitions du même rôle durent exactement
+  pareil. Ce qui s'anime se limite à `transform` et `opacity`, les deux
+  propriétés que le navigateur sait traiter sans remesurer ni repeindre
+  la page — une largeur ou une position animée le fait travailler à
+  chaque image, et ça se voit sur un téléphone bon marché.
+
+  Les états `:hover` vivent tous sous `@media (hover: hover)` — sur un
+  écran tactile ils restent collés au dernier élément touché.
 */
 
+/* Les six fontes sont servies en WOFF2, et en WOFF2 seulement : c'est
+   du TrueType compressé en Brotli, soit 433 Kio ramenés à 176 Kio pour
+   des glyphes identiques au pixel près. Le format est compris par tout
+   navigateur capable de faire tourner cette app — elle demande déjà les
+   service workers et IndexedDB, plus récents que lui — donc pas de repli
+   TrueType : les fichiers seraient précachés avec le reste (voir
+   `globPatterns` dans vite.config.ts) et l'installation hors ligne
+   téléchargerait 433 Kio que personne n'ouvrirait jamais.
+
+   `font-display: swap` : le texte s'affiche tout de suite dans la fonte
+   système, puis échange. En magasin, sur un réseau qui traîne, une liste
+   de courses lisible en Helvetica vaut mieux qu'une page blanche. Les
+   deux fontes du premier écran sont préchargées dans `index.html`, ce
+   qui rend l'échange assez rapide pour passer inaperçu. */
 @font-face {
   font-family: 'Bricolage Grotesque';
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/bricolage-400.ttf') format('truetype');
+  src: url('/fonts/bricolage-400.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Bricolage Grotesque';
   font-weight: 600;
   font-display: swap;
-  src: url('/fonts/bricolage-600.ttf') format('truetype');
+  src: url('/fonts/bricolage-600.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Bricolage Grotesque';
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/bricolage-700.ttf') format('truetype');
+  src: url('/fonts/bricolage-700.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Bricolage Grotesque';
   font-weight: 800;
   font-display: swap;
-  src: url('/fonts/bricolage-800.ttf') format('truetype');
+  src: url('/fonts/bricolage-800.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Hanken Grotesk';
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/hanken-400.ttf') format('truetype');
+  src: url('/fonts/hanken-400.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Hanken Grotesk';
   font-weight: 600;
   font-display: swap;
-  src: url('/fonts/hanken-600.ttf') format('truetype');
+  src: url('/fonts/hanken-600.woff2') format('woff2');
 }
 
 :root {
@@ -121,10 +141,44 @@
   --filet: rgb(32 27 12 / 0.07);
   --filet-fort: rgb(32 27 12 / 0.12);
 
-  /* Une seule décélération pour tout ce qui entre ou se déplace, un
-     seul rebond pour ce qui répond au doigt. */
-  --sortie: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Mouvement — échelle Material 3.
+
+     Les courbes viennent telles quelles du système : `--standard` pour
+     un simple changement d'état (une couleur, un survol), `--sortie`
+     (emphasized decelerate) pour ce qui entre ou se déplace,
+     `--acceleree` (emphasized accelerate) pour ce qui sort de l'écran.
+     Un objet qui arrive freine, un objet qui part accélère : leur
+     donner la même courbe, comme c'était le cas, faisait lire les deux
+     moitiés d'une transition d'écran comme un seul glissement mou.
+
+     `--ressort` n'est pas de M3 : le rebond de l'appui est une décision
+     de ce système-ci, et c'est la seule courbe qui dépasse sa cible.
+     Elle ne sert qu'aux retours tactiles courts (≤ 150 ms), jamais aux
+     entrées — un dépassement sur une carte qui apparaît se lit comme un
+     défaut de calage. */
+  --standard: cubic-bezier(0.2, 0, 0, 1);
+  --sortie: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --acceleree: cubic-bezier(0.3, 0, 0.8, 0.15);
   --ressort: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Durées : l'échelle M3, pas des valeurs au jugé. Les quatorze durées
+     écrites en dur dans cette feuille (0.12s, 0.14s, 0.15s, 0.16s…)
+     n'étaient distinctes qu'à la lecture du code — à l'œil, 120 ms et
+     140 ms sont la même chose. Cinq paliers suffisent, et deux
+     transitions du même rôle durent maintenant exactement pareil. */
+  --court2: 100ms; /* retour d'appui, bascule de couleur */
+  --court3: 150ms; /* micro-déplacement, pression sur un bouton */
+  --court4: 200ms; /* survol, ombre, changement d'état visible */
+  --moyen2: 300ms; /* transition d'écran */
+  --moyen3: 350ms; /* déplacement d'un objet à travers l'écran */
+  --moyen4: 400ms; /* entrée d'un élément dans la page */
+  --long2: 500ms; /* mouvement ample et lent (zoom d'une photo) */
+
+  /* Pas de l'horloge des minuteurs (`hooks/useMinuteurs.ts`). Ce n'est
+     pas une durée d'animation mais une cadence de rendu : la jauge du
+     bandeau s'en sert pour couvrir exactement l'intervalle entre deux
+     tics. Les deux valeurs doivent rester égales. */
+  --tic-minuteur: 1000ms;
 
   --rayon-petit: 16px;
   --rayon: 24px;
@@ -270,20 +324,11 @@ p.aide a {
 .attente .accueil-sceau {
   margin: 0;
   opacity: 0;
-  animation: attente-apparition 0.4s var(--sortie) 0.25s forwards;
+  animation: attente-apparition var(--moyen4) var(--sortie) 0.25s forwards;
 }
 
 @keyframes attente-apparition {
   to {
-    opacity: 1;
-  }
-}
-
-/* « Réduire les animations » désactive toutes les animations de la
-   feuille : sans ce rattrapage, le repère resterait invisible pour
-   toujours au lieu d'apparaître tout de suite. */
-@media (prefers-reduced-motion: reduce) {
-  .attente .accueil-sceau {
     opacity: 1;
   }
 }
@@ -476,7 +521,7 @@ p.aide a {
      trait sous le titre ne sépare rien. `data-defile` est posé sur
      <html> par App.tsx. */
   box-shadow: 0 1px 0 transparent;
-  transition: box-shadow 0.2s var(--sortie), background-color 0.2s var(--sortie);
+  transition: box-shadow var(--court4) var(--sortie), background-color var(--court4) var(--sortie);
 }
 
 html[data-defile='true'] .entete-app {
@@ -523,7 +568,7 @@ html[data-defile='true'] .entete-app {
   place-items: center;
   cursor: pointer;
   box-shadow: inset 0 0 0 1px var(--filet);
-  transition: transform 0.14s var(--ressort), background-color 0.14s ease, color 0.14s ease;
+  transition: transform var(--court3) var(--ressort), background-color var(--court3) var(--standard), color var(--court3) var(--standard);
 }
 
 .bouton-rond-discret:active {
@@ -641,7 +686,7 @@ nav.onglets button {
   font-weight: 600;
   letter-spacing: 0.01em;
   cursor: pointer;
-  transition: color 0.18s ease;
+  transition: color var(--court4) var(--standard);
 }
 
 /* La pastille active tient sous l'icône seule, pas sous le bouton
@@ -654,7 +699,7 @@ nav.onglets button {
   height: 30px;
   border-radius: 999px;
   background: transparent;
-  transition: background-color 0.22s var(--sortie), transform 0.22s var(--ressort);
+  transition: background-color var(--court4) var(--sortie), transform var(--court4) var(--ressort);
 }
 
 nav.onglets button[aria-current='page'] {
@@ -692,8 +737,8 @@ nav.onglets button:active .onglet-pastille {
      ombre interne plutôt qu'en bordure — aucune épaisseur ajoutée à la
      boîte, donc rien à retrancher aux paddings. */
   box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
-  transition: transform 0.18s var(--sortie), box-shadow 0.18s var(--sortie),
-    background-color 0.14s ease;
+  transition: transform var(--court4) var(--sortie), box-shadow var(--court4) var(--sortie),
+    background-color var(--court3) var(--standard);
 }
 
 /* Les cartes de « Proposer » sont des boutons : retour tactile au doigt. */
@@ -861,9 +906,27 @@ button.carte:active {
   gap: 12px;
 }
 
+/* Le catalogue s'affiche d'un coup, une quarantaine de cartes, dont
+   quatre ou six tiennent à l'écran. `content-visibility: auto` dit au
+   navigateur de ne pas mettre en page ni dessiner celles qui sont hors
+   champ tant qu'on n'y arrive pas : au premier rendu de l'écran, il y a
+   six cartes à composer au lieu de quarante.
+
+   `contain-intrinsic-size: auto 260px` est la hauteur qu'on leur suppose
+   en attendant. Le mot-clé `auto` est la moitié importante : dès qu'une
+   carte a été rendue une fois, le navigateur retient sa hauteur réelle
+   et s'en sert à la place de l'estimation — sans lui, la barre de
+   défilement se recalait à chaque carte atteinte.
+
+   La recherche dans la page, le clavier et les lecteurs d'écran voient
+   quand même ce contenu : le navigateur rend une carte sautée dès que
+   l'un d'eux la demande. Et là où la propriété n'existe pas, il ne se
+   passe rien du tout — la grille s'affiche comme avant. */
 .grille-recettes .carte-recette {
   margin-bottom: 0;
   cursor: pointer;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 260px;
 }
 
 .grille-recettes .carte-recette:active {
@@ -887,7 +950,7 @@ button.carte:active {
 /* Le zoom vit sur l'image, pas sur la vignette : celle-ci porte le
    badge et le bouton d'ajout, qui ne doivent pas bouger avec elle. */
 .vignette img {
-  transition: transform 0.5s var(--sortie);
+  transition: transform var(--long2) var(--sortie);
 }
 
 .grille-recettes .vignette {
@@ -1007,8 +1070,19 @@ button.discret.danger {
   margin: 16px 0 0;
 }
 
-/* Entrée des cartes : montée courte + fondu, échelonnée par la
-   variable --rang posée sur chaque carte. */
+/* Entrée des cartes : montée courte + fondu, échelonnée par la variable
+   --rang posée sur chaque carte.
+
+   Seules les huit premières s'animent. Le catalogue en compte une
+   quarantaine, et chaque carte animée est une couche que le navigateur
+   compose à part : au montage de l'écran, quarante couches naissaient
+   d'un coup pour un effet dont trente et quelques se jouaient hors de
+   l'écran, invisibles. Huit couvrent large la première hauteur d'écran
+   sur un téléphone ; les suivantes sont simplement là quand on arrive.
+
+   Le pas passe de 40 à 30 ms : à huit cartes, la cascade se referme en
+   210 ms au lieu de 800 ms sur vingt. Un échelonnement se sent, il ne
+   se regarde pas — passé ~250 ms, la grille a l'air lente à venir. */
 @keyframes monter {
   from {
     opacity: 0;
@@ -1016,9 +1090,9 @@ button.discret.danger {
   }
 }
 
-.grille-recettes .carte-recette {
-  animation: monter 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-  animation-delay: calc(var(--rang, 0) * 40ms);
+.grille-recettes .carte-recette:nth-child(-n + 8) {
+  animation: monter var(--moyen4) var(--sortie) backwards;
+  animation-delay: calc(var(--rang, 0) * 30ms);
 }
 
 /* Bloc d'astuce du mode cuisson. Ses couleurs sont écrites en dur
@@ -1058,8 +1132,8 @@ button.discret.danger {
   /* Le liseré clair sur l'arête haute et l'ombre portée sous le rond en
      font un bouton posé sur la photo, pas une pastille peinte dessus. */
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), var(--ombre-nette);
-  transition: transform 0.16s var(--ressort), background-color 0.16s ease,
-    box-shadow 0.16s var(--sortie);
+  transition: transform var(--court3) var(--ressort), background-color var(--court3) var(--standard),
+    box-shadow var(--court3) var(--sortie);
 }
 
 .bouton-ajout:active {
@@ -1167,7 +1241,7 @@ button.discret.danger {
      à l'appui sans faire sauter la ligne suivante. */
   box-shadow: inset 0 -1px 0 var(--filet);
   border-radius: var(--rayon-petit);
-  transition: background-color 0.14s ease, box-shadow 0.14s ease;
+  transition: background-color var(--court3) var(--standard), box-shadow var(--court3) var(--standard);
 }
 
 /* Dernière ligne d'un rayon (ou d'une fiche) : pas de trait sous le
@@ -1247,8 +1321,8 @@ button.discret.danger {
   display: grid;
   place-items: center;
   color: var(--sur-accent);
-  transition: background-color 0.14s ease, border-color 0.14s ease,
-    border-radius 0.2s var(--ressort), transform 0.14s var(--ressort);
+  transition: background-color var(--court3) var(--standard), border-color var(--court3) var(--standard),
+    border-radius var(--court4) var(--ressort), transform var(--court3) var(--ressort);
 }
 
 .rangee[data-coche='true'] .case {
@@ -1450,8 +1524,8 @@ h3.entete-section {
   font-weight: 600;
   cursor: pointer;
   box-shadow: inset 0 0 0 1px var(--filet);
-  transition: transform 0.15s var(--ressort), background-color 0.12s ease, color 0.12s ease,
-    box-shadow 0.12s ease;
+  transition: transform var(--court3) var(--ressort), background-color var(--court2) var(--standard), color var(--court2) var(--standard),
+    box-shadow var(--court2) var(--standard);
 }
 
 .puce:active {
@@ -1510,7 +1584,7 @@ h3.entete-section {
   cursor: pointer;
   list-style: none;
   font-weight: 700;
-  transition: color 0.14s ease;
+  transition: color var(--court3) var(--standard);
 }
 
 @media (hover: hover) {
@@ -1536,7 +1610,7 @@ h3.entete-section {
 .tiroir-filtres summary svg {
   margin-left: auto;
   color: var(--encre-douce);
-  transition: transform 0.18s ease;
+  transition: transform var(--court4) var(--standard);
 }
 
 .tiroir-filtres[open] summary svg {
@@ -1569,8 +1643,8 @@ button.principal {
   cursor: pointer;
   margin-top: 8px;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), var(--ombre-nette);
-  transition: transform 0.16s var(--ressort), box-shadow 0.18s var(--sortie),
-    opacity 0.12s ease, filter 0.16s ease;
+  transition: transform var(--court3) var(--ressort), box-shadow var(--court4) var(--sortie),
+    opacity var(--court2) var(--standard), filter var(--court3) var(--standard);
 }
 
 button.principal:active:not(:disabled) {
@@ -1630,8 +1704,8 @@ button.discret {
   font: inherit;
   font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.14s ease, background-color 0.14s ease, color 0.14s ease,
-    transform 0.14s var(--ressort);
+  transition: border-color var(--court3) var(--standard), background-color var(--court3) var(--standard), color var(--court3) var(--standard),
+    transform var(--court3) var(--ressort);
 }
 
 button.discret:active:not(:disabled) {
@@ -1809,7 +1883,7 @@ button.pastille-synchro {
   border: 0;
   font-family: inherit;
   cursor: pointer;
-  transition: transform 0.14s var(--ressort);
+  transition: transform var(--court3) var(--ressort);
 }
 
 button.pastille-synchro:active {
@@ -2036,7 +2110,7 @@ button.pastille-synchro:active {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color var(--court4) var(--standard), color var(--court4) var(--standard);
 }
 
 .bascule-mode-bouton[aria-pressed='true'] {
@@ -2117,7 +2191,7 @@ button.carte-panier-bouton .carte-panier-corps {
   flex-wrap: wrap;
   gap: 12px;
   background: var(--carte-haute);
-  animation: confirmation-entree 0.16s ease;
+  animation: confirmation-entree var(--court3) var(--sortie);
 }
 
 .carte-annulation p {
@@ -2140,7 +2214,7 @@ button.carte-panier-bouton .carte-panier-corps {
   color: var(--accent);
   cursor: pointer;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
-  transition: transform 0.18s var(--sortie), box-shadow 0.18s var(--sortie);
+  transition: transform var(--court4) var(--sortie), box-shadow var(--court4) var(--sortie);
   margin-bottom: 12px;
 }
 
@@ -2245,7 +2319,7 @@ button.carte-panier-bouton .carte-panier-corps {
   place-items: center;
   flex-shrink: 0;
   box-shadow: inset 0 0 0 1px var(--filet);
-  transition: background-color 0.14s ease, color 0.14s ease, transform 0.14s var(--ressort);
+  transition: background-color var(--court3) var(--standard), color var(--court3) var(--standard), transform var(--court3) var(--ressort);
 }
 
 .compteur button:active {
@@ -2319,7 +2393,7 @@ button.carte-panier-bouton .carte-panier-corps {
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: transform 0.12s ease;
+  transition: transform var(--court2) var(--standard);
 }
 
 .cuisson-rond:active {
@@ -2374,7 +2448,7 @@ button.carte-panier-bouton .carte-panier-corps {
   height: 6px;
   border-radius: 999px;
   background: rgb(255 248 239 / 0.18);
-  transition: background-color 0.2s ease;
+  transition: background-color var(--court4) var(--standard);
 }
 
 .progression button[data-fait='true']::before {
@@ -2419,7 +2493,7 @@ button.carte-panier-bouton .carte-panier-corps {
 /* Le chevron pointe à droite replié, vers le bas déplié. */
 .tiroir-ingredients summary svg {
   margin-left: auto;
-  transition: transform 0.18s ease;
+  transition: transform var(--court4) var(--standard);
 }
 
 .tiroir-ingredients[open] summary svg {
@@ -2515,7 +2589,7 @@ button.carte-panier-bouton .carte-panier-corps {
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.12s ease;
+  transition: transform var(--court2) var(--standard);
 }
 
 .bouton-minuteur:active {
@@ -2533,6 +2607,9 @@ button.carte-panier-bouton .carte-panier-corps {
    l'écran, elle mérite de gros chiffres lisibles de loin plutôt qu'un
    badge qu'il faut plisser les yeux pour lire. */
 .bandeau-minuteur {
+  /* `relative` porte le voile de pulsation (`::after`) quand le minuteur
+     sonne — voir plus bas. */
+  position: relative;
   display: block;
   width: 100%;
   margin-top: 14px;
@@ -2543,10 +2620,13 @@ button.carte-panier-bouton .carte-panier-corps {
   color: #fff8ef;
   cursor: pointer;
   text-align: left;
-  transition: background-color 0.2s ease;
+  transition: background-color var(--court4) var(--standard);
 }
 
 .bandeau-minuteur-ligne {
+  /* Au-dessus du voile de pulsation. */
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2594,6 +2674,9 @@ button.carte-panier-bouton .carte-panier-corps {
 }
 
 .bandeau-minuteur-jauge {
+  /* Au-dessus du voile de pulsation, comme la ligne de texte. */
+  position: relative;
+  z-index: 1;
   margin-top: 10px;
   height: 6px;
   border-radius: 999px;
@@ -2601,16 +2684,46 @@ button.carte-panier-bouton .carte-panier-corps {
   overflow: hidden;
 }
 
+/* La jauge avançait en animant sa `width` : le navigateur remesurait et
+   repeignait la barre à chaque image, en continu, pendant toute la
+   cuisson. Un `scaleX` fait le même trajet sur le compositeur — aucun
+   calcul de mise en page, et le fil principal reste libre pour le reste
+   de l'app. Le remplissage part de la gauche (`transform-origin`), et
+   c'est le parent qui arrondit les extrémités : l'`i` n'a plus de rayon
+   propre, qu'une mise à l'échelle horizontale aurait écrasé.
+
+   La durée suit exactement le pas de l'horloge des minuteurs
+   (`useMinuteurs`, une image par seconde) : plus courte, la jauge
+   avancerait par à-coups avec une pause entre deux tics ; plus longue,
+   elle traînerait derrière le décompte affiché. */
 .bandeau-minuteur-jauge i {
   display: block;
   height: 100%;
-  border-radius: inherit;
+  width: 100%;
   background: #a6d47e;
-  transition: width 0.5s linear;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--progression, 0));
+  transition: transform var(--tic-minuteur) linear;
 }
 
 .bandeau-minuteur[data-sonne='true'] {
   background: #a6d47e;
+}
+
+/* Pulsation de fin : un voile clair qui se fond et se retire par-dessus
+   le bandeau, plutôt que la couleur de fond animée d'une image sur
+   l'autre. L'opacité seule se joue sur le compositeur ; animer
+   `background` obligeait le navigateur à repeindre le bandeau entier,
+   texte compris, soixante fois par seconde et sans fin — sur un
+   téléphone posé sur le plan de travail, c'est la batterie qui paie. */
+.bandeau-minuteur[data-sonne='true']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: #bcefc0;
   animation: pulsation-bandeau 1s ease-in-out infinite;
 }
 
@@ -2707,8 +2820,12 @@ button.carte-panier-bouton .carte-panier-corps {
 }
 
 @keyframes pulsation-bandeau {
+  0%,
+  100% {
+    opacity: 0;
+  }
   50% {
-    background: #bcefc0;
+    opacity: 1;
   }
 }
 
@@ -2817,12 +2934,6 @@ button.carte-panier-bouton .carte-panier-corps {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .bandeau-minuteur[data-sonne='true'] {
-    animation: none;
-  }
-}
-
 .cuisson-focus .dose {
   color: #ffb3b0;
 }
@@ -2849,7 +2960,7 @@ button.carte-panier-bouton .carte-panier-corps {
   font: inherit;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.12s ease;
+  transition: transform var(--court2) var(--standard);
 }
 
 .bouton-cuisson:active {
@@ -2916,7 +3027,7 @@ button.carte-panier-bouton .carte-panier-corps {
   font: inherit;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.12s ease;
+  transition: transform var(--court2) var(--standard);
 }
 
 .choix-verdict:active {
@@ -2971,7 +3082,7 @@ button.carte-panier-bouton .carte-panier-corps {
   color: var(--sur-accent);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), var(--ombre-nette);
   cursor: pointer;
-  transition: transform 0.16s var(--ressort), box-shadow 0.18s var(--sortie);
+  transition: transform var(--court3) var(--ressort), box-shadow var(--court4) var(--sortie);
 }
 
 .bouton-flottant:active {
@@ -3033,7 +3144,7 @@ button.carte-panier-bouton .carte-panier-corps {
   /* Creux d'un pixel sur l'arête haute : un champ se lit comme un
      renfoncement, à l'inverse des boutons qui prennent la lumière. */
   box-shadow: inset 0 1px 2px rgb(32 27 12 / 0.05);
-  transition: border-color 0.14s ease, box-shadow 0.14s ease;
+  transition: border-color var(--court3) var(--standard), box-shadow var(--court3) var(--standard);
 }
 
 .champ-texte::placeholder {
@@ -3191,7 +3302,7 @@ button.carte-panier-bouton .carte-panier-corps {
   background: var(--accent);
   color: var(--sur-accent);
   cursor: pointer;
-  transition: transform 0.12s ease, opacity 0.12s ease;
+  transition: transform var(--court2) var(--standard), opacity var(--court2) var(--standard);
 }
 
 .composeur-valider:active:not(:disabled) {
@@ -3215,7 +3326,7 @@ button.carte-panier-bouton .carte-panier-corps {
   border-radius: var(--rayon);
   background: var(--terracotta-doux);
   color: var(--encre);
-  animation: confirmation-entree 0.16s ease;
+  animation: confirmation-entree var(--court3) var(--sortie);
 }
 
 .bloc-confirmation p {
@@ -3350,10 +3461,22 @@ nav.onglets {
   view-transition-name: chrome-hors-ligne;
 }
 
+/* L'écran qui part accélère vers la sortie, celui qui arrive freine en
+   se posant : c'est la paire de courbes que Material appelle
+   « emphasized accelerate / decelerate ». Les deux moitiés partageaient
+   la même décélération, et la transition se lisait comme un seul
+   glissement uniforme au lieu d'un écran qui cède la place à un autre. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.28s;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: var(--moyen2);
+}
+
+::view-transition-old(root) {
+  animation-timing-function: var(--acceleree);
+}
+
+::view-transition-new(root) {
+  animation-timing-function: var(--sortie);
 }
 
 /* Avancer (nouvel écran) : l'ancien glisse et s'efface vers la gauche,
@@ -3403,10 +3526,36 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   }
 }
 
+/* « Réduire les animations », appliqué à toute la feuille d'un coup.
+
+   Pas `animation: none` : la propriété raccourcie effaçait aussi le
+   `forwards`, et une animation qui laissait son élément dans son état
+   final — le sceau de l'écran d'attente, qui part d'`opacity: 0` — le
+   laissait invisible pour toujours. Il fallait un rattrapage par
+   animation concernée, à ne pas oublier la prochaine fois.
+
+   La durée quasi nulle, elle, laisse chaque animation se jouer : elle
+   atteint sa dernière image en une fraction de milliseconde, remplit ce
+   qu'elle a à remplir, et les événements `animationend` /
+   `transitionend` partent normalement — du JavaScript qui les attendrait
+   ne resterait pas suspendu. Le délai négatif évite qu'une animation
+   retardée reste bloquée sur sa première image le temps de son délai.
+
+   `!important` et le sélecteur universel, pseudo-éléments compris :
+   c'est un réglage d'accessibilité, il passe devant tout le reste. Les
+   pseudo-éléments `::view-transition-*` n'appartiennent pas à l'arbre du
+   document et échappent à cette règle — la garde est posée côté JS, dans
+   `App.tsx` (`avecTransition`). */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: -1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -3562,30 +3711,50 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
    recouvrent jamais le trou lui-même — l'élément réel reste visible et
    cliquable dessous, la visite ne fait qu'indiquer où il est. */
 
+/* Les quatre bandes se déplaçaient en animant `top`, `left`, `width` et
+   `height` : à chaque image, le navigateur recalculait la mise en page
+   puis repeignait quatre rectangles qui couvrent tout l'écran, pendant
+   350 ms, à chaque changement d'étape. C'est le mouvement le plus cher
+   de l'app, et il tombe pile au premier lancement.
+
+   Chaque bande est donc un carré d'un pixel en haut à gauche de l'écran,
+   que `transform` déplace et étire jusqu'à sa taille réelle : le
+   compositeur fait tout, sans mesure ni repeinte. Une bande n'a ni
+   bordure ni rayon — c'est un aplat — donc la mise à l'échelle ne
+   déforme rien. */
 .visite-bande {
   position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
   background: color-mix(in srgb, var(--encre) 62%, transparent);
   z-index: 55;
-  transition:
-    top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: 0 0;
+  transform: translate(var(--x, 0px), var(--y, 0px)) scale(var(--l, 0), var(--h, 0));
+  transition: transform var(--moyen3) var(--standard);
 }
 
+/* Le repère, lui, garde ses dimensions animées : c'est un anneau, et
+   l'étirer déformerait son trait de 3 px et ses coins arrondis. Seul son
+   déplacement passe en `transform` — soit le gros du trajet quand on
+   saute d'un bouton du bas à un bouton du haut. Un élément qui remesure
+   au lieu de quatre plein écran. */
 .visite-repere {
   position: fixed;
+  top: 0;
+  left: 0;
   z-index: 56;
   border: 3px solid var(--accent);
   border-radius: 20px; /* repli tant que le rayon réel de la cible n'est pas encore mesuré */
   pointer-events: none;
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+  transform: translate(var(--x, 0px), var(--y, 0px));
   transition:
-    top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    border-radius 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transform var(--moyen3) var(--standard),
+    width var(--moyen3) var(--standard),
+    height var(--moyen3) var(--standard),
+    border-radius var(--moyen3) var(--standard);
 }
 
 .visite-repere::after {
@@ -3594,7 +3763,11 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   inset: 0;
   border-radius: inherit;
   border: 3px solid var(--accent);
-  animation: visite-ping 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  /* L'onde part vite puis s'étale : c'est la décélération accentuée, la
+     même que pour tout ce qui entre. Le rythme (1,8 s) n'est pas une
+     durée de transition mais une respiration — il ne prend pas de
+     jeton. */
+  animation: visite-ping 1.8s var(--sortie) infinite;
 }
 
 @keyframes visite-ping {
@@ -3618,11 +3791,16 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
      une carte blanche posée sur un voile sombre, le halo vert se voyait. */
   box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-haute);
   padding: 20px;
-  transition:
-    top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Même raison que les bandes : la carte glisse en `transform` depuis
+     l'origine de l'écran, pas en animant `top`/`left`. */
+  top: 0;
+  left: 0;
+  transform: translate(var(--x, 0px), var(--y, 0px));
+  transition: transform var(--moyen3) var(--standard);
 }
 
+/* Étape sans repère : la carte se pose au centre et n'a nulle part où
+   glisser. `left`/`top` reprennent la main sur la translation. */
 .visite-carte-centre {
   top: 50%;
   left: 50%;
@@ -3650,7 +3828,7 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
 }
 
 .visite-carte-corps {
-  animation: visite-entree 0.28s ease;
+  animation: visite-entree var(--moyen2) var(--sortie);
 }
 
 @keyframes visite-entree {
@@ -3690,7 +3868,7 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   border-radius: 999px;
   background: var(--trait);
   cursor: pointer;
-  transition: width 0.16s ease, background-color 0.16s ease;
+  transition: width var(--court3) var(--standard), background-color var(--court3) var(--standard);
 }
 
 .visite-point[aria-current='true'] {
@@ -3716,20 +3894,6 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   align-items: center;
   gap: 4px;
   white-space: nowrap;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .visite-bande,
-  .visite-repere,
-  .visite-carte {
-    transition: none;
-  }
-  .visite-repere::after {
-    animation: none;
-  }
-  .visite-carte-corps {
-    animation: none;
-  }
 }
 
 /* --- Ajouter une recette (section de l'écran Proposer) --------------------
@@ -3760,7 +3924,7 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.12s ease, transform 0.12s ease;
+  transition: border-color var(--court2) var(--standard), transform var(--court2) var(--standard);
 }
 
 .bande-ajout:active {
@@ -3844,7 +4008,7 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.12s ease, transform 0.12s ease;
+  transition: border-color var(--court2) var(--standard), transform var(--court2) var(--standard);
 }
 
 .carte-methode:active {
