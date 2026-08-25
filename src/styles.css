@@ -1111,6 +1111,11 @@ button.carte:active {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+  /* Chaque carte à sa propre hauteur. Étirées à la plus haute de leur
+     rangée, celles qui n'ont pas de photo — bandeau court, titre de deux
+     lignes — se retrouvaient avec un grand aplat de vide sous le titre à
+     côté d'une carte illustrée. */
+  align-items: start;
 }
 
 /* Le catalogue s'affiche d'un coup, une quarantaine de cartes, dont
@@ -1172,7 +1177,9 @@ button.carte:active {
    temps de cuisson, et le titre remonte à sa place. */
 .vignette[data-sans-photo] {
   aspect-ratio: auto;
-  min-height: 52px;
+  /* De quoi loger le bouton d'ajout, qui vit au ras du bas de la
+     vignette : plus court, il débordait par-dessus le titre. */
+  min-height: 60px;
   padding-bottom: 0;
   align-items: center;
   justify-content: flex-end;
@@ -1182,9 +1189,13 @@ button.carte:active {
 
 .grille-recettes .vignette[data-sans-photo] {
   aspect-ratio: auto;
-  min-height: 46px;
+  min-height: 56px;
   font-size: 22px;
   padding-right: 10px;
+}
+
+.vignette[data-sans-photo] .bouton-ajout-flottant {
+  bottom: 6px;
 }
 
 @supports not (aspect-ratio: 4 / 3) {
