@@ -275,11 +275,14 @@ export default function App() {
   // enregistré : à la fin, `terminerOnboarding` le réécrit simplement à
   // la même valeur. On repart de l'onglet Proposer — la visite y
   // commence toujours — plutôt que de laisser l'écran Réglages ouvert
-  // dessous.
+  // dessous. Retour en haut au passage, comme toute navigation : la
+  // visite gèle le défilement, et repartir d'un écran Réglages défilé
+  // laisserait le premier repère hors de vue sans moyen d'y descendre.
   const revoirOnboarding = useCallback(() => {
     setPile([{ type: 'onglet', onglet: 'propose' }])
+    defilerVers(0)
     setOnboardingVu(false)
-  }, [])
+  }, [defilerVers])
 
   /**
    * Au clavier ou au lecteur d'écran, changer d'écran ne déplaçait pas
