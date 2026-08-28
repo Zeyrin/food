@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Recipe, Verdict } from '../types'
-import { annoterEtape, etapeEnTexte, formatQuantite } from '../lib/aggregate'
+import { dosesDeLEtape, etapeEnTexte, formatQuantite } from '../lib/aggregate'
 import { formatDuree, minuteursDeLEtape } from '../lib/duree'
 import { useWakeLock } from '../hooks/useWakeLock'
 import type { Minuteurs } from '../hooks/useMinuteurs'
 import { ecrireProgression, lireProgression, oublierProgression } from '../lib/progressionCuisson'
 import { useLangue } from '../lib/i18n'
+import { recetteAffichee } from '../lib/traduireRecette'
 import BandeauMinuteur from '../components/BandeauMinuteur'
 import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
@@ -20,15 +21,38 @@ interface Props {
 }
 
 export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdict, onQuitter }: Props) {
-  const { t } = useLangue()
+  const { t, langue } = useLangue()
   const [index, setIndex] = useState(-1)
   // Lu une seule fois au montage : la valeur ne doit pas disparaître de
   // l'écran de préparation au moment où on écrit la progression suivante.
   const [reprise] = useState(() => lireProgression(recette.id))
   useWakeLock(true)
 
-  const etape = recette.etapes[index] ?? ''
+  // Ce qui s'affiche : titre, étapes et noms d'ingrédients dans la
+  // langue de l'app. `recette` reste la version française du corpus —
+  // c'est elle qui porte les clés d'agrégation et la morphologie que
+  // sait lire `dosesDeLEtape`.
+  const affichee = useMemo(() => recetteAffichee(recette, langue), [recette, langue])
+
+  const etape = affichee.etapes[index] ?? ''
   const proposes = useMemo(() => minuteursDeLEtape(etape), [etape])
+
+  /**
+   * Les doses de l'étape, sorties de la phrase. Elles sont repérées sur
+   * le texte français, puis réétiquetées avec le nom affiché : « ail »
+   * devient « garlic » sans que la reconnaissance ait à savoir lire
+   * l'anglais.
+   */
+  const doses = useMemo(() => {
+    const source = recette.etapes[index]
+    if (source === undefined) return []
+    const parNom = new Map(affichee.ingredients.map((ing) => [ing.nom, ing.affichage]))
+    return dosesDeLEtape(source, recette.ingredients).map((ing) => ({
+      cle: ing.nom,
+      nom: parNom.get(ing.nom) ?? ing.nom,
+      quantite: formatQuantite(ing),
+    }))
+  }, [recette, affichee, index])
 
   const fini = index >= recette.etapes.length
 
@@ -49,18 +73,18 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           <Icone nom="precedent" taille={18} /> {t('cuisson.retour')}
         </button>
 
-        <h1>{recette.titre}</h1>
+        <h1>{affichee.titre}</h1>
 
-        <h2>{t('cuisson.titreIngredients', { n: recette.ingredients.length })}</h2>
-        {recette.ingredients.map((ing) => (
+        <h2>{t('cuisson.titreIngredients', { n: affichee.ingredients.length })}</h2>
+        {affichee.ingredients.map((ing) => (
           <div className="rangee rangee-lecture" key={ing.nom}>
-            <span className="nom">{ing.nom}</span>
+            <span className="nom">{ing.affichage}</span>
             <span className="qte">{formatQuantite(ing)}</span>
           </div>
         ))}
-        <h2>{t('cuisson.titreEtapes', { n: recette.etapes.length })}</h2>
+        <h2>{t('cuisson.titreEtapes', { n: affichee.etapes.length })}</h2>
         <ol className="apercu-etapes">
-          {recette.etapes.map((etape, i) => (
+          {affichee.etapes.map((etape, i) => (
             <li key={i}>{etapeEnTexte(etape)}</li>
           ))}
         </ol>
@@ -194,13 +218,13 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           si le rendu React est occupé ailleurs. */}
       <details className="tiroir-ingredients">
         <summary>
-          <span>{t('cuisson.titreIngredients', { n: recette.ingredients.length })}</span>
+          <span>{t('cuisson.titreIngredients', { n: affichee.ingredients.length })}</span>
           <Icone nom="suivant" taille={18} />
         </summary>
         <ul className="liste-ingredients">
-          {recette.ingredients.map((ing) => (
+          {affichee.ingredients.map((ing) => (
             <li key={ing.nom}>
-              <span>{ing.nom}</span>
+              <span>{ing.affichage}</span>
               <b>{formatQuantite(ing)}</b>
             </li>
           ))}
@@ -210,14 +234,22 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
       {/* Seule zone qui défile : une étape longue ne pousse plus les
           boutons hors de l'écran. */}
       <div className="cuisson-corps" key={index}>
-        <p className="etape-titre">
-          {annoterEtape(etape, recette.ingredients).map((seg, i) => (
-            <span key={i}>
-              {seg.texte}
-              {seg.quantite && <b className="dose"> {seg.quantite}</b>}
-            </span>
-          ))}
-        </p>
+        {/* La dose n'est plus dans la phrase. « Faire revenir l'ail
+            60 g dans la poêle » se lit deux fois : une pour la
+            consigne, une pour le nombre. Les quantités montent donc
+            au-dessus, en ligne, et l'étape redevient une phrase qu'on
+            lit d'un trait à un mètre du plan de travail. */}
+        {doses.length > 0 && (
+          <ul className="doses-etape" aria-label={t('cuisson.dosesDeLEtape')}>
+            {doses.map((d) => (
+              <li key={d.cle}>
+                <b>{d.quantite}</b> {d.nom}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <p className="etape-titre">{etapeEnTexte(etape)}</p>
 
         {/* Un bouton par durée citée dans l'étape : la durée est déjà
             sous les yeux, il ne reste qu'à la lancer. */}
@@ -229,7 +261,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
                 className="bouton-minuteur"
                 onClick={() => {
                   mesurer('minuteur_lance', { secondes: m.secondes })
-                  minuteurs.lancer(m.secondes, m.nom, recette.id, recette.titre)
+                  minuteurs.lancer(m.secondes, m.nom, recette.id, affichee.titre)
                 }}
               >
                 <Icone nom="minuteur" taille={16} /> {t('cuisson.lancer', { duree: formatDuree(m.secondes) })}
@@ -238,10 +270,10 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           </div>
         )}
 
-        {recette.astuces?.[index] && (
+        {affichee.astuces?.[index] && (
           <div className="bloc-astuce">
             <Icone nom="etoile" taille={20} />
-            <p>{recette.astuces[index]}</p>
+            <p>{affichee.astuces[index]}</p>
           </div>
         )}
       </div>

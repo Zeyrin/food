@@ -9,6 +9,10 @@
  *    imposent de citer l'auteur : une recette ajoutée avec sa photo mais
  *    sans sa ligne dans `public/credits.html` est un manquement, pas un
  *    détail de présentation.
+ * 3. La couverture de la traduction anglaise du corpus. Une recette ou
+ *    un ingrédient sans traduction ne casse rien — il retombe en
+ *    français au milieu d'un écran anglais, et seul quelqu'un qui
+ *    bascule la langue sur cette recette-là le voit.
  */
 import { readFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
@@ -104,9 +108,71 @@ if (domaines.size > 1) {
   erreurs.push(`domaine : plusieurs origines annoncées — ${[...domaines].join(', ')}`)
 }
 
+// --- 4. Couverture de la traduction du corpus -------------------------------
+
+interface TraductionRecette {
+  titre?: string
+  description?: string
+  etapes?: string[]
+  astuces?: string[]
+}
+
+const traductions: Record<string, TraductionRecette> = JSON.parse(lire('src/data/recipes.en.json'))
+const glossaire: { ingredients: Record<string, string>; tags: Record<string, string> } = JSON.parse(
+  lire('src/data/glossaire.en.json'),
+)
+
+for (const r of recettes) {
+  const tr = traductions[r.id]
+  if (!tr) {
+    erreurs.push(`traduction : « ${r.titre} » (${r.id}) n'a pas de version anglaise`)
+    continue
+  }
+  if (!tr.titre) erreurs.push(`traduction : ${r.id} — titre anglais manquant`)
+  // Le nombre d'étapes fait foi : l'app indexe les deux listes par le
+  // même compteur, une étape en trop ou en moins décalerait tout.
+  if ((tr.etapes?.length ?? 0) !== r.etapes.length) {
+    erreurs.push(
+      `traduction : ${r.id} — ${tr.etapes?.length ?? 0} étape(s) anglaise(s) pour ${r.etapes.length}`,
+    )
+  }
+  if ((tr.astuces?.length ?? 0) !== (r.astuces?.length ?? 0)) {
+    erreurs.push(`traduction : ${r.id} — astuces anglaises incomplètes`)
+  }
+  if (r.description && !tr.description) {
+    erreurs.push(`traduction : ${r.id} — description anglaise manquante`)
+  }
+}
+
+for (const id of Object.keys(traductions)) {
+  if (!recettes.some((r) => r.id === id)) {
+    erreurs.push(`traduction : « ${id} » ne correspond à aucune recette du corpus`)
+  }
+}
+
+const ingredientsDuCorpus = new Set(recettes.flatMap((r) => r.ingredients.map((i) => i.nom)))
+const tagsDuCorpus = new Set(recettes.flatMap((r) => r.tags))
+
+for (const nom of ingredientsDuCorpus) {
+  if (!glossaire.ingredients[nom]) erreurs.push(`glossaire : ingrédient « ${nom} » sans traduction`)
+}
+for (const tag of tagsDuCorpus) {
+  if (!glossaire.tags[tag]) erreurs.push(`glossaire : tag « ${tag} » sans traduction`)
+}
+for (const nom of Object.keys(glossaire.ingredients)) {
+  if (!ingredientsDuCorpus.has(nom)) erreurs.push(`glossaire : ingrédient « ${nom} » absent du corpus`)
+}
+for (const tag of Object.keys(glossaire.tags)) {
+  if (!tagsDuCorpus.has(tag)) erreurs.push(`glossaire : tag « ${tag} » absent du corpus`)
+}
+
 // --- Rapport ----------------------------------------------------------------
 
 console.log(`i18n : ${fr.size} clés fr, ${en.size} clés en.`)
+console.log(
+  `traduction : ${Object.keys(traductions).length}/${recettes.length} recettes, ` +
+    `${Object.keys(glossaire.ingredients).length} ingrédients, ${Object.keys(glossaire.tags).length} tags.`,
+)
 console.log(`crédits : ${credites.size} lignes pour ${recettes.filter((r) => r.image).length} recettes avec photo.`)
 console.log(`domaine : ${[...domaines].join(', ')} (${releve.length} mentions).`)
 

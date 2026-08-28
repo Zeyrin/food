@@ -17,7 +17,7 @@ Avec l'app : la même génération, mais le résultat colle direct dans le catal
 4. Elle rejoint immédiatement le même pool que les 16 recettes existantes — pas de statut "brouillon", pas de friction.
 
 ### Job 2 — Le run hebdomadaire (déjà construit, ne change pas)
-**Proposer** (filtrer par temps/tags, ajouter au panier) → **Panier** (ajuster les portions) → **Liste** (trier ce qu'on a déjà, cocher en rayon, rangé par rayon puis par magasin) → **Cuisson** (étape par étape, quantités annotées, mode focus plein écran).
+**Proposer** (filtrer par temps/tags, ajouter au panier) → **Panier** (ajuster les portions) → **Liste** (trier ce qu'on a déjà, cocher en rayon, rangé par rayon puis par magasin) → **Cuisson** (étape par étape, doses de l'étape sur une ligne au-dessus, mode focus plein écran).
 
 ## Ce qui découle de ça pour la suite du travail
 

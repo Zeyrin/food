@@ -1,3 +1,5 @@
+import { traduire } from './i18n'
+
 /**
  * Minuteurs proposés par une étape. On lit la recette au lieu de
  * demander un champ de plus dans le JSON : la durée y est déjà écrite,
@@ -6,10 +8,12 @@
  * Le mot d'unité est obligatoire, sinon « préchauffer à 200 °C » et
  * « des cubes de 2 cm » deviendraient des minuteurs.
  */
-const DUREE = /(\d+)\s*(h\b|heures?|min\b|minutes?|secondes?|sec\b)/gi
+const DUREE = /(\d+)\s*(h\b|heures?|hours?|min\b|minutes?|secondes?|seconds?|sec\b)/gi
 
-/** Amorces de proposition : elles n'apportent rien à un nom de minuteur. */
-const AMORCE = /^(?:puis|et|ensuite|alors|enfin)\s+/i
+/** Amorces de proposition : elles n'apportent rien à un nom de minuteur.
+ *  Les deux langues, puisque le nom du minuteur est découpé dans
+ *  l'étape telle qu'elle est affichée. */
+const AMORCE = /^(?:puis|et|ensuite|alors|enfin|then|and|next|finally)\s+/i
 
 export interface Minuteur {
   secondes: number
@@ -74,7 +78,11 @@ export function minuteursDeLEtape(texte: string): Minuteur[] {
     const unite = m[2]!.toLowerCase()
     const secondes = unite.startsWith('h') ? n * 3600 : unite.startsWith('s') ? n : n * 60
     if (secondes > 0 && !vus.has(secondes)) {
-      vus.set(secondes, nommer(texte, m.index ?? 0, secondes) || `Minuteur ${formatDuree(secondes)}`)
+      vus.set(
+        secondes,
+        nommer(texte, m.index ?? 0, secondes) ||
+          traduire('duree.minuteurSansNom', { duree: formatDuree(secondes) }),
+      )
     }
   }
 

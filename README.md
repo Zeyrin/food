@@ -155,6 +155,11 @@ Deux langues, donc, français et anglais (`src/lib/i18n.tsx`). La première ouve
 langue courante sans contexte React : ces fonctions sont pures, appelées depuis quatre
 écrans, et laissaient sinon des « c. à s. » au milieu d'une liste en anglais.
 
+`npm run verifier` couvre en plus ce que les tests ne voient pas : la parité des clés fr/en,
+les crédits photo, le domaine annoncé au même endroit partout, et la couverture de la
+traduction du corpus — chaque recette doit avoir sa version anglaise avec le même nombre
+d'étapes, chaque ingrédient et chaque tag leur entrée au glossaire.
+
 ## Écrire des recettes
 
 Le format est décrit dans `src/types.ts`. Une recette :
@@ -184,6 +189,20 @@ Quatre règles qui font tenir le reste :
 3. `placard: true` pour ce qu'on a toujours (sel, poivre, huile, épices). Exclu de la liste
    de courses, mais affiché en mode cuisson.
 4. Les quantités correspondent à `portions`. L'app fait la règle de trois.
+
+**Le corpus est écrit en français, l'anglais vit à côté.** `src/data/recipes.en.json`
+donne, par `id`, le titre et les étapes traduites ; `src/data/glossaire.en.json` traduit les
+noms d'ingrédients et les tags, partagés par tout le corpus. Ajouter une recette veut donc
+dire ajouter sa traduction : `npm run verifier` refuse une recette sans version anglaise, un
+nombre d'étapes qui ne correspond pas, ou un ingrédient absent du glossaire.
+
+La séparation n'est pas qu'une commodité de fichier. `nom` est la clé d'agrégation de la
+liste de courses et de la synchro (`crème fraîche|cl`) : si elle changeait avec la langue,
+deux téléphones réglés différemment couperaient la même ligne de liste en deux. La
+traduction reste donc un habillage — `src/lib/traduireRecette.ts` rend un `affichage` à côté
+du `nom`, et le reste de l'app continue de lire `nom` sans savoir qu'il y a deux langues.
+Une recette collée par l'utilisateur n'est dans aucun des deux fichiers : elle s'affiche
+telle qu'il l'a écrite, champ par champ, plutôt que de perdre une étape en route.
 
 **Les photos aussi sont statiques.** `image` pointe sur `/plats/<id>.webp`, un
 fichier de `public/plats/` livré avec le build et précaché par le service worker :

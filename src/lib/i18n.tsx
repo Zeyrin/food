@@ -225,6 +225,7 @@ const fr: Dico = {
     etapeSur: 'Étape {{n}} sur {{total}}',
     allerAEtape: "Aller à l'étape {{n}}",
     lancer: 'Minuteur ({{duree}})',
+    dosesDeLEtape: 'Pour cette étape',
     precedent: 'Précédent',
     suivant: 'Suivant',
     termine: 'Terminé',
@@ -427,7 +428,8 @@ const fr: Dico = {
     },
     {
       titre: 'Le mode Cuisson',
-      texte: 'Les étapes défilent une à une, avec les quantités affichées directement dans le texte.',
+      texte:
+        "Les étapes défilent une à une. Les doses de l'étape s'affichent sur une ligne juste au-dessus — la consigne reste une phrase, le nombre reste un nombre.",
     },
     {
       titre: 'Réglages',
@@ -447,6 +449,14 @@ const fr: Dico = {
     surgeles: 'Surgelés',
     boissons: 'Boissons',
     autre: 'Ajouté à la main',
+  },
+  /**
+   * Le nom d'un minuteur est découpé dans l'étape (`lib/duree.ts`).
+   * Quand elle n'offre rien à lire — « Laisser 20 min » et rien
+   * d'autre —, il reste ce libellé.
+   */
+  duree: {
+    minuteurSansNom: 'Minuteur {{duree}}',
   },
   /**
    * Noms d'unité et séparateur décimal, pour le formulaire de recette
@@ -729,6 +739,7 @@ const en: Dico = {
     etapeSur: 'Step {{n}} of {{total}}',
     allerAEtape: 'Go to step {{n}}',
     lancer: 'Timer ({{duree}})',
+    dosesDeLEtape: 'For this step',
     precedent: 'Previous',
     suivant: 'Next',
     termine: 'Done',
@@ -923,7 +934,8 @@ const en: Dico = {
     },
     {
       titre: 'Cooking mode',
-      texte: 'The steps scroll one by one, with quantities shown directly in the text.',
+      texte:
+        'The steps scroll one by one. The quantities for each step sit on a line just above it — the instruction stays a sentence, the number stays a number.',
     },
     {
       titre: 'Settings',
@@ -943,6 +955,9 @@ const en: Dico = {
     surgeles: 'Frozen',
     boissons: 'Drinks',
     autre: 'Added by hand',
+  },
+  duree: {
+    minuteurSansNom: 'Timer {{duree}}',
   },
   unites: {
     g: 'g',
