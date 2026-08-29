@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import type { Onglet } from '../types'
 import { VISITE_GUIDEE } from '../data/onboarding'
+import { useGelDefilement } from '../hooks/useGelDefilement'
 import { useTourRect } from '../hooks/useTourRect'
 import { etapesOnboarding, useLangue } from '../lib/i18n'
 import { mesurer } from '../lib/mesure'
@@ -56,6 +57,11 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
 
   const tour = useTourRect(etape.cible)
   const rect = tour?.rect ?? null
+  // L'app derrière le voile ne défile plus : le repère et la carte sont
+  // posés sur des coordonnées d'écran mesurées une fois, un défilement
+  // les laissait désigner du vide.
+  useGelDefilement()
+  const rayon = rayonRepere(tour?.rayon)
 
   const carteRef = useRef<HTMLDivElement>(null)
   const [style, setStyle] = useState<CSSProperties>({})
@@ -107,6 +113,23 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
 
   const vw = window.innerWidth
   const vh = window.innerHeight
+
+  /**
+   * Le trou laissé dans le voile : la cible, élargie de `MARGE` de chaque
+   * côté, arrondie au pixel entier. Bandes, coins et anneau se partagent
+   * ces quatre bords — un bord à la moitié d'un pixel fait border deux
+   * voiles translucides sur un demi-pixel d'antialiasing, et la jointure
+   * se lit comme un liseré clair en travers de l'écran.
+   */
+  const trou = rect
+    ? {
+        gauche: Math.round(rect.left - MARGE),
+        haut: Math.round(rect.top - MARGE),
+        droite: Math.round(rect.right + MARGE),
+        bas: Math.round(rect.bottom + MARGE),
+      }
+    : null
+
   /**
    * Les quatre bandes sombres autour du trou, décrites en coordonnées
    * d'écran. Elles ne sont pas posées avec `top`/`left`/`width`/`height`
@@ -115,23 +138,23 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
    * étape à l'autre se joue alors sur le compositeur, sans recalcul de
    * mise en page.
    */
-  const bandes = rect
-    ? [
-        { x: 0, y: 0, l: vw, h: Math.max(0, rect.top - MARGE) },
-        { x: 0, y: rect.bottom + MARGE, l: vw, h: Math.max(0, vh - rect.bottom - MARGE) },
-        {
-          x: 0,
-          y: Math.max(0, rect.top - MARGE),
-          l: Math.max(0, rect.left - MARGE),
-          h: rect.height + MARGE * 2,
-        },
-        {
-          x: rect.right + MARGE,
-          y: Math.max(0, rect.top - MARGE),
-          l: Math.max(0, vw - rect.right - MARGE),
-          h: rect.height + MARGE * 2,
-        },
-      ]
+  const bandes = trou
+    ? (() => {
+        // Une cible qui dépasse en haut de l'écran ne doit pas donner une
+        // bande de hauteur négative aux flancs.
+        const haut = Math.max(0, trou.haut)
+        return [
+          { x: 0, y: 0, l: vw, h: haut },
+          { x: 0, y: trou.bas, l: vw, h: Math.max(0, vh - trou.bas) },
+          { x: 0, y: haut, l: Math.max(0, trou.gauche), h: Math.max(0, trou.bas - haut) },
+          {
+            x: trou.droite,
+            y: haut,
+            l: Math.max(0, vw - trou.droite),
+            h: Math.max(0, trou.bas - haut),
+          },
+        ]
+      })()
     : [{ x: 0, y: 0, l: vw, h: vh }]
 
   return (
@@ -151,16 +174,31 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
         />
       ))}
 
-      {rect && (
+      {trou && (
+        <div
+          className="visite-coins"
+          style={
+            {
+              '--x': `${trou.gauche}px`,
+              '--y': `${trou.haut}px`,
+              '--rayon-trou': rayon,
+              width: trou.droite - trou.gauche,
+              height: trou.bas - trou.haut,
+            } as CSSProperties
+          }
+        />
+      )}
+
+      {trou && (
         <div
           className="visite-repere"
           style={
             {
-              '--x': `${rect.left - MARGE}px`,
-              '--y': `${rect.top - MARGE}px`,
-              width: rect.width + MARGE * 2,
-              height: rect.height + MARGE * 2,
-              borderRadius: rayonRepere(tour?.rayon),
+              '--x': `${trou.gauche}px`,
+              '--y': `${trou.haut}px`,
+              width: trou.droite - trou.gauche,
+              height: trou.bas - trou.haut,
+              borderRadius: rayon,
             } as CSSProperties
           }
         />

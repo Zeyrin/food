@@ -4192,6 +4192,26 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
    recouvrent jamais le trou lui-même — l'élément réel reste visible et
    cliquable dessous, la visite ne fait qu'indiquer où il est. */
 
+/* Défilement gelé pendant la visite (voir hooks/useGelDefilement.ts).
+   Le voile couvre l'écran mais ne retient rien : sans ce gel, la molette
+   et le doigt faisaient défiler l'app derrière, et le repère se
+   retrouvait à désigner un bouton parti hors de vue. Le corps sort du
+   flux — c'est la seule mise en garde qu'iOS Safari respecte — décalé de
+   la position mémorisée pour que l'écran ne bouge pas d'un pixel à
+   l'instant du gel, et la largeur de la barre de défilement disparue est
+   rendue en marge pour que le texte ne se reformate pas dessous. */
+html[data-gele='true'] {
+  overflow: hidden;
+}
+
+html[data-gele='true'] body {
+  position: fixed;
+  top: var(--gel-haut, 0px);
+  left: 0;
+  right: 0;
+  padding-right: var(--gel-barre, 0px);
+}
+
 /* Les quatre bandes se déplaçaient en animant `top`, `left`, `width` et
    `height` : à chaque image, le navigateur recalculait la mise en page
    puis repeignait quatre rectangles qui couvrent tout l'écran, pendant
@@ -4203,17 +4223,61 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
    compositeur fait tout, sans mesure ni repeinte. Une bande n'a ni
    bordure ni rayon — c'est un aplat — donc la mise à l'échelle ne
    déforme rien. */
+/* Une seule définition du voile : les bandes et les coins du trou se
+   touchent bord à bord, et le voile est translucide — la moindre
+   différence de densité dessinerait la jointure. */
+.visite {
+  --voile: color-mix(in srgb, var(--encre) 62%, transparent);
+}
+
 .visite-bande {
   position: fixed;
   top: 0;
   left: 0;
   width: 1px;
   height: 1px;
-  background: color-mix(in srgb, var(--encre) 62%, transparent);
+  background: var(--voile);
   z-index: 55;
   transform-origin: 0 0;
   transform: translate(var(--x, 0px), var(--y, 0px)) scale(var(--l, 0), var(--h, 0));
   transition: transform var(--moyen3) var(--standard);
+}
+
+/* Quatre bandes rectangulaires laissent forcément un trou à angles
+   vifs. Sur une cible arrondie — la pilule de la barre du bas, une carte
+   — ces quatre pointes de fond clair dépassaient de l'élément, juste à
+   côté d'un anneau qui, lui, épouse déjà ses coins réels : la visite
+   désignait un bouton rond dans une découpe carrée.
+
+   Le trou reprend donc le rayon de sa cible. Un cadre aux dimensions
+   exactes du trou, `overflow: hidden`, dans lequel un rectangle arrondi
+   projette son ombre portée : l'ombre ne remplit que les quatre pointes
+   qui manquaient, et le découpage au cadre garantit qu'elle ne recouvre
+   jamais les bandes — deux épaisseurs de voile translucide se verraient.
+   Le cadre est transparent au clic : la cible réelle reste utilisable
+   pendant la visite. */
+.visite-coins {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 55;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translate(var(--x, 0px), var(--y, 0px));
+  transition:
+    transform var(--moyen3) var(--standard),
+    width var(--moyen3) var(--standard),
+    height var(--moyen3) var(--standard);
+}
+
+.visite-coins::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--rayon-trou, 0px);
+  /* Étalement large et sans flou : c'est un aplat, découpé au cadre. */
+  box-shadow: 0 0 0 200px var(--voile);
+  transition: border-radius var(--moyen3) var(--standard);
 }
 
 /* Le repère, lui, garde ses dimensions animées : c'est un anneau, et
