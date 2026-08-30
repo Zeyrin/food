@@ -4,6 +4,7 @@ import Icone from '../components/Icone'
 import { LONGUEUR_CODE } from '../lib/codeFoyer'
 import { useLangue } from '../lib/i18n'
 import type { FoyerPrecedent } from '../lib/local'
+import { mesurer } from '../lib/mesure'
 import { partageActif } from '../lib/sync'
 
 interface Props {
@@ -36,7 +37,7 @@ export default function Bienvenue({
   onReprendre,
   onOublierPrecedent,
 }: Props) {
-  const { t } = useLangue()
+  const { langue, definirLangue, t } = useLangue()
   const [code, setCode] = useState('')
   const [enCours, setEnCours] = useState<Zone | null>(null)
   const [erreur, setErreur] = useState<{ zone: Zone; texte: string } | null>(null)
@@ -130,6 +131,33 @@ export default function Bienvenue({
       <div className="accueil-hero">
         <img className="accueil-hero-photo" src={PHOTO_HERO} alt="" aria-hidden="true" />
         <div className="accueil-hero-voile" aria-hidden="true" />
+        {/* Seul écran accessible avant qu'un foyer n'existe : Réglages,
+            où vit l'autre bascule, ne l'est pas encore. Sans celle-ci,
+            qui ouvre l'app dans la mauvaise langue resterait coincé. */}
+        <div className="accueil-langue" role="group" aria-label={t('reglages.langue')}>
+          <button
+            type="button"
+            className="accueil-langue-bouton"
+            aria-pressed={langue === 'fr'}
+            onClick={() => {
+              mesurer('langue_changee', { vers: 'fr' })
+              definirLangue('fr')
+            }}
+          >
+            FR
+          </button>
+          <button
+            type="button"
+            className="accueil-langue-bouton"
+            aria-pressed={langue === 'en'}
+            onClick={() => {
+              mesurer('langue_changee', { vers: 'en' })
+              definirLangue('en')
+            }}
+          >
+            EN
+          </button>
+        </div>
         <div className="accueil-hero-corps">
           <span className="accueil-hero-sceau" aria-hidden="true">
             <Icone nom="grill" taille={22} />

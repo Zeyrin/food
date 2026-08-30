@@ -32,6 +32,7 @@ export type Nom =
   | 'crayon'
   | 'etincelle'
   | 'copier'
+  | 'bulle'
 
 const TRACES: Record<Nom, string> = {
   menu: 'M4 6h16M4 12h16M4 18h16',
@@ -71,6 +72,8 @@ const TRACES: Record<Nom, string> = {
   // avec « liste » à 18 px.
   copier:
     'M9 9a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-8a2 2 0 01-2-2V9z M5 15H4a2 2 0 01-2-2V5a2 2 0 012-2h8a2 2 0 012 2v1',
+  bulle:
+    'M4 5a2 2 0 012-2h12a2 2 0 012 2v9a2 2 0 01-2 2H9l-4 4v-4a2 2 0 01-2-2V5z M8 9h8 M8 12.5h5',
 }
 
 export default function Icone({ nom, taille = 24 }: { nom: Nom; taille?: number }) {

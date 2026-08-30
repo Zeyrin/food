@@ -452,6 +452,22 @@ const fr: Dico = {
     plusTard: 'Plus tard',
     mettreAJour: 'Mettre à jour',
   },
+  retour: {
+    ouvrir: 'Donner votre avis',
+    titre: 'Un avis, un bug ?',
+    texte: "Deux phrases suffisent. Pas de compte, pas de ticket — ça part directement à qui fait l'app.",
+    champLabel: 'Votre message',
+    champPlaceholder: "Ce qui vous plaît, ce qui coince, une idée…",
+    contactLabel: 'Pour vous répondre (facultatif)',
+    contactPlaceholder: 'Email ou rien du tout',
+    fermer: "Fermer sans envoyer",
+    envoyer: 'Envoyer',
+    envoiEnCours: 'Envoi…',
+    envoye: 'Merci, c\'est envoyé !',
+    echec: "L'envoi a échoué. Vérifiez votre connexion et réessayez.",
+    indisponible: "Le partage n'est pas configuré sur cette installation : impossible d'envoyer un avis pour l'instant.",
+    champVide: 'Écrivez au moins quelques mots.',
+  },
   promptRecette: {
     demandeParDefaut: 'une recette au choix',
     corps:
@@ -1008,6 +1024,22 @@ const en: Dico = {
     plusTard: 'Later',
     mettreAJour: 'Update',
   },
+  retour: {
+    ouvrir: 'Give feedback',
+    titre: 'A thought, a bug?',
+    texte: 'A couple of sentences is plenty. No account, no ticket — it goes straight to whoever makes the app.',
+    champLabel: 'Your message',
+    champPlaceholder: 'What you like, what\'s broken, an idea…',
+    contactLabel: 'So we can reply (optional)',
+    contactPlaceholder: 'Email, or nothing at all',
+    fermer: 'Close without sending',
+    envoyer: 'Send',
+    envoiEnCours: 'Sending…',
+    envoye: 'Thanks, it\'s sent!',
+    echec: 'Sending failed. Check your connection and try again.',
+    indisponible: 'Sharing is not configured on this install: sending feedback is not possible right now.',
+    champVide: 'Write at least a few words.',
+  },
   promptRecette: {
     demandeParDefaut: "a recipe of your choosing",
     corps:
@@ -1170,28 +1202,18 @@ export function phrasesSansPhoto(langue: Langue): string[] {
 }
 
 /**
- * La langue à la première ouverture. On ne présumait rien et on
- * servait du français à tout le monde, alors que l'anglais est traduit
- * de bout en bout : `navigator.language` répond à la question sans
- * jamais rien demander. Un choix déjà fait dans les réglages prime,
- * évidemment — c'est la seule valeur qu'on écrit.
+ * La langue à la première ouverture. Défaut anglais tant qu'aucun choix
+ * n'a été enregistré dans les réglages — ce choix, lui, prime toujours
+ * puisque c'est la seule valeur qu'on écrit.
  */
 function lireLangueSauvegardee(): Langue {
   try {
     const v = localStorage.getItem(CLE_LANGUE)
     if (v === 'fr' || v === 'en') return v
   } catch {
-    /* stockage indisponible : on continue avec la langue du navigateur */
+    /* stockage indisponible : on continue avec le défaut anglais */
   }
-  // `window` et non `navigator` : Node en expose un, avec sa propre
-  // locale (« en-US »), et les tests basculeraient en anglais sans le
-  // vouloir. La détection n'a de sens que dans un navigateur.
-  if (typeof window !== 'undefined') {
-    // `startsWith` plutôt qu'une égalité : « en-GB », « en-US » et
-    // « en » désignent la même colonne du dictionnaire.
-    if (window.navigator?.language?.toLowerCase().startsWith('en')) return 'en'
-  }
-  return 'fr'
+  return 'en'
 }
 
 /**

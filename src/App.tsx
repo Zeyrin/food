@@ -51,6 +51,7 @@ import { useMinuteurs } from './hooks/useMinuteurs'
 import { ecouterClicNotification } from './lib/minuteurs'
 import { useMagasins } from './hooks/useMagasins'
 import Reglages from './screens/Reglages'
+import Retour from './components/Retour'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
 import { useEtatSynchro } from './hooks/useEtatSynchro'
@@ -799,6 +800,10 @@ export default function App() {
           <Icone nom="menu" taille={20} />
         </button>
       )}
+
+      {/* Visible sur tous les écrans principaux, comme les réglages — un
+          avis ne demande pas de creuser un menu. */}
+      <Retour onglet={sousEcran ? vueActuelle.type : onglet} />
 
       {/* Deux pannes, une seule pastille — elles ne peuvent pas être vraies
           en même temps de façon utile, et deux bandeaux empilés en haut
