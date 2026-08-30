@@ -149,6 +149,19 @@ const quantiteMuette = (ing: Pick<ListItem, 'quantite' | 'unite'>) =>
 /** Ce dont l'annotation d'une étape a besoin d'un ingrédient. */
 export type IngredientCite = Pick<ListItem, 'nom' | 'quantite' | 'unite'> & { placard?: boolean }
 
+/**
+ * Un morceau d'étape découpé par `annoterEtape`. `ing` est l'ingrédient
+ * que ce morceau cite — le mode cuisson sort les doses du texte pour les
+ * poser sur une ligne au-dessus, et il lui faut l'ingrédient lui-même,
+ * pas seulement sa dose formatée : c'est son nom qui sert de clé pour
+ * l'afficher dans la langue de l'app.
+ */
+export interface Segment {
+  texte: string
+  quantite?: string
+  ing?: IngredientCite
+}
+
 const sansAccents = (s: string) => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
 
 /** Mots de liaison : ni porteurs de sens dans un nom d'ingrédient, ni
@@ -332,11 +345,8 @@ function ingredientDesigne<T extends Pick<ListItem, 'nom'>>(
  * même en texte normal — une faute de frappe ne doit pas faire
  * disparaître un morceau de la recette.
  */
-function annoterMarqueurs(
-  texte: string,
-  ingredients: IngredientCite[],
-): Array<{ texte: string; quantite?: string }> {
-  const segments: Array<{ texte: string; quantite?: string }> = []
+function annoterMarqueurs(texte: string, ingredients: IngredientCite[]): Segment[] {
+  const segments: Segment[] = []
   let curseur = 0
 
   for (const m of texte.matchAll(MARQUEURS)) {
@@ -346,7 +356,7 @@ function annoterMarqueurs(
     const partielle = estMentionPartielle(texte, debut)
     segments.push({
       texte: texte.slice(curseur, debut) + libelle,
-      ...(ing && !partielle && !quantiteMuette(ing) ? { quantite: formatQuantite(ing) } : {}),
+      ...(ing && !partielle && !quantiteMuette(ing) ? { quantite: formatQuantite(ing), ing } : {}),
     })
     curseur = debut + m[0].length
   }
@@ -370,14 +380,17 @@ function annoterMarqueurs(
  * (« pâtes longues » citées comme « les pâtes »). La quantité se pose
  * après le groupe nominal entier, pas après ce premier mot : « l'huile
  * de sésame [1 c. à s.] », jamais « l'huile [1 c. à s.] de sésame ».
- * Singulier et pluriel sont acceptés. Les mots de moins de 4 lettres
- * sont ignorés — « ail », « sel », « riz » se retrouvent partout et
- * annoter chaque occurrence rendrait l'étape illisible.
+ * Singulier et pluriel sont acceptés.
+ *
+ * Les mots de moins de 3 lettres sont ignorés. Le seuil était à 4 tant
+ * que la dose s'écrivait au milieu de la phrase : « ail », « riz » et
+ * « œuf » reviennent à chaque étape, et une phrase hachée par les
+ * quantités devenait illisible. Les doses vivent maintenant sur leur
+ * propre ligne au-dessus de l'étape, une par ingrédient : « 60 g ail »
+ * y a toute sa place, et c'est même la première chose qu'on venait
+ * chercher.
  */
-export function annoterEtape(
-  texte: string,
-  ingredients: IngredientCite[],
-): Array<{ texte: string; quantite?: string }> {
+export function annoterEtape(texte: string, ingredients: IngredientCite[]): Segment[] {
   if (MARQUEUR.test(texte)) return annoterMarqueurs(texte, ingredients)
 
   const cibles = ingredients
@@ -385,13 +398,13 @@ export function annoterEtape(
     // poivre ½ c. à c. » n'aide personne. Un marqueur explicite, lui,
     // reste honoré — c'est l'auteur qui décide.
     .filter((ing) => !ing.placard && !quantiteMuette(ing))
-    .map((ing) => ({ nom: ing.nom, mots: motsDuNom(ing.nom), quantite: formatQuantite(ing) }))
-    .filter((c) => (c.mots[0]?.length ?? 0) >= 4)
+    .map((ing) => ({ ing, nom: ing.nom, mots: motsDuNom(ing.nom), quantite: formatQuantite(ing) }))
+    .filter((c) => (c.mots[0]?.length ?? 0) >= 3)
 
   if (cibles.length === 0) return [{ texte }]
 
   // Un seul passage sur le texte, chaque ingrédient annoté une fois.
-  const segments: Array<{ texte: string; quantite?: string }> = []
+  const segments: Segment[] = []
   const vus = new Set<string>()
   const regex = /[\p{L}\p{M}]+/gu
   let curseur = 0
@@ -427,11 +440,38 @@ export function annoterEtape(
 
     const fin = consommerQualificatifs(texte, trouve.fin)
     vus.add(trouve.nom)
-    segments.push({ texte: texte.slice(curseur, fin), quantite: trouve.quantite })
+    segments.push({ texte: texte.slice(curseur, fin), quantite: trouve.quantite, ing: trouve.ing })
     curseur = fin
     regex.lastIndex = fin
   }
 
   if (curseur < texte.length) segments.push({ texte: texte.slice(curseur) })
   return segments
+}
+
+/**
+ * Les ingrédients qu'une étape met en jeu, avec leur dose, dans l'ordre
+ * où l'étape les nomme.
+ *
+ * Le mode cuisson ne colle plus la dose au milieu de la phrase : « faire
+ * revenir l'ail 60 g dans la poêle » se lit deux fois, une fois pour la
+ * consigne et une fois pour le nombre. Les doses montent donc sur une
+ * ligne à part, au-dessus de l'étape — « 60 g ail » — et la phrase
+ * redevient une phrase : « faire revenir l'ail dans la poêle ».
+ *
+ * La reconnaissance tourne toujours sur le texte français du corpus,
+ * même quand l'app affiche l'anglais : c'est lui qui porte les
+ * marqueurs et la morphologie que `annoterEtape` sait lire. Seul
+ * l'affichage du nom change de langue, et il se fait par la clé
+ * canonique portée ici.
+ */
+export function dosesDeLEtape(texte: string, ingredients: IngredientCite[]): IngredientCite[] {
+  const vus = new Set<string>()
+  const doses: IngredientCite[] = []
+  for (const seg of annoterEtape(texte, ingredients)) {
+    if (!seg.ing || vus.has(seg.ing.nom)) continue
+    vus.add(seg.ing.nom)
+    doses.push(seg.ing)
+  }
+  return doses
 }

@@ -1,0 +1,1501 @@
+{
+  "mapo-tofu": {
+    "titre": "Mapo tofu",
+    "etapes": [
+      "Start the rice. Cut the tofu into 2 cm cubes and set them aside in a bowl of warm water: they will hold together better while cooking.",
+      "Chop the garlic, the ginger and the white part of the spring onions. Keep the green for the end.",
+      "Fry the minced pork over high heat until it colours and breaks into grains, 4 min.",
+      "Add garlic, ginger, doubanjiang and miso. Stir 1 min — the paste should turn dark red and fragrant.",
+      "Pour in 150 ml of water and the soy sauce, simmer 3 min.",
+      "Add the drained tofu, shaking the pan rather than stirring so it doesn't break up. Leave 4 min.",
+      "Slake the cornflour in a little cold water, pour it in slowly and stir until the sauce coats the spoon.",
+      "Off the heat: sesame oil, crushed Sichuan pepper, spring onion greens. Serve over the rice."
+    ]
+  },
+  "falafel-bowl": {
+    "titre": "Falafel bowl",
+    "etapes": [
+      "Heat the oven to 200 °C.",
+      "Blend the drained chickpeas with the onion, the garlic, half the herbs, the cumin and the ground coriander. The texture should stay coarse, not smooth.",
+      "Salt, shape a dozen flattened balls, oil them and bake 25 min, turning them halfway.",
+      "Meanwhile, pour 120 ml of boiling salted water over the couscous, cover and let it swell 10 min.",
+      "Dice the cucumber and cherry tomatoes, chop the rest of the herbs, mix it all into the couscous with the lemon juice and a drizzle of oil.",
+      "Build the bowls: tabbouleh, falafels, a spoonful of hummus and of yoghurt."
+    ]
+  },
+  "bowl-quinoa-legumes-rotis": {
+    "titre": "Quinoa & roast vegetable bowl",
+    "etapes": [
+      "Heat the oven to 210 °C.",
+      "Cut the red kuri squash into 3 cm cubes, toss with the chickpeas — well drained and dried — the oil, the cumin and the paprika.",
+      "Bake 30 min: the chickpeas should crisp and the squash brown at the corners.",
+      "Cook the quinoa 12 min in twice its volume of salted water, then let it rest covered 5 min off the heat.",
+      "Whisk the tahini with the lemon juice and 2 tbsp of cold water — the sauce will thicken first, then loosen again, that's normal.",
+      "Massage the kale with a pinch of salt to tenderise it, slice the radishes, slice the avocado.",
+      "Assemble and spoon over the tahini sauce."
+    ]
+  },
+  "patate-douce-farcie": {
+    "titre": "Stuffed sweet potato",
+    "etapes": [
+      "Heat the oven to 200 °C. Prick the sweet potatoes with a fork and bake them whole 45 min, until a knife goes through without resistance.",
+      "Halfway through, add the chickpeas to the tray, drained, oiled and tossed with the spices.",
+      "Whisk the yoghurt with the tahini and the lemon juice.",
+      "Split the potatoes lengthways, mash the flesh a little with a fork.",
+      "Top with the spiced chickpeas, spoon over the sauce, scatter with spring onion and sliced chilli."
+    ]
+  },
+  "dahl-lentilles-corail": {
+    "titre": "Red lentil dhal",
+    "etapes": [
+      "Slice the onion, chop the garlic, the ginger and the chilli.",
+      "Fry the onion 5 min over medium heat until it turns translucent.",
+      "Add garlic, ginger, chilli and every spice except the garam masala. Stir 1 min — the spices should perfume without burning.",
+      "Pour in the rinsed lentils, the tomatoes, the coconut milk and 200 ml of water.",
+      "Simmer 20 min covered, stirring now and then. The lentils should collapse completely.",
+      "Off the heat: garam masala, salt, lemon juice and chopped coriander."
+    ]
+  },
+  "curry-pois-chiches-epinards": {
+    "titre": "Chickpea & spinach curry",
+    "etapes": [
+      "Start the rice.",
+      "Fry the sliced onion 5 min, then add garlic, ginger and the spices except the garam masala.",
+      "Pour in the tomatoes and the coconut milk, reduce 10 min uncovered until the sauce thickens.",
+      "Add the drained chickpeas, leave 5 min more.",
+      "Stir in the spinach a handful at a time: it wilts in seconds.",
+      "Finish with the garam masala, the lime juice and the coriander."
+    ]
+  },
+  "tacos-poulet-avocat": {
+    "titre": "Chicken & avocado tacos",
+    "etapes": [
+      "Cut the chicken into strips, toss with the spices, the paprika, the oil and the juice of one lime. Marinate 10 min.",
+      "Meanwhile, make the pico de gallo: cherry tomatoes quartered, half the red onion finely diced, coriander, lime juice.",
+      "Mash the avocado with a fork, with salt and a little lemon juice.",
+      "Mix the cream and the sriracha.",
+      "Sear the chicken over high heat 6 min, without stirring constantly so it colours.",
+      "Warm the tortillas 20 seconds in a dry pan, then fill them."
+    ]
+  },
+  "poelee-asiatique-nouilles": {
+    "titre": "Asian noodle stir-fry",
+    "etapes": [
+      "Cook the noodles as the packet says, rinse them under cold water and set aside.",
+      "Break the broccoli into small florets and cut the carrots into thin batons.",
+      "Heat a wok over high heat, sear garlic and ginger 30 seconds.",
+      "Add carrots and broccoli, stir-fry 5 min: the vegetables should stay crunchy and catch a little colour.",
+      "Add the drained chickpeas, the noodles, the soy sauce and the lao gan ma. Stir-fry 2 min, tossing.",
+      "Off the heat, pour in the sesame oil."
+    ]
+  },
+  "riz-saute-oeuf": {
+    "titre": "Egg fried rice",
+    "etapes": [
+      "The rice must be cold, ideally cooked the day before: warm, it clumps and won't fry.",
+      "Cut the carrot into small dice, chop the garlic, slice the spring onions.",
+      "Stir-fry carrot and garlic 3 min over high heat.",
+      "Add the rice, press it a little with the spatula to separate the grains, fry 4 min without stirring too much.",
+      "Push the rice to one side, break the eggs into the free space, scramble them then fold everything together.",
+      "Finish with the soy sauce, the sesame oil and the spring onion greens."
+    ]
+  },
+  "gratin-chou-fleur-jambon": {
+    "titre": "Cauliflower & ham gratin",
+    "etapes": [
+      "Break the cauliflower into florets and cook them 10 min in boiling salted water: a knife should go in easily but the floret should stay whole.",
+      "Heat the oven to 200 °C.",
+      "Brown the bacon lardons in a dry pan 4 min.",
+      "Drain the cauliflower very thoroughly — leftover water is what makes a gratin bland.",
+      "Lay the cauliflower in a dish with the ham cut into strips and the lardons. Pour over the hot milk, salt and pepper.",
+      "Cover with grated cheese and bake 25 min, until the top is well coloured."
+    ]
+  },
+  "soupe-chou-fleur-lait": {
+    "titre": "Cauliflower soup with milk",
+    "etapes": [
+      "Break the cauliflower into florets and cook them 12 min in boiling salted water.",
+      "Heat the milk without letting it boil.",
+      "Drain the cauliflower, blend it with the hot milk until smooth.",
+      "Salt and pepper generously. It's creamy without a drop of cream."
+    ]
+  },
+  "rouleaux-riz-jambon": {
+    "titre": "Ham rice paper rolls",
+    "etapes": [
+      "Cut the bell pepper and carrot into very thin batons, cut the ham into strips.",
+      "Soak a sheet of rice paper 30 seconds in warm water: it should stay slightly firm, it will finish softening on the worktop.",
+      "Fill the bottom third, fold the sides in then roll tightly.",
+      "Serve with the soy sauce. The principle works with just about anything left in the fridge."
+    ]
+  },
+  "salade-mediterraneenne": {
+    "titre": "Full Mediterranean salad",
+    "etapes": [
+      "Rinse and drain everything tinned — that's the difference between a fresh salad and a briny one.",
+      "Slice the hearts of palm into rounds.",
+      "Flake the tuna coarsely.",
+      "Whisk olive oil, lemon juice and salt, pour over everything and fold gently.",
+      "Rest 10 min in the fridge before serving."
+    ]
+  },
+  "pates-thon-legumineuses": {
+    "titre": "Pasta with tuna and pulses",
+    "etapes": [
+      "Start the pasta in a big pan of well-salted water.",
+      "Fry the crushed garlic 30 seconds in the oil, then pour in the tomatoes. Reduce 10 min.",
+      "Add chickpeas, peas and olives, warm through 3 min.",
+      "Stir in the drained tuna and the cream off the heat, so the tuna doesn't dry out.",
+      "Drain the pasta keeping a ladle of cooking water, fold together and loosen the sauce if needed."
+    ]
+  },
+  "one-pot-mediterraneen": {
+    "titre": "Mediterranean one-pot",
+    "etapes": [
+      "Fry the sliced onion and the garlic 5 min in a large sauté pan.",
+      "Add the tomatoes and 700 ml of salted water, bring to the boil.",
+      "Tip the dry pasta straight in and cook uncovered for the time on the packet, stirring regularly.",
+      "Two minutes before the end, add the drained chickpeas, flageolet beans, sweetcorn and peas.",
+      "Off the heat: tuna, olives and cream. The sauce should coat the pasta without being runny.",
+      "If it's too thick, a little hot water; too runny, two more minutes over high heat."
+    ]
+  },
+  "pates-citron-parmesan": {
+    "titre": "Lemon & parmesan pasta",
+    "etapes": [
+      "Bring a large pan of well-salted water to the boil and cook the pasta in it.",
+      "Meanwhile, grate the parmesan and zest the lemon.",
+      "Mix the cream, the parmesan, the zest and the crushed garlic in a bowl.",
+      "Drain the pasta keeping a ladle of cooking water.",
+      "Tip the piping-hot pasta onto the mixture, add a little cooking water and stir briskly until the sauce coats.",
+      "Pepper generously and serve at once."
+    ]
+  },
+  "salade-pates-estivale": {
+    "titre": "Summer pasta salad",
+    "etapes": [
+      "Bring a large pan of salted water to the boil and cook the short pasta as the packet says, until it stays firm to the bite.",
+      "Drain and rinse immediately under cold water to stop the cooking and stop it clumping as it cools.",
+      "Halve the cherry tomatoes, dice the cucumber small, and slice the red onion finely.",
+      "Chop the basil, drain the black olives and tear the mozzarella into small pieces.",
+      "In a big bowl, mix the cooled pasta, the vegetables, the mozzarella, the basil and the olives.",
+      "Whisk the olive oil with the balsamic vinegar, salt and pepper, pour over the salad and toss.",
+      "Rest 10 min in the fridge before serving, long enough for the flavours to come together."
+    ]
+  },
+  "poke-bowl-saumon-avocat": {
+    "titre": "Salmon avocado poke bowl",
+    "etapes": [
+      "Cook the sushi rice as the packet says, then season it while still hot with the rice vinegar and a pinch of salt. Let it cool to lukewarm.",
+      "Cut the fresh salmon into 1.5 cm cubes.",
+      "Marinate the salmon 10 min with the soy sauce, the sesame oil and the lime juice — no longer, or the acid starts to cook the fish.",
+      "Slice the avocado and the cucumber, thinly slice the radishes.",
+      "Divide the warm rice between the bowls, then arrange salmon, avocado, cucumber, radish and edamame.",
+      "Scatter with sesame seeds and spoon over the rest of the marinade before serving."
+    ]
+  },
+  "chili-sin-carne": {
+    "titre": "Chilli sin carne",
+    "etapes": [
+      "Start the white rice.",
+      "Slice the onion, chop the garlic and the fresh chilli, dice the bell peppers.",
+      "Fry the onion and the peppers 5 min in the olive oil until they soften.",
+      "Add the garlic, the chilli, the ground cumin, the smoked paprika and the mexican spice mix. Stir 1 min, long enough for it to smell good.",
+      "Pour in the chopped tomatoes, the drained kidney beans and chickpeas, the sweetcorn and 100 ml of water.",
+      "Simmer 20 min uncovered, stirring now and then, until the sauce thickens.",
+      "Salt and serve over the rice."
+    ]
+  },
+  "curry-vert-thai-poulet": {
+    "titre": "Thai green chicken curry",
+    "etapes": [
+      "Start the white rice.",
+      "Cut the chicken breast into pieces, the aubergine into cubes and the bell pepper into strips.",
+      "Heat the olive oil in a wok, fry the green curry paste 1 min over medium heat until it smells fragrant.",
+      "Add the chicken, sear 4 min over high heat until it turns white all over.",
+      "Pour in the coconut milk, add the aubergine and the pepper. Simmer 15 min covered, until the aubergine is meltingly soft.",
+      "Season with the fish sauce and the brown sugar, taste and adjust.",
+      "Off the heat, add the lime juice and the chopped fresh basil. Serve over the rice."
+    ]
+  },
+  "ratatouille-four-oeuf-poche": {
+    "titre": "Oven ratatouille & baked egg",
+    "etapes": [
+      "Heat the oven to 200 °C.",
+      "Cut the aubergine, the courgettes, the bell peppers and the tomatoes into even pieces of about 2 cm.",
+      "Slice the onion and the garlic.",
+      "Toss all the vegetables in a large dish with the olive oil, the herbes de Provence, salt and pepper.",
+      "Bake 40 min, stirring halfway, until the vegetables are soft and lightly caramelised at the edges.",
+      "In the last 5 minutes, hollow out four wells in the vegetables and break the eggs into them. Return to the oven until the white is set and the yolk still runny.",
+      "Serve straight from the dish."
+    ]
+  },
+  "quiche-courgette-chevre": {
+    "titre": "Courgette & goat cheese quiche",
+    "etapes": [
+      "Heat the oven to 190 °C.",
+      "Unroll the shortcrust pastry into a tart tin and prick it with a fork.",
+      "Slice the courgettes thinly, sweat them 5 min in a pan so they stop releasing water inside the quiche.",
+      "Whisk the eggs with the crème fraîche, the milk, salt, pepper and the nutmeg.",
+      "Spread the courgettes over the pastry base, pour in the custard, cover with rounds of goat cheese log.",
+      "Bake 30 min, until the quiche is golden and barely wobbling in the middle."
+    ]
+  },
+  "couscous-poulet-legumes": {
+    "titre": "Chicken & vegetable couscous",
+    "etapes": [
+      "Peel and cut the carrots into chunks, the courgettes into thick batons, slice the onions.",
+      "Brown the chicken thighs in the olive oil 5 min on all sides.",
+      "Add the onions, the ground cumin and the harissa, stir 1 min.",
+      "Add the carrots and 800 ml of water, salt, cover and simmer 20 min.",
+      "Add the courgettes and the drained chickpeas, carry on cooking 15 min.",
+      "Meanwhile, prepare the fine couscous with the raisins as the packet says.",
+      "Serve the chicken and vegetables over the couscous, moistened with a little broth."
+    ]
+  },
+  "risotto-champignons": {
+    "titre": "Mushroom risotto",
+    "etapes": [
+      "Dissolve the stock cube in 1 l of hot water, keep it warm.",
+      "Slice the onion and the garlic, slice the button mushrooms.",
+      "Fry the mushrooms in the olive oil 5 min, set aside.",
+      "In the same pan, sweat the onion and the garlic 2 min, add the risotto rice and toast 1 min until the grains turn pearly.",
+      "Pour in the white wine, let it reduce, then add the stock a ladle at a time, stirring until each is absorbed, for 18 min.",
+      "Return the mushrooms, add the butter and the parmesan, pepper and serve at once."
+    ]
+  },
+  "poulet-basquaise": {
+    "titre": "Basque chicken",
+    "etapes": [
+      "Start the white rice.",
+      "Cut the bell peppers into strips, slice the onions and the garlic.",
+      "Brown the chicken thighs in the olive oil 8 min on all sides, set aside.",
+      "Fry the peppers and onions 5 min in the same pan.",
+      "Add the garlic, the Espelette pepper, the chopped tomatoes and the chicken, salt.",
+      "Cover and simmer 25 min over low heat. Serve over the rice."
+    ]
+  },
+  "soupe-miso-tofu": {
+    "titre": "Miso soup with tofu",
+    "etapes": [
+      "Heat 600 ml of water without letting it boil.",
+      "Rehydrate the wakame seaweed 5 min in a bowl of cold water, drain.",
+      "Cut the silken tofu into small dice, slice the spring onion.",
+      "Slake the miso paste in a ladle of hot water then stir it back into the pan off the heat.",
+      "Add the tofu, the seaweed and the soy sauce, ladle into bowls and scatter with spring onion."
+    ]
+  },
+  "burger-maison": {
+    "titre": "Homemade burger",
+    "etapes": [
+      "Slice the tomato and the red onion into rounds, wash the green salad.",
+      "Salt the beef patties and cook them in the olive oil 3 min a side, adding the cheddar at the end so it melts.",
+      "Toast the burger buns lightly.",
+      "Spread with ketchup and mustard, top with salad, tomato, onion and gherkins.",
+      "Lay the cheesy patty on and close the bun."
+    ]
+  },
+  "pizza-margherita-maison": {
+    "titre": "Homemade margherita pizza",
+    "etapes": [
+      "Heat the oven to 240 °C, as hot as it goes.",
+      "Roll the pizza dough out on a tray, spread with salted chopped tomatoes.",
+      "Scatter over the mozzarella, drained and torn into pieces.",
+      "Bake 12 to 15 min until the edges are golden.",
+      "Straight out of the oven, drizzle with olive oil and scatter with fresh basil."
+    ]
+  },
+  "tartiflette": {
+    "titre": "Tartiflette",
+    "etapes": [
+      "Cook the potatoes 20 min in boiling water, until a knife goes in easily, then peel and slice them into rounds.",
+      "Heat the oven to 200 °C.",
+      "Fry the bacon lardons and the sliced onion 5 min in a dry pan.",
+      "In a dish, layer potatoes, bacon and onion, and crème fraîche, and pepper.",
+      "Cut the reblochon in half through its thickness, lay it on top rind up.",
+      "Bake 25 min until the cheese is melted and golden."
+    ]
+  },
+  "shakshuka": {
+    "titre": "Shakshuka",
+    "etapes": [
+      "Slice the onion, the garlic and the bell pepper.",
+      "Fry the onion and the pepper 5 min in the olive oil.",
+      "Add the garlic, the ground cumin and the smoked paprika, stir 1 min.",
+      "Pour in the chopped tomatoes, salt and simmer 10 min until it thickens.",
+      "Hollow out 4 wells in the sauce, break the eggs into them, cover and cook 6 min until the whites are set.",
+      "Scatter with fresh coriander and serve straight from the pan."
+    ]
+  },
+  "gyoza-porc": {
+    "titre": "Pork gyoza",
+    "etapes": [
+      "Slice the chinese cabbage very finely, salt it and let it drain 10 min then squeeze out the water.",
+      "Mix the minced pork, the cabbage, the sliced spring onion, the grated fresh ginger and garlic, the soy sauce and the sesame oil.",
+      "Put a spoonful of filling in the middle of each gyoza wrapper, wet the edges and pleat to seal.",
+      "Brown the gyoza 2 min flat side down in an oiled pan.",
+      "Pour in 60 ml of water, cover at once and steam 5 min until it has all evaporated."
+    ]
+  },
+  "buddha-bowl-tofu": {
+    "titre": "Crispy tofu buddha bowl",
+    "etapes": [
+      "Heat the oven to 200 °C. Cook the quinoa as the packet says.",
+      "Cut the firm tofu into cubes, coat with cornflour and olive oil.",
+      "Bake the tofu and the broccoli florets 20 min, until the tofu is golden and crisp.",
+      "Grate the carrots, slice the avocado.",
+      "Divide quinoa, tofu, broccoli, carrot and avocado between the bowls, drizzle with soy sauce and scatter with sesame seeds."
+    ]
+  },
+  "saumon-teriyaki-riz": {
+    "titre": "Teriyaki salmon & rice",
+    "etapes": [
+      "Start the white rice.",
+      "Steam the broccoli 8 min.",
+      "Brown the salmon 3 min skin side down in the sesame oil, turn for 2 min.",
+      "Pour in the teriyaki sauce, reduce 2 min while spooning it over the fish.",
+      "Serve over the rice with the broccoli, scattered with sesame seeds."
+    ]
+  },
+  "tagine-agneau-abricots": {
+    "titre": "Lamb & apricot tagine",
+    "etapes": [
+      "Cut the lamb shoulder into large cubes, slice the onions and the garlic.",
+      "Brown the meat in the olive oil 8 min on all sides, set aside.",
+      "Fry the onion and the garlic 5 min, add the cinnamon and the ground cumin.",
+      "Return the meat, cover with water, salt, cover and simmer 1 h over low heat.",
+      "Add the dried apricots and carry on 15 min.",
+      "Prepare the fine couscous as the packet says, scatter the tagine with flaked almonds and serve over the couscous."
+    ]
+  },
+  "pad-thai-poulet": {
+    "titre": "Chicken pad thai",
+    "etapes": [
+      "Soak the rice noodles in hot water 10 min as the packet says, drain.",
+      "Cut the chicken breast into strips, chop the garlic.",
+      "Stir-fry the chicken and the garlic 5 min in a very hot wok.",
+      "Push to one side, break in the eggs and scramble 1 min, then fold into the chicken.",
+      "Add the noodles, the fish sauce and the brown sugar, stir-fry 2 min.",
+      "Add the bean sprouts, stir-fry 1 min, serve with crushed peanuts and lime wedges."
+    ]
+  },
+  "lasagnes-legumes": {
+    "titre": "Vegetable lasagne",
+    "etapes": [
+      "Dice the courgette and the aubergine, slice the onion and the garlic.",
+      "Fry the onion and the garlic in the olive oil 3 min, add courgette and aubergine, cook 10 min.",
+      "Add the chopped tomatoes, salt, simmer 10 min.",
+      "Make a béchamel: melt the butter, add the flour, cook 1 min then pour in the milk little by little, whisking, until it thickens.",
+      "Heat the oven to 200 °C. Layer in a dish: tomato and vegetable sauce, lasagne sheets, béchamel, three times over.",
+      "Finish with the béchamel, the mozzarella and the parmesan. Bake 30 min until the top is browned."
+    ]
+  },
+  "boeuf-bourguignon": {
+    "titre": "Beef bourguignon",
+    "etapes": [
+      "Cut the meat into large 4 cm cubes and pat them dry: a wet surface doesn't colour, it boils.",
+      "Sear the cubes in two batches in a very hot casserole, 5 min a batch, until deep brown all over. Set aside.",
+      "Render the bacon lardons with the sliced onions and the carrots in thick rounds in the same casserole, 8 min.",
+      "Return the meat, dust with flour, stir and leave 2 min: that is what will thicken the sauce.",
+      "Add the crushed garlic, the tomato purée, the bouquet garni, pour in the red wine and top up with water and the stock to cover.",
+      "Cover and simmer at the barest bubble for 3 h. The meat is ready when a fork goes in without resistance.",
+      "Fry the mushrooms separately 5 min over high heat and add them in the last ten minutes, otherwise they release their water into the sauce.",
+      "Taste, salt, pepper. Better reheated the next day."
+    ]
+  },
+  "blanquette-de-veau": {
+    "titre": "Veal blanquette",
+    "etapes": [
+      "Put the veal in a casserole, cover with cold water, bring to a bare simmer and skim off the grey foam for 5 min: that is what keeps the broth clear.",
+      "Add the carrots in chunks, the leeks, the onion and the bouquet garni. Cook covered 1 h, never at a hard boil.",
+      "Lift out the meat and vegetables, strain the broth and keep 75 cl of it.",
+      "Make a white roux: melt the butter, add the flour, stir 2 min without letting it colour.",
+      "Pour in the hot broth little by little, whisking, and let it thicken 10 min.",
+      "Cook the sliced mushrooms 5 min in a little broth with a squeeze of lemon.",
+      "Off the heat, slake the egg yolk in the cream and stir it into the sauce — it must not boil after that, or it will split.",
+      "Return meat, vegetables and mushrooms to the sauce, reheat gently and serve with the rice."
+    ]
+  },
+  "coq-au-vin": {
+    "titre": "Coq au vin",
+    "etapes": [
+      "Salt and pepper the thighs, brown them skin side down 8 min in the casserole, then 4 min on the other side. Set aside.",
+      "Pour off half the fat, sweat the sliced onions, the carrots in rounds and the bacon lardons 8 min.",
+      "Dust with flour, stir 2 min, add the garlic and the tomato purée.",
+      "Return the chicken, pour in the red wine, add the bouquet garni. The liquid should just come up to the meat.",
+      "Cover and simmer 1 h over low heat.",
+      "Fry the mushrooms in butter 5 min separately and add them at the end.",
+      "Lift out the chicken, reduce the sauce uncovered 10 min if it is too thin, then check the seasoning."
+    ]
+  },
+  "pot-au-feu": {
+    "titre": "Pot-au-feu",
+    "etapes": [
+      "Put the meat in a large stockpot, cover generously with cold water and bring gently to a simmer.",
+      "Skim carefully for 10 min, until the surface stays clean.",
+      "Add the studded onion, the garlic, the bouquet garni and the celery. Salt. Cook covered 2 h at the barest bubble.",
+      "Add carrots, turnips and leeks tied in a bundle, carry on 45 min.",
+      "Cook the potatoes separately in a ladle of broth 25 min: in the pot they would cloud it.",
+      "Serve the meat sliced and surrounded by its vegetables, with mustard and gherkins. The broth is drunk first, in a bowl."
+    ]
+  },
+  "navarin-agneau": {
+    "titre": "Spring lamb navarin",
+    "etapes": [
+      "Cut the lamb into 5 cm pieces, sear them over high heat in the casserole 6 min until well coloured.",
+      "Dust with sugar and let it caramelise 1 min: that is what gives a navarin its colour.",
+      "Add the flour, stir, then the garlic, the tomato purée and the stock dissolved in 50 cl of hot water.",
+      "Add the bouquet garni, cover and simmer 45 min.",
+      "Add carrots, turnips and potatoes cut into large pieces, carry on 30 min uncovered.",
+      "Throw in the peas 5 min before the end. Check salt and pepper."
+    ]
+  },
+  "daube-provencale": {
+    "titre": "Provençal daube",
+    "etapes": [
+      "The day before if you can: marinate the cubed meat with the wine, the carrots in rounds, the onions and the bouquet garni, in the fridge.",
+      "Drain the meat keeping the marinade, pat it dry and brown it in two batches, 5 min a batch.",
+      "Add the drained vegetables, fry 8 min, dust with flour.",
+      "Pour in the strained marinade, the chopped tomatoes, the crushed garlic and a wide ribbon of orange zest.",
+      "Cover and simmer 3 h over very low heat — a barely visible tremble.",
+      "Add the olives in the last quarter of an hour. Serve with short pasta or steamed potatoes."
+    ]
+  },
+  "cassoulet-maison": {
+    "titre": "Homemade cassoulet",
+    "etapes": [
+      "Soak the beans the day before, then cook them 45 min in simmering water with the smoked pork belly, the onion, the carrot and the bouquet garni.",
+      "Brown the sausages 8 min in a pan, set aside. Warm the duck legs 5 min to shed their set fat.",
+      "Fry the second onion and the chopped garlic in a spoonful of duck fat, add the tomatoes and the purée, leave 10 min.",
+      "Fold the drained beans into that sauce, moisten with 50 cl of their cooking water and the stock.",
+      "In a deep oven dish, layer beans, pieces of meat and beans. The liquid should just come up without drowning it.",
+      "Bake 1 h at 150 °C. Break the crust with a spoon three or four times during cooking: that is what thickens it."
+    ]
+  },
+  "choucroute-garnie": {
+    "titre": "Choucroute garnie",
+    "etapes": [
+      "Rinse the sauerkraut under cold water and squeeze it hard between your hands: that is what sets its acidity.",
+      "Sweat the sliced onions in a casserole 5 min, without colouring them.",
+      "Add half the sauerkraut, lay the smoked pork belly and the roast on top, cover with the rest of the sauerkraut.",
+      "Pour in the white wine and 25 cl of water, add the juniper berries and the bouquet garni. Cover.",
+      "Cook 1 h over low heat. Add the sausages and the peeled potatoes, carry on 30 min.",
+      "Serve from the dish, meats sliced on top, mustard on the side."
+    ]
+  },
+  "petit-sale-lentilles": {
+    "titre": "Salt pork with lentils",
+    "etapes": [
+      "Blanch the smoked pork belly 10 min in boiling water to draw out the salt, then cut it into thick lardons.",
+      "Fry the onion, the shallots and the carrots in rounds 6 min in the casserole.",
+      "Add the rinsed lentils, the pork belly, the garlic, the bouquet garni and cover with 1.2 l of cold water. Don't salt yet: salt toughens the skin of the lentils.",
+      "Bring to a simmer and cook 30 min covered.",
+      "Add the sausages, pricked with a fork, carry on 15 min.",
+      "Salt at the end, pepper, and serve with the mustard."
+    ]
+  },
+  "boeuf-carottes": {
+    "titre": "Beef with carrots",
+    "etapes": [
+      "Cut the meat into cubes, brown it in small batches 5 min a batch in the casserole.",
+      "Set the meat aside, fry the sliced onions 6 min in the pan juices.",
+      "Deglaze with white wine, scraping the bottom with a wooden spoon: all the flavour is there.",
+      "Return the meat, add the carrots in thick chunks, the garlic, the purée, the bouquet garni and the stock with 30 cl of water.",
+      "Cover and simmer 2 h over very low heat. The carrots should be on the point of falling apart.",
+      "Uncover for the last 15 min to reduce the sauce, then check the seasoning."
+    ]
+  },
+  "poulet-chasseur": {
+    "titre": "Chicken chasseur",
+    "etapes": [
+      "Brown the seasoned thighs 10 min on both sides in a sauté pan. Set aside.",
+      "Sweat the chopped shallots 3 min, add the sliced mushrooms and turn the heat up 6 min to drive off their water.",
+      "Dust with flour, deglaze with white wine, reduce 3 min.",
+      "Add the chopped tomatoes, the garlic and the tarragon, return the chicken and simmer 30 min covered.",
+      "Add the cream, leave 5 min uncovered, then scatter with parsley."
+    ]
+  },
+  "lapin-moutarde": {
+    "titre": "Rabbit in mustard sauce",
+    "etapes": [
+      "Coat the rabbit pieces generously with mustard and leave them 15 min at room temperature.",
+      "Flour them lightly and brown them 8 min in butter and oil in a casserole, gently: mustard burns fast.",
+      "Add the sliced shallots, leave 3 min.",
+      "Deglaze with white wine, add the thyme, cover and simmer 35 min.",
+      "Lift out the pieces, pour the cream into the casserole and reduce 5 min over high heat.",
+      "Return the rabbit to the sauce, pepper generously and serve with fresh pasta."
+    ]
+  },
+  "poulet-roti-pommes-de-terre": {
+    "titre": "Roast chicken and potatoes",
+    "etapes": [
+      "Heat the oven to 200 °C. Take the chicken out of the fridge 20 min ahead: a chilled bird cooks dry on the outside before it is done at the centre.",
+      "Slide the soft butter under the skin of the breasts, salt and pepper all over, inside too.",
+      "Shut the lemon, pricked with a fork, two garlic cloves and the thyme into the cavity.",
+      "Lay the chicken on its side in a large dish, surrounded by the potatoes in wedges, the garlic in its skin and the oil.",
+      "Roast 25 min, turn onto the other side for 25 min, then finish 25 min on its back to colour the breast.",
+      "Check by piercing the thigh: the juices should run clear. Rest 10 min before carving, or the juices run into the dish."
+    ]
+  },
+  "hachis-parmentier": {
+    "titre": "Hachis parmentier",
+    "etapes": [
+      "Cook the peeled potatoes 25 min in salted water, until a knife goes through without effort.",
+      "Meanwhile, fry the chopped onions 6 min, add the meat and press it with a spoon so it cooks in grains, 8 min.",
+      "Add the garlic, the chopped tomatoes, the parsley, salt and pepper. Leave 10 min uncovered: the filling should be moist, never runny.",
+      "Mash the potatoes, beat in the hot milk, the butter and the nutmeg. Don't blend, the mash would turn elastic.",
+      "Spread the meat in a dish, cover with mash, score with a fork and scatter with grated cheese.",
+      "Bake 25 min at 200 °C, until the ridges are golden."
+    ]
+  },
+  "tomates-farcies": {
+    "titre": "Stuffed tomatoes",
+    "etapes": [
+      "Cut a lid off the tomatoes, hollow them out with a teaspoon keeping the pulp. Salt the inside and turn them upside down for 10 min to drain.",
+      "Soak the sandwich bread in the milk, then squeeze it out.",
+      "Mix by hand the meat, the chopped onion and garlic, the egg, the squeezed bread, the parsley, salt and pepper.",
+      "Fill the tomatoes without packing them down, put the lids back on.",
+      "Scatter the dry rice and the chopped pulp over the bottom of the dish with a glass of water: it will cook in the tomato juices.",
+      "Bake 55 min at 180 °C. Baste once halfway through."
+    ]
+  },
+  "escalope-veau-creme": {
+    "titre": "Veal escalope in cream sauce",
+    "etapes": [
+      "Start the pasta water. Flour the escalopes lightly, salt and pepper.",
+      "Sear them 3 min a side in the hot butter, then keep them warm under a sheet of foil.",
+      "In the same pan, sweat the shallots 2 min, add the sliced mushrooms and cook 6 min over high heat.",
+      "Deglaze with white wine, reduce by half, 3 min.",
+      "Pour in the cream, let it thicken 4 min, return the escalopes for a minute to warm through.",
+      "Scatter with parsley and serve over the drained pasta."
+    ]
+  },
+  "cordon-bleu-maison": {
+    "titre": "Homemade cordon bleu",
+    "etapes": [
+      "Butterfly each chicken breast and flatten it between two sheets of baking paper to 1 cm thick.",
+      "Salt, pepper, lay on a slice of ham and of comté, close it up pressing the edges well.",
+      "Pass each cordon bleu through the flour, then the beaten egg, then the breadcrumbs. Repeat egg and breadcrumbs on the edges: that is where the cheese escapes.",
+      "Cook the green beans 8 min in boiling salted water.",
+      "Brown the cordons bleus 5 min a side over medium heat in the oil — too fierce and the crumb burns before the chicken is cooked.",
+      "Drain on kitchen paper and serve at once."
+    ]
+  },
+  "steak-frites": {
+    "titre": "Homemade steak and chips",
+    "etapes": [
+      "Cut the potatoes into one-centimetre batons, rinse them under cold water then dry them thoroughly in a tea towel.",
+      "First fry: drop the chips 7 min into oil at 150 °C, they should stay pale and floppy. Drain them and let them rest.",
+      "Take the meat out of the fridge 20 min ahead, salt it just before cooking.",
+      "Sear the steaks 2 min a side in a very hot pan with the butter, basting. Rest them 5 min on a warm plate.",
+      "Second fry: 3 min at 180 °C, until golden and crisp. Salt as they come out.",
+      "Serve with the dressed salad and the mustard."
+    ]
+  },
+  "cote-porc-charcutiere": {
+    "titre": "Pork chops charcutière",
+    "etapes": [
+      "Cook the potatoes in their skins 25 min in salted water.",
+      "Sear the seasoned chops 4 min a side in the butter and oil, then keep them warm.",
+      "Sweat the chopped shallots 3 min in the pan juices, dust with flour.",
+      "Deglaze with white wine, add the stock dissolved in 15 cl of water, reduce 5 min.",
+      "Off the heat, stir in the mustard and the sliced gherkins: boiled mustard turns bitter.",
+      "Spoon the sauce over the chops and serve with the potatoes."
+    ]
+  },
+  "roti-porc-pommes-terre": {
+    "titre": "Pork roast with potatoes",
+    "etapes": [
+      "Heat the oven to 200 °C. Brush the roast with mustard, salt, pepper, scatter with thyme.",
+      "Colour it 8 min on all sides in an ovenproof casserole.",
+      "Add the potatoes in wedges, the onions in slivers and the garlic in its skin, drizzle with oil and toss.",
+      "Pour the stock dissolved in 20 cl of hot water into the bottom of the dish.",
+      "Roast 1 h, turning the potatoes halfway through.",
+      "Rest the meat 10 min under foil before slicing."
+    ]
+  },
+  "saucisse-puree": {
+    "titre": "Sausages and homemade mash",
+    "etapes": [
+      "Cook the potatoes, peeled and cut into large pieces, 25 min in salted water from cold.",
+      "Prick the sausages, brown them 15 min over medium heat in a pan with a little water: the water cooks them through, the pan colours them once it has evaporated.",
+      "Melt the sliced onions 12 min over low heat in a little oil, until golden and soft.",
+      "Drain the potatoes, pass them through a ricer, beat in the butter then the hot milk little by little.",
+      "Season with salt, pepper and nutmeg. Serve the sausages on the mash, crowned with onions."
+    ]
+  },
+  "boudin-noir-pommes": {
+    "titre": "Black pudding with apples",
+    "etapes": [
+      "Cook the potatoes 25 min in salted water, then mash them roughly with a fork and a knob of butter.",
+      "Cut the apples into thick wedges without peeling them and slice the onion.",
+      "Fry them in butter 10 min with the brown sugar, until the apples are golden but still whole.",
+      "Prick the black pudding and lay it in a hot pan, 5 min a side over medium heat. Don't prick it further, it would empty out.",
+      "Deglaze the apples with a splash of vinegar off the heat and serve at once."
+    ]
+  },
+  "magret-canard-pommes": {
+    "titre": "Duck breast with apples",
+    "etapes": [
+      "Score the skin of the duck breasts in a criss-cross without cutting into the flesh, salt.",
+      "Lay them skin down in a cold pan, turn the heat to medium and let the fat render 8 min. Pour the fat off twice along the way.",
+      "Turn and cook 4 min flesh side for pink meat. Rest 10 min under foil — the rest matters as much as the cooking.",
+      "Fry the diced potatoes 15 min in two spoonfuls of the saved duck fat, with the thyme.",
+      "In the duck pan, brown the apple wedges 6 min with the honey, then deglaze with balsamic vinegar.",
+      "Slice the duck on the diagonal and serve with the pan juices spooned over."
+    ]
+  },
+  "gigot-agneau-flageolets": {
+    "titre": "Leg of lamb with flageolet beans",
+    "etapes": [
+      "Take the lamb out 1 h ahead. Heat the oven to 220 °C.",
+      "Stud the meat with four garlic cloves in slivers, rub with oil, salt, pepper, scatter with thyme.",
+      "Roast 15 min at 220 °C to sear, then drop to 180 °C and count 12 min per pound for pink meat.",
+      "Fry the shallots and the remaining garlic 5 min in butter, add the drained flageolet beans and the stock dissolved in 15 cl of water.",
+      "Simmer 20 min covered, then scatter with parsley.",
+      "Rest the lamb 15 min before carving, and save the juices from the dish to moisten the beans."
+    ]
+  },
+  "moules-marinieres": {
+    "titre": "Moules marinières",
+    "etapes": [
+      "Sort the mussels under cold water: throw out the broken ones and any that stay open when tapped on the sink.",
+      "Cut the potatoes into chips and give them a first fry, 7 min at 150 °C.",
+      "Sweat the chopped shallots and garlic in the butter 4 min without colouring, in a large stockpot.",
+      "Pour in the white wine, bring to a hard boil 2 min to drive off the alcohol.",
+      "Tip in the mussels all at once, cover and leave 5 min over high heat, shaking the pot once: they are ready as soon as they have all opened.",
+      "Fry the chips a second time, 3 min at 180 °C, and salt them.",
+      "Pepper the mussels, scatter with parsley and serve with the cooking juices in a bowl."
+    ]
+  },
+  "cabillaud-provencale": {
+    "titre": "Cod loin provençale",
+    "etapes": [
+      "Heat the oven to 200 °C. Fry the sliced onion 5 min in the oil.",
+      "Add the garlic, the diced tomatoes and the herbs, let it stew down 10 min over high heat: the sauce should thicken, not swim.",
+      "Add the olives, the capers and the white wine, carry on 3 min.",
+      "Pour the sauce into a dish, lay the cod loins on top, salt and pepper, drizzle with oil.",
+      "Bake 15 min. The fish is cooked when the flesh flakes apart under a fork.",
+      "Serve with the lemon juice squeezed over at the last moment."
+    ]
+  },
+  "papillote-saumon-legumes": {
+    "titre": "Salmon en papillote with vegetables",
+    "etapes": [
+      "Heat the oven to 200 °C. Peel the courgettes and the carrots into thin ribbons: cut thick, they would stay raw.",
+      "Lay out four large sheets of baking paper. Divide the vegetables in the centre, then the sliced shallots.",
+      "Lay a salmon fillet on each bed of vegetables, salt, pepper, add two lemon slices.",
+      "Drizzle with oil and a spoonful of white wine, then close the parcels by folding the edges over twice.",
+      "Bake 15 min: the parcel should puff up, the sign that the steam is working.",
+      "Open at the table and scatter with chopped chives."
+    ]
+  },
+  "truite-amandes": {
+    "titre": "Trout with almonds",
+    "etapes": [
+      "Cook the potatoes in salted water 25 min.",
+      "Pat the trout dry, salt them inside and out, then flour them lightly, tapping off the excess.",
+      "Cook them 5 min a side in 40 g of foaming butter, over medium heat. Keep warm.",
+      "Wipe the pan, melt the rest of the butter and brown the almonds in it 2 min, stirring constantly — they go from golden to burnt in seconds.",
+      "Off the heat, add the juice of a lemon and the parsley, pour over the trout and serve with the steamed potatoes."
+    ]
+  },
+  "saumon-creme-ciboulette": {
+    "titre": "Salmon with cream and chives",
+    "etapes": [
+      "Start the rice. Cut the salmon into large 3 cm cubes, salt and pepper.",
+      "Sweat the chopped shallots 3 min in butter in a sauté pan.",
+      "Deglaze with white wine and reduce by half, 3 min.",
+      "Add the cream and let it thicken 4 min over low heat.",
+      "Lay the salmon cubes in the sauce, cover and leave 5 min over very low heat: the salmon should stay translucent at the centre.",
+      "Off the heat, add the chives and a squeeze of lemon. Serve over the rice."
+    ]
+  },
+  "cabillaud-meuniere": {
+    "titre": "Cod meunière",
+    "etapes": [
+      "Cook the green beans 8 min in boiling salted water, then drain them and fry them 2 min in oil.",
+      "Pat the pieces of fish dry, salt and pepper them and pass them through the flour just before cooking — too early and the flour goes soggy and sticks.",
+      "Heat 40 g of butter until it foams, lay the fish in and cook 4 min without touching it.",
+      "Turn gently with a spatula, carry on 3 min, then plate up.",
+      "Discard the cooked butter, melt the rest until it smells nutty, add the lemon juice and the parsley off the heat, and spoon over at once."
+    ]
+  },
+  "gambas-ail-persil": {
+    "titre": "Prawns with garlic and parsley",
+    "etapes": [
+      "Peel the prawns keeping the tails, and pull out the black vein with a knife along the back.",
+      "Chop the garlic finely and infuse it 2 min over low heat in the olive oil: over high heat it turns bitter.",
+      "Turn the heat up, tip in the prawns and sear them 2 min a side, until pink and firm.",
+      "Deglaze with white wine, leave 1 min, then add the parsley, the Espelette pepper and the salt.",
+      "Squeeze over lemon and serve immediately with the baguette for the sauce."
+    ]
+  },
+  "saint-jacques-poelees": {
+    "titre": "Pan-seared scallops with cream",
+    "etapes": [
+      "Slice the leeks into thin rounds and melt them 12 min covered in 20 g of butter, with two spoonfuls of water.",
+      "Pat the scallops dry one by one: the slightest moisture makes them boil instead of colour.",
+      "Sear them 90 seconds a side in a very hot pan with the rest of the butter, salt, pepper, then set aside.",
+      "Sweat the shallots in the same pan 2 min, deglaze with white wine and reduce 3 min.",
+      "Add the cream, let it thicken 3 min, return the scallops for 30 seconds to warm through.",
+      "Plate on the melted leeks and scatter with chives."
+    ]
+  },
+  "gratin-dauphinois": {
+    "titre": "Gratin dauphinois",
+    "etapes": [
+      "Heat the oven to 160 °C. Rub a gratin dish with a cut garlic clove, then butter it generously.",
+      "Peel the potatoes and slice them 3 mm thick. Whatever you do, don't rinse them: their starch is what binds the gratin.",
+      "Heat the milk, the cream, the remaining crushed garlic, the salt, the pepper and the nutmeg without letting it boil.",
+      "Tip the slices into that mixture and cook 10 min over low heat, stirring gently: the gratin will go in already hot and save half an hour in the oven.",
+      "Pour into the dish, level it, dot with butter.",
+      "Bake 1 h. The top should be golden and a knife tip go through without resistance. Rest 10 min before serving."
+    ]
+  },
+  "quiche-lorraine": {
+    "titre": "Quiche lorraine",
+    "etapes": [
+      "Heat the oven to 190 °C. Roll the pastry into a tin, prick it with a fork and cover it with baking paper weighed down with dried pulses.",
+      "Blind bake 12 min: without this step the base stays pale and soggy under the custard.",
+      "Fry the bacon lardons 5 min in a dry pan, then drain them on kitchen paper.",
+      "Beat the eggs with the cream and the milk, salt sparingly — the lardons and the comté are salty already — pepper, grate in the nutmeg.",
+      "Remove the pulses, scatter the lardons and the grated comté over the base, pour in the custard.",
+      "Bake 35 min, until the quiche is puffed and golden. It sinks as it cools, that's normal."
+    ]
+  },
+  "croque-monsieur": {
+    "titre": "Croque-monsieur",
+    "etapes": [
+      "Make the béchamel: melt the butter, add the flour, stir 2 min, then pour in the hot milk little by little, whisking.",
+      "Let it thicken 4 min over low heat, season with salt, pepper and nutmeg. It should coat the spoon.",
+      "Heat the oven to 200 °C. Spread eight slices of bread with béchamel.",
+      "On four of them, lay a slice of ham and a layer of grated comté, then close with the other slices, béchamel side in.",
+      "Coat the tops with the rest of the béchamel and the remaining comté.",
+      "Bake 12 min, then 2 min under the grill so the top blisters and browns."
+    ]
+  },
+  "omelette-fines-herbes": {
+    "titre": "Herb omelette",
+    "etapes": [
+      "Beat the eggs with a fork, just enough to mix whites and yolks: over-beaten, they make a rubbery omelette.",
+      "Add the chopped herbs, salt, pepper.",
+      "Dress the salad with oil, vinegar, salt and pepper.",
+      "Foam the butter in a pan over medium heat, pour the eggs in all at once.",
+      "Draw the edges to the centre with a spatula for 2 min, until the top is still glossy and creamy.",
+      "Roll the omelette over on itself and slide it onto the plate. Serve with the salad."
+    ]
+  },
+  "oeufs-cocotte": {
+    "titre": "Baked eggs with cream",
+    "etapes": [
+      "Heat the oven to 180 °C and heat a pan of water for the bain-marie.",
+      "Fry the shallot and the sliced mushrooms 6 min in butter, until their water has completely gone.",
+      "Butter four ramekins, divide the mushrooms between them then a spoonful of cream.",
+      "Break an egg into each ramekin without bursting the yolk, spoon over the rest of the cream, scatter with comté, salt and pepper.",
+      "Set the ramekins in a dish, pour in hot water halfway up and bake 10 min: the white should be set, the yolk still runny.",
+      "Scatter with chives and serve with fingers of toasted baguette."
+    ]
+  },
+  "oeufs-meurette": {
+    "titre": "Œufs en meurette",
+    "etapes": [
+      "Fry the bacon lardons, the shallots and the mushrooms 8 min in butter in a sauté pan.",
+      "Dust with flour, stir, then pour in the red wine with the garlic and the bouquet garni. Reduce 20 min over medium heat, until the sauce coats the spoon.",
+      "Toast four slices of baguette and rub them with garlic.",
+      "Bring a pan of water with the vinegar to a bare simmer — never a rolling boil, it shreds the white.",
+      "Break each egg into a bowl, slide it into the water and poach 3 min, then drain it on kitchen paper.",
+      "Set an egg on each crouton, spoon over the strained sauce and pepper."
+    ]
+  },
+  "piperade": {
+    "titre": "Piperade",
+    "etapes": [
+      "Slice the bell peppers into thin strips and the onions into half-moons.",
+      "Melt them 20 min over low heat in the oil, covered: piperade is made with patience, not high heat.",
+      "Add the garlic and the peeled diced tomatoes, the Espelette pepper, and reduce 15 min uncovered.",
+      "Grill the slices of cured ham 1 min a side in a dry pan, set them aside.",
+      "Beat the eggs, pour them into the vegetables and stir constantly 3 min over low heat: the mixture should stay soft and loose.",
+      "Serve at once, with the cured ham laid on top."
+    ]
+  },
+  "endives-jambon": {
+    "titre": "Chicory with ham",
+    "etapes": [
+      "Cut out the bitter cone at the base of each chicory head with a sharp knife.",
+      "Cook them 20 min in boiling salted water with the lemon juice and the sugar, then drain and press them firmly: a waterlogged chicory drowns the gratin.",
+      "Make the béchamel with the butter, the flour and the hot milk, let it thicken 5 min, season with salt, pepper and nutmeg.",
+      "Wrap each chicory head in a slice of ham and lay them side by side in a buttered dish.",
+      "Coat with béchamel, scatter with grated cheese.",
+      "Bake 25 min at 200 °C, until the top is well browned."
+    ]
+  },
+  "gratin-courgettes": {
+    "titre": "Courgette and rice gratin",
+    "etapes": [
+      "Cook the rice 10 min in boiling salted water, drain it: it will finish cooking in the gratin.",
+      "Coarsely grate the courgettes, salt them and let them drain 10 min in a colander, then squeeze them out by the handful.",
+      "Fry the chopped onion and garlic 5 min, add the courgettes and cook 8 min over high heat to drive off the last of the water.",
+      "Beat the eggs with the cream, the nutmeg, the parsley, salt and pepper. Fold in the rice and the courgettes.",
+      "Pour into an oiled dish, cover with grated cheese.",
+      "Bake 35 min at 190 °C. The gratin should be set at the centre and golden at the edges."
+    ]
+  },
+  "gratin-pates-jambon": {
+    "titre": "Pasta and ham gratin",
+    "etapes": [
+      "Cook the pasta 2 min less than the stated time: it finishes in the oven and would otherwise turn to mush.",
+      "Fry the sliced mushrooms 6 min over high heat, then set them aside.",
+      "Make the béchamel: melted butter, flour, 2 min of cooking, then the hot milk poured in slowly while whisking. Let it thicken 5 min.",
+      "Season with salt, pepper and nutmeg, then stir in half the grated cheese off the heat.",
+      "Mix the pasta, the ham in strips, the mushrooms and the béchamel, pour into a buttered dish.",
+      "Cover with the remaining cheese and bake 20 min at 200 °C, finishing 3 min under the grill."
+    ]
+  },
+  "tarte-poireaux-lardons": {
+    "titre": "Leek and bacon tart",
+    "etapes": [
+      "Split the leeks in four lengthways and rinse them under water: the grit hides between the leaves.",
+      "Slice them and melt them 20 min covered with the butter and two spoonfuls of water, over low heat.",
+      "Fry the bacon lardons 5 min in a dry pan, drain them.",
+      "Heat the oven to 190 °C, roll the pastry into the tin and prick it with a fork.",
+      "Beat the eggs with the cream, the salt, the pepper and the nutmeg.",
+      "Spread the leeks and lardons over the pastry, pour in the custard, cover with grated cheese and bake 35 min."
+    ]
+  },
+  "flammekueche": {
+    "titre": "Flammekueche",
+    "etapes": [
+      "Heat the oven as hot as it goes, 250 °C if possible, with the tray inside: a tarte flambée is won on the heat from below.",
+      "Mix the fromage blanc and the cream, season with salt, pepper and nutmeg.",
+      "Slice the onions very finely and fry the bacon lardons 3 min in a dry pan.",
+      "Roll the dough out as thinly as you can on baking paper, in a rectangle.",
+      "Cover it with a thin layer of the creamy mixture, then scatter with onions and lardons.",
+      "Bake 12 min on the searing tray, until the edges are brown and crisp. Serve cut into squares, straight away."
+    ]
+  },
+  "pissaladiere": {
+    "titre": "Pissaladière",
+    "etapes": [
+      "Slice the onions into thin half-moons — the only real work in this recipe.",
+      "Stew them 45 min over very low heat in the oil, covered, with the thyme, the garlic and the sugar. They should turn golden and soft without ever colouring hard.",
+      "Uncover for 10 min to drive off the remaining juice, then salt lightly.",
+      "Heat the oven to 220 °C and roll the dough out on a tray.",
+      "Spread the stewed onions over it, lay the anchovies in a lattice and an olive in each diamond.",
+      "Bake 20 min. Best eaten warm rather than piping hot."
+    ]
+  },
+  "tarte-tomate-moutarde": {
+    "titre": "Tomato and mustard tart",
+    "etapes": [
+      "Heat the oven to 200 °C. Slice the tomatoes 5 mm thick, salt them and let them drain 15 min on kitchen paper.",
+      "Roll the pastry into the tin, prick it all over with a fork.",
+      "Spread the base with mustard, then scatter with half the grated cheese: that layer is what shields the pastry from the juice.",
+      "Lay the tomato slices out in a rosette, packed tight — they shrink a lot.",
+      "Salt, pepper, scatter with herbes de Provence, the rest of the cheese and a drizzle of oil.",
+      "Bake 30 min, until the edges are well risen and golden."
+    ]
+  },
+  "souffle-fromage": {
+    "titre": "Cheese soufflé",
+    "etapes": [
+      "Heat the oven to 190 °C. Butter a soufflé dish with vertical brush strokes: the soufflé climbs along the streaks.",
+      "Make a roux with the butter and the flour, then pour in the hot milk, whisking. Let it thicken 5 min — it's a tight béchamel.",
+      "Off the heat, stir in the grated comté, the nutmeg, the salt and the pepper, then the egg yolks one at a time.",
+      "Whisk the whites to firm peaks with a pinch of salt.",
+      "Beat a third of them in briskly to loosen the mixture, then fold in the rest gently with a spatula, lifting the mass.",
+      "Pour into the dish, bake 30 min without ever opening the door, and serve within the minute."
+    ]
+  },
+  "galette-complete": {
+    "titre": "Buckwheat galette complète",
+    "etapes": [
+      "Mix the buckwheat flour, 1 teaspoon of salt, an egg and 60 cl of water. Whisk to a smooth, loose batter.",
+      "Rest the batter 30 min: without a rest, the galette tears at the first touch of the spatula.",
+      "Heat a large pan, butter it lightly, pour in a ladle of batter and spread it by tilting the pan. Cook 2 min.",
+      "Turn the galette over, break an egg in the centre, lay the ham and the grated comté around it.",
+      "Fold the four sides in to make a square, carry on 3 min covered to melt the cheese while keeping the yolk runny.",
+      "Repeat for the other galettes and serve with the dressed salad."
+    ]
+  },
+  "camembert-roti": {
+    "titre": "Oven-baked camembert",
+    "etapes": [
+      "Cook the potatoes in their skins 25 min in salted water.",
+      "Heat the oven to 180 °C. Take the camembert out of its wrapping and put it back in its wooden box, without the lid.",
+      "Score the top in a criss-cross, slide slivers of garlic into the cuts.",
+      "Drizzle with honey, scatter with thyme, pepper.",
+      "Bake 20 min: the centre should be completely molten when you push a spoon in.",
+      "Serve in the middle of the table with the potatoes, the sliced baguette and the salad."
+    ]
+  },
+  "cake-jambon-olives": {
+    "titre": "Ham and olive loaf",
+    "etapes": [
+      "Heat the oven to 180 °C and line a loaf tin with baking paper.",
+      "Beat the eggs, add the oil and the warm milk, then the flour mixed with the baking powder. Stop working the batter as soon as it comes together.",
+      "Dice the ham, drain the olives and dry them: their brine would make the loaf sink.",
+      "Fold in ham, olives and grated cheese with a spatula, pepper generously, salt barely.",
+      "Pour into the tin and bake 45 min. A knife blade should come out dry.",
+      "Turn out while warm and cool on a rack before slicing."
+    ]
+  },
+  "pates-carbonara": {
+    "titre": "Pasta carbonara",
+    "etapes": [
+      "Bring a large pan of salted water to the boil and start the pasta.",
+      "Fry the bacon lardons 6 min over medium heat in a drizzle of oil, until golden and crisp.",
+      "Beat the eggs with the grated parmesan and plenty of black pepper: that is the whole sauce, there is no cream.",
+      "Take out a ladle of cooking water before draining the pasta.",
+      "Off the heat, tip the piping-hot pasta onto the lardons, add the egg and parmesan mixture and stir constantly: the heat of the pasta is enough to bind it, the pan on the flame would make an omelette.",
+      "Loosen with a little cooking water until the sauce coats, and serve immediately."
+    ]
+  },
+  "pates-bolognaise": {
+    "titre": "Pasta bolognese",
+    "etapes": [
+      "Chop carrot, onion and celery very finely, and melt them 10 min in the oil over low heat.",
+      "Add the meat, break it up with a spoon and colour it 8 min over high heat — it should brown, not boil in its juices.",
+      "Add the garlic and the tomato purée, stir 1 min.",
+      "Deglaze with red wine, let it evaporate 3 min, then pour in the milk and let it be absorbed 5 min: that is what softens the acidity of the sauce.",
+      "Add the chopped tomatoes and the herbs, salt, pepper, and simmer 1 h uncovered, over the barest heat.",
+      "Cook the pasta al dente, fold it into the sauce in the pan with a ladle of cooking water, and serve with the parmesan."
+    ]
+  },
+  "salade-nicoise": {
+    "titre": "Salade niçoise",
+    "etapes": [
+      "Cook the eggs 9 min in boiling water, then cool them straight away under cold water to stop the cooking and make them easier to peel.",
+      "Cook the green beans 8 min in salted water, refresh them so they keep their colour.",
+      "Cut the tomatoes into wedges, the bell pepper into thin strips, the red onion into very thin rounds.",
+      "Make the dressing: vinegar, salt, pepper, then the oil whisked in.",
+      "Lay the salad over the bottom of the dish, then the vegetables in separate piles, the flaked tuna, the eggs in quarters, the olives and the anchovies.",
+      "Pour over the dressing at the last moment and scatter with hand-torn basil."
+    ]
+  },
+  "salade-chevre-chaud": {
+    "titre": "Warm goat cheese salad",
+    "etapes": [
+      "Heat the oven grill. Cut the baguette into eight thick slices.",
+      "Slice the goat cheese log into eight rounds and lay one on each slice of bread.",
+      "Drizzle each toast with a little honey and pepper it.",
+      "Grill 5 min, until the cheese is golden and blistered — keep an eye on it, it goes from golden to black very fast.",
+      "Whisk the mustard, the vinegar, the salt and the oil, and dress the salad, the halved cherry tomatoes and the crushed walnuts with it.",
+      "Set two searing-hot toasts on each plate and serve without waiting."
+    ]
+  },
+  "salade-lyonnaise": {
+    "titre": "Salade lyonnaise",
+    "etapes": [
+      "Fry the bacon lardons 6 min in a dry pan, add the diced baguette to the rendered fat and brown it 3 min. Set aside.",
+      "Deglaze the pan with 2 spoonfuls of vinegar, scrape up the juices and keep that liquid.",
+      "Bring a pan of water with the rest of the vinegar to a bare simmer.",
+      "Break each egg into a bowl, slide it into the simmering water and poach 3 min, until the white is set around a yolk that is still liquid.",
+      "Whisk the mustard, the chopped shallot, the pan juices and the oil for the dressing.",
+      "Plate the dressed salad, the lardons, the croutons rubbed with garlic, and set a poached egg on each plate. Pepper."
+    ]
+  },
+  "celeri-remoulade": {
+    "titre": "Celeriac remoulade",
+    "etapes": [
+      "Peel the celeriac with a knife: a peeler slips on its uneven skin.",
+      "Grate it into thick strands and pour the lemon juice over at once, or it turns black within minutes.",
+      "Mix the mayonnaise, the mustard and the crème fraîche, salt and pepper.",
+      "Fold the grated celeriac into the sauce and mix well.",
+      "Rest 10 min in the fridge before serving: the celeriac softens. Scatter with parsley."
+    ]
+  },
+  "carottes-rapees": {
+    "titre": "Grated carrots with orange",
+    "etapes": [
+      "Plump the raisins 10 min in a bowl of warm water.",
+      "Peel and grate the carrots, on the coarse side so they stay crunchy.",
+      "Squeeze the orange and the lemon, whisk the juice with the honey, the salt, the pepper and the oil.",
+      "Mix carrots, drained raisins and dressing.",
+      "Rest 10 min in the fridge and scatter with parsley just before serving."
+    ]
+  },
+  "poireaux-vinaigrette": {
+    "titre": "Leeks vinaigrette",
+    "etapes": [
+      "Cook the eggs 9 min in boiling water, cool them and chop them finely.",
+      "Clean the leeks, keep only the white and a little tender green, and tie them into a bundle so they hold their shape.",
+      "Cook them 18 min in boiling salted water: a knife tip should go in without effort.",
+      "Drain them and press them gently between two plates, then let them cool to lukewarm — a wet leek waters down the dressing.",
+      "Whisk the mustard, the vinegar, the salt and the pepper, then the oil in a thin stream, and add the chopped shallot.",
+      "Spoon over the warm leeks, scatter with chopped egg and parsley."
+    ]
+  },
+  "oeufs-mimosa": {
+    "titre": "Œufs mimosa",
+    "etapes": [
+      "Cook the eggs 10 min in boiling water, then plunge them into iced water: they peel without tearing the white.",
+      "Cut them in half lengthways and lift out the yolks.",
+      "Mash five yolks with a fork with the mayonnaise, the mustard, a squeeze of lemon, salt and pepper. Keep the sixth for the top.",
+      "Fill the whites with this mixture using a teaspoon, or a piping bag to make it pretty.",
+      "Crumble the remaining yolk over the top, scatter with chives and a touch of paprika, and serve on a bed of salad."
+    ]
+  },
+  "tartare-saumon": {
+    "titre": "Salmon and avocado tartare",
+    "etapes": [
+      "Put the salmon in the freezer for 15 min: really cold, it cuts cleanly instead of squashing.",
+      "Take off the skin and the bones, then cut it into 5 mm cubes with a knife — never in a blender.",
+      "Mix the salmon with the chopped shallot, the chives, the juice of one lime, the soy sauce, the oil, salt and pepper.",
+      "Dice the avocados and squeeze the second lime over them.",
+      "Plate in a ring, a layer of avocado then a layer of salmon, and chill 10 min.",
+      "Serve with the toasted sourdough bread."
+    ]
+  },
+  "avocat-crevettes": {
+    "titre": "Prawn-filled avocado",
+    "etapes": [
+      "Mix the mayonnaise, the ketchup, a few drops of lemon juice, salt and pepper: that's the cocktail sauce.",
+      "Peel the prawns and cut them in half if they are large.",
+      "Halve the avocados, take out the stone and squeeze lemon over the flesh at once.",
+      "Fold the prawns into the sauce and fill the avocado halves with it.",
+      "Scatter with chives and serve well chilled on a few salad leaves."
+    ]
+  },
+  "soupe-oignon-gratinee": {
+    "titre": "French onion soup",
+    "etapes": [
+      "Slice the onions into thin slivers.",
+      "Melt them 30 min over low heat in the butter with the sugar, stirring now and then: they should turn golden brown — that is all the colour and all the flavour of the soup.",
+      "Dust with flour, stir 2 min, then deglaze with white wine.",
+      "Add 1.2 l of water, the stock cubes and the thyme, and simmer 20 min.",
+      "Ladle the soup into ovenproof bowls, lay two slices of toasted baguette on each and cover with grated comté.",
+      "Grill 5 min, until the cheese forms a golden crust."
+    ]
+  },
+  "potage-poireaux-pommes-terre": {
+    "titre": "Leek and potato soup",
+    "etapes": [
+      "Split and wash the leeks, slice them into rounds, white and tender green alike.",
+      "Sweat them 8 min in butter with the sliced onion, without colouring.",
+      "Add the diced potatoes, cover with 1 l of water and add the stock.",
+      "Cook 25 min covered, until the potatoes crush under a spoon.",
+      "Blend, add the cream, check salt and pepper.",
+      "Serve with the chopped chives. One extra potato blended in instead of a ladle of water, and the soup turns velvety."
+    ]
+  },
+  "veloute-potimarron": {
+    "titre": "Red kuri squash velouté",
+    "etapes": [
+      "Wash the squash and cut it into large cubes without peeling it: the skin turns tender as it cooks and gives the velouté its colour.",
+      "Fry the sliced onion and carrot 6 min in the oil.",
+      "Add the squash, cover with water, add the stock and cook 25 min covered.",
+      "Blend at length, until the velouté is perfectly smooth.",
+      "Add the cream and the nutmeg, check the seasoning.",
+      "Serve with the walnuts, crushed and toasted 2 min in a pan."
+    ]
+  },
+  "soupe-legumes-hiver": {
+    "titre": "Winter vegetable soup",
+    "etapes": [
+      "Peel and cut all the vegetables into even 2 cm pieces — even, they finish cooking together.",
+      "Sweat the onion and the leek 8 min in the oil at the bottom of a large stockpot.",
+      "Add the root vegetables, cover with 1.5 l of water, add the stock cubes.",
+      "Cook 30 min at a gentle bubble, adding the courgette after 15 min.",
+      "Blend it all for a velouté, half of it to keep some bite, or not at all.",
+      "Check the seasoning and scatter with parsley."
+    ]
+  },
+  "salade-lentilles": {
+    "titre": "Lentil salad with shallots",
+    "etapes": [
+      "Rinse the lentils and cook them 25 min in three times their volume of cold water with the bouquet garni and the whole carrot. Salt only at the end.",
+      "Cook the eggs 9 min in boiling water and cool them.",
+      "Whisk the mustard, the vinegar, the salt and the pepper, then the oil in a thin stream.",
+      "Drain the lentils while still hot and tip them into the dressing: warm, they drink it up; cold, they leave it at the bottom of the bowl.",
+      "Add the chopped shallots, the cooked carrot cut into dice and the parsley.",
+      "Serve warm or cold, with the eggs in quarters."
+    ]
+  },
+  "taboule-menthe": {
+    "titre": "Mint tabbouleh",
+    "etapes": [
+      "Tip the couscous into a bowl with the lemon juice, the oil and 20 cl of cold water.",
+      "Let it swell 15 min covered, forking it through twice — that is what stops it setting into blocks.",
+      "Deseed the tomatoes and the cucumber, dice them small and add them to the couscous.",
+      "Roughly chop the mint, the parsley and the spring onions, and fold them in.",
+      "Salt, pepper, adjust the lemon, and chill 1 h before serving."
+    ]
+  },
+  "crepes-sucrees": {
+    "titre": "Sweet crêpes",
+    "etapes": [
+      "Melt the butter and let it cool to lukewarm.",
+      "Tip the flour into a bowl, make a well, break the eggs into it and whisk out from the centre.",
+      "Add the milk little by little: poured in all at once, it makes lumps that nothing can rescue.",
+      "Stir in the melted butter, the sugar, the vanilla sugar and the salt, then rest the batter 30 min.",
+      "Heat a pan over medium-high heat, barely grease it, pour in a small ladle and tilt the pan to spread it.",
+      "Cook 1 min, turn as soon as the edges lift and carry on 30 seconds. Serve with sugar and lemon juice."
+    ]
+  },
+  "gateau-yaourt": {
+    "titre": "Yoghurt cake",
+    "etapes": [
+      "Heat the oven to 180 °C and butter a round cake tin.",
+      "Tip the yoghurt into a bowl and keep the empty pot: it is the measure when you have no scales.",
+      "Add the sugar and the eggs, whisk until the mixture pales.",
+      "Stir in the oil, the vanilla, then the flour mixed with the baking powder and the salt. Stop as soon as the batter is smooth.",
+      "Pour into the tin and bake 35 min. A knife blade should come out dry.",
+      "Turn out while warm onto a rack so the base doesn't go soggy."
+    ]
+  },
+  "mousse-chocolat": {
+    "titre": "Chocolate mousse",
+    "etapes": [
+      "Melt the chocolate, broken into pieces, with the butter over a bain-marie, stirring until perfectly smooth.",
+      "Separate the whites from the yolks. Stir the yolks one at a time into the warm chocolate — if it is too hot, they cook.",
+      "Whisk the whites with the salt, showering in the sugar as they start to foam, until they hold a firm peak.",
+      "Beat a third of the whites in briskly to loosen the chocolate.",
+      "Fold in the rest in three goes, with a spatula, lifting the mass from the bottom up: mix as little as possible to keep the air.",
+      "Divide into glasses and chill at least 3 h to set."
+    ]
+  },
+  "fondant-chocolat": {
+    "titre": "Chocolate fondant",
+    "etapes": [
+      "Heat the oven to 180 °C. Butter a tin and dust it with cocoa rather than flour.",
+      "Melt the chocolate and the butter over a bain-marie, then let it cool 5 min.",
+      "Whisk the eggs with the sugar and the salt until the mixture doubles in volume, 3 min.",
+      "Pour in the melted chocolate, mix, then fold in the sifted flour.",
+      "Bake 18 min exactly: the centre should still wobble slightly when you shake the tin. Two minutes more and it's a cake, not a fondant.",
+      "Rest 10 min before turning out."
+    ]
+  },
+  "tarte-pommes": {
+    "titre": "Apple tart",
+    "etapes": [
+      "Heat the oven to 190 °C. Roll the pastry into the tin and prick it with a fork.",
+      "Dust the base with a spoonful of flour mixed with a little sugar: it will soak up the juice from the apples.",
+      "Peel four apples, cut them into pieces and cook them 10 min covered with 20 g of butter and the vanilla sugar, then crush them to a compote.",
+      "Spread the compote over the pastry base.",
+      "Slice the two remaining apples thinly and lay them in a tight rosette, dust with sugar and cinnamon, dot with the remaining butter.",
+      "Bake 35 min, then glaze with warm honey as it comes out of the oven."
+    ]
+  },
+  "crumble-pommes": {
+    "titre": "Apple crumble",
+    "etapes": [
+      "Heat the oven to 190 °C. Peel the apples and cut them into large cubes.",
+      "Toss them with the lemon juice and the cinnamon, then spread them in a gratin dish.",
+      "With your fingertips, rub the flour, the cold diced butter, the brown sugar and the salt into large uneven crumbs. The butter must stay cold, or the mixture turns into a cream.",
+      "Add the flaked almonds to the crumbs and cover the apples with them, without pressing down.",
+      "Bake 35 min, until the top is golden and the juice bubbles at the edges.",
+      "Let it cool 10 min before serving."
+    ]
+  },
+  "clafoutis-cerises": {
+    "titre": "Cherry clafoutis",
+    "etapes": [
+      "Heat the oven to 180 °C. Butter a dish and dust it with a spoonful of sugar.",
+      "Wash the cherries and pull off the stalks. Leave the stones in: they perfume the batter as it bakes, but warn your guests.",
+      "Whisk the eggs with the sugar, the vanilla sugar and the salt, then fold in the flour.",
+      "Loosen with the milk poured in slowly, until the batter is as fluid as a crêpe batter.",
+      "Scatter the cherries in the dish, pour the batter over them.",
+      "Bake 40 min, until the clafoutis is puffed and golden. Eaten warm."
+    ]
+  },
+  "riz-au-lait": {
+    "titre": "Rice pudding",
+    "etapes": [
+      "Blanch the rice 3 min in boiling water then drain it: that removes the excess surface starch and stops it catching.",
+      "Bring the milk to a bare simmer with the vanilla, the salt and the butter.",
+      "Tip the rice in and cook 35 min over very low heat, stirring regularly — the stirring is what makes rice pudding creamy.",
+      "Add the sugar only halfway through: added too early, it hardens the grain.",
+      "Off the heat, stir in the cream. The mixture should stay loose, it thickens as it cools.",
+      "Serve warm or cold, in pots."
+    ]
+  },
+  "ile-flottante": {
+    "titre": "Île flottante",
+    "etapes": [
+      "Separate the whites from the yolks. Heat the milk with the vanilla without letting it boil.",
+      "Whisk the yolks with 80 g of sugar until they pale.",
+      "Pour the hot milk over them, whisking, return to low heat and stir with a spatula 8 min: the custard is ready when it coats the spoon and a finger drawn through leaves a clean line. It must never boil.",
+      "Strain the custard and chill it.",
+      "Whisk the whites to firm peaks with the salt and 40 g of sugar, then poach them in large spoonfuls 2 min in simmering milk, turning them halfway.",
+      "Make a golden caramel with the remaining sugar and a little water. Set the whites on the custard, pour over the caramel and scatter with toasted almonds."
+    ]
+  },
+  "creme-brulee": {
+    "titre": "Crème brûlée",
+    "etapes": [
+      "Heat the oven to 100 °C. Heat the cream and the milk with the vanilla, without boiling, then let it infuse 10 min.",
+      "Whisk the egg yolks with the sugar, without frothing: bubbles would leave a foam on the surface of the ramekins.",
+      "Pour the hot mixture over the yolks, stirring, then pass it through a fine sieve.",
+      "Divide between six shallow ramekins and bake 50 min. The custard should be set at the edges and still wobbly in the middle.",
+      "Cool then chill at least 3 h.",
+      "Just before serving, dust with brown sugar and caramelise with a blowtorch or 3 min under a searing grill."
+    ]
+  },
+  "far-breton": {
+    "titre": "Far breton with prunes",
+    "etapes": [
+      "Soak the prunes 20 min in warm water, then drain them.",
+      "Heat the oven to 200 °C and generously butter a deep-sided dish.",
+      "Whisk the eggs with the sugar, the vanilla sugar and the salt, add the flour then the milk in a thin stream until the batter is smooth and runny.",
+      "Stir in the melted butter, pour the batter into the dish and scatter in the prunes.",
+      "Bake 15 min at 200 °C, then drop to 180 °C and carry on 35 min.",
+      "The far should be golden, almost brown in places. Eaten warm or cold, never hot."
+    ]
+  },
+  "pain-perdu": {
+    "titre": "French toast",
+    "etapes": [
+      "Use stale bread: fresh, it soaks through too fast and falls apart in the pan.",
+      "Beat the eggs with the milk, half the sugar and the vanilla sugar in a shallow dish.",
+      "Dip each slice 20 seconds a side, no more.",
+      "Foam the butter in a pan over medium heat and brown the slices 3 min on each side.",
+      "Mix the remaining sugar with the cinnamon and dust it over the slices while still hot."
+    ]
+  },
+  "madeleines": {
+    "titre": "Madeleines",
+    "etapes": [
+      "Melt the butter and let it cool to lukewarm.",
+      "Whisk the eggs with the sugar, the honey, the lemon zest and the salt until the mixture is foamy, 3 min.",
+      "Fold in the flour sifted with the baking powder, then the melted butter.",
+      "Chill the batter at least 1 h: the shock between cold batter and hot oven is what makes the hump.",
+      "Heat the oven to 220 °C, fill the moulds two thirds full.",
+      "Bake 4 min at 220 °C then drop to 180 °C and carry on 6 min. Turn out at once."
+    ]
+  },
+  "quatre-quarts": {
+    "titre": "Quatre-quarts pound cake",
+    "etapes": [
+      "Heat the oven to 170 °C and line a loaf tin.",
+      "Weigh the eggs: that weight gives you the weight of the butter, the sugar and the flour. That is the whole principle of the cake.",
+      "Beat the soft butter with the sugar to a pale cream, 4 min with a whisk.",
+      "Add the eggs one at a time, whisking well between each, then the vanilla.",
+      "Fold in the flour sifted with the baking powder and the salt, with a spatula and without labouring it.",
+      "Pour into the tin and bake 50 min. Cool before slicing — a quatre-quarts is better the next day."
+    ]
+  },
+  "tarte-citron-meringuee": {
+    "titre": "Lemon meringue tart",
+    "etapes": [
+      "Heat the oven to 190 °C. Roll out the pastry, prick it, cover it with weighted paper and blind bake 20 min, until golden.",
+      "Squeeze the lemons and zest two of them.",
+      "Whisk 3 whole eggs and 3 yolks with 150 g of sugar and the cornflour, then add the juice and the zest.",
+      "Cook this mixture over low heat, stirring constantly, 6 min, until it thickens, then beat in the butter off the heat.",
+      "Pour the curd onto the cooled base and let it set 1 h in the fridge.",
+      "Whisk the 3 remaining whites to peaks with the salt, tighten with the remaining 100 g of sugar until the meringue is smooth and glossy.",
+      "Cover the tart with meringue, pulling it into peaks, dust with icing sugar and grill 5 min, keeping an eye on it."
+    ]
+  },
+  "curry-rouge-crevettes": {
+    "titre": "Thai red prawn curry",
+    "etapes": [
+      "Start the jasmine rice.",
+      "Heat the thick part of the coconut milk 3 min in a wok, until the oil separates and glistens on the surface.",
+      "Fry the curry paste in it 2 min, crushing it with the spatula: this step is what wakes the spices up, skipping it gives a flat curry.",
+      "Pour in the rest of the coconut milk, add the crushed kaffir lime leaves, the fish sauce and the palm sugar.",
+      "Add the green beans in lengths and the bell pepper in strips, simmer 6 min.",
+      "Tip in the prawns and cook 3 min, no more: beyond that they turn rubbery.",
+      "Off the heat, add the Thai basil and a squeeze of lime. Serve with the rice."
+    ]
+  },
+  "massaman-poulet": {
+    "titre": "Chicken massaman curry",
+    "etapes": [
+      "Brown the chicken pieces 8 min in the wok, then set them aside.",
+      "Fry the massaman paste 2 min in the thick part of the coconut milk, until it smells fragrant.",
+      "Return the chicken, pour in the rest of the coconut milk, add the cinnamon and bring to a simmer.",
+      "Add the potatoes in large cubes and the onions in wedges, cover and simmer 30 min.",
+      "Season with the fish sauce, the palm sugar and the tamarind — a massaman stands on the balance of salt, sweet and sour, adjusted by the spoonful.",
+      "Add the peanuts, carry on 5 min and serve with the jasmine rice."
+    ]
+  },
+  "tom-yum-crevettes": {
+    "titre": "Tom yum with prawns",
+    "etapes": [
+      "Peel the prawns, keeping the heads and shells.",
+      "Fry the shells 3 min in a dry pan, cover with 1.2 l of water and simmer 15 min, then strain: this broth is the whole difference from a soup made with water.",
+      "Crush the lemongrass stalks with the flat of a knife and cut them into lengths. Slice the galangal into rounds.",
+      "Add to the broth the lemongrass, the galangal, the crushed kaffir lime leaves, the crushed shallots and the curry paste. Let it infuse 5 min.",
+      "Add the mushrooms and the cherry tomatoes, cook 3 min, then the prawns, 2 min.",
+      "Off the heat: fish sauce, sugar, lime juice, crushed chillies and coriander. Never let it boil after the lime, it would lose its perfume."
+    ]
+  },
+  "tom-kha-kai": {
+    "titre": "Tom kha kai",
+    "etapes": [
+      "Bring 50 cl of water to a simmer with the stock, the sliced galangal, the crushed lemongrass and the kaffir lime leaves. Let it infuse 10 min.",
+      "Pour in the coconut milk and hold it just below boiling — boiled, coconut splits and goes grainy.",
+      "Add the finely sliced chicken and the mushrooms, cook 8 min.",
+      "Season with fish sauce and palm sugar.",
+      "Off the heat, add the lime juice, the crushed chillies and the coriander.",
+      "Serve as it is or with a bowl of rice: the lemongrass stalks and the galangal are left at the side of the plate."
+    ]
+  },
+  "som-tam": {
+    "titre": "Som tam, green papaya salad",
+    "etapes": [
+      "Peel the green papaya and grate it into long strands on the coarse side, or cut it into fine strips with a knife. Do the same with the carrot.",
+      "Pound the garlic and the chillies in a mortar, coarsely.",
+      "Add the palm sugar, the fish sauce and the lime juice, pound until the sugar dissolves.",
+      "Add the green beans cut into lengths and the cherry tomatoes, crush them lightly so they release their juice.",
+      "Add the papaya and the carrot, mixing by pounding gently with one hand and stirring with the other: you bruise the fibres so they drink the dressing, you don't purée them.",
+      "Scatter with crushed peanuts and serve immediately, before the papaya gives up its water."
+    ]
+  },
+  "larb-gai": {
+    "titre": "Larb gai, minced chicken salad",
+    "etapes": [
+      "Toast the 2 spoonfuls of jasmine rice in a dry pan 5 min, until golden brown, then grind it to a coarse powder in a mortar. That is what gives larb its texture and its nutty perfume.",
+      "Cook the minced chicken 6 min in a pan with 3 spoonfuls of water, pressing it with the spatula so it stays in grains. No fat: larb is not a stir-fry.",
+      "Off the heat, let it cool 2 min then add the fish sauce, the lime juice, the sugar and the dried chilli.",
+      "Add the sliced shallots, the spring onions and the toasted rice powder.",
+      "Fold in the chopped mint and coriander at the last moment.",
+      "Serve warm with the salad leaves and the cucumber batons, to pick the larb up by hand."
+    ]
+  },
+  "pad-krapow-porc": {
+    "titre": "Pad krapow, pork with Thai basil",
+    "etapes": [
+      "Start the jasmine rice.",
+      "Pound the garlic and the chillies together in a mortar, to a rough paste.",
+      "Heat the wok until searing with a spoonful of oil, throw in the garlic and chilli paste for 20 seconds.",
+      "Add the pork and sear it 4 min over maximum heat, pressing it with the spatula.",
+      "Add the green beans in short lengths, the oyster sauce, the soy sauce, the fish sauce and the sugar, stir-fry 2 min.",
+      "Cut the heat and throw in the Thai basil: the residual heat is enough to wilt it, cooked it loses everything.",
+      "Fry the eggs in the rest of the very hot oil, lacy edges and runny yolk, and set one on each plate of rice."
+    ]
+  },
+  "pad-see-ew": {
+    "titre": "Pad see ew",
+    "etapes": [
+      "Soak the wide rice noodles as their packet says, until supple but still firm. Drain them and oil them lightly so they don't stick.",
+      "Slice the chicken into strips and toss it with a spoonful of soy sauce.",
+      "Heat the wok very hard, sear the chicken 3 min, then push it to the side.",
+      "Break the eggs into the middle, scramble them 30 seconds, add the garlic and the chinese cabbage cut into lengths, stir-fry 2 min.",
+      "Add the noodles, the sauces and the sugar. Stir-fry 3 min, flipping with the spatula rather than stirring in circles: the noodles should pick up charred marks, the signature of the dish.",
+      "Pepper generously and serve with the rice vinegar on the side."
+    ]
+  },
+  "khao-pad": {
+    "titre": "Khao pad, Thai fried rice",
+    "etapes": [
+      "Cook the rice the day before if you can and let it cool in the fridge: warm, damp rice turns to mush in the wok.",
+      "Heat the wok over maximum heat, sear the diced chicken 4 min, then the garlic and the onion 1 min.",
+      "Push to one side, break in the eggs and scramble them quickly.",
+      "Add the cold rice, breaking up the grains by hand, stir-fry 3 min, pressing the grains against the side of the wok.",
+      "Season with fish sauce, soy sauce and sugar, add the tomatoes in wedges and the spring onions, stir-fry 1 min.",
+      "Serve with the cucumber in rounds and a lime wedge to squeeze over."
+    ]
+  },
+  "satay-poulet": {
+    "titre": "Satay skewers with peanut sauce",
+    "etapes": [
+      "Cut the chicken into long strips and toss them with half the coconut milk, the turmeric, the ground coriander and a spoonful of fish sauce. Marinate 20 min.",
+      "Start the jasmine rice.",
+      "For the sauce: fry the curry paste 2 min in a little oil, add the rest of the coconut milk, the blitzed peanuts, the sugar and the remaining fish sauce.",
+      "Let it thicken 8 min over low heat, stirring: the sauce should coat, loosen it with a little water if it tightens too much.",
+      "Thread the strips onto skewers and grill them 3 min a side in a pan or on the barbecue, until the edges caramelise.",
+      "Serve with the peanut sauce, the cucumber in rounds and the limes."
+    ]
+  },
+  "curry-jaune-poulet": {
+    "titre": "Yellow curry with chicken and potatoes",
+    "etapes": [
+      "Fry the yellow curry paste and the turmeric 2 min in the hot oil, until the aroma rises.",
+      "Add the chicken pieces and coat them 3 min.",
+      "Pour in the coconut milk and 20 cl of water, bring to a simmer.",
+      "Add the potatoes in cubes, the carrots in rounds and the onion in wedges.",
+      "Simmer 30 min covered, until the potatoes are meltingly soft.",
+      "Season with fish sauce and palm sugar, add the lime and the coriander off the heat. Serve with the rice."
+    ]
+  },
+  "yam-woon-sen": {
+    "titre": "Yam woon sen, glass noodle salad",
+    "etapes": [
+      "Soak the glass noodles 8 min in hot water, then drain them and cut them with scissors into manageable lengths.",
+      "Poach the minced pork 3 min in a pan of simmering water, breaking it up, then the prawns 2 min. Drain it all.",
+      "Make the dressing: pound the garlic and the chillies, add the fish sauce, the sugar and the lime juice.",
+      "Mix the warm noodles, the pork, the prawns, the sliced shallots, the celery in thin slices and the cherry tomatoes.",
+      "Pour over the dressing and mix by hand: warm, the noodles drink it up.",
+      "Add the coriander and the spring onions, scatter with crushed peanuts and serve at once."
+    ]
+  },
+  "poisson-vapeur-citron-vert": {
+    "titre": "Steamed fish with lime",
+    "etapes": [
+      "Start the jasmine rice. Set up a steamer basket over a pan of boiling water.",
+      "Line the basket with chinese cabbage and lengths of crushed lemongrass, lay the fish on top and score it twice across the top.",
+      "Cover and steam 12 min: the flesh should flake apart at the first touch of a fork.",
+      "Meanwhile, pound the garlic and the chillies, then slacken with the lime juice, the fish sauce, the sugar and 10 cl of hot stock.",
+      "Pour this searing sauce over the fish as it comes out of the basket.",
+      "Cover with whole sprigs of coriander, stalks included, and serve with the rice."
+    ]
+  },
+  "khai-jiao": {
+    "titre": "Khai jiao, Thai omelette",
+    "etapes": [
+      "Start the rice.",
+      "Beat the eggs hard with a fork with the fish sauce, a squeeze of lime and the chopped spring onions, until the mixture is foamy: the beaten-in air is what makes the omelette puff.",
+      "Heat the oil in a wok until it shimmers — you need plenty, a Thai omelette is deep-fried, not pan-fried.",
+      "Pour the eggs in all at once, from a height: they should blister at the edges immediately.",
+      "Cook 2 min, turn and carry on 1 min, until the omelette is golden and crisp.",
+      "Drain on kitchen paper, set on the rice, pepper and serve with the sriracha."
+    ]
+  },
+  "boeuf-basilic-thai": {
+    "titre": "Beef stir-fried with Thai basil",
+    "etapes": [
+      "Start the rice. Slice the beef into thin strips across the grain — that is what keeps it tender.",
+      "Mix the oyster sauce, the soy sauce, the fish sauce and the sugar in a bowl: the stir-fry will go too fast to measure along the way.",
+      "Heat the wok until it smokes, sear the beef in two batches, 90 seconds a batch, and set it aside. Overloaded, the wok braises instead of searing.",
+      "Throw in the garlic and the chillies for 20 seconds, then the onion and the bell pepper in strips, 2 min over maximum heat.",
+      "Return the beef, pour in the sauce, stir-fry 1 min.",
+      "Cut the heat, add the Thai basil and stir once. Serve immediately."
+    ]
+  },
+  "gai-yang": {
+    "titre": "Gai yang, Thai grilled chicken",
+    "etapes": [
+      "Pound the garlic, the coriander roots and stalks, the sliced lemongrass and the pepper into a rough paste.",
+      "Mix in the fish sauce, the soy sauce, the palm sugar and the turmeric.",
+      "Coat the thighs in this marinade and chill at least 30 min, overnight if you can.",
+      "Soak the sticky rice 30 min, then steam it 25 min in a cloth.",
+      "Grill the thighs 15 min a side over medium heat, skin down first, brushing them with marinade. Over too fierce a heat, the sugar burns before the flesh is cooked.",
+      "Serve with the sticky rice, the sriracha let down with a little lime juice, and the rest of the coriander."
+    ]
+  },
+  "pad-pak-legumes": {
+    "titre": "Pad pak, wok-fried vegetables",
+    "etapes": [
+      "Start the rice. Cut every vegetable before you light the wok: once it is going, a stir-fry leaves no time to chop anything.",
+      "Drain and press the tofu, cut it into cubes and brown it 6 min on all sides. Set aside.",
+      "Slake the cornflour in 10 cl of water with the oyster sauce, the soy sauce and the sugar.",
+      "Heat the wok over maximum heat, throw in the garlic and the ginger for 20 seconds.",
+      "Add carrots and broccoli, stir-fry 3 min, then the mushrooms and the pak choi, 2 min more. The vegetables should stay crunchy.",
+      "Pour in the sauce, return the tofu, let it coat 1 min and serve over the rice."
+    ]
+  },
+  "soupe-nouilles-poulet-thai": {
+    "titre": "Chicken noodle soup",
+    "etapes": [
+      "Bring 1.5 l of water to a simmer with the stock cubes, the sliced ginger and the crushed garlic. Let it infuse 15 min.",
+      "Poach the chicken breasts 12 min in this broth, over very low heat, then lift them out and shred them by hand.",
+      "Season the broth with fish sauce, soy sauce and palm sugar, and strain it.",
+      "Soak the rice noodles 5 min in hot water, then dip them 30 seconds in the broth before dividing them between the bowls.",
+      "Add the shredded chicken, the bean sprouts and the searing broth.",
+      "Everyone finishes their own bowl: spring onions, coriander, crushed peanuts, dried chilli and lime."
+    ]
+  },
+  "riz-gluant-mangue": {
+    "titre": "Mango sticky rice",
+    "etapes": [
+      "Rinse the sticky rice until the water runs clear, then soak it at least 3 h, overnight if you can. Without soaking, it stays hard at the centre.",
+      "Steam it 25 min in a cloth, until the grains are translucent and sticky.",
+      "Heat 30 cl of coconut milk with the sugar and the salt without boiling, until dissolved.",
+      "Pour this over the hot rice, stir and let it stand 20 min covered: the rice should absorb it all.",
+      "Thicken the rest of the coconut milk with the slaked cornflour, 2 min over low heat, for the sauce to spoon over.",
+      "Plate the rice with the mango cheeks sliced, spoon over the sauce and scatter with toasted sesame."
+    ]
+  }
+}
