@@ -26,7 +26,7 @@ type Zone = 'reprise' | 'creation' | 'jonction'
  * décrit. Décoratif — `alt=""` — la vraie légende de ce plat n'a rien à
  * faire ici, elle vit sur sa fiche.
  */
-const PHOTO_HERO = '/plats/burger-maison.webp'
+const PHOTO_HERO = '/plats/boeuf-bourguignon.webp'
 
 export default function Bienvenue({
   onCreer,
