@@ -2,6 +2,7 @@ import type { BasketEntry, Recipe } from '../types'
 import { teinteRecette } from '../lib/identite'
 import { cuisineRecemment, type Historique } from '../lib/propose'
 import { useLangue } from '../lib/i18n'
+import { titreRecette } from '../lib/traduireRecette'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 import VignettePlaceholder from '../components/VignettePlaceholder'
@@ -14,7 +15,7 @@ interface Props {
 }
 
 export default function CuissonListe({ recipes, basket, historique, onCuisiner }: Props) {
-  const { t } = useLangue()
+  const { t, langue } = useLangue()
   const byId = new Map(recipes.map((r) => [r.id, r]))
 
   /**
@@ -63,6 +64,10 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
           const r = byId.get(entree.recipeId)
           if (!r) return null
           const dejaFait = fait(entree.recipeId)
+          // Le titre suit la langue ; la teinte, elle, reste calculée
+          // sur le titre du corpus, pour qu'un plat garde sa couleur
+          // d'un téléphone à l'autre.
+          const titre = titreRecette(r, langue)
           return (
             <button
               className="carte carte-recette"
@@ -86,7 +91,7 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
                 </span>
               </div>
               <div className="carte-recette-corps">
-                <h3>{r.titre}</h3>
+                <h3>{titre}</h3>
                 <div className="carte-cuisson-pied">
                   <span className="meta">
                     {dejaFait

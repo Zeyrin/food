@@ -21,8 +21,13 @@ assert.equal(
   'crème [10 cl] puis crème',
 )
 
-// Mots courts ignorés : « ail », « sel » sont trop fréquents.
-assert.equal(rendu("hacher l'ail et saler", [ing('ail', 3, 'piece')]), "hacher l'ail et saler")
+// Les noms de trois lettres comptent : « ail », « riz », « œuf » sont
+// des ingrédients à part entière, et leur dose s'affiche sur une ligne
+// à elle plutôt qu'au milieu de la phrase (voir Cuisson).
+assert.equal(rendu("hacher l'ail et saler", [ing('ail', 3, 'piece')]), "hacher l'ail [3] et saler")
+
+// Deux lettres, en revanche, restent hors jeu.
+assert.equal(rendu('mettre au feu', [ing('fe', 1, 'piece')]), 'mettre au feu')
 
 // Pas de correspondance partielle : « parmesan » ne matche pas « par ».
 assert.equal(rendu('couper par le milieu', [ing('parmesan', 60, 'g')]), 'couper par le milieu')

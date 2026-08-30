@@ -2996,6 +2996,42 @@ button.carte-panier-bouton .carte-panier-corps {
   padding: 8px 0 18px;
 }
 
+/* Les doses de l'étape, sorties de la phrase et posées juste au-dessus.
+   On les lit d'un coup d'œil — « 60 g ail », « 400 g tofu soyeux » —
+   pendant que la consigne en dessous reste une phrase. En ligne et non
+   en liste : c'est un bandeau, pas un second tiroir d'ingrédients.
+
+   Les marges automatiques du couple doses/étape (`auto` en haut ici,
+   `auto` en bas sur .etape-titre) centrent les deux ensemble dans la
+   zone qui défile, sans figer la hauteur ni rogner une étape longue. */
+.doses-etape {
+  margin: auto 0 16px;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 16px;
+  line-height: 1.3;
+  opacity: 0.85;
+}
+
+/* Le nom en retrait, la dose en avant : c'est le nombre qu'on vient
+   chercher, le nom ne sert qu'à savoir de quoi il parle. */
+.doses-etape li {
+  display: flex;
+  gap: 5px;
+  align-items: baseline;
+}
+
+.doses-etape b {
+  font-family: var(--affichage);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 /* Marges automatiques plutôt que `justify-content: center` : ça centre
    l'étape courte tout en laissant l'étape longue défiler sans que son
    début soit rogné en haut. */
@@ -3005,13 +3041,18 @@ button.carte-panier-bouton .carte-panier-corps {
    au-dessus et au-dessous d'une phrase de trois lignes. `balance`
    répartit ces lignes au lieu de laisser un mot seul sur la dernière. */
 .etape-titre {
-  margin: auto 0;
+  margin: 0 0 auto;
   font-family: var(--affichage);
   font-size: clamp(25px, 7vw, 38px);
   font-weight: 800;
   line-height: 1.22;
   letter-spacing: -0.02em;
   text-wrap: balance;
+}
+
+/* Sans dose au-dessus, l'étape reprend seule le centrage. */
+.cuisson-corps > .etape-titre:first-child {
+  margin-top: auto;
 }
 
 .cuisson-corps .bloc-astuce {
@@ -3394,7 +3435,7 @@ button.carte-panier-bouton .carte-panier-corps {
   }
 }
 
-.cuisson-focus .dose {
+.cuisson-focus .doses-etape b {
   color: #ffb3b0;
 }
 
