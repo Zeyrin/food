@@ -10,8 +10,14 @@ const fr: Dico = {
   foyer: {
     sessionImpossible:
       "Impossible d'ouvrir une session avec le serveur. Si vous administrez ce site : activez les connexions anonymes dans Supabase (Authentication → Providers → Anonymous sign-ins).",
+    creationEchouee: "La maison n'a pas pu être créée.",
   },
   reglages: {
+    langueFr: 'Français',
+    langueEn: 'English',
+    installerIOS:
+      'Sur iPhone : bouton **{{partager}}** dans la barre de Safari, puis **{{ecranAccueil}}**.',
+    installerAndroid: 'Sur Android (Chrome) : menu **⋮** en haut à droite, puis **{{ajouterEcranAndroid}}**.',
     donneesTitre:
       "Données & vie privée",
     donneesTexte:
@@ -441,6 +447,32 @@ const fr: Dico = {
     foyerNonInitialiseReessayez: 'Foyer non initialisé, réessayez dans un instant.',
     foyerNonInitialise: 'Foyer non initialisé.',
   },
+  bandeauMaj: {
+    disponible: 'Nouvelle version disponible',
+    plusTard: 'Plus tard',
+    mettreAJour: 'Mettre à jour',
+  },
+  retour: {
+    ouvrir: 'Donner votre avis',
+    titre: 'Un avis, un bug ?',
+    texte: "Deux phrases suffisent. Pas de compte, pas de ticket — ça part directement à qui fait l'app.",
+    champLabel: 'Votre message',
+    champPlaceholder: "Ce qui vous plaît, ce qui coince, une idée…",
+    contactLabel: 'Pour vous répondre (facultatif)',
+    contactPlaceholder: 'Email ou rien du tout',
+    fermer: "Fermer sans envoyer",
+    envoyer: 'Envoyer',
+    envoiEnCours: 'Envoi…',
+    envoye: 'Merci, c\'est envoyé !',
+    echec: "L'envoi a échoué. Vérifiez votre connexion et réessayez.",
+    indisponible: "Le partage n'est pas configuré sur cette installation : impossible d'envoyer un avis pour l'instant.",
+    champVide: 'Écrivez au moins quelques mots.',
+  },
+  promptRecette: {
+    demandeParDefaut: 'une recette au choix',
+    corps:
+      'Génère une ou plusieurs recettes de cuisine au format JSON strict, sans aucun texte autour (pas de markdown, pas de ```json, juste le JSON brut). Pour plusieurs recettes, renvoie un tableau JSON d\'objets au même format.\n\nDemande : {{demande}}\n\nFormat exact attendu (pour une recette ; plusieurs = un tableau de ces objets) :\n{\n  "titre": "string",\n  "temps": nombre de minutes (total, du plan de travail à l\'assiette),\n  "portions": nombre de parts que couvrent les quantités ci-dessous,\n  "tags": ["quelques mots-clés libres, ex: asiatique, végé, rapide, four"],\n  "ingredients": [\n    { "nom": "string (nom canonique, sans quantité dedans)", "quantite": nombre, "unite": "une valeur parmi {{unites}}", "rayon": "une valeur parmi {{rayons}}" }\n  ],\n  "etapes": ["une string par étape, dans l\'ordre, texte clair et complet, avec les ingrédients entre accolades : \\"Cuire les {pâtes} dans l\'eau salée\\""],\n  "description": "une phrase courte qui donne envie (optionnel)",\n  "astuces": ["un tour de main par étape, même ordre que etapes, chaîne vide si rien à dire (optionnel)"]\n}\n\nContraintes :\n- "unite" doit être exactement une des valeurs listées, rien d\'autre.\n- "rayon" est le rayon du magasin où l\'ingrédient se trouve, jamais une enseigne : le même ingrédient doit recevoir le même rayon d\'une recette à l\'autre. Dans le doute, "epicerie".\n- Les quantités sont des nombres (pas de fractions texte comme "1/2", utilise 0.5).\n- Le sel, poivre, huile courants peuvent avoir "placard": true en plus des autres champs (optionnel).\n- Dans les étapes, entoure d\'accolades chaque mention d\'un ingrédient de la liste : l\'app affiche la dose juste après. Écris le mot tel qu\'il doit se lire — les accolades disparaissent à l\'affichage, et le texte à l\'intérieur peut différer du "nom" canonique : { "nom": "pâtes longues" } se cite « les {pâtes} », { "nom": "oignon nouveau" } se cite « les {oignons nouveaux} ».\n- N\'entoure pas une mention partielle ou indirecte : « la moitié du reblochon », « le reste des herbes », « la sauce » quand il s\'agit de celle qu\'on est en train de faire. Sans accolades, aucune dose n\'est affichée — c\'est le comportement voulu dans ces cas.\n- N\'entoure pas non plus les ingrédients de placard (sel, poivre, huile courante) : leur dose n\'intéresse personne en cours de cuisson.',
+  },
   onboarding: [
     {
       titre: 'Bienvenue sur FFFood',
@@ -564,6 +596,8 @@ const fr: Dico = {
     ingredientQuantiteInvalide: '{{oi}} : « quantite » doit être un nombre positif.',
     ingredientUniteInvalide: "{{oi}} : « unite » doit être l'une de : {{liste}}.",
     ingredientRayonInvalide: "{{oi}} : « rayon » doit être l'un de : {{liste}}.",
+    imageInvalide:
+      "« image » doit désigner une photo livrée avec l'app (/plats/<nom>.webp). Omettez le champ pour utiliser la vignette.",
   },
 }
 
@@ -571,8 +605,13 @@ const en: Dico = {
   foyer: {
     sessionImpossible:
       "Could not open a session with the server. If you administer this site: enable anonymous sign-ins in Supabase (Authentication → Providers → Anonymous sign-ins).",
+    creationEchouee: 'The household could not be created.',
   },
   reglages: {
+    langueFr: 'Français',
+    langueEn: 'English',
+    installerIOS: 'On iPhone: **{{partager}}** button in the Safari bar, then **{{ecranAccueil}}**.',
+    installerAndroid: 'On Android (Chrome): **⋮** menu top right, then **{{ajouterEcranAndroid}}**.',
     donneesTitre:
       "Data & privacy",
     donneesTexte:
@@ -980,6 +1019,32 @@ const en: Dico = {
     foyerNonInitialiseReessayez: 'Household not ready yet, try again in a moment.',
     foyerNonInitialise: 'Household not ready.',
   },
+  bandeauMaj: {
+    disponible: 'New version available',
+    plusTard: 'Later',
+    mettreAJour: 'Update',
+  },
+  retour: {
+    ouvrir: 'Give feedback',
+    titre: 'A thought, a bug?',
+    texte: 'A couple of sentences is plenty. No account, no ticket — it goes straight to whoever makes the app.',
+    champLabel: 'Your message',
+    champPlaceholder: 'What you like, what\'s broken, an idea…',
+    contactLabel: 'So we can reply (optional)',
+    contactPlaceholder: 'Email, or nothing at all',
+    fermer: 'Close without sending',
+    envoyer: 'Send',
+    envoiEnCours: 'Sending…',
+    envoye: 'Thanks, it\'s sent!',
+    echec: 'Sending failed. Check your connection and try again.',
+    indisponible: 'Sharing is not configured on this install: sending feedback is not possible right now.',
+    champVide: 'Write at least a few words.',
+  },
+  promptRecette: {
+    demandeParDefaut: "a recipe of your choosing",
+    corps:
+      'Generate one or more cooking recipes in strict JSON format, with no surrounding text (no markdown, no ```json, just the raw JSON). For several recipes, return a JSON array of objects in the same format.\n\nRequest: {{demande}}\n\nExact expected format (for one recipe; several = an array of these objects):\n{\n  "titre": "string",\n  "temps": number of minutes (total, from prep to plate),\n  "portions": number of servings the amounts below cover,\n  "tags": ["a few free keywords, e.g. asian, veggie, quick, oven"],\n  "ingredients": [\n    { "nom": "string (canonical name, no amount inside)", "quantite": number, "unite": "one value from {{unites}}", "rayon": "one value from {{rayons}}" }\n  ],\n  "etapes": ["one string per step, in order, clear and complete text, with ingredients in braces: \\"Cook the {pasta} in salted water\\""],\n  "description": "one short tempting sentence (optional)",\n  "astuces": ["one tip per step, same order as etapes, empty string if nothing to say (optional)"]\n}\n\nConstraints:\n- "unite" must be exactly one of the listed values, nothing else.\n- "rayon" is the aisle of the shop where the ingredient is found, never a store brand: the same ingredient must get the same aisle from one recipe to the next. When unsure, "epicerie".\n- Amounts are numbers (no text fractions like "1/2", use 0.5 instead).\n- Common salt, pepper, oil may have "placard": true in addition to the other fields (optional).\n- In the steps, wrap each mention of a listed ingredient in braces: the app displays its amount right after. Write the word as it should read — the braces disappear on display, and the text inside can differ from the canonical "nom": { "nom": "long pasta" } is cited as "the {pasta}", { "nom": "spring onion" } is cited as "the {spring onions}".\n- Do not wrap a partial or indirect mention: "half the reblochon", "the rest of the herbs", "the sauce" when referring to the one being made. Without braces, no amount is shown — that is the intended behavior in those cases.\n- Do not wrap pantry ingredients either (salt, pepper, everyday oil): nobody cares about their amount while cooking.',
+  },
   onboarding: [
     {
       titre: 'Welcome to FFFood',
@@ -1084,6 +1149,8 @@ const en: Dico = {
     ingredientQuantiteInvalide: '{{oi}}: "quantite" must be a positive number.',
     ingredientUniteInvalide: '{{oi}}: "unite" must be one of: {{liste}}.',
     ingredientRayonInvalide: '{{oi}}: "rayon" must be one of: {{liste}}.',
+    imageInvalide:
+      '"image" must point to a photo shipped with the app (/plats/<name>.webp). Omit the field to use the placeholder.',
   },
 }
 
@@ -1135,28 +1202,18 @@ export function phrasesSansPhoto(langue: Langue): string[] {
 }
 
 /**
- * La langue à la première ouverture. On ne présumait rien et on
- * servait du français à tout le monde, alors que l'anglais est traduit
- * de bout en bout : `navigator.language` répond à la question sans
- * jamais rien demander. Un choix déjà fait dans les réglages prime,
- * évidemment — c'est la seule valeur qu'on écrit.
+ * La langue à la première ouverture. Défaut anglais tant qu'aucun choix
+ * n'a été enregistré dans les réglages — ce choix, lui, prime toujours
+ * puisque c'est la seule valeur qu'on écrit.
  */
 function lireLangueSauvegardee(): Langue {
   try {
     const v = localStorage.getItem(CLE_LANGUE)
     if (v === 'fr' || v === 'en') return v
   } catch {
-    /* stockage indisponible : on continue avec la langue du navigateur */
+    /* stockage indisponible : on continue avec le défaut anglais */
   }
-  // `window` et non `navigator` : Node en expose un, avec sa propre
-  // locale (« en-US »), et les tests basculeraient en anglais sans le
-  // vouloir. La détection n'a de sens que dans un navigateur.
-  if (typeof window !== 'undefined') {
-    // `startsWith` plutôt qu'une égalité : « en-GB », « en-US » et
-    // « en » désignent la même colonne du dictionnaire.
-    if (window.navigator?.language?.toLowerCase().startsWith('en')) return 'en'
-  }
-  return 'fr'
+  return 'en'
 }
 
 /**

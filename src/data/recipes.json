@@ -3154,7 +3154,8 @@
       "Couvrir et laisser mijoter à tout petits bouillons 3 h. La viande est prête quand une fourchette y entre sans résistance.",
       "Faire sauter les champignons à part 5 min à feu vif et les ajouter dans les dix dernières minutes, sinon ils rendent leur eau dans la sauce.",
       "Goûter, saler, poivrer. Meilleur réchauffé le lendemain."
-    ]
+    ],
+    "image": "/plats/boeuf-bourguignon.webp"
   },
   {
     "id": "blanquette-de-veau",
@@ -3911,7 +3912,8 @@
       "Verser le vin blanc et 25 cl d'eau, ajouter les baies de genièvre et le bouquet garni. Couvrir.",
       "Laisser cuire 1 h à feu doux. Ajouter les saucisses et les pommes de terre pelées, poursuivre 30 min.",
       "Servir dans le plat, viandes tranchées sur le dessus, moutarde à part."
-    ]
+    ],
+    "image": "/plats/choucroute-garnie.webp"
   },
   {
     "id": "petit-sale-lentilles",
@@ -4391,7 +4393,8 @@
       "Poser le poulet sur le côté dans un grand plat, entouré des pommes de terre en quartiers, de l'ail en chemise et de l'huile.",
       "Enfourner 25 min, retourner sur l'autre côté 25 min, puis finir 25 min sur le dos pour dorer la poitrine.",
       "Vérifier la cuisson en piquant la cuisse : le jus doit sortir clair. Laisser reposer 10 min avant de découper, sinon le jus part dans le plat."
-    ]
+    ],
+    "image": "/plats/poulet-roti-pommes-de-terre.webp"
   },
   {
     "id": "hachis-parmentier",
@@ -4495,7 +4498,8 @@
       "Écraser les pommes de terre, incorporer le lait chaud, le beurre et la muscade. Ne pas mixer, la purée deviendrait élastique.",
       "Étaler la viande dans un plat, couvrir de purée, rayer à la fourchette et parsemer de fromage râpé.",
       "Enfourner 25 min à 200 °C, jusqu'à ce que les crêtes soient dorées."
-    ]
+    ],
+    "image": "/plats/hachis-parmentier.webp"
   },
   {
     "id": "tomates-farcies",

@@ -24,6 +24,11 @@ import Icone from '../components/Icone'
 const estIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent)
 const estAndroid = () => /Android/.test(navigator.userAgent)
 
+/** Découpe « texte **gras** texte » en fragments, les paires impaires en `<b>`. */
+function avecGras(texte: string) {
+  return texte.split('**').map((fragment, i) => (i % 2 === 1 ? <b key={i}>{fragment}</b> : fragment))
+}
+
 interface Props {
   magasins: ConfigMagasins
   onMagasins: (config: ConfigMagasins) => void
@@ -177,7 +182,7 @@ export default function Reglages({
             definirLangue('fr')
           }}
         >
-          Français
+          {t('reglages.langueFr')}
         </button>
         <button
           className="discret"
@@ -187,7 +192,7 @@ export default function Reglages({
             definirLangue('en')
           }}
         >
-          English
+          {t('reglages.langueEn')}
         </button>
       </div>
 
@@ -203,16 +208,11 @@ export default function Reglages({
             // iOS n'expose aucune API d'installation : reste le geste, à
             // condition de savoir lequel.
             <p className="aide">
-              {langue === 'fr' ? (
-                <>
-                  Sur iPhone : bouton <b>{t('reglages.partager')}</b> dans la barre de Safari, puis{' '}
-                  <b>{t('reglages.ecranAccueil')}</b>.
-                </>
-              ) : (
-                <>
-                  On iPhone: <b>{t('reglages.partager')}</b> button in the Safari bar, then{' '}
-                  <b>{t('reglages.ecranAccueil')}</b>.
-                </>
+              {avecGras(
+                t('reglages.installerIOS', {
+                  partager: t('reglages.partager'),
+                  ecranAccueil: t('reglages.ecranAccueil'),
+                }),
               )}
             </p>
           ) : estAndroid() ? (
@@ -220,15 +220,10 @@ export default function Reglages({
             // retard (ou pas du tout hors Chrome) : le geste manuel reste
             // utile même sur Android.
             <p className="aide">
-              {langue === 'fr' ? (
-                <>
-                  Sur Android (Chrome) : menu <b>⋮</b> en haut à droite, puis{' '}
-                  <b>{t('reglages.ajouterEcranAndroid')}</b>.
-                </>
-              ) : (
-                <>
-                  On Android (Chrome): <b>⋮</b> menu top right, then <b>{t('reglages.ajouterEcranAndroid')}</b>.
-                </>
+              {avecGras(
+                t('reglages.installerAndroid', {
+                  ajouterEcranAndroid: t('reglages.ajouterEcranAndroid'),
+                }),
               )}
             </p>
           ) : (

@@ -468,6 +468,40 @@ p.aide a {
   );
 }
 
+.accueil-langue {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  right: 16px;
+  z-index: 1;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.16);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.28);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.accueil-langue-bouton {
+  border: 0;
+  background: transparent;
+  color: rgb(255 255 255 / 0.75);
+  font-family: var(--affichage);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color var(--court3) var(--standard), color var(--court3) var(--standard);
+}
+
+.accueil-langue-bouton[aria-pressed='true'] {
+  background: rgb(255 255 255 / 0.92);
+  color: #16150f;
+}
+
 .accueil-hero-corps {
   position: relative;
   width: 100%;
@@ -867,6 +901,15 @@ html[data-defile='true'] .entete-app {
   z-index: 11;
 }
 
+/* Miroir du bouton réglages, côté gauche : un avis se donne depuis
+   n'importe quel écran principal, sans y être invité. */
+.bouton-retour-global {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: 16px;
+  z-index: 11;
+}
+
 /* --- Barre d'onglets ----------------------------------------------------- */
 
 .espaceur-action-flottante {
@@ -921,6 +964,7 @@ html[data-defile='true'] .entete-app {
 @media (max-width: 899px) {
   [data-sous-ecran='true'] nav.onglets,
   [data-sous-ecran='true'] .bouton-reglages-global,
+  [data-sous-ecran='true'] .bouton-retour-global,
   [data-sous-ecran='true'] .pastille-hors-ligne {
     display: none;
   }
@@ -1328,6 +1372,24 @@ button.carte:active {
 
 .grille-recettes .vignette[data-sans-photo] {
   padding: 10px 10px 50px;
+}
+
+/* Repli quand une photo était attendue mais n'a pas chargé (lien mort,
+   hors ligne) : le mini logo de l'app plutôt qu'un cadre vide. Toujours
+   petit et discret — ce n'est pas la photo du plat, juste un signe que
+   l'app a essayé. Spécificité volontairement au-dessus de `.vignette
+   img` etc. (elle cible en plus le conteneur) pour ne pas dépendre de
+   l'ordre des règles dans la feuille. */
+.vignette img.vignette-logo-repli,
+.vignette-mini img.vignette-logo-repli,
+.carte-prochaine-cuisson img.vignette-logo-repli {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: 0.4;
 }
 
 .grille-recettes .vignette-placeholder {
@@ -2491,7 +2553,7 @@ button.pastille-synchro:active {
    reste lisible sur un plat clair comme sur un plat sombre, sans avoir à
    connaître la photo. Sur la teinte de repli il n'a rien à faire — le
    texte y est déjà à l'encre. */
-.carte-prochaine-cuisson:has(img)::after {
+.carte-prochaine-cuisson:has(img):not(:has(.vignette-logo-repli))::after {
   content: '';
   position: absolute;
   top: 0;
@@ -2517,8 +2579,8 @@ button.pastille-synchro:active {
   z-index: 1;
 }
 
-.carte-prochaine-cuisson:has(img) .carte-prochaine-cuisson-titre,
-.carte-prochaine-cuisson:has(img) .carte-resume-label {
+.carte-prochaine-cuisson:has(img):not(:has(.vignette-logo-repli)) .carte-prochaine-cuisson-titre,
+.carte-prochaine-cuisson:has(img):not(:has(.vignette-logo-repli)) .carte-resume-label {
   color: #fff8ef;
 }
 
@@ -3439,6 +3501,61 @@ button.carte-panier-bouton .carte-panier-corps {
   color: #ffb3b0;
 }
 
+/* Feuille de retour utilisateur : même ancrage en bas que le panneau des
+   minuteurs, mais sur le papier clair de l'app — ce n'est pas un écran de
+   cuisson, pas de raison d'en emprunter le thème sombre. */
+.panneau-retour {
+  position: fixed;
+  z-index: 31;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 20px 20px max(20px, env(safe-area-inset-bottom));
+  border-radius: var(--rayon-grand) var(--rayon-grand) 0 0;
+  background: var(--papier);
+  color: var(--encre);
+  box-shadow: var(--ombre-haute);
+  animation: confirmation-entree var(--court3) var(--sortie);
+}
+
+.panneau-retour-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panneau-retour-entete h2 {
+  margin: 0;
+  font-family: var(--affichage);
+  font-size: 20px;
+}
+
+.panneau-retour .champ-texte {
+  margin-top: 14px;
+}
+
+.champ-retour-contact {
+  margin-top: 10px;
+}
+
+.panneau-retour .discret.accent {
+  margin-top: 16px;
+}
+
+.panneau-retour-envoye {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0;
+  padding: 8px 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
 /* Filet de séparation : sans lui, le texte qui défile vient toucher les
    boutons et on ne voit plus qu'il reste de l'étape à lire. */
 .cuisson-actions {
@@ -4350,6 +4467,63 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
 
   [data-minuteur='true'] .action-flottante {
     bottom: 96px;
+  }
+
+  /* Bienvenue : pas encore de rail (pas de foyer, donc pas d'onglets) —
+     la gouttière de 128px pensée pour lui laisserait le premier écran
+     décentré. Et la photo plein viewport, pensée pour un pouce, tournerait
+     à l'affiche démesurée sur un écran large : elle se pose plutôt en
+     panneau fixe d'un côté, colonne de lecture centrée dans l'espace
+     restant de l'autre — la disposition classique d'un écran d'entrée sur
+     grand écran. Panneau en position fixe plutôt qu'une colonne de grille :
+     il reste à l'écran quelle que soit la hauteur du texte à droite, sans
+     dépendre du nombre de lignes que la grille aurait à deviner. */
+  #root:has(.accueil) {
+    max-width: none;
+    padding: 0 0 0 clamp(360px, 38vw, 560px);
+  }
+
+  .accueil-hero {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: clamp(360px, 38vw, 560px);
+    height: 100dvh;
+    max-height: none;
+    aspect-ratio: auto;
+    margin: 0;
+  }
+
+  .accueil-hero-corps {
+    padding: 24px 40px max(40px, env(safe-area-inset-bottom));
+  }
+
+  /* Le bloc se centre dans l'espace libéré par le panneau, comme la
+     photo se centre dans le sien : deux moitiés d'écran, chacune avec
+     son propre milieu. Le titre s'aligne avec la liste plutôt que de
+     rester centré au-dessus d'un texte qui, lui, ne l'est pas. */
+  .accueil {
+    align-items: center;
+    gap: 40px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  .accueil-comment-titre,
+  .accueil-comment,
+  .accueil-actions {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .accueil-comment-titre {
+    margin-top: max(56px, env(safe-area-inset-top));
+    text-align: left;
+  }
+
+  .accueil-actions {
+    margin-bottom: 56px;
   }
 }
 

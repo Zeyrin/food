@@ -69,10 +69,18 @@ export function proposer(recipes: Recipe[], historique: Historique, criteres: Cr
   })
 
   return scored
-    // À score égal (deux recettes jamais cuisinées peuvent tomber sur le
-    // même tirage), l'identifiant tranche : sans ça l'ordre dépendrait de
-    // la stabilité du tri, donc du moteur.
-    .sort((a, b) => b.score - a.score || a.recipe.id.localeCompare(b.recipe.id))
+    // Une recette sans photo tombe sur le placeholder générique : la
+    // grille se lit mieux si les plats illustrés passent en premier,
+    // avant même le score. À égalité de photo, le score déjà en place
+    // tranche — l'identifiant en tout dernier recours (deux recettes
+    // jamais cuisinées peuvent tomber sur le même tirage), sans ça
+    // l'ordre dépendrait de la stabilité du tri, donc du moteur.
+    .sort(
+      (a, b) =>
+        (b.recipe.image ? 1 : 0) - (a.recipe.image ? 1 : 0) ||
+        b.score - a.score ||
+        a.recipe.id.localeCompare(b.recipe.id),
+    )
     .slice(0, nombre)
     .map((s) => s.recipe)
 }

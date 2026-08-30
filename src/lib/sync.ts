@@ -344,6 +344,31 @@ export function suivreHistorique(foyer: string, onChange: (h: Historique) => voi
   )
 }
 
+/**
+ * Un avis déposé depuis n'importe quel écran, sans rapport avec le foyer :
+ * donner son avis ne doit pas dépendre d'en avoir déjà un. `contexte` aide
+ * à situer le retour (onglet, langue, version) sans jamais transporter de
+ * contenu personnel — mêmes règles que `mesurer` (voir lib/mesure.ts).
+ *
+ * `false` sur tout échec (pas de Supabase, session refusée, policy) : à
+ * l'appelant de le dire simplement, sans détail technique qu'un avis perdu
+ * n'a pas besoin d'exposer.
+ */
+export async function envoyerRetour(
+  texte: string,
+  contact: string | null,
+  contexte: Record<string, string | number>,
+): Promise<boolean> {
+  if (!supabase) return false
+  if (!(await assurerSession())) return false
+  const { error } = await supabase.from('retours').insert({ texte, contact, contexte })
+  if (error) {
+    console.warn(`Envoi du retour refusé : ${error.message}`)
+    return false
+  }
+  return true
+}
+
 export function suivreRecettes(foyer: string, onChangement: (recettes: Recipe[]) => void): () => void {
   return abonner(foyer, (client) =>
     client
