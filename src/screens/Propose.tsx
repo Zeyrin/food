@@ -8,6 +8,7 @@ import { mesurer } from '../lib/mesure'
 import { comportementDefilement } from '../lib/mouvement'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
+import VignettePlaceholder from '../components/VignettePlaceholder'
 import AjoutRecette from '../components/AjoutRecette'
 
 interface Props {
@@ -333,7 +334,7 @@ export default function Propose({
                 }
               >
                 <div className="vignette" data-sans-photo={r.image ? undefined : 'true'} aria-hidden="true">
-                  {r.titre.charAt(0)}
+                  {!r.image && <VignettePlaceholder titre={r.titre} />}
                   <ImageRecette src={r.image} />
                   <span className="badge-temps">
                     <Icone nom="minuteur" taille={12} /> {t('propose.minutes', { n: r.temps })}

@@ -20,6 +20,14 @@ interface Props {
 /** Là où l'attente et l'erreur s'affichent : à côté du geste qui les a produites. */
 type Zone = 'reprise' | 'creation' | 'jonction'
 
+/**
+ * Un plat du corpus livré avec l'app, plein cadre, avant même de savoir
+ * ce qu'est un « foyer » : le premier écran montre plutôt qu'il ne
+ * décrit. Décoratif — `alt=""` — la vraie légende de ce plat n'a rien à
+ * faire ici, elle vit sur sa fiche.
+ */
+const PHOTO_HERO = '/plats/burger-maison.webp'
+
 export default function Bienvenue({
   onCreer,
   onRejoindre,
@@ -116,17 +124,55 @@ export default function Bienvenue({
     <main className="accueil">
       {/* Premier écran de l'app, et le seul qui n'ait rien à montrer :
           pas de recette, pas de liste, rien à reprendre. Il présente donc
-          le produit — sceau, nom, promesse — avant de demander la seule
-          décision qu'il réclame, créer ou rejoindre. Le bloc de marque
-          occupe la place libre, les actions restent au pouce. */}
-      <div className="accueil-marque">
-        <span className="accueil-sceau" aria-hidden="true">
-          <Icone nom="grill" taille={30} />
-        </span>
-        <p className="accueil-surtitre">{t('bienvenue.titre')}</p>
-        <h1 className="accueil-nom">FFFood</h1>
-        <p className="accueil-baseline">{t('bienvenue.intro')}</p>
+          le produit — une photo plutôt qu'une promesse écrite, la
+          question du soir raturée plutôt qu'un slogan — avant de demander
+          la seule décision qu'il réclame, créer ou rejoindre. */}
+      <div className="accueil-hero">
+        <img className="accueil-hero-photo" src={PHOTO_HERO} alt="" aria-hidden="true" />
+        <div className="accueil-hero-voile" aria-hidden="true" />
+        <div className="accueil-hero-corps">
+          <span className="accueil-hero-sceau" aria-hidden="true">
+            <Icone nom="grill" taille={22} />
+          </span>
+          <p className="accueil-hero-marque">FFFood</p>
+          <h1 className="accueil-hero-titre">
+            <span className="accueil-hero-question">{t('bienvenue.question')}</span>
+            <span className="accueil-hero-reponse">{t('bienvenue.reponse')}</span>
+          </h1>
+          <p className="accueil-hero-baseline">{t('bienvenue.intro')}</p>
+        </div>
       </div>
+
+      <h2 className="accueil-comment-titre">{t('bienvenue.commentTitre')}</h2>
+      <ol className="accueil-comment">
+        <li>
+          <span className="accueil-comment-pastille" aria-hidden="true">
+            <Icone nom="etoile" taille={18} />
+          </span>
+          <div>
+            <b>{t('bienvenue.etapeProposerTitre')}</b>
+            <p>{t('bienvenue.etapeProposerTexte')}</p>
+          </div>
+        </li>
+        <li>
+          <span className="accueil-comment-pastille" aria-hidden="true">
+            <Icone nom="liste" taille={18} />
+          </span>
+          <div>
+            <b>{t('bienvenue.etapeListeTitre')}</b>
+            <p>{t('bienvenue.etapeListeTexte')}</p>
+          </div>
+        </li>
+        <li>
+          <span className="accueil-comment-pastille" aria-hidden="true">
+            <Icone nom="grill" taille={18} />
+          </span>
+          <div>
+            <b>{t('bienvenue.etapeCuisineTitre')}</b>
+            <p>{t('bienvenue.etapeCuisineTexte')}</p>
+          </div>
+        </li>
+      </ol>
 
       <div className="accueil-actions">
         {/* Quitter une maison ne l'efface pas : elle reste joignable par

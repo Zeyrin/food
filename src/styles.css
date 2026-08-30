@@ -321,6 +321,19 @@ p.aide a {
   place-items: center;
 }
 
+/* Le sceau : le carré arrondi de l'icône d'app, seul repère de cet écran
+   d'attente — et de l'écran de panne, qui le partage. */
+.accueil-sceau {
+  display: inline-grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 22px;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--accent) 90%, white), var(--accent));
+  color: var(--sur-accent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), var(--ombre-nette);
+}
+
 .attente .accueil-sceau {
   margin: 0;
   opacity: 0;
@@ -416,78 +429,173 @@ p.aide a {
   padding: max(32px, env(safe-area-inset-top)) 0 32px;
 }
 
-.accueil-marque {
+/* --- Photo hero -----------------------------------------------------------
+   Une photo plutôt qu'une promesse écrite : le premier écran montre un
+   plat plein cadre, et pose dessus la question qu'on se pose tous les
+   soirs — biffée, parce que c'est précisément celle que l'app éteint.
+   Plein bord (largeur du viewport, pas de la colonne à 640px) pour que la
+   photo se lise comme une affiche, pas comme une vignette de plus. */
+.accueil-hero {
   position: relative;
-  text-align: center;
+  width: 100vw;
+  margin: calc(-1 * max(32px, env(safe-area-inset-top))) calc(50% - 50vw) 0;
+  aspect-ratio: 4 / 5;
+  max-height: min(72vh, 620px);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
 }
 
-/* Une lueur derrière le sceau, seule licence prise sur un système par
-   ailleurs mat : l'écran est vide par nature, et le sceau y est la seule
-   chose à regarder. Assez pâle pour ne pas se lire comme un dégradé —
-   ce qu'on doit voir, c'est que la lumière vient de là. */
-.accueil-marque::before {
-  content: '';
+.accueil-hero-photo {
   position: absolute;
-  top: -80px;
-  left: 50%;
-  width: min(360px, 92vw);
-  aspect-ratio: 1;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--accent) 15%, transparent),
-    transparent 68%
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Voile dégradé, pas un simple assombrissement uniforme : le bas — où vit
+   le texte — doit rester lisible quelle que soit la photo, le haut garde
+   sa lumière pour ne pas noyer le plat qu'on est venu montrer. */
+.accueil-hero-voile {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgb(20 14 8 / 0.88),
+    rgb(20 14 8 / 0.55) 42%,
+    rgb(20 14 8 / 0.05) 75%
   );
-  pointer-events: none;
 }
 
-/* La lueur est un pseudo-élément positionné : sans cette ligne, elle se
-   peindrait *par-dessus* le nom et la baseline, qui sont dans le flux.
-   `z-index: -1` sur la lueur l'aurait au contraire envoyée derrière le
-   fond du `body`, c'est-à-dire nulle part. */
-.accueil-marque > * {
+.accueil-hero-corps {
   position: relative;
+  width: 100%;
+  padding: 24px 20px max(28px, env(safe-area-inset-bottom) / 2);
+  text-align: center;
+  color: #fff;
 }
 
-/* Sceau : le carré arrondi d'une icône d'application, repris ici pour
-   que l'écran d'accueil ressemble à ce qui vient d'être touché sur le
-   téléphone. */
-.accueil-sceau {
+.accueil-hero-sceau {
   display: inline-grid;
   place-items: center;
-  width: 68px;
-  height: 68px;
-  margin-bottom: 20px;
-  border-radius: 22px;
-  background: linear-gradient(to bottom, color-mix(in srgb, var(--accent) 90%, white), var(--accent));
-  color: var(--sur-accent);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), var(--ombre-nette);
+  width: 44px;
+  height: 44px;
+  margin-bottom: 10px;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.16);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.28);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 
-.accueil-surtitre {
+.accueil-hero-marque {
+  margin: 0 0 14px;
+  font-family: var(--affichage);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.75);
+}
+
+.accueil-hero-titre {
   margin: 0;
+  font-family: var(--affichage);
+  font-size: clamp(28px, 8vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+/* La question, biffée : pas grisée ni retirée, toujours lisible — c'est
+   le geste de rayer qui doit se voir, pas une phrase qui manquerait. */
+.accueil-hero-question {
+  display: block;
+  color: rgb(255 255 255 / 0.62);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  text-decoration-color: rgb(255 255 255 / 0.5);
+}
+
+/* Toujours la même teinte claire, que le système soit en clair ou en
+   sombre : le voile sous ce texte est fixe (une photo, pas le papier de
+   l'app), donc `--accent` — qui s'inverse avec le thème — s'y lirait mal
+   une fois sur deux. */
+.accueil-hero-reponse {
+  display: block;
+  margin-top: 4px;
+  color: #cefda3;
+}
+
+.accueil-hero-baseline {
+  max-width: 32ch;
+  margin: 14px auto 0;
+  color: rgb(255 255 255 / 0.85);
+  font-size: 15px;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+/* --- Comment ça marche : trois gestes -------------------------------------
+   Nouveau venu, on ne sait pas encore que « Proposer » cache un panier ou
+   que « Liste » sort du panier tout seul. Trois lignes, dans l'ordre où
+   l'app les propose sur sa propre barre d'onglets. */
+.accueil-comment-titre {
+  margin: 0 0 14px;
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  text-align: center;
   color: var(--encre-douce);
 }
 
-.accueil-nom {
-  margin: 6px 0 0;
-  font-size: clamp(40px, 13vw, 56px);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1;
+.accueil-comment {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: min(100%, 420px);
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
 }
 
-.accueil-baseline {
-  max-width: 30ch;
-  margin: 14px auto 0;
+.accueil-comment li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.accueil-comment-pastille {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+.accueil-comment li div {
+  padding-top: 4px;
+}
+
+.accueil-comment li b {
+  display: block;
+  font-family: var(--affichage);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.008em;
+}
+
+.accueil-comment li p {
+  margin: 2px 0 0;
   color: var(--encre-douce);
-  font-size: 17px;
-  line-height: 1.45;
+  font-size: 14px;
+  line-height: 1.4;
   text-wrap: pretty;
 }
 
@@ -503,23 +611,33 @@ p.aide a {
    qu'on reverra vingt fois par jour. Sous `no-preference` uniquement, et
    `both` pour que l'état de départ tienne avant le premier temps. */
 @media (prefers-reduced-motion: no-preference) {
-  .accueil-marque .accueil-sceau {
-    animation: accueil-sceau 0.6s var(--sortie) both;
+  .accueil-hero-photo {
+    animation: accueil-hero-zoom 8s var(--sortie) both;
   }
 
-  .accueil-marque > :not(.accueil-sceau) {
-    animation: accueil-entree 0.5s var(--sortie) 0.08s both;
+  .accueil-hero-corps > * {
+    animation: accueil-entree 0.5s var(--sortie) 0.1s both;
+  }
+
+  .accueil-comment-titre,
+  .accueil-comment {
+    animation: accueil-entree 0.5s var(--sortie) 0.18s both;
   }
 
   .accueil-actions {
-    animation: accueil-entree 0.5s var(--sortie) 0.16s both;
+    animation: accueil-entree 0.5s var(--sortie) 0.24s both;
   }
 }
 
-@keyframes accueil-sceau {
+/* Léger zoom continu façon Ken Burns : la photo reste vivante derrière un
+   texte qui, lui, ne bouge pas — sans lui, un plein cadre fixe se lit
+   comme une simple image d'illustration plutôt qu'une scène. */
+@keyframes accueil-hero-zoom {
   from {
-    opacity: 0;
-    transform: scale(0.86) translateY(10px);
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
   }
 }
 
@@ -1010,6 +1128,10 @@ button.carte:active {
     color: hsl(var(--teinte) 55% 78% / 0.28);
     background: hsl(var(--teinte) 30% 24%);
   }
+
+  .vignette-placeholder {
+    color: hsl(var(--teinte) 55% 82% / 0.75);
+  }
 }
 
 /* Un temps de cuisson n'est ni une alerte ni une promotion : il se lit
@@ -1111,10 +1233,11 @@ button.carte:active {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  /* Chaque carte à sa propre hauteur. Étirées à la plus haute de leur
-     rangée, celles qui n'ont pas de photo — bandeau court, titre de deux
-     lignes — se retrouvaient avec un grand aplat de vide sous le titre à
-     côté d'une carte illustrée. */
+  /* Chaque carte à sa propre hauteur : la vignette est toujours du même
+     format (photo ou formule de repli), mais le titre fait parfois deux
+     lignes plutôt qu'une. Étirées à la plus haute de leur rangée, la
+     carte au titre court se serait retrouvée avec un aplat de vide en
+     bas, à côté de celle au titre long. */
   align-items: start;
 }
 
@@ -1170,40 +1293,46 @@ button.carte:active {
   font-size: 40px;
 }
 
-/* Les recettes sans photo — le corpus en compte cent une — réservaient
-   un carré entier pour une initiale géante sur un aplat de couleur : la
-   carte donnait l'impression d'une image qui n'a pas fini de charger.
-   Un bandeau de la hauteur du badge suffit à porter la teinte et le
-   temps de cuisson, et le titre remonte à sa place. */
+/* Les recettes sans photo gardent le même format de vignette que les
+   autres — même ratio, même hauteur — pour que la grille reste une
+   grille de cartes égales plutôt qu'un damier de tailles différentes.
+   Une formule à la place de la photo (voir `VignettePlaceholder`) plutôt
+   qu'une simple initiale, posée comme un sous-titre en bas de vignette. */
 .vignette[data-sans-photo] {
-  aspect-ratio: auto;
-  /* De quoi loger le bouton d'ajout, qui vit au ras du bas de la
-     vignette : plus court, il débordait par-dessus le titre. */
-  min-height: 60px;
-  padding-bottom: 0;
   align-items: center;
-  justify-content: flex-end;
-  padding-right: 14px;
-  font-size: 26px;
+  justify-content: center;
+  /* Marge basse généreuse : le rond d'ajout flotte dans ce coin, et un
+     texte centré sur toute la largeur passerait dessous sans elle. */
+  padding: 16px 16px 60px;
+  font-size: 0;
+}
+
+.vignette-placeholder {
+  margin: 0;
+  font-family: var(--texte);
+  font-size: 13px;
+  font-weight: 600;
+  font-style: italic;
+  text-transform: none;
+  color: hsl(var(--teinte) 35% 25% / 0.75);
+  line-height: 1.3;
+  text-align: center;
+  text-wrap: balance;
+  /* Trois lignes au plus : au-delà, une formule débordait sur le badge
+     temps posé en haut de la même vignette. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .grille-recettes .vignette[data-sans-photo] {
-  aspect-ratio: auto;
-  min-height: 56px;
-  font-size: 22px;
-  padding-right: 10px;
+  padding: 10px 10px 50px;
 }
 
-.vignette[data-sans-photo] .bouton-ajout-flottant {
-  bottom: 6px;
-}
-
-@supports not (aspect-ratio: 4 / 3) {
-  .vignette[data-sans-photo],
-  .grille-recettes .vignette[data-sans-photo] {
-    height: auto;
-    padding-bottom: 0;
-  }
+.grille-recettes .vignette-placeholder {
+  font-size: 12px;
+  -webkit-line-clamp: 4;
 }
 
 .grille-recettes .badge-temps {

@@ -4,6 +4,7 @@ import { cuisineRecemment, type Historique } from '../lib/propose'
 import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
+import VignettePlaceholder from '../components/VignettePlaceholder'
 
 interface Props {
   recipes: Recipe[]
@@ -78,7 +79,7 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
               }
             >
               <div className="vignette" data-sans-photo={r.image ? undefined : 'true'} aria-hidden="true">
-                {r.titre.charAt(0)}
+                {!r.image && <VignettePlaceholder titre={r.titre} />}
                 <ImageRecette src={r.image} />
                 <span className="badge-temps">
                   <Icone nom="minuteur" taille={12} /> {t('cuissonListe.minutes', { n: r.temps })}

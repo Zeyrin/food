@@ -99,8 +99,23 @@ const fr: Dico = {
   bienvenue: {
     partageInactif:
       "Le partage n'est pas configuré sur cette installation : l'app fonctionne seule sur cet appareil.",
-    titre: 'Bienvenue',
+    // Le problème du soir, biffé plutôt que résolu à coups d'arguments :
+    // la question ne se pose plus, elle est raturée. `reponse` porte le
+    // ton (« réglé », pas « nous proposons des solutions »).
+    question: "Qu'est-ce qu'on mange ce soir ?",
+    reponse: 'Décidé.',
     intro: 'Décider les repas de la semaine, en tirer la liste, et cuisiner. À deux, sans compte.',
+    // Trois gestes, dans l'ordre où l'app les propose (voir la barre
+    // d'onglets) : choisir des plats, s'en servir pour la liste de
+    // courses, puis cuisiner. Nouveau venu, on ne sait pas encore que
+    // « Proposer » cache un panier ou que « Liste » sort du panier.
+    commentTitre: 'Comment ça marche',
+    etapeProposerTitre: 'Choisissez des plats',
+    etapeProposerTexte: 'Piochez dans le catalogue, ou collez vos propres recettes.',
+    etapeListeTitre: 'La liste se fait seule',
+    etapeListeTexte: 'Les ingrédients de vos plats, regroupés par rayon.',
+    etapeCuisineTitre: 'Cuisinez, étape par étape',
+    etapeCuisineTexte: 'Minuteurs intégrés, et une note pour retrouver ce que vous avez aimé.',
     ou: 'ou',
     creation: 'Création…',
     creerMaMaison: 'Créer ma maison',
@@ -125,6 +140,36 @@ const fr: Dico = {
     repriseOublier: 'Oublier cette maison',
     repriseIntrouvable: "Cette maison est introuvable : elle a peut-être été supprimée.",
     repriseErreur: 'Le retour a échoué. Vérifiez votre connexion et réessayez.',
+  },
+  placeholders: {
+    // Une recette sans photo (ajoutée depuis l'app, en général) : plutôt
+    // qu'une case vide ou une simple initiale, une formule qui fait
+    // sourire — chacune reste attachée à la même recette d'un rendu à
+    // l'autre (voir `phraseRecette` dans lib/identite.ts). Objet plutôt
+    // que tableau : `i18n.test.ts` traite un tableau comme une liste de
+    // sous-dictionnaires (voir `onboarding`), pas de simples chaînes.
+    sansPhoto: {
+      '0': 'Mangé avant la photo.',
+      '1': "Trop bon pour attendre l'appareil photo.",
+      '2': 'Le parfum ne tenait pas en photo.',
+      '3': 'Photo en cours de digestion.',
+      '4': 'On a préféré se resservir.',
+      '5': 'Belle à table, timide en photo.',
+      '6': "Personne n'a pensé à sortir son téléphone.",
+      '7': "Ici, on juge au nez, pas à l'œil.",
+      '8': "Les mains étaient trop occupées à se resservir.",
+      '9': 'Le temps de trouver le téléphone, il ne restait plus rien.',
+      '10': "Cette recette préfère l'incognito.",
+      '11': 'Vue une seule fois. Mangée deux fois plus vite.',
+      '12': "L'appareil photo a eu moins de succès que le plat.",
+      '13': "Sublime en vrai, on vous jure.",
+      '14': "Photo ratée, plat réussi : on a gardé le bon des deux.",
+      '15': 'Personne ne fait de photo un lundi soir affamé.',
+      '16': "Imaginez, mais avec plus de vapeur qui monte.",
+      '17': "A fini dans les assiettes avant de finir en photo.",
+      '18': 'Sentait trop bon pour attendre.',
+      '19': "Cette recette-là se raconte, elle ne se montre pas.",
+    },
   },
   propose: {
     titre: 'Proposer',
@@ -605,8 +650,16 @@ const en: Dico = {
   bienvenue: {
     partageInactif:
       "Sharing is not configured on this install: the app works on this device alone.",
-    titre: 'Welcome',
+    question: 'What are we eating tonight?',
+    reponse: 'Sorted.',
     intro: 'Decide the week\'s meals, turn them into a list, and cook. Together, no account.',
+    commentTitre: 'How it works',
+    etapeProposerTitre: 'Pick some dishes',
+    etapeProposerTexte: 'Browse the catalog, or paste in your own recipes.',
+    etapeListeTitre: 'The list builds itself',
+    etapeListeTexte: 'Every ingredient from your dishes, grouped by aisle.',
+    etapeCuisineTitre: 'Cook, step by step',
+    etapeCuisineTexte: 'Built-in timers, and a note to remember what you liked.',
     ou: 'or',
     creation: 'Creating…',
     creerMaMaison: 'Create my household',
@@ -631,6 +684,30 @@ const en: Dico = {
     repriseOublier: 'Forget this household',
     repriseIntrouvable: 'That household cannot be found: it may have been deleted.',
     repriseErreur: 'Going back failed. Check your connection and try again.',
+  },
+  placeholders: {
+    sansPhoto: {
+      '0': 'Eaten before the photo happened.',
+      '1': 'Too good to wait for the camera.',
+      '2': "The smell didn't fit in a photo.",
+      '3': 'Photo currently being digested.',
+      '4': 'We went for seconds instead.',
+      '5': 'Gorgeous on the plate, camera-shy.',
+      '6': 'Nobody thought to grab their phone.',
+      '7': 'Judged by smell, not by sight, here.',
+      '8': 'Hands were too busy going for seconds.',
+      '9': 'By the time the phone came out, it was gone.',
+      '10': 'This recipe prefers to stay incognito.',
+      '11': 'Seen once. Eaten twice as fast.',
+      '12': 'The camera had less luck than the dish.',
+      '13': 'Gorgeous in person, we promise.',
+      '14': 'Photo failed, dinner succeeded: we kept the good one.',
+      '15': 'Nobody photographs a hungry Monday night.',
+      '16': 'Picture it, but with more steam rising off it.',
+      '17': 'Made it to the plates before it made it to a photo.',
+      '18': 'Smelled too good to wait around.',
+      '19': "This one's told, not shown.",
+    },
   },
   propose: {
     titre: 'Suggest',
@@ -1031,6 +1108,15 @@ export function traduireEn(
 
 export function etapesOnboarding(langue: Langue) {
   return dictionnaires[langue].onboarding as unknown as { titre: string; texte: string }[]
+}
+
+/** Les formules pour une recette sans photo, voir `phraseRecette`. */
+export function phrasesSansPhoto(langue: Langue): string[] {
+  const dico = (dictionnaires[langue].placeholders as unknown as { sansPhoto: Record<string, string> })
+    .sansPhoto
+  return Object.keys(dico)
+    .sort((a, b) => Number(a) - Number(b))
+    .map((cle) => dico[cle]!)
 }
 
 /**
