@@ -4374,27 +4374,21 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
      la gouttière de 128px pensée pour lui laisserait le premier écran
      décentré. Et la photo plein viewport, pensée pour un pouce, tournerait
      à l'affiche démesurée sur un écran large : elle se pose plutôt en
-     panneau fixe d'un côté, colonne de lecture de l'autre — la
-     disposition classique d'un écran d'entrée sur grand écran. */
+     panneau fixe d'un côté, colonne de lecture centrée dans l'espace
+     restant de l'autre — la disposition classique d'un écran d'entrée sur
+     grand écran. Panneau en position fixe plutôt qu'une colonne de grille :
+     il reste à l'écran quelle que soit la hauteur du texte à droite, sans
+     dépendre du nombre de lignes que la grille aurait à deviner. */
   #root:has(.accueil) {
     max-width: none;
-    padding: 0;
-  }
-
-  .accueil {
-    min-height: 100dvh;
-    display: grid;
-    grid-template-columns: minmax(360px, 38vw) 1fr;
-    column-gap: 0;
-    row-gap: 32px;
-    padding: 0;
+    padding: 0 0 0 clamp(360px, 38vw, 560px);
   }
 
   .accueil-hero {
-    position: sticky;
+    position: fixed;
     top: 0;
-    grid-row: 1 / -1;
-    width: 100%;
+    left: 0;
+    width: clamp(360px, 38vw, 560px);
     height: 100dvh;
     max-height: none;
     aspect-ratio: auto;
