@@ -4399,8 +4399,30 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
     padding: 24px 40px max(40px, env(safe-area-inset-bottom));
   }
 
+  /* La colonne de lecture s'ancre à une marge fixe plutôt que de se
+     centrer dans l'espace libéré par le panneau : centrée, elle flotte
+     au milieu d'une gouttière qui grandit avec l'écran ; ancrée, elle se
+     lit comme un bloc posé, quelle que soit la largeur de fenêtre. Le
+     titre s'aligne avec la liste plutôt que de rester centré au-dessus
+     d'un texte qui, lui, ne l'est pas. */
+  .accueil {
+    align-items: flex-start;
+    gap: 40px;
+    padding-left: clamp(48px, 6vw, 96px);
+    padding-right: 40px;
+  }
+
+  .accueil-comment-titre,
+  .accueil-comment,
+  .accueil-actions {
+    width: 100%;
+    max-width: 480px;
+    margin: 0;
+  }
+
   .accueil-comment-titre {
     margin-top: max(56px, env(safe-area-inset-top));
+    text-align: left;
   }
 
   .accueil-actions {
