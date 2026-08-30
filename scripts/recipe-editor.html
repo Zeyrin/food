@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Éditeur de recettes — FFFood</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, sans-serif; background: #f6f5f2; color: #1c1a17; }
+  header { position: sticky; top: 0; z-index: 10; background: #1c1a17; color: #fff; padding: 14px 20px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  header h1 { font-size: 16px; margin: 0; font-weight: 600; }
+  header .stat { font-size: 13px; opacity: .85; }
+  header input[type="search"] { flex: 1; min-width: 180px; padding: 7px 10px; border-radius: 6px; border: none; font-size: 14px; }
+  header label { font-size: 13px; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+  main { max-width: 1200px; margin: 0 auto; padding: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+  .card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.12); display: flex; flex-direction: column; transition: box-shadow .2s; }
+  .card.missing-img { outline: 2px solid #d98c3a; }
+  .card.saved { box-shadow: 0 0 0 2px #4a7c59; }
+  .thumb { aspect-ratio: 4/3; background: linear-gradient(135deg,#dcd3c4,#b8ab92); display: flex; align-items: center; justify-content: center; color: #6b5f4d; font-size: 12px; text-align: center; padding: 8px; position: relative; cursor: pointer; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .thumb .drop-hint { position: absolute; inset: 0; background: rgba(0,0,0,.45); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; opacity: 0; transition: opacity .15s; pointer-events: none; text-align:center; padding: 8px; }
+  .thumb:hover .drop-hint { opacity: 1; }
+  .badge { position: absolute; top: 6px; left: 6px; font-size: 10px; font-weight: 700; padding: 3px 7px; border-radius: 999px; text-transform: uppercase; letter-spacing: .03em; z-index: 2; }
+  .badge.ok { background: #4a7c59; color: #fff; }
+  .badge.no { background: #d98c3a; color: #fff; }
+  .rm-img { position: absolute; top: 6px; right: 6px; z-index: 2; background: rgba(0,0,0,.55); color: #fff; border: none; border-radius: 999px; width: 20px; height: 20px; font-size: 12px; line-height: 1; cursor: pointer; }
+  .body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .titre { font-size: 15px; font-weight: 700; border: none; background: transparent; width: 100%; font-family: inherit; padding: 2px 0; }
+  .meta { font-size: 12px; color: #6b6455; display: flex; gap: 10px; align-items: center; }
+  .meta input { width: 46px; font-size: 12px; border: 1px solid #ddd7ca; border-radius: 4px; padding: 1px 4px; }
+  .tags { font-size: 11px; color: #4a7c59; }
+  details { font-size: 12.5px; }
+  details summary { cursor: pointer; color: #6b6455; padding: 4px 0; user-select: none; }
+  .ingredients, .etapes { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+  .ingredients li, .etapes li { display: flex; gap: 6px; align-items: flex-start; }
+  .ingredients li span.idx, .etapes li span.idx { color: #a89d87; min-width: 14px; font-variant-numeric: tabular-nums; }
+  [contenteditable] { outline: none; }
+  [contenteditable]:hover { background: #fdf6e8; }
+  [contenteditable]:focus { background: #fef3d0; box-shadow: 0 0 0 1px #d9c07a; border-radius: 3px; }
+  .ing-field { border: none; background: transparent; font-family: inherit; font-size: 12.5px; }
+  .id { font-size: 10.5px; color: #a89d87; font-family: ui-monospace, monospace; }
+  .savebtn { align-self: flex-start; margin-top: 4px; background: #4a7c59; color: #fff; border: none; border-radius: 6px; padding: 5px 10px; font-size: 11.5px; cursor: pointer; }
+  .savebtn:hover { background: #3d6749; }
+  .savestate { font-size: 10.5px; color: #4a7c59; margin-left: 6px; }
+  footer { text-align: center; padding: 30px; font-size: 12px; color: #8a8171; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Éditeur de recettes</h1>
+  <span class="stat" id="stat"></span>
+  <input type="search" id="q" placeholder="Filtrer par titre, tag, ingrédient, id…" />
+  <label><input type="checkbox" id="only-missing" /> photo manquante seulement</label>
+</header>
+<main>
+  <div class="grid" id="grid">Chargement…</div>
+</main>
+<footer>Chaque champ sauvegarde directement sur disque. Dépose une image sur la vignette pour remplacer la photo (recadrée en 800×600 WebP).</footer>
+<script>
+let DATA = null;
+let items = [];
+
+async function load() {
+  const r = await fetch('/api/data');
+  DATA = await r.json();
+  render();
+}
+
+function fieldVal(el, sel) { return el.querySelector(sel).value; }
+function fieldText(el, sel) { return el.querySelector(sel).textContent.trim(); }
+
+function collectFr(el, original) {
+  const r = { ...original };
+  r.titre = fieldVal(el, '[data-field="titre"]').trim() || original.titre;
+  r.temps = Number(fieldVal(el, '[data-field="temps"]')) || original.temps;
+  r.portions = Number(fieldVal(el, '[data-field="portions"]')) || original.portions;
+  r.tags = fieldText(el, '[data-field="tags"]').split(',').map(s => s.trim()).filter(Boolean);
+  const desc = fieldText(el, '[data-field="description"]');
+  if (desc && desc !== '(pas de description)') r.description = desc; else delete r.description;
+  r.ingredients = (original.ingredients || []).map((ing, i) => ({
+    ...ing,
+    quantite: Number(el.querySelector('[data-ing="'+i+'"][data-ingfield="quantite"]').value) || ing.quantite,
+    unite: el.querySelector('[data-ing="'+i+'"][data-ingfield="unite"]').value.trim(),
+    nom: el.querySelector('[data-ing="'+i+'"][data-ingfield="nom"]').textContent.trim(),
+    rayon: el.querySelector('[data-ing="'+i+'"][data-ingfield="rayon"]').textContent.trim(),
+  }));
+  r.etapes = (original.etapes || []).map((et, i) => el.querySelector('[data-etape="'+i+'"]').textContent.trim());
+  return r;
+}
+
+function collectEn(el, originalEn) {
+  if (!originalEn) return null;
+  const titreEl = el.querySelector('[data-en-field="titre"]');
+  if (!titreEl) return null;
+  return {
+    ...originalEn,
+    titre: titreEl.textContent.trim(),
+    etapes: (originalEn.etapes || []).map((et, i) => el.querySelector('[data-en-etape="'+i+'"]').textContent.trim()),
+  };
+}
+
+async function save(cardEl, recipe) {
+  const fr = collectFr(cardEl, recipe);
+  const en = collectEn(cardEl, recipe._en);
+  const stateEl = cardEl.querySelector('.savestate');
+  stateEl.textContent = 'sauvegarde…';
+  try {
+    const res = await fetch('/api/recipe', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: recipe.id, fr, en }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    recipe.titre = fr.titre; recipe.temps = fr.temps; recipe.portions = fr.portions;
+    recipe.tags = fr.tags; recipe.description = fr.description; recipe.ingredients = fr.ingredients; recipe.etapes = fr.etapes;
+    if (en) recipe._en = en;
+    stateEl.textContent = 'enregistré ✓';
+    cardEl.classList.add('saved');
+    setTimeout(() => { stateEl.textContent = ''; cardEl.classList.remove('saved'); }, 1200);
+  } catch (e) {
+    stateEl.textContent = 'échec';
+    console.error(e);
+  }
+}
+
+function cropToWebp(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const fr = new FileReader();
+    fr.onload = () => { img.src = fr.result; };
+    fr.onerror = reject;
+    img.onload = () => {
+      const targetW = 800, targetH = 600;
+      const targetRatio = targetW / targetH;
+      const srcRatio = img.width / img.height;
+      let sx, sy, sw, sh;
+      if (srcRatio > targetRatio) {
+        sh = img.height; sw = sh * targetRatio; sx = (img.width - sw) / 2; sy = 0;
+      } else {
+        sw = img.width; sh = sw / targetRatio; sx = 0; sy = (img.height - sh) / 2;
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW; canvas.height = targetH;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
+      canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('encodage webp échoué')), 'image/webp', 0.85);
+    };
+    img.onerror = reject;
+    fr.readAsDataURL(file);
+  });
+}
+
+async function uploadImage(id, file, thumbEl, badgeEl, imgEl) {
+  const blob = await cropToWebp(file);
+  const res = await fetch('/api/image?id=' + encodeURIComponent(id), { method: 'POST', body: blob, headers: { 'Content-Type': 'image/webp' } });
+  if (!res.ok) { alert('échec de l\\'envoi de la photo'); return; }
+  const url = URL.createObjectURL(blob);
+  if (imgEl) { imgEl.src = url; }
+  badgeEl.textContent = 'photo'; badgeEl.className = 'badge ok';
+  thumbEl.closest('.card').classList.remove('missing-img');
+  thumbEl.dataset.hasPhoto = '1';
+  refreshStat();
+}
+
+async function removeImage(id, cardEl) {
+  if (!confirm('Supprimer la photo de « ' + id + ' » ?')) return;
+  await fetch('/api/image?id=' + encodeURIComponent(id), { method: 'DELETE' });
+  render();
+}
+
+function refreshStat() {
+  const withPhoto = DATA.recipes.filter(r => DATA.images.includes(r.id) || document.querySelector('[data-id="'+r.id+'"]')?.dataset.hasPhoto === '1').length;
+  document.getElementById('stat').textContent = DATA.recipes.length + ' recettes · ' + document.querySelectorAll('.thumb[data-has-photo="1"]').length + '/' + DATA.recipes.length + ' avec photo';
+}
+
+function card(r) {
+  const hasPhoto = DATA.images.includes(r.id);
+  r._en = DATA.en[r.id] || null;
+  const el = document.createElement('div');
+  el.className = 'card' + (hasPhoto ? '' : ' missing-img');
+  el.dataset.id = r.id;
+  el.dataset.search = [r.titre, r.id, ...(r.tags||[]), ...(r.ingredients||[]).map(i=>i.nom)].join(' ').toLowerCase();
+
+  const thumb = document.createElement('div');
+  thumb.className = 'thumb';
+  thumb.dataset.hasPhoto = hasPhoto ? '1' : '0';
+
+  const badge = document.createElement('span');
+  badge.className = 'badge ' + (hasPhoto ? 'ok' : 'no');
+  badge.textContent = hasPhoto ? 'photo' : 'manquante';
+  thumb.appendChild(badge);
+
+  let imgEl = null;
+  if (hasPhoto) {
+    imgEl = document.createElement('img');
+    imgEl.src = '/plats/' + r.id + '.webp?t=' + Date.now();
+    imgEl.alt = r.titre;
+    thumb.appendChild(imgEl);
+
+    const rm = document.createElement('button');
+    rm.className = 'rm-img';
+    rm.textContent = '✕';
+    rm.title = 'Supprimer la photo';
+    rm.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); removeImage(r.id, el); });
+    thumb.appendChild(rm);
+  } else {
+    const span = document.createElement('span');
+    span.textContent = 'clique ou dépose une photo ici';
+    thumb.appendChild(span);
+  }
+
+  const hint = document.createElement('div');
+  hint.className = 'drop-hint';
+  hint.textContent = 'remplacer la photo';
+  thumb.appendChild(hint);
+
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*';
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) uploadImage(r.id, fileInput.files[0], thumb, badge, imgEl || thumb.querySelector('img'));
+  });
+  thumb.appendChild(fileInput);
+
+  thumb.addEventListener('dragover', (e) => e.preventDefault());
+  thumb.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const f = e.dataTransfer.files[0];
+    if (f) uploadImage(r.id, f, thumb, badge, thumb.querySelector('img'));
+  });
+
+  const body = document.createElement('div');
+  body.className = 'body';
+
+  const titre = document.createElement('input');
+  titre.className = 'titre';
+  titre.value = r.titre;
+  titre.dataset.field = 'titre';
+
+  const idLine = document.createElement('div');
+  idLine.className = 'id';
+  idLine.textContent = r.id;
+
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  meta.innerHTML = '<span>⏱ <input data-field="temps" type="number" value="' + r.temps + '" min="1"> min</span>' +
+    '<span>🍽 <input data-field="portions" type="number" value="' + r.portions + '" min="1"> parts</span>';
+
+  const tags = document.createElement('div');
+  tags.className = 'tags';
+  tags.contentEditable = 'true';
+  tags.dataset.field = 'tags';
+  tags.textContent = (r.tags||[]).join(', ');
+
+  const desc = document.createElement('div');
+  desc.style.cssText = 'font-size:12.5px;font-style:italic;color:#4a4436';
+  desc.contentEditable = 'true';
+  desc.dataset.field = 'description';
+  desc.textContent = r.description || '(pas de description)';
+
+  const detIng = document.createElement('details');
+  const sumIng = document.createElement('summary');
+  sumIng.textContent = 'Ingrédients (' + (r.ingredients||[]).length + ')';
+  detIng.appendChild(sumIng);
+  const ulIng = document.createElement('ul');
+  ulIng.className = 'ingredients';
+  (r.ingredients||[]).forEach((ing, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="idx">' + (i+1) + '.</span>' +
+      '<input class="ing-field" data-ing="' + i + '" data-ingfield="quantite" style="width:44px" value="' + ing.quantite + '">' +
+      '<input class="ing-field" data-ing="' + i + '" data-ingfield="unite" style="width:44px" value="' + ing.unite + '">' +
+      '<span class="ing-field" contenteditable="true" data-ing="' + i + '" data-ingfield="nom" style="flex:1">' + ing.nom + '</span>' +
+      '<span class="ing-field" contenteditable="true" data-ing="' + i + '" data-ingfield="rayon" style="width:100px;color:#a89d87">' + ing.rayon + '</span>';
+    ulIng.appendChild(li);
+  });
+  detIng.appendChild(ulIng);
+
+  const detEt = document.createElement('details');
+  const sumEt = document.createElement('summary');
+  sumEt.textContent = 'Étapes (' + (r.etapes||[]).length + ')';
+  detEt.appendChild(sumEt);
+  const ulEt = document.createElement('ul');
+  ulEt.className = 'etapes';
+  (r.etapes||[]).forEach((et, i) => {
+    const li = document.createElement('li');
+    const idx = document.createElement('span'); idx.className = 'idx'; idx.textContent = (i+1) + '.';
+    const txt = document.createElement('span'); txt.contentEditable = 'true'; txt.dataset.etape = i; txt.style.flex = '1'; txt.textContent = et;
+    li.appendChild(idx); li.appendChild(txt);
+    ulEt.appendChild(li);
+  });
+  detEt.appendChild(ulEt);
+
+  const en = r._en;
+  const detEn = document.createElement('details');
+  const sumEn = document.createElement('summary');
+  sumEn.textContent = en ? 'Version anglaise ✓' : 'Version anglaise MANQUANTE';
+  if (!en) sumEn.style.color = '#c0392b';
+  detEn.appendChild(sumEn);
+  if (en) {
+    const enTitre = document.createElement('div');
+    enTitre.contentEditable = 'true';
+    enTitre.dataset.enField = 'titre';
+    enTitre.style.fontWeight = '600';
+    enTitre.textContent = en.titre;
+    const enUl = document.createElement('ul');
+    enUl.className = 'etapes';
+    (en.etapes||[]).forEach((et,i) => {
+      const li = document.createElement('li');
+      const idx = document.createElement('span'); idx.className='idx'; idx.textContent=(i+1)+'.';
+      const txt = document.createElement('span'); txt.contentEditable='true'; txt.dataset.enEtape=i; txt.style.flex='1'; txt.textContent=et;
+      li.appendChild(idx); li.appendChild(txt);
+      enUl.appendChild(li);
+    });
+    detEn.appendChild(enTitre);
+    detEn.appendChild(enUl);
+  }
+
+  const saveRow = document.createElement('div');
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'savebtn';
+  saveBtn.textContent = 'Enregistrer';
+  const saveState = document.createElement('span');
+  saveState.className = 'savestate';
+  saveBtn.addEventListener('click', () => save(el, r));
+  saveRow.append(saveBtn, saveState);
+
+  body.append(titre, idLine, meta, tags, desc, detIng, detEt, detEn, saveRow);
+  el.append(thumb, body);
+  return el;
+}
+
+function render() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  items = DATA.recipes.map(r => {
+    const el = card(r);
+    grid.appendChild(el);
+    return { el, recipe: r };
+  });
+  refreshStat();
+  applyFilter();
+}
+
+function applyFilter() {
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const onlyMissing = document.getElementById('only-missing').checked;
+  for (const it of items) {
+    const matchesQ = !q || it.el.dataset.search.includes(q);
+    const hasPhoto = it.el.querySelector('.thumb').dataset.hasPhoto === '1';
+    const matchesMissing = !onlyMissing || !hasPhoto;
+    it.el.classList.toggle('hidden', !(matchesQ && matchesMissing));
+  }
+}
+document.getElementById('q').addEventListener('input', applyFilter);
+document.getElementById('only-missing').addEventListener('change', applyFilter);
+
+load();
+</script>
+</body>
+</html>
