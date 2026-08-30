@@ -9,4 +9,4 @@ supabase/seed_corpus_initial.sql
 supabase/update_images.sql
 supabase/cleanup_foyers.sql
 supabase/creer_tables_manquantes.sql
-recipe-review.html
+recipe-book.html

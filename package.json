@@ -10,7 +10,7 @@
     "preview": "vite preview --host",
     "test": "tsx --test 'src/**/*.test.ts'",
     "lint:recipes": "node scripts/lint-recipes.mjs",
-    "edit:recipes": "node scripts/recipe-editor-server.mjs",
+    "recipe-book": "node scripts/generate-recipe-book.mjs",
     "verifier": "tsx scripts/verifier-invariants.ts",
     "typecheck": "tsc --noEmit",
     "ci": "npm run typecheck && npm test && npm run lint:recipes && npm run verifier && npm run build"
