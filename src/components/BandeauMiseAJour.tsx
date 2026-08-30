@@ -1,4 +1,5 @@
 import Icone from './Icone'
+import { useLangue } from '../lib/i18n'
 
 interface Props {
   onAppliquer: () => void
@@ -13,18 +14,19 @@ interface Props {
  * l'écran repart d'en haut.
  */
 export default function BandeauMiseAJour({ onAppliquer, onPlusTard }: Props) {
+  const { t } = useLangue()
   return (
     <div className="bandeau-maj" role="status">
       <span className="bandeau-maj-texte">
         <Icone nom="rafraichir" taille={18} />
-        Nouvelle version disponible
+        {t('bandeauMaj.disponible')}
       </span>
       <span className="bandeau-maj-actions">
         <button className="bandeau-maj-plus-tard" onClick={onPlusTard}>
-          Plus tard
+          {t('bandeauMaj.plusTard')}
         </button>
         <button className="bandeau-maj-appliquer" onClick={onAppliquer}>
-          Mettre à jour
+          {t('bandeauMaj.mettreAJour')}
         </button>
       </span>
     </div>

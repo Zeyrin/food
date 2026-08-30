@@ -72,9 +72,7 @@ export function validerRecette(json: unknown): { recette: Recipe } | { erreurs: 
 
   // Une image écartée sans un mot laisserait croire à un bug d'affichage.
   if (r.image !== undefined && !estPhotoLivree(r.image)) {
-    erreurs.push(
-      '« image » doit désigner une photo livrée avec l\'app (/plats/<nom>.webp). Omettez le champ pour utiliser la vignette.',
-    )
+    erreurs.push(traduire('validation.imageInvalide'))
   }
 
   if (erreurs.length > 0) return { erreurs }

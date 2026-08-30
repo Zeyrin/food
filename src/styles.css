@@ -1330,6 +1330,24 @@ button.carte:active {
   padding: 10px 10px 50px;
 }
 
+/* Repli quand une photo était attendue mais n'a pas chargé (lien mort,
+   hors ligne) : le mini logo de l'app plutôt qu'un cadre vide. Toujours
+   petit et discret — ce n'est pas la photo du plat, juste un signe que
+   l'app a essayé. Spécificité volontairement au-dessus de `.vignette
+   img` etc. (elle cible en plus le conteneur) pour ne pas dépendre de
+   l'ordre des règles dans la feuille. */
+.vignette img.vignette-logo-repli,
+.vignette-mini img.vignette-logo-repli,
+.carte-prochaine-cuisson img.vignette-logo-repli {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  opacity: 0.4;
+}
+
 .grille-recettes .vignette-placeholder {
   font-size: 12px;
   -webkit-line-clamp: 4;
@@ -2491,7 +2509,7 @@ button.pastille-synchro:active {
    reste lisible sur un plat clair comme sur un plat sombre, sans avoir à
    connaître la photo. Sur la teinte de repli il n'a rien à faire — le
    texte y est déjà à l'encre. */
-.carte-prochaine-cuisson:has(img)::after {
+.carte-prochaine-cuisson:has(img):not(:has(.vignette-logo-repli))::after {
   content: '';
   position: absolute;
   top: 0;
@@ -2517,8 +2535,8 @@ button.pastille-synchro:active {
   z-index: 1;
 }
 
-.carte-prochaine-cuisson:has(img) .carte-prochaine-cuisson-titre,
-.carte-prochaine-cuisson:has(img) .carte-resume-label {
+.carte-prochaine-cuisson:has(img):not(:has(.vignette-logo-repli)) .carte-prochaine-cuisson-titre,
+.carte-prochaine-cuisson:has(img):not(:has(.vignette-logo-repli)) .carte-resume-label {
   color: #fff8ef;
 }
 
@@ -4350,6 +4368,49 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
 
   [data-minuteur='true'] .action-flottante {
     bottom: 96px;
+  }
+
+  /* Bienvenue : pas encore de rail (pas de foyer, donc pas d'onglets) —
+     la gouttière de 128px pensée pour lui laisserait le premier écran
+     décentré. Et la photo plein viewport, pensée pour un pouce, tournerait
+     à l'affiche démesurée sur un écran large : elle se pose plutôt en
+     panneau fixe d'un côté, colonne de lecture de l'autre — la
+     disposition classique d'un écran d'entrée sur grand écran. */
+  #root:has(.accueil) {
+    max-width: none;
+    padding: 0;
+  }
+
+  .accueil {
+    min-height: 100dvh;
+    display: grid;
+    grid-template-columns: minmax(360px, 38vw) 1fr;
+    column-gap: 0;
+    row-gap: 32px;
+    padding: 0;
+  }
+
+  .accueil-hero {
+    position: sticky;
+    top: 0;
+    grid-row: 1 / -1;
+    width: 100%;
+    height: 100dvh;
+    max-height: none;
+    aspect-ratio: auto;
+    margin: 0;
+  }
+
+  .accueil-hero-corps {
+    padding: 24px 40px max(40px, env(safe-area-inset-bottom));
+  }
+
+  .accueil-comment-titre {
+    margin-top: max(56px, env(safe-area-inset-top));
+  }
+
+  .accueil-actions {
+    margin-bottom: 56px;
   }
 }
 

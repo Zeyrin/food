@@ -43,7 +43,7 @@ export async function creerFoyerAvecCode(): Promise<{ id: string; code: string }
 
   const resultat = data as { foyer?: string; code?: string } | null
   if (!resultat?.foyer || !resultat.code) {
-    throw new Error("La maison n'a pas pu être créée.")
+    throw new Error(traduire('foyer.creationEchouee'))
   }
   // `creer_foyer` a déjà inscrit l'appareil : pas de `reclamer_foyer`
   // redondant au premier chargement.
