@@ -142,33 +142,30 @@ const fr: Dico = {
     repriseErreur: 'Le retour a échoué. Vérifiez votre connexion et réessayez.',
   },
   placeholders: {
-    // Une recette sans photo (ajoutée depuis l'app, en général) : plutôt
-    // qu'une case vide ou une simple initiale, une formule qui fait
-    // sourire — chacune reste attachée à la même recette d'un rendu à
-    // l'autre (voir `phraseRecette` dans lib/identite.ts). Objet plutôt
-    // que tableau : `i18n.test.ts` traite un tableau comme une liste de
-    // sous-dictionnaires (voir `onboarding`), pas de simples chaînes.
+    // La légende de l'assiette dessinée qui remplace une photo absente
+    // (voir `VignettePlaceholder`). Un clin d'œil au dessin et une
+    // invitation à cuisiner, jamais une moquerie : les anciennes
+    // formules riaient du plat (« en cours de digestion », « se
+    // resservir » avec les mains) ou s'excusaient de la photo ratée —
+    // pas ce qu'on veut lire sous une recette, ni voir sur une capture.
+    // Courtes : la légende tient sur une ligne. Chacune reste attachée à
+    // la même recette d'un rendu à l'autre (voir `phraseRecette` dans
+    // lib/identite.ts). Objet plutôt que tableau : `i18n.test.ts` traite
+    // un tableau comme une liste de sous-dictionnaires (voir
+    // `onboarding`), pas de simples chaînes.
     sansPhoto: {
-      '0': 'Mangé avant la photo.',
-      '1': "Trop bon pour attendre l'appareil photo.",
-      '2': 'Le parfum ne tenait pas en photo.',
-      '3': 'Photo en cours de digestion.',
-      '4': 'On a préféré se resservir.',
-      '5': 'Belle à table, timide en photo.',
-      '6': "Personne n'a pensé à sortir son téléphone.",
-      '7': "Ici, on juge au nez, pas à l'œil.",
-      '8': "Les mains étaient trop occupées à se resservir.",
-      '9': 'Le temps de trouver le téléphone, il ne restait plus rien.',
-      '10': "Cette recette préfère l'incognito.",
-      '11': 'Vue une seule fois. Mangée deux fois plus vite.',
-      '12': "L'appareil photo a eu moins de succès que le plat.",
-      '13': "Sublime en vrai, on vous jure.",
-      '14': "Photo ratée, plat réussi : on a gardé le bon des deux.",
-      '15': 'Personne ne fait de photo un lundi soir affamé.',
-      '16': "Imaginez, mais avec plus de vapeur qui monte.",
-      '17': "A fini dans les assiettes avant de finir en photo.",
-      '18': 'Sentait trop bon pour attendre.',
-      '19': "Cette recette-là se raconte, elle ne se montre pas.",
+      '0': 'Croquée à la main.',
+      '1': 'Dessinée ici, dégustée chez vous.',
+      '2': 'Sa photo, ce sera la vôtre.',
+      '3': 'Elle sera plus belle dans la vôtre.',
+      '4': 'Le vrai rendu : chez vous, ce soir.',
+      '5': 'Servie au crayon, en attendant.',
+      '6': 'Son portrait arrive bientôt.',
+      '7': 'Une assiette à imaginer.',
+      '8': 'Dessinée avec gourmandise.',
+      '9': 'Au crayon ici, à table chez vous.',
+      '10': 'La photo attend son tour.',
+      '11': 'Un avant-goût, en couleurs.',
     },
   },
   propose: {
@@ -697,26 +694,18 @@ const en: Dico = {
   },
   placeholders: {
     sansPhoto: {
-      '0': 'Eaten before the photo happened.',
-      '1': 'Too good to wait for the camera.',
-      '2': "The smell didn't fit in a photo.",
-      '3': 'Photo currently being digested.',
-      '4': 'We went for seconds instead.',
-      '5': 'Gorgeous on the plate, camera-shy.',
-      '6': 'Nobody thought to grab their phone.',
-      '7': 'Judged by smell, not by sight, here.',
-      '8': 'Hands were too busy going for seconds.',
-      '9': 'By the time the phone came out, it was gone.',
-      '10': 'This recipe prefers to stay incognito.',
-      '11': 'Seen once. Eaten twice as fast.',
-      '12': 'The camera had less luck than the dish.',
-      '13': 'Gorgeous in person, we promise.',
-      '14': 'Photo failed, dinner succeeded: we kept the good one.',
-      '15': 'Nobody photographs a hungry Monday night.',
-      '16': 'Picture it, but with more steam rising off it.',
-      '17': 'Made it to the plates before it made it to a photo.',
-      '18': 'Smelled too good to wait around.',
-      '19': "This one's told, not shown.",
+      '0': 'Hand-drawn, still delicious.',
+      '1': 'Drawn here, tasted at yours.',
+      '2': 'Its photo will be yours.',
+      '3': "It'll look even better on your plate.",
+      '4': 'The real thing: your kitchen, tonight.',
+      '5': 'Served in pencil, for now.',
+      '6': 'Portrait coming soon.',
+      '7': 'A plate to imagine.',
+      '8': 'Drawn with an appetite.',
+      '9': 'Pencil here, plated at yours.',
+      '10': 'The photo is waiting its turn.',
+      '11': 'A little foretaste, in colour.',
     },
   },
   propose: {
