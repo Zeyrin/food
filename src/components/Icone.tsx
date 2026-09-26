@@ -10,6 +10,7 @@ export type Nom =
   | 'panier'
   | 'liste'
   | 'grill'
+  | 'marmite'
   | 'plus'
   | 'plus-cercle'
   | 'coche'
@@ -45,6 +46,10 @@ const TRACES: Record<Nom, string> = {
   plus: 'M12 5v14M5 12h14',
   'plus-cercle': 'M12 8v8M8 12h8 M12 21a9 9 0 100-18 9 9 0 000 18z',
   coche: 'M5 13l4 4L19 7',
+  // La cuisson a sa marmite : le sac était déjà la marque de l'app
+  // (icône d'écran d'accueil, sceau), et l'onglet Cuisson le reprenait —
+  // deux sens pour un même dessin, dont un qui ne disait pas « cuisiner ».
+  marmite: 'M5 11h14v6a3 3 0 01-3 3H8a3 3 0 01-3-3v-6z M2.5 11H5 M19 11h2.5 M6 8h12 M12 8V5.5',
   moins: 'M5 12h14',
   feuille: 'M5 20C5 10 12 4 20 4c0 8-6 15-16 16z M5 20c2-4 6-8 11-10',
   boite: 'M4 8l8-4 8 4-8 4-8-4z M4 8v9l8 4 8-4V8 M12 12v9',

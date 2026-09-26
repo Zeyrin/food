@@ -7,6 +7,7 @@ import { useLangue } from '../lib/i18n'
 import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
+import AssietteRecette from '../components/AssietteRecette'
 
 interface Props {
   recipes: Recipe[]
@@ -176,6 +177,25 @@ export default function Panier({
           temps de cuisine ça représente, et ce qu'il reste à cuisiner. */}
       <section className="carte-resume carte-resume-semaine">
         <p className="carte-resume-label">{t('panier.apercuSemaine')}</p>
+        {/* La semaine en un coup d'œil : les plats retenus, empilés en
+            éventail dans le coin. Quatre au plus — au-delà, l'éventail
+            déborde sur le titre, et le nombre est déjà écrit en grand. */}
+        <div className="pile-plats" aria-hidden="true">
+          {basket.slice(0, 4).map((e, i) => {
+            const r = byId.get(e.recipeId)
+            if (!r) return null
+            return (
+              <span
+                key={e.recipeId}
+                className="pile-plat"
+                style={{ '--teinte': teinteRecette(r.titre), '--rang': i } as React.CSSProperties}
+              >
+                {!r.image && <AssietteRecette titre={r.titre} ingredients={r.ingredients} />}
+                <ImageRecette src={r.image} />
+              </span>
+            )
+          })}
+        </div>
         <div className="carte-resume-rangee">
           <div>
             <h2 className="carte-resume-nombre">{t('panier.plats', { n: basket.length, s: basket.length > 1 ? 's' : '' })}</h2>
@@ -208,7 +228,7 @@ export default function Panier({
                 aria-hidden="true"
                 style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
               >
-                {r.titre.charAt(0)}
+                {!r.image && <AssietteRecette titre={r.titre} ingredients={r.ingredients} />}
                 <ImageRecette src={r.image} />
               </div>
               <div className="carte-panier-corps">

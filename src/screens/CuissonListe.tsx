@@ -31,7 +31,7 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
   const entete = (
     <header className="entete-app">
       <div className="entete-app-titre">
-        <Icone nom="grill" />
+        <Icone nom="marmite" />
         <h1>{t('cuissonListe.titre')}</h1>
       </div>
     </header>
@@ -84,7 +84,7 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
               }
             >
               <div className="vignette" data-sans-photo={r.image ? undefined : 'true'} aria-hidden="true">
-                {!r.image && <VignettePlaceholder titre={r.titre} />}
+                {!r.image && <VignettePlaceholder recette={r} />}
                 <ImageRecette src={r.image} />
                 <span className="badge-temps">
                   <Icone nom="minuteur" taille={12} /> {t('cuissonListe.minutes', { n: r.temps })}

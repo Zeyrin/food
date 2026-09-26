@@ -906,9 +906,9 @@ export default function App() {
         {(
           [
             ['propose', 'etoile', t('app.proposer')],
-            ['panier', 'panier', basket.length ? t('app.panier', { n: basket.length }) : t('panier.titre')],
+            ['panier', 'panier', t('panier.titre')],
             ['liste', 'liste', t('app.liste')],
-            ['cuisson', 'grill', t('app.cuisson')],
+            ['cuisson', 'marmite', t('app.cuisson')],
           ] as const
         ).map(([cle, icone, label]) => (
           <button
@@ -916,11 +916,22 @@ export default function App() {
             data-tour={`nav-${cle}`}
             onClick={() => changerOnglet(cle)}
             aria-current={estOnglet && onglet === cle ? 'page' : undefined}
+            // Le nombre de plats passe du libellé à une pastille sur
+            // l'icône ; le nom accessible, lui, le garde en toutes lettres.
+            aria-label={cle === 'panier' && basket.length ? t('app.panier', { n: basket.length }) : undefined}
           >
             {/* L'icône vit dans sa propre pastille : c'est elle que la
                 sélection colore, pas le bouton entier (voir styles.css). */}
             <span className="onglet-pastille">
               <Icone nom={icone} taille={22} />
+              {cle === 'panier' && basket.length > 0 && (
+                // La clé change avec le nombre : React remonte la
+                // pastille, et son animation de rebond rejoue à chaque
+                // plat ajouté ou retiré, où qu'on soit dans l'app.
+                <span className="onglet-compteur" key={basket.length} aria-hidden="true">
+                  {basket.length}
+                </span>
+              )}
             </span>
             {label}
           </button>

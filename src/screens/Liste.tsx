@@ -10,6 +10,7 @@ import { useLangue } from '../lib/i18n'
 import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
+import AssietteRecette from '../components/AssietteRecette'
 
 interface Props {
   items: ListItem[]
@@ -326,6 +327,9 @@ export default function Liste({
               className="carte-prochaine-cuisson"
               style={{ '--teinte': teinteRecette(prochaineCuisson.titre) } as React.CSSProperties}
             >
+              {!prochaineCuisson.image && (
+                <AssietteRecette titre={prochaineCuisson.titre} ingredients={prochaineCuisson.ingredients} />
+              )}
               <ImageRecette src={prochaineCuisson.image} />
               <div className="carte-prochaine-cuisson-texte">
                 <p className="carte-resume-label">{t('liste.prochaineCuisson')}</p>
@@ -355,7 +359,7 @@ export default function Liste({
                 liste : quand la dernière case se coche, on est debout dans
                 la file d'attente, pas en train de faire défiler l'écran. */}
             <button className="discret" onClick={onVersCuisson}>
-              <Icone nom="grill" taille={18} /> {t('liste.passerALaCuisson')}
+              <Icone nom="marmite" taille={18} /> {t('liste.passerALaCuisson')}
             </button>
           </div>
         )}
@@ -463,7 +467,7 @@ export default function Liste({
             {t('liste.revoirLeTri')}
           </button>
           <button className="discret accent" onClick={onVersCuisson}>
-            <Icone nom="grill" taille={18} /> {t('liste.cuisson')}
+            <Icone nom="marmite" taille={18} /> {t('liste.cuisson')}
           </button>
         </div>
 

@@ -136,7 +136,9 @@ export default function Bienvenue({
           </span>
           <p className="accueil-hero-marque">FFFood</p>
           <h1 className="accueil-hero-titre">
-            <span className="accueil-hero-question">{t('bienvenue.question')}</span>
+            <span className="accueil-hero-question">
+              <span className="accueil-hero-rature">{t('bienvenue.question')}</span>
+            </span>
             <span className="accueil-hero-reponse">{t('bienvenue.reponse')}</span>
           </h1>
           <p className="accueil-hero-baseline">{t('bienvenue.intro')}</p>
@@ -165,7 +167,7 @@ export default function Bienvenue({
         </li>
         <li>
           <span className="accueil-comment-pastille" aria-hidden="true">
-            <Icone nom="grill" taille={18} />
+            <Icone nom="marmite" taille={18} />
           </span>
           <div>
             <b>{t('bienvenue.etapeCuisineTitre')}</b>
