@@ -1453,6 +1453,48 @@ button.discret.danger {
   margin: 16px 0 0;
 }
 
+/* Le tuto vidéo d'une recette (voir components/LienTuto.tsx). Même
+   pilule contournée que les liens vers Claude et ChatGPT de l'ajout par
+   IA (`.lien-ia`) : les deux quittent l'app, ils se ressemblent exprès.
+   La phrase sous le bouton n'est pas un ornement — c'est le seul endroit
+   de l'app où un geste demande du réseau, et ça se dit avant le clic
+   plutôt qu'après, dans la page d'erreur du navigateur. */
+.bloc-tuto {
+  margin-top: 16px;
+}
+
+.lien-tuto {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 18px;
+  border: 2px solid var(--trait);
+  border-radius: 999px;
+  color: var(--encre);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lien-tuto:active {
+  border-color: var(--accent);
+}
+
+/* Hors ligne : le lien reste là — le masquer laisserait croire que la
+   recette n'a pas de tuto — mais il ne promet plus rien. Le contour
+   pointillé porte l'information autant que la couleur, l'app ne fait
+   jamais reposer un état sur la seule teinte. */
+.lien-tuto-inerte {
+  border-style: dashed;
+  color: var(--encre-douce);
+  cursor: default;
+}
+
+.bloc-tuto .aide {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
 /* Entrée des cartes : montée courte + fondu, échelonnée par la variable
    --rang posée sur chaque carte.
 

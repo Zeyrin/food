@@ -152,6 +152,8 @@ h1{font-family:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;font-wei
 h2{font-family:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:1.3rem;margin:2.5rem 0 .75rem}
 a{color:var(--accent)}
 .meta{color:var(--encre-douce);margin:0 0 1.25rem}
+.tuto{margin:0 0 1.5rem}
+.tuto a{display:inline-block;border:2px solid var(--trait);border-radius:999px;padding:.55rem 1.1rem;color:var(--encre);text-decoration:none;font-weight:600}
 .tags{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;padding:0;margin:0 0 1.5rem}
 .tags li{background:var(--carte-basse);border-radius:999px;padding:.2rem .75rem;font-size:.9rem;color:var(--encre-douce)}
 img.plat{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:var(--rayon);background:var(--carte-basse)}
@@ -236,6 +238,17 @@ function pageRecette(r) {
   ${
     r.tags.length > 0
       ? `<ul class="tags">${r.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`
+      : ''
+  }
+
+  ${
+    // Le tuto vidéo, quand la recette en a un. `npm run lint:recipes`
+    // garantit que c'est une adresse https : rien d'autre ne peut
+    // arriver dans ce `href`. `rel="noopener"` parce que la page
+    // s'ouvre dans un onglet à elle, et `nofollow` parce qu'on cite un
+    // tuto, on ne le recommande pas au moteur de recherche.
+    r.video
+      ? `<p class="tuto"><a href="${esc(r.video)}" target="_blank" rel="noopener noreferrer nofollow">Voir le tuto vidéo</a></p>`
       : ''
   }
 

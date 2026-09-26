@@ -43,6 +43,37 @@ for (const image of [
   )
 }
 
+// Pas de tuto vidéo : c'est le cas courant, et il reste valide.
+assert.equal(ok(base).video, undefined)
+
+// Une adresse https passe, débarrassée de ses espaces.
+assert.equal(
+  ok({ ...base, video: '  https://www.youtube.com/watch?v=abc123  ' }).video,
+  'https://www.youtube.com/watch?v=abc123',
+)
+
+// Tout le reste est refusé, et le dit. `javascript:` et `data:` sont le
+// cœur du test : ce champ finit dans le `href` d'un lien, et un JSON
+// collé depuis n'importe où pourrait les porter.
+for (const video of [
+  'javascript:alert(1)',
+  'JavaScript:alert(1)',
+  'data:text/html,<script>alert(1)</script>',
+  'http://exemple.fr/tuto',
+  '//exemple.fr/tuto',
+  'cherche « dahl » sur YouTube',
+  '',
+  '   ',
+  42,
+  { url: 'https://exemple.fr' },
+]) {
+  const erreurs = ko({ ...base, video })
+  assert.ok(
+    erreurs.some((e) => e.includes('video')),
+    `« ${String(video)} » aurait dû être refusée avec un message sur « video »`,
+  )
+}
+
 // Un rayon inconnu est refusé.
 assert.ok(
   ko({ ...base, ingredients: [{ ...base.ingredients[0], rayon: 'cave-a-vin' }] }).some((e) =>

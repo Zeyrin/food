@@ -5,6 +5,7 @@ import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
+import LienTuto from '../components/LienTuto'
 
 interface Props {
   recette: Recipe
@@ -110,6 +111,11 @@ export default function DetailRecette({
       </div>
 
       {recette.description && <p className="aide detail-description">{recette.description}</p>}
+
+      {/* Sous la description, avant le réglage des parts : le tuto aide à
+          décider si on se lance, ce qui vient avant de compter les
+          convives. */}
+      <LienTuto video={recette.video} />
 
       <div className="reglage-parts">
         <div className="compteur">

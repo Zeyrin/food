@@ -27,6 +27,30 @@ function estPhotoLivree(image: unknown): image is string {
   return typeof image === 'string' && /^\/plats\/[a-z0-9-]+\.webp$/.test(image)
 }
 
+/**
+ * Le tuto vidéo, lui, est un lien vers l'extérieur : c'est la vidéo de
+ * quelqu'un d'autre, sur sa plateforme, et il n'y a pas de version
+ * « livrée avec l'app » à en faire (voir le champ `video` de
+ * `types.ts`). Deux exigences restent :
+ *
+ * - `https` et rien d'autre. Un JSON collé depuis une IA ou un presse-
+ *   papiers quelconque peut porter `javascript:…` ou `data:text/html,…`,
+ *   et ce champ finit dans le `href` d'un lien : c'est la seule barrière
+ *   entre un collage et l'exécution de ce qu'il contient. `http://` est
+ *   refusé aussi — un lien en clair est cassé sur une page servie en
+ *   HTTPS, autant le dire à la saisie.
+ * - une URL que le navigateur sait analyser, plutôt qu'une phrase
+ *   (« sur YouTube, cherche… ») qui donnerait un lien mort.
+ */
+function estLienVideo(video: unknown): video is string {
+  if (typeof video !== 'string' || !video.trim()) return false
+  try {
+    return new URL(video.trim()).protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 export function validerRecette(json: unknown): { recette: Recipe } | { erreurs: string[] } {
   const erreurs: string[] = []
 
@@ -72,9 +96,13 @@ export function validerRecette(json: unknown): { recette: Recipe } | { erreurs: 
 
   // Une image écartée sans un mot laisserait croire à un bug d'affichage.
   if (r.image !== undefined && !estPhotoLivree(r.image)) {
-    erreurs.push(
-      '« image » doit désigner une photo livrée avec l\'app (/plats/<nom>.webp). Omettez le champ pour utiliser la vignette.',
-    )
+    erreurs.push(traduire('validation.imageInvalide'))
+  }
+
+  // Idem pour le tuto : un lien refusé en silence passerait pour une
+  // recette qui n'en a pas.
+  if (r.video !== undefined && !estLienVideo(r.video)) {
+    erreurs.push(traduire('validation.videoInvalide'))
   }
 
   if (erreurs.length > 0) return { erreurs }
@@ -99,6 +127,7 @@ export function validerRecette(json: unknown): { recette: Recipe } | { erreurs: 
       ...(estPhotoLivree(r.image) ? { image: r.image } : {}),
       ...(typeof r.description === 'string' && r.description ? { description: r.description } : {}),
       ...(Array.isArray(r.astuces) ? { astuces: r.astuces as string[] } : {}),
+      ...(estLienVideo(r.video) ? { video: r.video.trim() } : {}),
     },
   }
 }

@@ -85,6 +85,21 @@ export interface Recipe {
   description?: string
   /** Tour de main, affiché en mode cuisson. `astuces[i]` accompagne `etapes[i]`. */
   astuces?: string[]
+  /**
+   * Le tuto vidéo du plat : une URL `https://` vers la vidéo de
+   * quelqu'un d'autre, sur sa plateforme (YouTube, Vimeo, le site d'un
+   * chef…). Facultative, et seul champ de la recette qui pointe hors de
+   * l'app — les photos, elles, sont livrées avec le build
+   * (`/plats/<id>.webp`) pour tenir hors ligne.
+   *
+   * L'exception est assumée, et elle s'arrête à un lien. On n'embarque
+   * pas la vidéo dans un `<iframe>` : ce serait faire entrer du pistage
+   * tiers dans une app qui n'en a aucun. On ne la précache pas non
+   * plus : quelques mégaoctets par recette rendraient l'installation
+   * hors ligne absurde. L'app affiche donc un lien sortant, qui dit
+   * qu'il a besoin du réseau — voir `screens/DetailRecette.tsx`.
+   */
+  video?: string
 }
 
 /** Une recette retenue pour la semaine, avec son nombre de parts. */

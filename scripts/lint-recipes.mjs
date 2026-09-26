@@ -37,6 +37,22 @@ for (const [i, r] of recipes.entries()) {
   if (!Array.isArray(r.tags) || r.tags.length === 0) avertissements.push(`${ou} : aucun tag`)
   if (!Array.isArray(r.etapes) || r.etapes.length === 0) erreurs.push(`${ou} : aucune étape`)
 
+  // Le tuto vidéo est le seul champ d'une recette qui pointe hors de
+  // l'app, et il finit dans le `href` d'un lien : même règle que
+  // `src/lib/validerRecette.ts` sur un JSON collé, appliquée ici au
+  // corpus livré avec le build.
+  if (r.video !== undefined) {
+    let protocole = null
+    try {
+      protocole = new URL(r.video).protocol
+    } catch {
+      /* laissé à null : le message dit la même chose dans les deux cas */
+    }
+    if (protocole !== 'https:') {
+      erreurs.push(`${ou} : « video » doit être une adresse https, reçu « ${r.video} »`)
+    }
+  }
+
   for (const ing of r.ingredients ?? []) {
     const oui = `${ou} → « ${ing.nom} »`
     if (!ing.nom) erreurs.push(`${ou} : ingrédient sans nom`)

@@ -10,6 +10,7 @@ import { recetteAffichee } from '../lib/traduireRecette'
 import BandeauMinuteur from '../components/BandeauMinuteur'
 import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
+import LienTuto from '../components/LienTuto'
 
 interface Props {
   recette: Recipe
@@ -74,6 +75,11 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
         </button>
 
         <h1>{affichee.titre}</h1>
+
+        {/* Le tuto se regarde avant de commencer, pas au milieu d'une
+            étape : le mode cuisson garde l'écran allumé sur une seule
+            consigne, un lien qui quitte l'app n'y a rien à faire. */}
+        <LienTuto video={recette.video} />
 
         <h2>{t('cuisson.titreIngredients', { n: affichee.ingredients.length })}</h2>
         {affichee.ingredients.map((ing) => (

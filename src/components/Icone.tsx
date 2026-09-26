@@ -32,6 +32,7 @@ export type Nom =
   | 'crayon'
   | 'etincelle'
   | 'copier'
+  | 'lecture'
 
 const TRACES: Record<Nom, string> = {
   menu: 'M4 6h16M4 12h16M4 18h16',
@@ -71,6 +72,10 @@ const TRACES: Record<Nom, string> = {
   // avec « liste » à 18 px.
   copier:
     'M9 9a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-8a2 2 0 01-2-2V9z M5 15H4a2 2 0 01-2-2V5a2 2 0 012-2h8a2 2 0 012 2v1',
+  // Le triangle dans le cadre, plutôt que le triangle seul : à 18 px, un
+  // chevron « suivant » et une flèche de lecture se ressemblent trop, et
+  // les deux cohabitent sur la fiche d'une recette.
+  lecture: 'M3 7a3 3 0 013-3h12a3 3 0 013 3v10a3 3 0 01-3 3H6a3 3 0 01-3-3V7z M11 9.5l3.5 2.5L11 14.5z',
 }
 
 export default function Icone({ nom, taille = 24 }: { nom: Nom; taille?: number }) {

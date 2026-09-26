@@ -68,6 +68,20 @@ const etapeVide = (): LigneEtape => ({ cle: nouvelleCle(), texte: '', astuce: ''
 /** « autre » est réservé aux articles ajoutés à la main sur la liste. */
 const RAYONS_CHOISISSABLES = RAYONS_ORDONNES.filter((r) => r !== 'autre')
 
+/**
+ * Le tuto vidéo est le seul champ d'une recette qui pointe hors de
+ * l'app, et il finit dans un `href` : `https` et rien d'autre, sinon
+ * un `javascript:…` collé depuis un presse-papiers deviendrait
+ * cliquable. Même règle que `lib/validerRecette.ts` sur un JSON collé.
+ */
+function estLienHttps(valeur: string): boolean {
+  try {
+    return new URL(valeur).protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 export default function FormulaireRecette({
   onValider,
   onAnnuler,
@@ -85,6 +99,7 @@ export default function FormulaireRecette({
   const [temps, setTemps] = useState(recetteInitiale ? String(recetteInitiale.temps) : '')
   const [portions, setPortions] = useState(recetteInitiale ? String(recetteInitiale.portions) : '2')
   const [description, setDescription] = useState(recetteInitiale?.description ?? '')
+  const [video, setVideo] = useState(recetteInitiale?.video ?? '')
   const [tags, setTags] = useState<string[]>(recetteInitiale?.tags ?? [])
   const [nouveauTag, setNouveauTag] = useState('')
   const [ingredients, setIngredients] = useState<LigneIngredient[]>(() =>
@@ -170,6 +185,11 @@ export default function FormulaireRecette({
       }
     })
     if (pas.length === 0) trouvees.push(t('ajouter.erreurEtapes'))
+    // Même exigence que `validerRecette` sur un JSON collé : ce champ
+    // finit dans le `href` d'un lien, et un champ vide reste valide —
+    // une recette sans tuto est le cas courant.
+    const lienVideo = video.trim()
+    if (lienVideo && !estLienHttps(lienVideo)) trouvees.push(t('ajouter.erreurVideo'))
 
     if (trouvees.length > 0) {
       setErreurs(trouvees)
@@ -195,6 +215,7 @@ export default function FormulaireRecette({
       // perdre sa photo au passage.
       ...(recetteInitiale?.image ? { image: recetteInitiale.image } : {}),
       ...(description.trim() ? { description: description.trim() } : {}),
+      ...(lienVideo ? { video: lienVideo } : {}),
       // Les astuces suivent les étapes une à une : elles sont saisies
       // sous l'étape qu'elles accompagnent, donc l'alignement tient
       // même si on en insère ou en supprime une.
@@ -269,6 +290,23 @@ export default function FormulaireRecette({
           placeholder={t('ajouter.champDescriptionPlaceholder')}
         />
       </label>
+
+      <label className="champ-etiquette" htmlFor={`${prefixe}-video`}>
+        <span>{t('ajouter.champVideo')}</span>
+        <input
+          id={`${prefixe}-video`}
+          className="champ-texte"
+          type="url"
+          inputMode="url"
+          value={video}
+          onChange={(e) => setVideo(e.target.value)}
+          placeholder={t('ajouter.champVideoPlaceholder')}
+          autoComplete="off"
+          autoCapitalize="off"
+          spellCheck={false}
+        />
+      </label>
+      <p className="aide-champ">{t('ajouter.champVideoAide')}</p>
 
       <h3 className="titre-etape-formulaire">{t('ajouter.blocTags')}</h3>
       <p className="aide-champ">{t('ajouter.tagsAide')}</p>

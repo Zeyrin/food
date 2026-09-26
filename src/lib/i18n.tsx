@@ -306,6 +306,17 @@ const fr: Dico = {
     supprimerDuCatalogue: 'Supprimer du catalogue',
     minutes: '{{n}} min',
   },
+  /**
+   * Le tuto vidéo d'une recette. Sa propre section, et non une clé de
+   * `detail` : le même bloc s'affiche sur la fiche et sur l'écran de
+   * préparation du mode cuisson (voir `components/LienTuto.tsx`), et
+   * une chaîne partagée par deux écrans n'appartient à aucun des deux.
+   */
+  tuto: {
+    voir: 'Voir le tuto vidéo',
+    aide: 'La vidéo est en ligne, sur une autre plateforme : elle demande du réseau.',
+    horsLigne: 'Hors ligne — le tuto vidéo attendra le retour du réseau.',
+  },
   ajouter: {
     // La section « Ajouter une recette » de l'écran Proposer.
     sectionTitre: 'Ajouter une recette',
@@ -331,6 +342,11 @@ const fr: Dico = {
       "Les quantités ci-dessous valent pour ce nombre de parts — l'app les recalcule ensuite selon le nombre de convives.",
     champDescription: 'Une phrase qui donne envie (facultatif)',
     champDescriptionPlaceholder: 'Doux, épicé, prêt en une demi-heure.',
+    champVideo: 'Tuto vidéo (facultatif)',
+    champVideoPlaceholder: 'https://www.youtube.com/watch?v=…',
+    champVideoAide:
+      "L'adresse d'une vidéo qui montre le geste. Elle s'ouvre hors de l'app, dans le navigateur — c'est le seul lien d'une recette qui demande du réseau.",
+    erreurVideo: 'Le tuto vidéo doit être une adresse https (elle commence par « https:// »).',
     blocTags: 'Les étiquettes',
     tagsAide: 'Elles servent à filtrer le catalogue : végé, rapide, four, asiatique…',
     tagNouveau: 'Nouvelle étiquette',
@@ -564,6 +580,10 @@ const fr: Dico = {
     ingredientQuantiteInvalide: '{{oi}} : « quantite » doit être un nombre positif.',
     ingredientUniteInvalide: "{{oi}} : « unite » doit être l'une de : {{liste}}.",
     ingredientRayonInvalide: "{{oi}} : « rayon » doit être l'un de : {{liste}}.",
+    imageInvalide:
+      "« image » doit désigner une photo livrée avec l'app (/plats/<nom>.webp). Omettez le champ pour utiliser la vignette.",
+    videoInvalide:
+      '« video » doit être une adresse https vers le tuto (ex : https://www.youtube.com/watch?v=…). Omettez le champ si la recette n\'a pas de vidéo.',
   },
 }
 
@@ -852,6 +872,11 @@ const en: Dico = {
     supprimerDuCatalogue: 'Delete from catalog',
     minutes: '{{n}} min',
   },
+  tuto: {
+    voir: 'Watch the video tutorial',
+    aide: 'The video lives online, on another platform: it needs a connection.',
+    horsLigne: 'Offline — the video tutorial will wait for the network.',
+  },
   ajouter: {
     sectionTitre: 'Add a recipe',
     sectionSousTitre: 'Write it yourself, or have an AI write it.',
@@ -875,6 +900,11 @@ const en: Dico = {
       'The amounts below are for this number of servings — the app rescales them for however many people you cook for.',
     champDescription: 'One tempting sentence (optional)',
     champDescriptionPlaceholder: 'Mild, spiced, ready in half an hour.',
+    champVideo: 'Video tutorial (optional)',
+    champVideoPlaceholder: 'https://www.youtube.com/watch?v=…',
+    champVideoAide:
+      "The address of a video showing how it's done. It opens outside the app, in the browser — it is the only link in a recipe that needs a connection.",
+    erreurVideo: 'The video tutorial must be an https address (it starts with "https://").',
     blocTags: 'Tags',
     tagsAide: 'They filter the catalog: veggie, quick, oven, asian…',
     tagNouveau: 'New tag',
@@ -1084,6 +1114,10 @@ const en: Dico = {
     ingredientQuantiteInvalide: '{{oi}}: "quantite" must be a positive number.',
     ingredientUniteInvalide: '{{oi}}: "unite" must be one of: {{liste}}.',
     ingredientRayonInvalide: '{{oi}}: "rayon" must be one of: {{liste}}.',
+    imageInvalide:
+      '"image" must point at a photo shipped with the app (/plats/<name>.webp). Leave the field out to use the tinted thumbnail.',
+    videoInvalide:
+      '"video" must be an https address for the tutorial (e.g. https://www.youtube.com/watch?v=…). Leave the field out if the recipe has no video.',
   },
 }
 

@@ -213,6 +213,28 @@ l'app — les licences Creative Commons imposent de citer l'auteur, une liste
 enfouie dans le dépôt n'y suffirait pas. Une recette sans photo reste valide :
 la vignette teintée prend le relais.
 
+**Le tuto vidéo est le seul lien sortant d'une recette.** `video` porte une adresse
+`https://` vers la vidéo de quelqu'un d'autre, sur sa plateforme — c'est l'exception à la
+règle du paragraphe précédent, et elle est assumée : il n'y a pas de version « livrée avec
+l'app » à faire d'un tuto qu'on n'a pas tourné. L'exception s'arrête au lien. Pas
+d'`<iframe>` d'un lecteur tiers, qui ferait entrer du pistage dans une app qui n'en a
+aucun ; pas de fichier précaché, qui rendrait l'installation hors ligne absurde à quelques
+mégaoctets par recette. Le bloc (`src/components/LienTuto.tsx`) s'affiche sur la fiche et
+sur l'écran de préparation du mode cuisson — on regarde le geste avant de s'y mettre — et
+il dit ce qu'aucun autre geste de l'app n'a à dire : celui-là demande du réseau. Hors
+ligne, le lien reste visible mais inerte, parce que le masquer laisserait croire que la
+recette n'a pas de tuto.
+
+`https` et rien d'autre, vérifié à trois endroits : `src/lib/validerRecette.ts` sur un
+JSON collé, le formulaire à la saisie, et `npm run lint:recipes` sur le corpus. Ce champ
+finit dans un `href` — c'est la seule barrière entre un collage et l'exécution de ce qu'il
+contient. `http://` est refusé aussi, un lien en clair étant cassé sur une page servie en
+HTTPS.
+
+Le prompt-template (`src/lib/promptRecette.ts`) ne mentionne pas `video`, volontairement :
+une IA à qui on demande l'adresse d'un tuto en invente une plausible et morte. Le lien se
+colle à la main, ou ne se colle pas.
+
 **Ajouter une recette est une section de l'écran « Proposer »**, pas un écran à part.
 On y regarde son catalogue : c'est là qu'on s'aperçoit qu'il manque un plat. La section
 pose d'abord la seule question qui compte — l'écrire soi-même, ou la faire écrire — parce
