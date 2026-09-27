@@ -127,6 +127,15 @@ export interface ListState {
    * case cochée s'écrasent l'une l'autre.
    */
   panier?: BasketEntry[]
+  /**
+   * Quand chaque entrée a changé pour la dernière fois (ms) : `c:<clé>`
+   * pour une case cochée, `d:<clé>` pour « j'ai déjà », `items` et
+   * `panier` pour ces deux blocs. C'est ce qui permet de fusionner deux
+   * états au lieu d'en écraser un (voir lib/fusionListe.ts).
+   */
+  horodatage?: Record<string, number>
+  /** Dernière remise à zéro (« Vider le panier ») : tout ce qui la précède est caduc. */
+  remise?: number
 }
 
 export type Verdict = 'refaire' | 'jamais'

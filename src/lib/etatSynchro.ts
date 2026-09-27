@@ -35,8 +35,20 @@ export function signalerSynchroOk(): void {
   diffuser()
 }
 
+/**
+ * Une requête qui n'a pas atteint le serveur — réseau faible en magasin,
+ * `navigator.onLine` qui dit vrai sur une barre de réseau fantôme. Ce
+ * n'est pas un refus : ça se rattrape tout seul, et afficher « synchro
+ * bloquée » pour ça envoyait chercher une panne de configuration qui
+ * n'existait pas.
+ */
+export function estPanneReseau(message: string): boolean {
+  return !navigator.onLine || /fetch|network|load failed|timed? ?out|aborted|connection/i.test(message)
+}
+
 /** Une écriture a été refusée par le serveur (policy, table absente…). */
 export function signalerSynchroRefusee(message: string): void {
+  if (estPanneReseau(message)) return
   // Le premier refus est le plus informatif : les suivants sont
   // généralement la même cause qui se répète.
   if (etat === 'refuse') return

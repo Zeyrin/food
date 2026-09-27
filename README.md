@@ -86,6 +86,16 @@ et l'historique de cuisson — « on a mangé ça mardi » vaut pour les deux t�
 appareil en garde une copie locale (IndexedDB) : en magasin, l'app fonctionne sans réseau,
 et la synchro rattrape au retour.
 
+**Une case cochée ne se perd pas.** La liste est un seul document JSON, et « dernier
+écrivain gagne » y perdait des cases : deux appuis dont les écritures se croisaient, l'écho
+d'une écriture ancienne qui décochait à l'écran ce qu'on venait de cocher, un téléphone
+sorti de veille qui republiait sa liste périmée. Chaque case porte maintenant son
+horodatage, et deux états se fusionnent entrée par entrée — le geste le plus récent gagne,
+dans n'importe quel ordre d'arrivée (`src/lib/fusionListe.ts`). La liste entière est gardée
+sur l'appareil à chaque geste, une seule écriture réseau est en vol à la fois, et le
+téléphone relit le serveur au retour du réseau, au retour au premier plan et à chaque
+réabonnement temps réel, en republiant ce que le serveur ignore.
+
 **Une app qui ne peut rien enregistrer marche quand même.** Navigation privée stricte,
 cookies tiers coupés, WebView verrouillée, quota atteint : IndexedDB rejette, et
 l'amorçage — une suite d'`await` sur ces lectures — laissait l'app sur un écran blanc

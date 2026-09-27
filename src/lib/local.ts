@@ -1,5 +1,5 @@
 import { del, get, set } from 'idb-keyval'
-import type { BasketEntry, Verdict } from '../types'
+import type { BasketEntry, ListState, Verdict } from '../types'
 import type { ConfigMagasins } from './magasins'
 import { CONFIG_PAR_DEFAUT, normaliserConfig } from './magasins'
 import type { Historique } from './propose'
@@ -15,6 +15,7 @@ const K_FOYER = 'foyer'
 const K_CODE_FOYER = 'codeFoyer'
 const K_MAGASINS = 'magasins'
 const K_FOYER_PRECEDENT = 'foyerPrecedent'
+const K_LISTE = 'liste'
 
 const HISTORIQUE_VIDE: Historique = { derniereFois: {}, verdicts: {} }
 
@@ -73,6 +74,22 @@ export async function lireBasket(): Promise<BasketEntry[]> {
 
 export async function ecrireBasket(basket: BasketEntry[]): Promise<void> {
   await ecrire(K_BASKET, basket)
+}
+
+/**
+ * La liste entière — cases cochées comprises — et le foyer auquel elle
+ * appartient. Seul le panier était gardé ici : un téléphone qui tuait
+ * l'app en magasin (ce que font iOS et Android dès qu'on passe à l'appareil
+ * photo) la rouvrait sur une liste décochée, et hors réseau rien ne venait
+ * la remplir. Le foyer accompagne l'état pour qu'une liste ne soit jamais
+ * relue dans une autre maison que la sienne.
+ */
+export async function lireListeLocale(): Promise<{ foyer: string; etat: ListState } | null> {
+  return lire<{ foyer: string; etat: ListState } | null>(K_LISTE, null)
+}
+
+export async function ecrireListeLocale(foyer: string, etat: ListState): Promise<void> {
+  await ecrire(K_LISTE, { foyer, etat })
 }
 
 export async function lireHistorique(): Promise<Historique> {

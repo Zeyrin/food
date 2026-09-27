@@ -136,7 +136,9 @@ const VIDE: ListState = { coche: {}, dejaPossede: {} }
  * rien. On ignore CLOSED, qui est le statut normal au démontage.
  */
 const journaliserStatut = (nom: string) => (statut: string) => {
-  if (statut === 'CHANNEL_ERROR' || statut === 'TIMED_OUT') {
+  // TIMED_OUT est une connexion qui traîne, pas un refus : le client
+  // se réabonne tout seul, et `onPret` rattrape ce qui a été manqué.
+  if (statut === 'CHANNEL_ERROR') {
     console.warn(`Realtime « ${nom} » : ${statut} — la synchro entre appareils ne remontera pas.`)
     signalerSynchroRefusee(`Realtime « ${nom} » : ${statut}`)
   } else if (statut === 'SUBSCRIBED') {
@@ -155,11 +157,11 @@ const journaliserStatut = (nom: string) => (statut: string) => {
 const topic = (prefixe: string) => `${prefixe}:${crypto.randomUUID().slice(0, 8)}`
 
 /**
- * La seule donnée synchronisée : l'état de la liste du foyer.
- * Une ligne, un JSON, dernier écrivain gagne. Deux personnes qui
- * cochent des produits différents ne se marchent pas dessus ;
- * deux personnes qui cochent le même en même temps arrivent au
- * même résultat. Ça suffit pour des courses.
+ * L'état de la liste du foyer : une ligne, un JSON. Le serveur garde la
+ * dernière écriture reçue, mais aucun téléphone n'écrit plus à l'aveugle :
+ * chaque état reçu est fusionné entrée par entrée avec le sien, et
+ * republié s'il en sait plus (voir lib/fusionListe.ts et App.tsx). « Dernier
+ * écrivain gagne » perdait des cases dès que deux écritures se croisaient.
  *
  * `null` quand la lecture a échoué, et c'est tout l'intérêt : une
  * erreur retournait `VIDE`, exactement comme un foyer qui n'a encore
@@ -169,7 +171,11 @@ const topic = (prefixe: string) => `${prefixe}:${crypto.randomUUID().slice(0, 8)
  * bien `VIDE` : c'est une réponse, pas une panne.
  */
 export async function lireListe(foyer: string): Promise<ListState | null> {
-  if (!supabase || !(await assurerAcces(foyer))) return VIDE
+  if (!supabase) return VIDE
+  // Sans accès (hors réseau en magasin, le plus souvent), c'est une
+  // panne, pas un foyer vide : rendre `VIDE` ici effaçait toute la liste
+  // à l'écran à chaque ouverture de l'app sans réseau.
+  if (!(await assurerAcces(foyer))) return null
   const { data, error } = await supabase
     .from('listes')
     .select('etat')
@@ -189,16 +195,32 @@ export async function lireListe(foyer: string): Promise<ListState | null> {
  * ligne »). Mais il est journalisé — sans ça, une policy mal réglée
  * ressemble à une app qui marche et ne synchronise simplement jamais.
  */
-export async function ecrireListe(foyer: string, etat: ListState): Promise<void> {
-  if (!supabase || !(await assurerAcces(foyer))) return
+export async function ecrireListe(foyer: string, etat: ListState): Promise<boolean> {
+  if (!supabase) return true
+  if (!(await assurerAcces(foyer))) return false
   const { error } = await supabase.from('listes').upsert({ foyer, etat, maj: new Date().toISOString() })
   if (error) {
     console.warn(`Écriture de la liste refusée : ${error.message}`)
+    // Hors réseau, l'échec est attendu et se rattrape au retour du
+    // réseau (voir App.tsx) : `signalerSynchroRefusee` l'écarte.
     signalerSynchroRefusee(error.message)
-  } else signalerSynchroOk()
+    return false
+  }
+  signalerSynchroOk()
+  return true
 }
 
-export function suivreListe(foyer: string, onChange: (etat: ListState) => void): () => void {
+/**
+ * `onPret` est appelé à chaque (ré)abonnement réussi — y compris après
+ * une coupure : les changements survenus pendant qu'on n'écoutait pas ne
+ * seront jamais rediffusés, il faut aller les relire.
+ */
+export function suivreListe(
+  foyer: string,
+  onChange: (etat: ListState) => void,
+  onPret?: () => void,
+): () => void {
+  const statut = journaliserStatut('liste')
   return abonner(foyer, (client) =>
     client
       .channel(topic(`liste:${foyer}`))
@@ -210,7 +232,10 @@ export function suivreListe(foyer: string, onChange: (etat: ListState) => void):
           if (etat) onChange(etat)
         },
       )
-      .subscribe(journaliserStatut('liste'))
+      .subscribe((s) => {
+        statut(s)
+        if (s === 'SUBSCRIBED') onPret?.()
+      })
 ,
   )
 }

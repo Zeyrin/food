@@ -7,7 +7,9 @@ import { cuisineRecemment, tousLesTags, type Historique } from './lib/propose'
 import { estFavorite } from './lib/favoris'
 import {
   ecrireBasket,
+  ecrireListeLocale,
   lireBasket,
+  lireListeLocale,
   lireCodeFoyer,
   lireFoyer,
   lireFoyerPrecedent,
@@ -60,6 +62,7 @@ import { useDecalageBarreOutils } from './hooks/useDecalageBarreOutils'
 import { useEnteteDefilee } from './hooks/useEnteteDefilee'
 import { useLangue } from './lib/i18n'
 import { mesurer } from './lib/mesure'
+import { enAvanceSur, fusionner, horodater } from './lib/fusionListe'
 import { titreRecette } from './lib/traduireRecette'
 
 const CORPUS: Recipe[] = corpus as Recipe[]
@@ -314,6 +317,21 @@ export default function App() {
   // elle n'est offerte que par l'écran d'accueil.
   const [foyerPrecedent, setFoyerPrecedent] = useState<FoyerPrecedent | null>(null)
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
+  /**
+   * L'état de la liste tel qu'il est *maintenant*, et le foyer auquel il
+   * appartient. Les écritures réseau et les fusions arrivent dans des
+   * callbacks asynchrones : lire `etatListe` depuis leur fermeture, c'est
+   * lire l'état d'il y a plusieurs appuis — exactement ce qui faisait
+   * republier une liste périmée.
+   */
+  const etatRef = useRef<ListState>(ETAT_VIDE)
+  const foyerDeLEtat = useRef<string | null>(null)
+  const poserEtat = useCallback((etat: ListState, foyerCible: string | null) => {
+    etatRef.current = etat
+    foyerDeLEtat.current = foyerCible
+    setEtatListe(etat)
+    if (foyerCible) void ecrireListeLocale(foyerCible, etat)
+  }, [])
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const enLigne = useEnLigne()
   const { etat: etatSynchro } = useEtatSynchro()
@@ -368,10 +386,19 @@ export default function App() {
   useEffect(() => {
     void (async () => {
       try {
-        const panier = await lireBasket()
-        setEtatListe((prec) => ({ ...prec, panier }))
+        // La liste entière d'abord (cases comprises), et seulement si elle
+        // appartient au foyer qu'on rouvre ; à défaut, le panier seul, comme
+        // avant que la liste soit gardée ici.
+        const foyerLu = await lireFoyer()
+        const listeLocale = await lireListeLocale()
+        if (foyerLu && listeLocale?.foyer === foyerLu) poserEtat(listeLocale.etat, foyerLu)
+        else {
+          const panier = await lireBasket()
+          etatRef.current = { ...ETAT_VIDE, panier }
+          setEtatListe(etatRef.current)
+        }
         setHistorique(await lireHistorique())
-        setFoyer(await lireFoyer())
+        setFoyer(foyerLu)
         setCodeFoyer(await lireCodeFoyer())
         setFoyerPrecedent(await lireFoyerPrecedent())
       } finally {
@@ -454,7 +481,7 @@ export default function App() {
     setRecipes([])
     // Sans ça, la liste et le panier de l'ancien foyer restent en mémoire
     // et seraient réécrits dans le prochain foyer rejoint.
-    setEtatListe(ETAT_VIDE)
+    poserEtat(ETAT_VIDE, null)
     setHistorique({ derniereFois: {}, verdicts: {} })
     // Reset direct plutôt que `reculer()` : on quitte le foyer entier,
     // pas juste l'écran réglages — l'écran Bienvenue qui suit ne fait
@@ -480,20 +507,81 @@ export default function App() {
     [rejoindreParLien, reculer],
   )
 
-  // Le panier arrive avec la liste. Tant que le foyer n'en a pas publié
-  // un (ligne `listes` créée avant que le panier ne soit partagé), on
-  // garde celui d'ici : sinon rejoindre un foyer viderait le panier en
-  // cours de constitution.
+  /**
+   * Publication de la liste, une écriture à la fois.
+   *
+   * Deux appuis rapprochés partaient en deux écritures concurrentes, qui
+   * pouvaient arriver dans le désordre : la plus ancienne gagnait. Ici une
+   * seule écriture est en vol ; ce qui change pendant qu'elle part est
+   * publié juste après, avec l'état le plus récent. Un échec (hors réseau)
+   * laisse l'état local en avance sur le serveur, et le prochain rattrapage
+   * le republie.
+   */
+  const aPublier = useRef(false)
+  const publicationEnVol = useRef(false)
+  const publier = useCallback(async () => {
+    const cible = foyerDeLEtat.current
+    if (!cible) return
+    aPublier.current = true
+    if (publicationEnVol.current) return
+    publicationEnVol.current = true
+    try {
+      while (aPublier.current && foyerDeLEtat.current === cible) {
+        aPublier.current = false
+        if (!(await ecrireListe(cible, etatRef.current))) break
+      }
+    } finally {
+      publicationEnVol.current = false
+    }
+  }, [])
+
+  /**
+   * Un état reçu du serveur (lecture ou temps réel) se fusionne avec le
+   * nôtre au lieu de le remplacer (voir lib/fusionListe.ts). S'il nous
+   * manque des choses que ce téléphone sait — cochées hors réseau, ou
+   * pendant que l'autre téléphone écrivait —, on les republie : c'est ce
+   * qui fait converger les deux.
+   */
+  const recevoir = useCallback(
+    (cible: string, distant: ListState) => {
+      if (foyerDeLEtat.current !== cible) return
+      const fusion = fusionner(etatRef.current, distant)
+      poserEtat(fusion, cible)
+      if (enAvanceSur(fusion, distant)) void publier()
+    },
+    [poserEtat, publier],
+  )
+
   useEffect(() => {
     if (!foyer) return
-    const appliquer = (distant: ListState) =>
-      setEtatListe((local) => ({ ...distant, panier: distant.panier ?? local.panier }))
-    // `null` = lecture refusée (voir lib/sync.ts). On ne l'applique pas :
-    // écraser la liste locale avec un état vide décocherait tout à
-    // l'écran, et la prochaine case cochée publierait ce vide.
-    void lireListe(foyer).then((distant) => distant && appliquer(distant))
-    return suivreListe(foyer, appliquer)
-  }, [foyer])
+    // Une liste venue d'une autre maison (on vient d'en changer) ne se
+    // fusionne pas dans celle-ci : on n'en garde que le panier, sans
+    // horodatage, que le panier du foyer remplacera s'il en a un — c'est
+    // ce qui évitait déjà de vider un panier en cours en rejoignant.
+    if (foyerDeLEtat.current !== foyer) {
+      poserEtat({ ...ETAT_VIDE, panier: etatRef.current.panier }, foyer)
+    }
+    // Rattraper : relire le serveur et fusionner. `null` = lecture
+    // impossible (hors réseau) ; on garde ce qu'on a, rien n'est effacé.
+    const rattraper = () => {
+      void lireListe(foyer).then((distant) => distant && recevoir(foyer, distant))
+    }
+    rattraper()
+    // Tout ce qui a pu se passer pendant qu'on n'écoutait pas : retour du
+    // réseau, retour au premier plan (le téléphone en veille ne reçoit
+    // rien), réabonnement du temps réel après une coupure.
+    const auRetour = () => {
+      if (document.visibilityState === 'visible') rattraper()
+    }
+    window.addEventListener('online', rattraper)
+    document.addEventListener('visibilitychange', auRetour)
+    const desabonner = suivreListe(foyer, (distant) => recevoir(foyer, distant), rattraper)
+    return () => {
+      window.removeEventListener('online', rattraper)
+      document.removeEventListener('visibilitychange', auRetour)
+      desabonner()
+    }
+  }, [foyer, poserEtat, recevoir])
 
   // Copie hors ligne du panier : au rayon sans réseau, la liste doit
   // quand même pouvoir se calculer. On n'écrit qu'une fois le local
@@ -578,12 +666,23 @@ export default function App() {
     [vueActuelle, irVers],
   )
 
+  /**
+   * Un geste sur la liste : horodaté entrée par entrée, gardé sur
+   * l'appareil tout de suite (l'app peut être tuée à la seconde suivante),
+   * puis publié. `remise` pour « Vider le panier ».
+   */
   const majListe = useCallback(
-    (suivant: ListState) => {
-      setEtatListe(suivant)
-      if (foyer) void ecrireListe(foyer, suivant)
+    (suivant: ListState, remise = false) => {
+      // Les écrans calculent `suivant` à partir de l'état qu'ils ont
+      // affiché. Le geste, c'est la différence entre les deux — et elle
+      // s'applique sur l'état *actuel* : un changement de l'autre
+      // téléphone arrivé entre l'affichage et l'appui ne doit pas se lire
+      // comme « l'utilisateur l'a défait ».
+      const geste = horodater(etatListe, suivant, remise)
+      poserEtat(fusionner(etatRef.current, geste), foyer)
+      void publier()
     },
-    [foyer],
+    [etatListe, foyer, poserEtat, publier],
   )
 
   const majBasket = useCallback(
@@ -606,7 +705,7 @@ export default function App() {
    */
   const viderPanier = useCallback(() => {
     mesurer('panier_vide', { plats: basket.length })
-    majListe({ coche: {}, dejaPossede: {}, items: [], panier: [] })
+    majListe({ coche: {}, dejaPossede: {}, items: [], panier: [] }, true)
   }, [majListe, basket.length])
 
   const ajouter = useCallback(
