@@ -5642,3 +5642,44 @@ html[data-gele='true'] body {
   justify-content: center;
   gap: 8px;
 }
+
+/* --- Panier : la photo et le titre ouvrent la fiche ------------------------
+   Remis à plat : un bouton qui garde l'allure de la vignette et du titre,
+   avec pour seul signe l'appui — la vignette s'enfonce, le titre prend
+   l'accent au survol. */
+button.vignette-mini-bouton {
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  transition: transform var(--court3) var(--ressort);
+}
+
+button.vignette-mini-bouton:active {
+  transform: scale(0.95);
+}
+
+.titre-panier-bouton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  /* La cible déborde un peu du texte : un titre d'une ligne fait moins
+     de 30 px de haut, en dessous d'un pouce. */
+  margin: -6px 0;
+  padding: 6px 0;
+}
+
+.titre-panier-bouton:active {
+  color: var(--accent);
+}
+
+@media (hover: hover) {
+  .titre-panier-bouton:hover {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}

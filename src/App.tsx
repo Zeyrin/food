@@ -872,6 +872,10 @@ export default function App() {
               historique={historique}
               onBasket={majBasket}
               onVersPropose={() => changerOnglet('propose')}
+              onDetail={(recipeId) => {
+                mesurer('fiche_ouverte', { source: 'panier' })
+                irVers({ type: 'detail', recipeId })
+              }}
               onVersListe={() => changerOnglet('liste')}
               onAjouterRecette={ouvrirAjout}
               onViderPanier={viderPanier}

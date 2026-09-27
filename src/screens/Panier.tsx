@@ -15,6 +15,8 @@ interface Props {
   historique: Historique
   onBasket: (basket: BasketEntry[]) => void
   onVersPropose: () => void
+  /** Ouvre la fiche d'un plat retenu : on veut relire la recette avant d'acheter. */
+  onDetail: (recipeId: string) => void
   onVersListe: () => void
   onAjouterRecette: () => void
   /** Vide le panier *et* la liste (cases cochées comprises) — voir App.tsx. */
@@ -27,6 +29,7 @@ export default function Panier({
   historique,
   onBasket,
   onVersPropose,
+  onDetail,
   onVersListe,
   onAjouterRecette,
   onViderPanier,
@@ -223,17 +226,30 @@ export default function Panier({
           if (!r) return null
           return (
             <div className="carte carte-panier" key={entree.recipeId}>
-              <div
-                className="vignette-mini"
+              {/* La photo et le titre ouvrent la fiche, comme une carte du
+                  catalogue. Deux cibles pour un même geste : la photo hors
+                  de l'ordre de tabulation, le titre porte le nom lu. */}
+              <button
+                className="vignette-mini vignette-mini-bouton"
+                tabIndex={-1}
                 aria-hidden="true"
+                onClick={() => onDetail(r.id)}
                 style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
               >
                 {!r.image && <AssietteRecette titre={r.titre} ingredients={r.ingredients} />}
                 <ImageRecette src={r.image} />
-              </div>
+              </button>
               <div className="carte-panier-corps">
                 <div className="ligne-titre-panier">
-                  <h3>{r.titre}</h3>
+                  <h3>
+                    <button
+                      className="titre-panier-bouton"
+                      onClick={() => onDetail(r.id)}
+                      aria-label={t('panier.ouvrirRecette', { titre: r.titre })}
+                    >
+                      {r.titre}
+                    </button>
+                  </h3>
                   <button
                     className="bouton-rond-discret bouton-retirer"
                     onClick={() => retirer(entree.recipeId)}
