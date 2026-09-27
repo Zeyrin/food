@@ -118,6 +118,17 @@ const fr: Dico = {
     etapeCuisineTexte: 'Minuteurs intégrés, et une note pour retrouver ce que vous avez aimé.',
     ou: 'ou',
     creation: 'Création…',
+    // L'action principale ne parle pas de « maison » : un visiteur venu
+    // d'une vidéo veut voir des plats, pas fonder un foyer. Elle crée la
+    // maison quand même — c'est elle qui porte le panier et la liste —,
+    // le mot arrive plus tard, là où il sert (le partage).
+    voirLesRecettes: 'Voir les recettes',
+    voirLaRecette: 'Voir la recette',
+    recetteAttendue: 'Votre recette vous attend : {{titre}}',
+    ctaNote: 'Gratuit, sans compte, sans pub.',
+    jaiUnCode: "On m'a donné un code",
+    navigateurIntegre:
+      "Vous êtes dans le navigateur de l'app {{app}}. Tout marche ici, mais pour retrouver votre semaine plus tard, ouvrez FFFood dans Safari ou Chrome (menu ⋯ puis « Ouvrir dans le navigateur »).",
     creerMaMaison: 'Créer ma maison',
     creerAide: 'Une maison neuve, avec un code à donner à qui la partagera.',
     creerErreur: "La maison n'a pas pu être créée. Vérifiez votre connexion et réessayez.",
@@ -140,6 +151,16 @@ const fr: Dico = {
     repriseOublier: 'Oublier cette maison',
     repriseIntrouvable: "Cette maison est introuvable : elle a peut-être été supprimée.",
     repriseErreur: 'Le retour a échoué. Vérifiez votre connexion et réessayez.',
+  },
+  integre: {
+    // Bandeau posé dans l'app quand elle tourne dans la vue web d'une app
+    // sociale (voir lib/navigateurIntegre.ts) : ce qu'on y fait n'existe
+    // pas dans Safari ou Chrome. Le lien de la maison est la seule chose
+    // qui traverse — le copier, c'est emporter sa semaine.
+    texte: "Vous êtes dans {{app}} : votre semaine reste ici. Pour la retrouver dans Safari ou Chrome, emportez le lien de votre maison.",
+    copier: 'Copier le lien',
+    copie: 'Lien copié, collez-le dans votre navigateur',
+    fermer: 'Masquer',
   },
   placeholders: {
     // La légende de l'assiette dessinée qui remplace une photo absente
@@ -440,46 +461,18 @@ const fr: Dico = {
   },
   onboarding: [
     {
-      titre: 'Bienvenue sur FFFood',
+      titre: 'Choisissez un plat',
+      texte: 'Touchez + pour le mettre dans le panier de la semaine. Vous choisirez les autres juste après.',
+    },
+    {
+      titre: 'La liste se fait toute seule',
       texte:
-        "Un tour de deux minutes pour repérer les boutons utiles. Choisissez vos repas, générez la liste de courses, et cuisinez — sans compte, sans pub, même hors ligne en magasin.",
+        "Les ingrédients de vos plats, additionnés et rangés par rayon. Cochez ce que vous avez déjà, et en magasin il ne reste qu'à suivre.",
     },
     {
-      titre: 'Chercher une recette',
+      titre: 'Puis on cuisine',
       texte:
-        "Un titre de plat, mais aussi un ingrédient : tapez « aubergine » pour trouver quoi faire de celle qui traîne.",
-    },
-    {
-      titre: 'Filtrer le catalogue',
-      texte:
-        'Par temps de préparation, par tag, ou par favoris — les plats que vous avez aimés après les avoir cuisinés, et ceux que vous avez ajoutés vous-même.',
-    },
-    {
-      titre: 'Ajouter une recette',
-      texte:
-        "Votre catalogue vous appartient. Cette bande ouvre l'ajout, en haut de « Proposer » : écrivez la recette dans un formulaire, ou faites-la écrire par une IA et recollez sa réponse.",
-    },
-    {
-      titre: 'Le Panier',
-      texte:
-        "Les plats retenus pour la semaine atterrissent ici. Ajustez le nombre de parts, puis générez la liste quand vous êtes prêt·e.",
-    },
-    {
-      titre: 'La Liste',
-      texte: "Générée automatiquement à partir du panier, rangée dans l'ordre des rayons. Cochez d'abord ce que vous avez déjà.",
-    },
-    {
-      titre: 'Le mode Cuisson',
-      texte:
-        "Les étapes défilent une à une. Les doses de l'étape s'affichent sur une ligne juste au-dessus — la consigne reste une phrase, le nombre reste un nombre.",
-    },
-    {
-      titre: 'Réglages',
-      texte: 'Le code de votre foyer à partager, et cette visite à tout moment, vous attendent ici.',
-    },
-    {
-      titre: "C'est parti !",
-      texte: "Vous savez l'essentiel. Le reste se découvre en cuisinant.",
+        'Étape par étape, minuteurs compris. Pour tout partager à deux, votre code de maison est dans le menu ☰.',
     },
   ],
   rayons: {
@@ -669,6 +662,13 @@ const en: Dico = {
     etapeCuisineTexte: 'Built-in timers, and a note to remember what you liked.',
     ou: 'or',
     creation: 'Creating…',
+    voirLesRecettes: 'See the recipes',
+    voirLaRecette: 'See the recipe',
+    recetteAttendue: 'Your recipe is waiting: {{titre}}',
+    ctaNote: 'Free, no account, no ads.',
+    jaiUnCode: "I've been given a code",
+    navigateurIntegre:
+      "You're in the {{app}} app's browser. Everything works here, but to find your week again later, open FFFood in Safari or Chrome (⋯ menu, then \"Open in browser\").",
     creerMaMaison: 'Create my household',
     creerAide: 'A fresh household, with a code to hand to whoever shares it.',
     creerErreur: 'The household could not be created. Check your connection and try again.',
@@ -691,6 +691,12 @@ const en: Dico = {
     repriseOublier: 'Forget this household',
     repriseIntrouvable: 'That household cannot be found: it may have been deleted.',
     repriseErreur: 'Going back failed. Check your connection and try again.',
+  },
+  integre: {
+    texte: "You're inside {{app}}: your week stays here. To find it in Safari or Chrome, take your household link with you.",
+    copier: 'Copy link',
+    copie: 'Link copied, paste it into your browser',
+    fermer: 'Hide',
   },
   placeholders: {
     sansPhoto: {
@@ -971,45 +977,16 @@ const en: Dico = {
   },
   onboarding: [
     {
-      titre: 'Welcome to FFFood',
-      texte:
-        'A two-minute tour to spot the useful buttons. Pick your meals, generate the shopping list, and cook — no account, no ads, even offline at the shop.',
+      titre: 'Pick a dish',
+      texte: "Tap + to put it in this week's basket. You'll pick the others right after.",
     },
     {
-      titre: 'Search for a recipe',
-      texte: 'A dish name, but also an ingredient: type "eggplant" to find what to do with the one lying around.',
+      titre: 'The list makes itself',
+      texte: 'Your dishes\' ingredients, added up and sorted by aisle. Tick what you already have, and at the shop just follow along.',
     },
     {
-      titre: 'Filter the catalog',
-      texte:
-        'By prep time, by tag, or by favorites — the dishes you liked after cooking them, and the ones you added yourself.',
-    },
-    {
-      titre: 'Add a recipe',
-      texte:
-        'Your catalog is yours. This band at the top of "Suggest" opens recipe entry: fill in a form yourself, or have an AI write the recipe and paste its reply back.',
-    },
-    {
-      titre: 'The Basket',
-      texte:
-        'Dishes picked for the week land here. Adjust the number of servings, then generate the list when ready.',
-    },
-    {
-      titre: 'The List',
-      texte: 'Generated automatically from the basket, ordered by aisle. Tick off what you already have first.',
-    },
-    {
-      titre: 'Cooking mode',
-      texte:
-        'The steps scroll one by one. The quantities for each step sit on a line just above it — the instruction stays a sentence, the number stays a number.',
-    },
-    {
-      titre: 'Settings',
-      texte: 'Your household code to share, and this tour any time, are waiting here.',
-    },
-    {
-      titre: "Let's go!",
-      texte: 'You know the essentials. The rest you\'ll discover while cooking.',
+      titre: 'Then you cook',
+      texte: 'Step by step, timers included. To share it all with someone, your household code is in the ☰ menu.',
     },
   ],
   rayons: {

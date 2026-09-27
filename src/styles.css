@@ -417,6 +417,15 @@ p.aide a {
   padding-bottom: 0;
 }
 
+/* Ni rail d'onglets sur desktop : la colonne réserve 128 px à gauche
+   pour lui, et la photo plein bord, centrée sur cette colonne
+   décentrée, laissait une bande de papier de 44 px sur sa gauche. */
+@media (min-width: 900px) {
+  #root:has(.accueil) {
+    padding-left: 40px;
+  }
+}
+
 .accueil {
   /* `min-height` et non `height` : avec la carte de reprise et les six
      cases, le contenu peut dépasser la hauteur du viewport sur un petit
@@ -439,8 +448,13 @@ p.aide a {
   position: relative;
   width: 100vw;
   margin: calc(-1 * max(32px, env(safe-area-inset-top))) calc(50% - 50vw) 0;
-  aspect-ratio: 4 / 5;
-  max-height: min(72vh, 620px);
+  /* Haute assez pour porter le bouton d'action sous la promesse, et pas
+     plus : le bouton doit tenir dans le premier écran, y compris dans la
+     vue web d'Instagram ou de TikTok qui mange le haut et le bas. `svh`
+     plutôt que `vh` : la barre d'adresse repliée ne doit pas pousser le
+     bouton sous le pli. */
+  min-height: min(86vh, 640px);
+  min-height: min(86svh, 640px);
   overflow: hidden;
   display: flex;
   align-items: flex-end;
@@ -466,10 +480,10 @@ p.aide a {
      burger et ne se lisait plus. */
   background: linear-gradient(
     to top,
-    rgb(20 14 8 / 0.92),
-    rgb(20 14 8 / 0.74) 45%,
-    rgb(20 14 8 / 0.3) 68%,
-    rgb(20 14 8 / 0.02) 88%
+    rgb(20 14 8 / 0.94),
+    rgb(20 14 8 / 0.8) 50%,
+    rgb(20 14 8 / 0.42) 72%,
+    rgb(20 14 8 / 0.08) 92%
   );
 }
 
@@ -539,6 +553,61 @@ p.aide a {
   display: block;
   margin-top: 4px;
   color: #cefda3;
+}
+
+/* L'action, dans la photo : pleine largeur jusqu'à 360 px, pour tenir
+   sous le pouce sans devenir une barre d'un bord à l'autre sur tablette. */
+.accueil-hero-actions {
+  width: min(100%, 360px);
+  margin: 22px auto 0;
+}
+
+.accueil-hero-attendue {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #cefda3;
+  text-wrap: balance;
+}
+
+/* Le vert clair de la réponse « Décidé. », pas le vert de l'app : sur la
+   photo sombre, le bouton doit être la chose la plus claire de l'écran,
+   quel que soit le thème du téléphone. */
+button.principal.accueil-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: #cefda3;
+  color: #0c2000;
+  box-shadow: 0 10px 30px -8px rgb(206 253 163 / 0.45);
+}
+
+.accueil-hero-note {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: rgb(255 255 255 / 0.72);
+}
+
+.accueil-hero-code {
+  color: #fff;
+  font-weight: 600;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+.accueil-integre {
+  margin: 20px 0 0;
+  padding: 14px 16px;
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet);
+  font-size: 14px;
+}
+
+#rejoindre {
+  scroll-margin-top: 24px;
 }
 
 .accueil-hero-baseline {
@@ -5538,4 +5607,38 @@ html[data-gele='true'] body {
   .panneau-ajout {
     padding: 24px;
   }
+}
+
+/* --- Vue web d'une app sociale ---------------------------------------------
+   Conseil, pas alerte : la surface basse des cartes, le texte à l'encre,
+   et l'action en discret accentué. Posé au-dessus de l'écran Proposer. */
+.bandeau-integre {
+  margin: 0 0 16px;
+  padding: 16px 16px 10px;
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+  animation: accueil-entree var(--moyen4) var(--sortie) both;
+}
+
+.bandeau-integre p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--encre-douce);
+  text-wrap: pretty;
+}
+
+.bandeau-integre-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.bandeau-integre-actions .discret {
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }

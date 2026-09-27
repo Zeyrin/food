@@ -20,8 +20,16 @@
     <meta property="og:url" content="https://www.fffood.fr/" />
     <meta property="og:title" content="FFFood — repas de la semaine et liste de courses" />
     <meta property="og:description" content="Choisissez vos repas de la semaine, générez votre liste de courses et cuisinez. Sans compte, gratuit, utilisable hors ligne en magasin." />
-    <meta property="og:image" content="https://www.fffood.fr/icon-512.png" />
-    <meta name="twitter:card" content="summary" />
+    <!-- Une affiche, pas l'icône : en DM, en story ou sur WhatsApp, un
+         lien vers FFFood montrait le petit sac vert de l'app, qui ne dit
+         rien de ce qu'on y fait. JPEG plutôt que WebP, que tous les
+         robots d'aperçu ne lisent pas. -->
+    <meta property="og:image" content="https://www.fffood.fr/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Qu'est-ce qu'on mange ce soir ? Décidé. — FFFood" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://www.fffood.fr/og.jpg" />
     <meta name="twitter:title" content="FFFood" />
     <meta name="twitter:description" content="Repas de la semaine, liste de courses et mode cuisson, sans compte." />
     <!-- Les deux fontes que porte le premier écran : le corps de texte et
@@ -38,10 +46,30 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <title>FFFood — Repas de la semaine & liste de courses</title>
+    <!-- L'écran d'attente, écrit dans la page même : sans lui, tout ce qui
+         précède le premier rendu React est une page blanche — une seconde
+         en 4G, six en 3G lente, assez pour qu'un visiteur venu d'une vidéo
+         reparte. Le sceau est celui de l'écran d'attente de l'app
+         (`.attente`), que React pose à sa place sans saut visible. -->
+    <style>
+      html,body{margin:0;background:#fff8ef}
+      .amorce{min-height:100vh;min-height:100dvh;display:grid;place-content:center;justify-items:center;gap:14px;font:700 13px/1 system-ui,sans-serif;letter-spacing:.16em;color:#43493c}
+      .amorce-sceau{width:68px;height:68px;border-radius:22px;background:#385e16;display:grid;place-items:center;animation:amorce 1.1s ease-in-out infinite alternate}
+      @keyframes amorce{to{transform:scale(.93);opacity:.82}}
+      @media (prefers-color-scheme:dark){html,body{background:#16150f}.amorce{color:#b8bcae}.amorce-sceau{background:#a6d47e}.amorce-sceau svg{stroke:#0c2000}}
+      @media (prefers-reduced-motion:reduce){.amorce-sceau{animation:none}}
+    </style>
     <script src="https://app.rybbit.io/api/script.js" data-site-id="4c5badb87633" defer></script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="amorce" aria-hidden="true">
+        <span class="amorce-sceau">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.5 11h-11z M8 8V5a4 4 0 018 0v3" /></svg>
+        </span>
+        FFFOOD
+      </div>
+    </div>
     <!--
       L'app entière tient dans `#root`, que React remplace au démarrage : sans
       JavaScript, la page est vide, et un robot d'indexation qui n'exécute rien

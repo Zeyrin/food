@@ -101,7 +101,7 @@ function description(r) {
 }
 
 const urlRecette = (r) => `${SITE}/recette/${r.id}/`
-const urlImage = (r) => (r.image ? `${SITE}${r.image}` : `${SITE}/icon-512.png`)
+const urlImage = (r) => (r.image ? `${SITE}${r.image}` : `${SITE}/og.jpg`)
 
 /**
  * Le balisage que les moteurs lisent pour afficher une recette autrement
@@ -163,6 +163,7 @@ ul.ingredients li.placard .q::after{content:' · placard';font-size:.85em}
 ol.etapes{padding-left:1.4rem;margin:0}
 ol.etapes li{margin-bottom:1rem;padding-left:.25rem}
 .cta{display:block;background:var(--accent);color:var(--sur-accent);text-decoration:none;text-align:center;font-weight:600;padding:1rem;border-radius:var(--rayon);margin:2.5rem 0 0}
+.cta-haut{margin:1.25rem 0 0;padding:.8rem 1rem}
 .cta span{display:block;font-weight:400;font-size:.9rem;opacity:.85;margin-top:.25rem}
 ul.liens{list-style:none;padding:0;margin:0;display:grid;gap:.5rem}
 ul.liens a{display:block;background:var(--carte);border:1px solid var(--trait);border-radius:16px;padding:.75rem 1rem;text-decoration:none;color:var(--encre)}
@@ -233,6 +234,7 @@ function pageRecette(r) {
   ${r.image ? `<img class="plat" src="${esc(r.image)}" width="800" height="600" alt="${esc(r.titre)}">` : ''}
   <h1>${esc(r.titre)}</h1>
   <p class="meta">${r.temps} min · ${r.portions} ${r.portions > 1 ? 'personnes' : 'personne'} · ${r.ingredients.length} ingrédients</p>
+  <a class="cta cta-haut" href="/#/r/${esc(r.id)}">Mettre ce plat sur ma liste de courses →</a>
   ${
     r.tags.length > 0
       ? `<ul class="tags">${r.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`
@@ -276,8 +278,10 @@ ${proches
     titre: `${r.titre} — recette en ${r.temps} min | FFFood`,
     desc: description(r),
     url: urlRecette(r),
+    // Sans photo, l'affiche du site plutôt que l'icône de l'app : un
+    // aperçu de lien grand format se partage mieux qu'un carré de 512 px.
     image: urlImage(r),
-    largeImage: Boolean(r.image),
+    largeImage: true,
     corps,
     jsonld: jsonLd(r),
   })
@@ -306,8 +310,8 @@ ${tries
     titre: `Toutes les recettes — ${tries.length} plats | FFFood`,
     desc: `Le catalogue FFFood : ${tries.length} recettes avec ingrédients, quantités et étapes. Choisissez vos repas de la semaine, la liste de courses s'en déduit.`,
     url: `${SITE}/recette/`,
-    image: `${SITE}/icon-512.png`,
-    largeImage: false,
+    image: `${SITE}/og.jpg`,
+    largeImage: true,
     corps,
     jsonld: null,
   })

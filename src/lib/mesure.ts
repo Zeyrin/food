@@ -28,10 +28,13 @@ interface Rybbit {
 
 /** Les gestes qui valent d'être comptés, et eux seuls. */
 export type Geste =
+  | 'accueil_vu'
+  | 'creation_echouee'
   | 'foyer_cree'
   | 'foyer_rejoint'
   | 'visite_terminee'
   | 'visite_passee'
+  | 'fiche_ouverte'
   | 'plat_ajoute_au_panier'
   | 'plat_retire_du_panier'
   | 'liste_generee'

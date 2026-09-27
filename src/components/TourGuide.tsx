@@ -9,6 +9,8 @@ import Icone from './Icone'
 
 interface Props {
   ongletActuel: Onglet
+  /** Le nombre de plats au panier : une étape `attend: 'ajout'` avance quand il monte. */
+  nbPanier: number
   onOnglet: (onglet: Onglet) => void
   onTerminer: () => void
 }
@@ -40,7 +42,7 @@ function rayonRepere(rayon: string | undefined): string {
  * étapes viennent de data/onboarding.ts, ce composant ne fait
  * qu'afficher et positionner.
  */
-export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props) {
+export default function TourGuide({ ongletActuel, nbPanier, onOnglet, onTerminer }: Props) {
   const { langue, t } = useLangue()
   const [index, setIndex] = useState(0)
   const textes = etapesOnboarding(langue)
@@ -54,6 +56,24 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
   useEffect(() => {
     if (etape.onglet && etape.onglet !== ongletActuel) onOnglet(etape.onglet)
   }, [index])
+
+  // L'étape qui attend un ajout avance toute seule quand le plat arrive
+  // au panier : le geste vaut « Suivant ». On compare au nombre relevé en
+  // entrant dans l'étape, pas à zéro — un panier déjà garni (visite
+  // relancée depuis Réglages) ne doit pas sauter l'étape d'office.
+  const panierAEntree = useRef(nbPanier)
+  useEffect(() => {
+    panierAEntree.current = nbPanier
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index])
+  useEffect(() => {
+    if (etape.attend === 'ajout' && nbPanier > panierAEntree.current) {
+      // Un temps pour voir la coche et le compteur rebondir avant que le
+      // voile ne se déplace.
+      const t = setTimeout(() => setIndex((i) => i + 1), 700)
+      return () => clearTimeout(t)
+    }
+  }, [nbPanier, etape.attend])
 
   const tour = useTourRect(etape.cible)
   const rect = tour?.rect ?? null
@@ -88,7 +108,9 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
 
   const suivant = () => {
     if (!dernier) return setIndex((i) => i + 1)
-    mesurer('visite_terminee', { etapes: VISITE_GUIDEE.length })
+    mesurer('visite_terminee', { etapes: VISITE_GUIDEE.length, panier: nbPanier })
+    // Retour au catalogue : c'est là qu'on choisit les autres plats.
+    onOnglet('propose')
     onTerminer()
   }
 
@@ -239,7 +261,10 @@ export default function TourGuide({ ongletActuel, onOnglet, onTerminer }: Props)
               <Icone nom="precedent" taille={18} /> {t('tour.retour')}
             </button>
           )}
-          <button className="principal" onClick={suivant}>
+          {/* Quand l'étape attend un geste dans l'app, le vert revient à
+              la cible : un gros « Suivant » plein à côté du « + » éclairé
+              attirait le doigt ailleurs que sur le geste à apprendre. */}
+          <button className={etape.attend ? 'discret' : 'principal'} onClick={suivant}>
             {dernier ? t('tour.commencer') : t('tour.suivant')} <Icone nom="suivant" taille={18} />
           </button>
         </div>
