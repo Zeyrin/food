@@ -417,6 +417,15 @@ p.aide a {
   padding-bottom: 0;
 }
 
+/* Ni rail d'onglets sur desktop : la colonne réserve 128 px à gauche
+   pour lui, et la photo plein bord, centrée sur cette colonne
+   décentrée, laissait une bande de papier de 44 px sur sa gauche. */
+@media (min-width: 900px) {
+  #root:has(.accueil) {
+    padding-left: 40px;
+  }
+}
+
 .accueil {
   /* `min-height` et non `height` : avec la carte de reprise et les six
      cases, le contenu peut dépasser la hauteur du viewport sur un petit
@@ -439,8 +448,13 @@ p.aide a {
   position: relative;
   width: 100vw;
   margin: calc(-1 * max(32px, env(safe-area-inset-top))) calc(50% - 50vw) 0;
-  aspect-ratio: 4 / 5;
-  max-height: min(72vh, 620px);
+  /* Haute assez pour porter le bouton d'action sous la promesse, et pas
+     plus : le bouton doit tenir dans le premier écran, y compris dans la
+     vue web d'Instagram ou de TikTok qui mange le haut et le bas. `svh`
+     plutôt que `vh` : la barre d'adresse repliée ne doit pas pousser le
+     bouton sous le pli. */
+  min-height: min(86vh, 640px);
+  min-height: min(86svh, 640px);
   overflow: hidden;
   display: flex;
   align-items: flex-end;
@@ -460,11 +474,16 @@ p.aide a {
 .accueil-hero-voile {
   position: absolute;
   inset: 0;
+  /* Le bloc de texte monte à mi-hauteur (sceau, marque, deux lignes
+     de question, la réponse, la phrase) : le voile doit rester dense
+     jusque-là, sinon la question biffée se posait sur le pain doré du
+     burger et ne se lisait plus. */
   background: linear-gradient(
     to top,
-    rgb(20 14 8 / 0.88),
-    rgb(20 14 8 / 0.55) 42%,
-    rgb(20 14 8 / 0.05) 75%
+    rgb(20 14 8 / 0.94),
+    rgb(20 14 8 / 0.8) 50%,
+    rgb(20 14 8 / 0.42) 72%,
+    rgb(20 14 8 / 0.08) 92%
   );
 }
 
@@ -514,9 +533,16 @@ p.aide a {
 .accueil-hero-question {
   display: block;
   color: rgb(255 255 255 / 0.62);
-  text-decoration: line-through;
-  text-decoration-thickness: 2px;
-  text-decoration-color: rgb(255 255 255 / 0.5);
+}
+
+/* Le trait est un fond, pas un `text-decoration` : un fond se dessine
+   de gauche à droite (voir `accueil-rayer` plus bas), une décoration de
+   texte ne sait qu'apparaître. `box-decoration-break: clone` en pose un
+   par ligne quand la question passe sur deux lignes. */
+.accueil-hero-rature {
+  background: linear-gradient(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.7)) no-repeat 0 58% / 100% 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 /* Toujours la même teinte claire, que le système soit en clair ou en
@@ -527,6 +553,61 @@ p.aide a {
   display: block;
   margin-top: 4px;
   color: #cefda3;
+}
+
+/* L'action, dans la photo : pleine largeur jusqu'à 360 px, pour tenir
+   sous le pouce sans devenir une barre d'un bord à l'autre sur tablette. */
+.accueil-hero-actions {
+  width: min(100%, 360px);
+  margin: 22px auto 0;
+}
+
+.accueil-hero-attendue {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #cefda3;
+  text-wrap: balance;
+}
+
+/* Le vert clair de la réponse « Décidé. », pas le vert de l'app : sur la
+   photo sombre, le bouton doit être la chose la plus claire de l'écran,
+   quel que soit le thème du téléphone. */
+button.principal.accueil-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: #cefda3;
+  color: #0c2000;
+  box-shadow: 0 10px 30px -8px rgb(206 253 163 / 0.45);
+}
+
+.accueil-hero-note {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: rgb(255 255 255 / 0.72);
+}
+
+.accueil-hero-code {
+  color: #fff;
+  font-weight: 600;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+.accueil-integre {
+  margin: 20px 0 0;
+  padding: 14px 16px;
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet);
+  font-size: 14px;
+}
+
+#rejoindre {
+  scroll-margin-top: 24px;
 }
 
 .accueil-hero-baseline {
@@ -619,6 +700,16 @@ p.aide a {
     animation: accueil-entree 0.5s var(--sortie) 0.1s both;
   }
 
+  /* La question arrive, se fait rayer d'un trait de stylo, et la réponse
+     tombe en dernier : le slogan se lit comme une petite scène. */
+  .accueil-hero-rature {
+    animation: accueil-rayer 0.45s cubic-bezier(0.6, 0, 0.3, 1) 0.75s both;
+  }
+
+  .accueil-hero-titre > .accueil-hero-reponse {
+    animation: accueil-reponse 0.5s var(--ressort) 1.2s both;
+  }
+
   .accueil-comment-titre,
   .accueil-comment {
     animation: accueil-entree 0.5s var(--sortie) 0.18s both;
@@ -638,6 +729,19 @@ p.aide a {
   }
   to {
     transform: scale(1);
+  }
+}
+
+@keyframes accueil-rayer {
+  from {
+    background-size: 0% 3px;
+  }
+}
+
+@keyframes accueil-reponse {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.86);
   }
 }
 
@@ -984,6 +1088,48 @@ nav.onglets button[aria-current='page'] {
   color: var(--accent);
 }
 
+/* Le nombre de plats au panier, en pastille sur l'icône : un chiffre
+   dans le libellé (« Panier (3) ») ne se voyait qu'en le lisant, et
+   changeait la largeur du mot à chaque ajout. */
+.onglet-pastille {
+  position: relative;
+}
+
+.onglet-compteur {
+  position: absolute;
+  top: -5px;
+  left: calc(50% + 6px);
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--terracotta);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--papier);
+  animation: compteur-rebond var(--moyen2) var(--ressort);
+}
+
+@media (prefers-color-scheme: dark) {
+  .onglet-compteur {
+    color: #3b0a0c;
+  }
+}
+
+@keyframes compteur-rebond {
+  0% {
+    transform: scale(0.4);
+  }
+  60% {
+    transform: scale(1.25);
+  }
+}
+
 nav.onglets button[aria-current='page'] .onglet-pastille {
   background: var(--accent-doux);
 }
@@ -1127,10 +1273,6 @@ button.carte:active {
   .vignette {
     color: hsl(var(--teinte) 55% 78% / 0.28);
     background: hsl(var(--teinte) 30% 24%);
-  }
-
-  .vignette-placeholder {
-    color: hsl(var(--teinte) 55% 82% / 0.75);
   }
 }
 
@@ -1296,43 +1438,149 @@ button.carte:active {
 /* Les recettes sans photo gardent le même format de vignette que les
    autres — même ratio, même hauteur — pour que la grille reste une
    grille de cartes égales plutôt qu'un damier de tailles différentes.
-   Une formule à la place de la photo (voir `VignettePlaceholder`) plutôt
-   qu'une simple initiale, posée comme un sous-titre en bas de vignette. */
+   À la place de la photo : l'assiette dessinée du plat (voir
+   `lib/assiette.ts`), posée sur une nappe vichy à la teinte de la
+   recette. Le carreau reste très pâle — il doit se sentir, pas se lire :
+   à pleine force il ferait vibrer la grille entière sur une capture. */
 .vignette[data-sans-photo] {
-  align-items: center;
-  justify-content: center;
-  /* Marge basse généreuse : le rond d'ajout flotte dans ce coin, et un
-     texte centré sur toute la largeur passerait dessous sans elle. */
-  padding: 16px 16px 60px;
+  --carreau: hsl(var(--teinte) 55% 62% / 0.17);
+  background-color: hsl(var(--teinte) 62% 88%);
+  background-image: linear-gradient(90deg, var(--carreau) 50%, transparent 0),
+    linear-gradient(var(--carreau) 50%, transparent 0);
+  background-size: 22px 22px;
   font-size: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
+.vignette[data-sans-photo]::after {
+  /* Pas de voile sombre sur un dessin : il n'y a pas de photo claire à
+     rattraper, le badge tient déjà sur la nappe pâle. Le filet reste. */
+  background: none;
+}
+
+.assiette {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 84%;
+  height: auto;
+  aspect-ratio: 1;
+  transform: translate(-50%, -46%) rotate(var(--assiette-angle, 0deg));
+  transition: transform var(--long2) var(--sortie);
+  overflow: visible;
+}
+
+.assiette-ombre {
+  fill: hsl(var(--teinte, 40) 45% 28% / 0.2);
+}
+
+.assiette-marli {
+  fill: #fffdf8;
+}
+
+.assiette-creux {
+  fill: #f6efe2;
+}
+
+.assiette-filet {
+  fill: none;
+  stroke: rgb(32 27 12 / 0.07);
+  stroke-width: 0.7;
+}
+
+.assiette-reflet {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  opacity: 0.9;
+}
+
+.assiette-nervure {
+  stroke: rgb(20 40 10 / 0.3);
+  stroke-width: 0.4;
+  stroke-linecap: round;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vignette[data-sans-photo] {
+    --carreau: hsl(var(--teinte) 35% 45% / 0.16);
+    background-color: hsl(var(--teinte) 26% 21%);
+  }
+
+  /* Une faïence blanche pure éblouit sur le fond sombre : elle passe au
+     grès clair, sans perdre l'idée d'une assiette. */
+  .assiette-ombre {
+    fill: rgb(0 0 0 / 0.35);
+  }
+
+  .assiette-marli {
+    fill: #ebe4d3;
+  }
+
+  .assiette-creux {
+    fill: #ddd4c0;
+  }
+
+  .assiette-reflet {
+    opacity: 0.5;
+  }
+}
+
+/* L'assiette se pose : un quart de tour qui freine en arrivant, en même
+   temps que la carte monte. Seules les cartes qui s'animent déjà (les
+   huit premières, voir `monter` plus bas) — même raison de coût. */
+@keyframes assiette-poser {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%) scale(0.86) rotate(-40deg);
+  }
+}
+
+.grille-recettes .carte-recette:nth-child(-n + 8) .assiette {
+  animation: assiette-poser var(--long2) var(--sortie) backwards;
+  animation-delay: calc(var(--rang, 0) * 30ms + 60ms);
+}
+
+@media (hover: hover) {
+  .grille-recettes .carte-recette:hover .assiette {
+    transform: translate(-50%, -46%) scale(1.04) rotate(12deg);
+  }
+}
+
+/* La formule qui accompagne l'assiette sur la fiche : une légende posée
+   en bas de la nappe, sur une pastille de papier pour rester lisible
+   au-dessus du carreau. */
 .vignette-placeholder {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  z-index: 1;
+  max-width: calc(100% - 32px);
   margin: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--carte) 82%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   font-family: var(--texte);
   font-size: 13px;
   font-weight: 600;
   font-style: italic;
   text-transform: none;
-  color: hsl(var(--teinte) 35% 25% / 0.75);
+  color: var(--encre-douce);
   line-height: 1.3;
   text-align: center;
-  text-wrap: balance;
-  /* Trois lignes au plus : au-delà, une formule débordait sur le badge
-     temps posé en haut de la même vignette. */
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.grille-recettes .vignette[data-sans-photo] {
-  padding: 10px 10px 50px;
-}
-
-.grille-recettes .vignette-placeholder {
-  font-size: 12px;
-  -webkit-line-clamp: 4;
+.detail-vignette[data-sans-photo] .assiette {
+  width: 62%;
+  transform: translate(-50%, -54%);
 }
 
 .grille-recettes .badge-temps {
@@ -1534,10 +1782,81 @@ button.discret.danger {
 }
 
 /* Une recette déjà retenue se repère en parcourant la grille, pas
-   seulement à l'icône du petit rond posé dessus. */
-.carte-recette[data-panier='true'] {
-  outline: 3px solid var(--accent);
-  outline-offset: -3px;
+   seulement à l'icône du petit rond posé dessus. Le liseré est un calque
+   posé par-dessus la carte plutôt qu'un `outline` : la vignette, en
+   position relative, peignait sa photo au-dessus de l'outline, qui ne
+   bordait plus que le bas de la carte. */
+.carte-recette {
+  position: relative;
+}
+
+.carte-recette[data-panier='true']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 3px var(--accent);
+  pointer-events: none;
+  animation: lisere-entree var(--court4) var(--sortie);
+}
+
+@keyframes lisere-entree {
+  from {
+    opacity: 0;
+  }
+}
+
+/* L'ajout se sent sous le doigt : le rond gonfle d'un cran et une onde
+   part de lui, la coche tourne en place du plus. Le rebond reste court,
+   l'onde s'efface en même temps que la couleur finit de changer. */
+.bouton-ajout[aria-pressed='true'] {
+  animation: ajout-rebond var(--moyen2) var(--ressort);
+}
+
+.bouton-ajout[aria-pressed='true'] svg {
+  animation: ajout-icone var(--moyen2) var(--sortie);
+}
+
+.bouton-ajout-flottant::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--terracotta);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.bouton-ajout-flottant[aria-pressed='true']::after {
+  animation: ajout-onde var(--long2) var(--sortie);
+}
+
+@keyframes ajout-rebond {
+  0% {
+    transform: scale(0.82);
+  }
+  60% {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes ajout-icone {
+  from {
+    transform: rotate(-90deg) scale(0.4);
+    opacity: 0;
+  }
+}
+
+@keyframes ajout-onde {
+  from {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.8);
+  }
 }
 
 .carte-recette[data-panier='true'] .carte-recette-corps {
@@ -1723,6 +2042,42 @@ button.discret.danger {
   border-color: var(--accent);
   color: var(--sur-accent);
   transform: scale(1.05);
+}
+
+/* La coche se trace, du coin bas vers la pointe, pendant que la case
+   rebondit : le geste qu'on fait avec un stylo sur une liste papier. Le
+   rebond est court (≤ 150 ms, la règle de `--ressort`), le trait suit. */
+.rangee[data-coche='true'] .case svg path {
+  stroke-dasharray: 22;
+  animation: coche-tracer var(--court4) var(--sortie) 60ms backwards;
+}
+
+.rangee[data-coche='true'] .case {
+  animation: case-rebond var(--court3) var(--ressort);
+}
+
+@keyframes coche-tracer {
+  from {
+    stroke-dashoffset: 22;
+  }
+}
+
+@keyframes case-rebond {
+  from {
+    transform: scale(0.8);
+  }
+}
+
+/* Le trait qui barre arrive en fondu plutôt que d'un coup. */
+.rangee .nom,
+.rangee .qte {
+  text-decoration-color: transparent;
+  transition: text-decoration-color var(--court4) var(--standard), color var(--court4) var(--standard);
+}
+
+.rangee[data-coche='true'] .nom,
+.rangee[data-coche='true'] .qte {
+  text-decoration-color: currentColor;
 }
 
 /* --- Boutons et sections --------------------------------------------------- */
@@ -2237,6 +2592,58 @@ button.discret.accent:active:not(:disabled) {
   filter: blur(32px);
 }
 
+/* Les plats de la semaine en éventail, en haut à droite de l'aperçu.
+   Chaque vignette est ronde, cerclée du fond de la carte pour se
+   détacher de sa voisine, et tournée d'un cran de plus que la
+   précédente : des assiettes posées en pile, pas des avatars alignés. */
+.pile-plats {
+  position: absolute !important;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.pile-plat {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  margin-left: -18px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: hsl(var(--teinte) 62% 88%);
+  box-shadow: 0 0 0 3px var(--carte-basse), var(--ombre);
+  transform: rotate(calc((var(--rang) - 1.5) * 7deg));
+  animation: pile-poser var(--moyen4) var(--sortie) backwards;
+  animation-delay: calc(var(--rang) * 60ms + 120ms);
+}
+
+.pile-plat img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pile-plat .assiette {
+  width: 124%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes pile-poser {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.7) rotate(-30deg);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .pile-plat {
+    background: hsl(var(--teinte) 26% 21%);
+  }
+}
+
 .carte-resume-detail {
   margin: 2px 0 0;
   font-size: 14px;
@@ -2626,6 +3033,38 @@ button.carte-panier-bouton .carte-panier-corps {
   }
 }
 
+/* Dans la vignette du panier, l'assiette déborde un peu du cadre : vue
+   de très près, comme une photo recadrée sur le plat. */
+.vignette-mini .assiette,
+.carte-prochaine-cuisson .assiette {
+  width: 118%;
+  transform: translate(-50%, -50%) rotate(var(--assiette-angle, 0deg));
+}
+
+.vignette-mini:has(.assiette) {
+  --carreau: hsl(var(--teinte) 55% 62% / 0.17);
+  background-image: linear-gradient(90deg, var(--carreau) 50%, transparent 0),
+    linear-gradient(var(--carreau) 50%, transparent 0);
+  background-size: 14px 14px;
+}
+
+/* Sur la tuile « prochaine cuisson », l'assiette s'écarte dans le coin
+   bas, à moitié hors cadre : le texte garde le haut de la tuile. */
+.carte-prochaine-cuisson .assiette {
+  width: 112px;
+  left: auto;
+  top: auto;
+  bottom: -30px;
+  right: -30px;
+  transform: none;
+}
+
+/* Le texte monte en haut de la tuile, l'assiette garde le coin bas. */
+.carte-prochaine-cuisson:has(.assiette) {
+  align-items: flex-start;
+  min-height: 150px;
+}
+
 .carte-panier-corps {
   flex: 1;
   min-width: 0;
@@ -2795,14 +3234,58 @@ button.carte-panier-bouton .carte-panier-corps {
 
 /* --- Écran de préparation (mode cuisson, avant "Commencer") -------------- */
 
+/* Les étapes numérotées dans des pastilles plutôt qu'avec les chiffres
+   du navigateur : le numéro se repère d'un coup d'œil en remontant la
+   liste, et la colonne de texte reste alignée à partir de 10. */
 .apercu-etapes {
   margin: 0 0 28px;
-  padding-left: 22px;
+  padding: 0;
+  list-style: none;
+  counter-reset: etape;
   line-height: 1.6;
 }
 
 .apercu-etapes li {
-  margin-bottom: 14px;
+  position: relative;
+  counter-increment: etape;
+  margin-bottom: 16px;
+  padding-left: 44px;
+  min-height: 30px;
+}
+
+.apercu-etapes li::before {
+  content: counter(etape);
+  position: absolute;
+  left: 0;
+  top: -1px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent-doux);
+  color: var(--accent);
+  font-family: var(--affichage);
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* Le plat en tête de l'écran de préparation : on sait ce qu'on va
+   cuisiner avant de lire la liste. Plus bas que la fiche — l'écran sert
+   à commencer, pas à regarder. */
+.cuisson-vignette {
+  aspect-ratio: 16 / 9;
+  margin: 16px 0 8px;
+  border-radius: var(--rayon-grand);
+  overflow: hidden;
+  box-shadow: var(--ombre);
+}
+
+.cuisson-vignette[data-sans-photo] .assiette {
+  width: 46%;
+  transform: translate(-50%, -50%);
 }
 
 /* --- Mode cuisson focus : plein écran sombre indépendant du thème
@@ -3487,15 +3970,120 @@ button.carte-panier-bouton .carte-panier-corps {
   text-align: center;
 }
 
+/* Le plat servi : la photo (ou l'assiette dessinée) dans un rond, la
+   coche en médaille sur son bord, et les confettis qui partent de
+   derrière. L'ensemble se pose en rebond — c'est la seule entrée de
+   l'app qui a le droit de dépasser : on fête quelque chose. */
+.ecran-fin-plat {
+  position: relative;
+  width: 168px;
+  height: 168px;
+  margin: 0 auto 32px;
+}
+
+.ecran-fin-vignette {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: hsl(var(--teinte) 26% 21%);
+  box-shadow: 0 0 0 6px rgb(255 248 239 / 0.08), 0 20px 48px -12px rgb(0 0 0 / 0.6);
+  animation: fin-plat var(--long2) var(--ressort) backwards;
+}
+
+.ecran-fin-vignette img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ecran-fin-vignette .assiette {
+  width: 112%;
+  transform: translate(-50%, -50%);
+}
+
 .ecran-fin-coche {
-  width: 88px;
-  height: 88px;
-  margin: 0 auto 28px;
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: #a6d47e;
   color: #0c2000;
   display: grid;
   place-items: center;
+  box-shadow: 0 0 0 5px #201b0c;
+  animation: fin-coche var(--moyen4) var(--ressort) 320ms backwards;
+}
+
+.ecran-fin-coche svg path {
+  stroke-dasharray: 22;
+  animation: coche-tracer var(--moyen2) var(--sortie) 520ms backwards;
+}
+
+@keyframes fin-plat {
+  from {
+    opacity: 0;
+    transform: scale(0.6) rotate(-25deg);
+  }
+}
+
+@keyframes fin-coche {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+.confettis {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.confettis span {
+  position: absolute;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: confetti 1.4s var(--sortie) calc(250ms + var(--delai)) forwards;
+}
+
+.confettis span[data-forme='1'] {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.confettis span[data-forme='2'] {
+  width: 5px;
+  height: 16px;
+}
+
+/* Chaque confetti part du centre, monte, s'écarte de son `--x`, tourne,
+   puis retombe en s'effaçant — un seul keyframe, les écarts viennent des
+   variables posées par confetti. */
+@keyframes confetti {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0);
+  }
+  45% {
+    opacity: 1;
+    transform: translate(var(--x), -150px) rotate(var(--angle));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--x) * 1.25), 40px) rotate(calc(var(--angle) * 2.5));
+  }
 }
 
 .ecran-fin h1 {
@@ -3566,6 +4154,33 @@ button.carte-panier-bouton .carte-panier-corps {
 
 .vide p {
   margin: 0;
+}
+
+/* Une assiette vide, fourchette et couteau posés à côté : l'état vide
+   dit la même chose que sa phrase, mais d'un coup d'œil. Un fond plutôt
+   qu'un élément : les cinq écrans vides l'ont sans rien changer à leur
+   balisage. */
+.vide::before {
+  content: '';
+  display: block;
+  width: 140px;
+  height: 90px;
+  margin: -8px auto 20px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 90'%3E%3Cellipse cx='71' cy='48' rx='38' ry='37' fill='%23e3d8bd' opacity='.35'/%3E%3Ccircle cx='70' cy='45' r='38' fill='%23fffdf8' stroke='%23e3d8bd' stroke-width='1.5'/%3E%3Ccircle cx='70' cy='45' r='26' fill='%23f6efe2' stroke='%23e3d8bd' stroke-width='1'/%3E%3Cpath d='M60 30a18 18 0 0 1 16-6' fill='none' stroke='%23fff' stroke-opacity='.8' stroke-width='2.5' stroke-linecap='round'/%3E%3Cg fill='none' stroke='%23b9bfad' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M18 14v18M13 14v12a5 5 0 0 0 10 0V14M18 32v44'/%3E%3Cpath d='M122 76V14c-6 4-8 14-8 26h8'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  animation: vide-poser var(--moyen4) var(--sortie) backwards;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vide::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 90'%3E%3Cellipse cx='71' cy='48' rx='38' ry='37' fill='%2345412f' opacity='.35'/%3E%3Ccircle cx='70' cy='45' r='38' fill='%232c2920' stroke='%2345412f' stroke-width='1.5'/%3E%3Ccircle cx='70' cy='45' r='26' fill='%23262319' stroke='%2345412f' stroke-width='1'/%3E%3Cpath d='M60 30a18 18 0 0 1 16-6' fill='none' stroke='%23fff' stroke-opacity='.12' stroke-width='2.5' stroke-linecap='round'/%3E%3Cg fill='none' stroke='%235d6152' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M18 14v18M13 14v12a5 5 0 0 0 10 0V14M18 32v44'/%3E%3Cpath d='M122 76V14c-6 4-8 14-8 26h8'/%3E%3C/g%3E%3C/svg%3E");
+  }
+}
+
+@keyframes vide-poser {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.94);
+  }
 }
 
 .bouton-flottant {
@@ -4991,5 +5606,80 @@ html[data-gele='true'] body {
 
   .panneau-ajout {
     padding: 24px;
+  }
+}
+
+/* --- Vue web d'une app sociale ---------------------------------------------
+   Conseil, pas alerte : la surface basse des cartes, le texte à l'encre,
+   et l'action en discret accentué. Posé au-dessus de l'écran Proposer. */
+.bandeau-integre {
+  margin: 0 0 16px;
+  padding: 16px 16px 10px;
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+  animation: accueil-entree var(--moyen4) var(--sortie) both;
+}
+
+.bandeau-integre p {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--encre-douce);
+  text-wrap: pretty;
+}
+
+.bandeau-integre-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.bandeau-integre-actions .discret {
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* --- Panier : la photo et le titre ouvrent la fiche ------------------------
+   Remis à plat : un bouton qui garde l'allure de la vignette et du titre,
+   avec pour seul signe l'appui — la vignette s'enfonce, le titre prend
+   l'accent au survol. */
+button.vignette-mini-bouton {
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  transition: transform var(--court3) var(--ressort);
+}
+
+button.vignette-mini-bouton:active {
+  transform: scale(0.95);
+}
+
+.titre-panier-bouton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  /* La cible déborde un peu du texte : un titre d'une ligne fait moins
+     de 30 px de haut, en dessous d'un pouce. */
+  margin: -6px 0;
+  padding: 6px 0;
+}
+
+.titre-panier-bouton:active {
+  color: var(--accent);
+}
+
+@media (hover: hover) {
+  .titre-panier-bouton:hover {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 }

@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ChampCode from '../components/ChampCode'
 import Icone from '../components/Icone'
 import { LONGUEUR_CODE } from '../lib/codeFoyer'
 import { useLangue } from '../lib/i18n'
 import type { FoyerPrecedent } from '../lib/local'
 import { partageActif } from '../lib/sync'
+import { navigateurIntegre } from '../lib/navigateurIntegre'
+import { mesurer } from '../lib/mesure'
 
 interface Props {
   onCreer: () => Promise<void>
@@ -15,6 +17,12 @@ interface Props {
   precedent: FoyerPrecedent | null
   onReprendre: () => Promise<boolean>
   onOublierPrecedent: () => void
+  /**
+   * Le titre de la recette qu'un lien `#/r/<id>` demandait : arrivé d'une
+   * page recette, on sait ce que la personne venait voir, et le bouton le
+   * lui promet plutôt qu'un catalogue en général.
+   */
+  recetteAttendue?: string | null
 }
 
 /** Là où l'attente et l'erreur s'affichent : à côté du geste qui les a produites. */
@@ -35,8 +43,17 @@ export default function Bienvenue({
   precedent,
   onReprendre,
   onOublierPrecedent,
+  recetteAttendue = null,
 }: Props) {
   const { t } = useLangue()
+  const appSociale = navigateurIntegre()
+
+  // Le haut de l'entonnoir : sans lui, on voit combien de maisons sont
+  // créées mais pas combien de visiteurs sont repartis sans en créer.
+  useEffect(() => {
+    mesurer('accueil_vu', { entree: recetteAttendue ? 'recette' : 'directe', integre: appSociale ?? 'non' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const [code, setCode] = useState('')
   const [enCours, setEnCours] = useState<Zone | null>(null)
   const [erreur, setErreur] = useState<{ zone: Zone; texte: string } | null>(null)
@@ -73,6 +90,7 @@ export default function Bienvenue({
       // désactivées). Cet écran est le seul endroit où on puisse encore le
       // lire — Réglages n'est pas atteignable tant qu'aucun foyer n'existe.
       const texte = e instanceof Error && e.message ? e.message : messages.panne
+      if (zone === 'creation') mesurer('creation_echouee')
       setErreur({ zone, texte })
       setEnCours(null)
     }
@@ -136,12 +154,47 @@ export default function Bienvenue({
           </span>
           <p className="accueil-hero-marque">FFFood</p>
           <h1 className="accueil-hero-titre">
-            <span className="accueil-hero-question">{t('bienvenue.question')}</span>
+            <span className="accueil-hero-question">
+              <span className="accueil-hero-rature">{t('bienvenue.question')}</span>
+            </span>
             <span className="accueil-hero-reponse">{t('bienvenue.reponse')}</span>
           </h1>
           <p className="accueil-hero-baseline">{t('bienvenue.intro')}</p>
+
+          {/* L'action tient dans la photo, sous la promesse : c'est le seul
+              bouton qu'un visiteur venu d'une vidéo doit trouver, et il
+              devait jusqu'ici faire défiler plus d'un écran pour y arriver. */}
+          <div className="accueil-hero-actions">
+            {recetteAttendue && (
+              <p className="accueil-hero-attendue">{t('bienvenue.recetteAttendue', { titre: recetteAttendue })}</p>
+            )}
+            {messageErreur('creation')}
+            <button className="principal accueil-hero-cta" onClick={creer} disabled={enCours !== null}>
+              {enCours === 'creation'
+                ? t('bienvenue.creation')
+                : recetteAttendue
+                  ? t('bienvenue.voirLaRecette')
+                  : t('bienvenue.voirLesRecettes')}
+              {enCours !== 'creation' && <Icone nom="suivant" taille={20} />}
+            </button>
+            <p className="accueil-hero-note">
+              {t('bienvenue.ctaNote')}{' '}
+              <a
+                className="accueil-hero-code"
+                href="#rejoindre"
+                onClick={(e) => {
+                  e.preventDefault()
+                  document.getElementById('rejoindre')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                }}
+              >
+                {t('bienvenue.jaiUnCode')}
+              </a>
+            </p>
+          </div>
         </div>
       </div>
+
+      {appSociale && <p className="accueil-note accueil-integre">{t('bienvenue.navigateurIntegre', { app: appSociale })}</p>}
 
       <h2 className="accueil-comment-titre">{t('bienvenue.commentTitre')}</h2>
       <ol className="accueil-comment">
@@ -165,7 +218,7 @@ export default function Bienvenue({
         </li>
         <li>
           <span className="accueil-comment-pastille" aria-hidden="true">
-            <Icone nom="grill" taille={18} />
+            <Icone nom="marmite" taille={18} />
           </span>
           <div>
             <b>{t('bienvenue.etapeCuisineTitre')}</b>
@@ -207,30 +260,9 @@ export default function Bienvenue({
           </section>
         )}
 
-        {/* Deux chemins de même rang, et non une action et son repli.
-            Chacun dit ce qu'il fait avant d'être choisi : « créer » et
-            « rejoindre » ne se distinguent que pour qui sait déjà comment
-            l'app partage — les autres ont une chance sur deux de fonder
-            une maison vide à côté de celle qu'on venait de leur ouvrir. */}
-        <section className="accueil-voie">
-          <h2 className="accueil-voie-titre">
-            <span className="accueil-voie-pastille" aria-hidden="true">
-              <Icone nom="plus" taille={16} />
-            </span>
-            {t('bienvenue.creerMaMaison')}
-          </h2>
-          <p className="accueil-voie-aide">{t('bienvenue.creerAide')}</p>
-          {messageErreur('creation')}
-          <button className="principal" onClick={creer} disabled={enCours !== null}>
-            {enCours === 'creation' ? t('bienvenue.creation') : t('bienvenue.creerMaMaison')}
-          </button>
-        </section>
-
-        <p className="accueil-ou">
-          <span>{t('bienvenue.ou')}</span>
-        </p>
-
-        <section className="accueil-voie">
+        {/* Créer est l'action du haut de page ; rejoindre reste ici, pour
+            qui a reçu un code — le lien « On m'a donné un code » y mène. */}
+        <section className="accueil-voie" id="rejoindre">
           <h2 className="accueil-voie-titre">
             <span className="accueil-voie-pastille" aria-hidden="true">
               <Icone nom="magasin" taille={16} />

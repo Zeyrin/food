@@ -26,6 +26,8 @@ interface Props {
    */
   ajoutOuvert: boolean
   onAjoutOuvert: (ouvert: boolean) => void
+  /** Un avis posé en tête du catalogue, sous l'en-tête (voir `BandeauIntegre`). */
+  bandeau?: React.ReactNode
 }
 
 const TEMPS = [20, 30, 45] as const
@@ -45,6 +47,7 @@ export default function Propose({
   onAjouterRecette,
   ajoutOuvert,
   onAjoutOuvert,
+  bandeau,
 }: Props) {
   const { t } = useLangue()
   const [recherche, setRecherche] = useState('')
@@ -195,6 +198,7 @@ export default function Propose({
       </header>
 
       <div className="corps-propose">
+        {bandeau}
         <div className="zone-ajout" ref={ancreAjout}>
           {ajoutOuvert ? (
             <AjoutRecette
@@ -334,7 +338,7 @@ export default function Propose({
                 }
               >
                 <div className="vignette" data-sans-photo={r.image ? undefined : 'true'} aria-hidden="true">
-                  {!r.image && <VignettePlaceholder titre={r.titre} />}
+                  {!r.image && <VignettePlaceholder recette={r} />}
                   <ImageRecette src={r.image} />
                   <span className="badge-temps">
                     <Icone nom="minuteur" taille={12} /> {t('propose.minutes', { n: r.temps })}
@@ -346,6 +350,9 @@ export default function Propose({
                   )}
                   <button
                     className="bouton-ajout bouton-ajout-flottant"
+                    // Le premier plat de la grille est celui que la visite
+                    // guidée fait ajouter (voir data/onboarding.ts).
+                    data-tour={i === 0 ? 'plat-exemple' : undefined}
                     onClick={(e) => {
                       e.stopPropagation()
                       basculer(r)

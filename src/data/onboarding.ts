@@ -15,16 +15,26 @@ import type { Onglet } from '../types'
 export interface EtapeVisiteStructure {
   cible: string | null
   onglet: Onglet | null
+  /**
+   * L'étape attend un geste dans l'app plutôt qu'un appui sur « Suivant » :
+   * `ajout`, c'est un plat qui entre au panier. La visite avance d'elle-même
+   * quand il arrive — « Suivant » reste là pour qui ne veut pas choisir.
+   */
+  attend?: 'ajout'
 }
 
+/**
+ * Trois étapes, et la première se fait avec le doigt.
+ *
+ * La visite d'avant faisait neuf cartes et décrivait l'interface — la
+ * recherche, les filtres, l'ajout par IA, les réglages — à quelqu'un qui
+ * n'avait encore rien choisi. C'est l'écran où décroche le visiteur venu
+ * d'une vidéo de quinze secondes. On lui fait vivre à la place le seul
+ * moment qui explique l'app : il ajoute un plat, et la liste de courses
+ * existe déjà. Le reste se découvre en s'en servant.
+ */
 export const VISITE_GUIDEE: EtapeVisiteStructure[] = [
-  { cible: null, onglet: 'propose' },
-  { cible: 'recherche-propose', onglet: 'propose' },
-  { cible: 'filtres-propose', onglet: 'propose' },
-  { cible: 'ajout-propose', onglet: 'propose' },
-  { cible: 'nav-panier', onglet: 'panier' },
+  { cible: 'plat-exemple', onglet: 'propose', attend: 'ajout' },
   { cible: 'nav-liste', onglet: 'liste' },
   { cible: 'nav-cuisson', onglet: 'cuisson' },
-  { cible: 'reglages', onglet: null },
-  { cible: null, onglet: 'propose' },
 ]

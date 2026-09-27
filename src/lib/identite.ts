@@ -6,8 +6,17 @@
 export function teinteRecette(titre: string): number {
   let h = 0
   for (let i = 0; i < titre.length; i++) h = (h * 31 + titre.charCodeAt(i)) % 360
-  return h
+  return NAPPES[h % NAPPES.length]!
 }
+
+/**
+ * Les teintes de nappe permises. Tout le cercle chromatique était ouvert :
+ * un magenta sortait à côté d'un cyan, et la grille se lisait comme un
+ * nuancier plutôt que comme une table. On garde une gamme de linge de
+ * cuisine — sauge, terracotta, moutarde, ciel, rose poudré, menthe — qui
+ * reste dans la palette sauge/terracotta de l'app.
+ */
+const NAPPES = [96, 14, 40, 205, 352, 158, 28, 222] as const
 
 /**
  * Choix stable dans une liste de phrases, dérivé du titre : la même

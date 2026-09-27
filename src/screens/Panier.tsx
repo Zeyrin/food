@@ -7,6 +7,7 @@ import { useLangue } from '../lib/i18n'
 import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
+import AssietteRecette from '../components/AssietteRecette'
 
 interface Props {
   recipes: Recipe[]
@@ -14,6 +15,8 @@ interface Props {
   historique: Historique
   onBasket: (basket: BasketEntry[]) => void
   onVersPropose: () => void
+  /** Ouvre la fiche d'un plat retenu : on veut relire la recette avant d'acheter. */
+  onDetail: (recipeId: string) => void
   onVersListe: () => void
   onAjouterRecette: () => void
   /** Vide le panier *et* la liste (cases cochées comprises) — voir App.tsx. */
@@ -26,6 +29,7 @@ export default function Panier({
   historique,
   onBasket,
   onVersPropose,
+  onDetail,
   onVersListe,
   onAjouterRecette,
   onViderPanier,
@@ -176,6 +180,25 @@ export default function Panier({
           temps de cuisine ça représente, et ce qu'il reste à cuisiner. */}
       <section className="carte-resume carte-resume-semaine">
         <p className="carte-resume-label">{t('panier.apercuSemaine')}</p>
+        {/* La semaine en un coup d'œil : les plats retenus, empilés en
+            éventail dans le coin. Quatre au plus — au-delà, l'éventail
+            déborde sur le titre, et le nombre est déjà écrit en grand. */}
+        <div className="pile-plats" aria-hidden="true">
+          {basket.slice(0, 4).map((e, i) => {
+            const r = byId.get(e.recipeId)
+            if (!r) return null
+            return (
+              <span
+                key={e.recipeId}
+                className="pile-plat"
+                style={{ '--teinte': teinteRecette(r.titre), '--rang': i } as React.CSSProperties}
+              >
+                {!r.image && <AssietteRecette titre={r.titre} ingredients={r.ingredients} />}
+                <ImageRecette src={r.image} />
+              </span>
+            )
+          })}
+        </div>
         <div className="carte-resume-rangee">
           <div>
             <h2 className="carte-resume-nombre">{t('panier.plats', { n: basket.length, s: basket.length > 1 ? 's' : '' })}</h2>
@@ -203,17 +226,30 @@ export default function Panier({
           if (!r) return null
           return (
             <div className="carte carte-panier" key={entree.recipeId}>
-              <div
-                className="vignette-mini"
+              {/* La photo et le titre ouvrent la fiche, comme une carte du
+                  catalogue. Deux cibles pour un même geste : la photo hors
+                  de l'ordre de tabulation, le titre porte le nom lu. */}
+              <button
+                className="vignette-mini vignette-mini-bouton"
+                tabIndex={-1}
                 aria-hidden="true"
+                onClick={() => onDetail(r.id)}
                 style={{ '--teinte': teinteRecette(r.titre) } as React.CSSProperties}
               >
-                {r.titre.charAt(0)}
+                {!r.image && <AssietteRecette titre={r.titre} ingredients={r.ingredients} />}
                 <ImageRecette src={r.image} />
-              </div>
+              </button>
               <div className="carte-panier-corps">
                 <div className="ligne-titre-panier">
-                  <h3>{r.titre}</h3>
+                  <h3>
+                    <button
+                      className="titre-panier-bouton"
+                      onClick={() => onDetail(r.id)}
+                      aria-label={t('panier.ouvrirRecette', { titre: r.titre })}
+                    >
+                      {r.titre}
+                    </button>
+                  </h3>
                   <button
                     className="bouton-rond-discret bouton-retirer"
                     onClick={() => retirer(entree.recipeId)}

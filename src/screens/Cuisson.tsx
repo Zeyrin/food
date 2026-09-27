@@ -10,6 +10,24 @@ import { recetteAffichee } from '../lib/traduireRecette'
 import BandeauMinuteur from '../components/BandeauMinuteur'
 import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
+import ImageRecette from '../components/ImageRecette'
+import AssietteRecette from '../components/AssietteRecette'
+import VignettePlaceholder from '../components/VignettePlaceholder'
+import { teinteRecette } from '../lib/identite'
+
+/**
+ * Les confettis de fin de recette : positions, teintes et délais fixés
+ * une fois pour toutes plutôt que tirés au hasard, pour que l'écran rende
+ * pareil d'une fois sur l'autre — et qu'une capture d'écran ne dépende
+ * pas du moment où on l'a prise.
+ */
+const CONFETTIS = Array.from({ length: 18 }, (_, i) => ({
+  x: ((i * 37) % 100) - 50,
+  delai: (i % 6) * 70,
+  angle: (i * 53) % 360,
+  couleur: ['#a6d47e', '#ffb3b0', '#f2d24a', '#fff8ef', '#8fd3d7', '#eb9a45'][i % 6]!,
+  forme: i % 3,
+}))
 
 interface Props {
   recette: Recipe
@@ -75,6 +93,19 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
 
         <h1>{affichee.titre}</h1>
 
+        <div
+          className="vignette cuisson-vignette"
+          data-sans-photo={recette.image ? undefined : 'true'}
+          aria-hidden="true"
+          style={{ '--teinte': teinteRecette(recette.titre) } as React.CSSProperties}
+        >
+          {!recette.image && <VignettePlaceholder recette={recette} />}
+          <ImageRecette src={recette.image} />
+          <span className="badge-temps">
+            <Icone nom="minuteur" taille={14} /> {t('detail.minutes', { n: recette.temps })}
+          </span>
+        </div>
+
         <h2>{t('cuisson.titreIngredients', { n: affichee.ingredients.length })}</h2>
         {affichee.ingredients.map((ing) => (
           <div className="rangee rangee-lecture" key={ing.nom}>
@@ -105,7 +136,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
                   setIndex(reprise)
                 }}
               >
-                <Icone nom="grill" taille={20} />{' '}
+                <Icone nom="marmite" taille={20} />{' '}
                 {t('cuisson.reprendre', { n: reprise + 1, total: recette.etapes.length })}
               </button>
               <button
@@ -129,7 +160,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
                 setIndex(0)
               }}
             >
-              <Icone nom="grill" taille={20} />{' '}
+              <Icone nom="marmite" taille={20} />{' '}
               {t('cuisson.commencer', {
                 total: recette.etapes.length,
                 s: recette.etapes.length > 1 ? 's' : '',
@@ -145,8 +176,35 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
     return (
       <div className="cuisson-focus">
         <div className="ecran-fin">
-          <div className="ecran-fin-coche" aria-hidden="true">
-            <Icone nom="coche" taille={40} />
+          {/* Le plat servi, marqué de la coche, sous une pluie de
+              confettis : la recette est finie, l'écran le fête. */}
+          <div className="ecran-fin-plat" aria-hidden="true">
+            <div className="confettis">
+              {CONFETTIS.map((c, i) => (
+                <span
+                  key={i}
+                  data-forme={c.forme}
+                  style={
+                    {
+                      '--x': `${c.x * 3.4}px`,
+                      '--delai': `${c.delai}ms`,
+                      '--angle': `${c.angle}deg`,
+                      background: c.couleur,
+                    } as React.CSSProperties
+                  }
+                />
+              ))}
+            </div>
+            <div
+              className="ecran-fin-vignette"
+              style={{ '--teinte': teinteRecette(recette.titre) } as React.CSSProperties}
+            >
+              {!recette.image && <AssietteRecette titre={recette.titre} ingredients={recette.ingredients} />}
+              <ImageRecette src={recette.image} />
+            </div>
+            <div className="ecran-fin-coche">
+              <Icone nom="coche" taille={28} />
+            </div>
           </div>
           <h1>{t('cuisson.cetaitComment')}</h1>
           <p>{t('cuisson.finTexte')}</p>

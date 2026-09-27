@@ -46,6 +46,7 @@ import Bienvenue from './screens/Bienvenue'
 import TourGuide from './components/TourGuide'
 import BandeauMinuteur from './components/BandeauMinuteur'
 import BandeauMiseAJour from './components/BandeauMiseAJour'
+import BandeauIntegre from './components/BandeauIntegre'
 import PanneauMinuteurs from './components/PanneauMinuteurs'
 import { useMinuteurs } from './hooks/useMinuteurs'
 import { ecouterClicNotification } from './lib/minuteurs'
@@ -59,6 +60,7 @@ import { useDecalageBarreOutils } from './hooks/useDecalageBarreOutils'
 import { useEnteteDefilee } from './hooks/useEnteteDefilee'
 import { useLangue } from './lib/i18n'
 import { mesurer } from './lib/mesure'
+import { titreRecette } from './lib/traduireRecette'
 
 const CORPUS: Recipe[] = corpus as Recipe[]
 
@@ -108,7 +110,7 @@ function lirePileSauvegardee(): Vue[] {
 }
 
 export default function App() {
-  const { t } = useLangue()
+  const { t, langue } = useLangue()
   useDecalageBarreOutils()
   useEnteteDefilee()
   const [pile, setPile] = useState<Vue[]>(lirePileSauvegardee)
@@ -548,7 +550,10 @@ export default function App() {
     if (!recipeId) return
     detailOuvertDepuisUrl.current = true
     history.replaceState(history.state, '', location.pathname + location.search)
-    if (recipes.some((r) => r.id === recipeId)) irVers({ type: 'detail', recipeId })
+    if (recipes.some((r) => r.id === recipeId)) {
+      mesurer('fiche_ouverte', { source: 'lien' })
+      irVers({ type: 'detail', recipeId })
+    }
   }, [recipes, irVers])
 
   // L'historique suit le même chemin que la liste : il vit dans le
@@ -667,8 +672,15 @@ export default function App() {
   }
 
   if (!foyer) {
+    // Arrivé par le bouton « Ouvrir dans FFFood » d'une page recette :
+    // le fragment `#/r/<id>` est encore là (il ne se nettoie qu'une fois
+    // le catalogue chargé, voir plus haut), et l'accueil peut promettre
+    // ce plat-là plutôt qu'un catalogue en général.
+    const idAttendu = location.hash.match(/^#\/r\/([a-z0-9-]+)$/i)?.[1]
+    const attendue = idAttendu ? CORPUS.find((r) => r.id === idAttendu) : undefined
     return (
       <Bienvenue
+        recetteAttendue={attendue ? titreRecette(attendue, langue) : null}
         onCreer={creer}
         onRejoindre={rejoindre}
         onRejoindreLien={rejoindreParLien}
@@ -839,10 +851,17 @@ export default function App() {
               historique={historique}
               basket={basket}
               onBasket={majBasket}
-              onDetail={(recipeId) => irVers({ type: 'detail', recipeId })}
+              onDetail={(recipeId) => {
+                mesurer('fiche_ouverte', { source: 'catalogue' })
+                irVers({ type: 'detail', recipeId })
+              }}
               onAjouterRecette={ajouter}
               ajoutOuvert={ajoutOuvert}
               onAjoutOuvert={setAjoutOuvert}
+              // Pas pendant la visite guidée : elle mesure la position du
+              // premier plat, et un bandeau qui s'insère au-dessus la
+              // décalerait. Il apparaît juste après.
+              bandeau={!visiteEnCours && <BandeauIntegre foyer={foyer} />}
             />
           )}
 
@@ -853,6 +872,10 @@ export default function App() {
               historique={historique}
               onBasket={majBasket}
               onVersPropose={() => changerOnglet('propose')}
+              onDetail={(recipeId) => {
+                mesurer('fiche_ouverte', { source: 'panier' })
+                irVers({ type: 'detail', recipeId })
+              }}
               onVersListe={() => changerOnglet('liste')}
               onAjouterRecette={ouvrirAjout}
               onViderPanier={viderPanier}
@@ -906,9 +929,9 @@ export default function App() {
         {(
           [
             ['propose', 'etoile', t('app.proposer')],
-            ['panier', 'panier', basket.length ? t('app.panier', { n: basket.length }) : t('panier.titre')],
+            ['panier', 'panier', t('panier.titre')],
             ['liste', 'liste', t('app.liste')],
-            ['cuisson', 'grill', t('app.cuisson')],
+            ['cuisson', 'marmite', t('app.cuisson')],
           ] as const
         ).map(([cle, icone, label]) => (
           <button
@@ -916,11 +939,22 @@ export default function App() {
             data-tour={`nav-${cle}`}
             onClick={() => changerOnglet(cle)}
             aria-current={estOnglet && onglet === cle ? 'page' : undefined}
+            // Le nombre de plats passe du libellé à une pastille sur
+            // l'icône ; le nom accessible, lui, le garde en toutes lettres.
+            aria-label={cle === 'panier' && basket.length ? t('app.panier', { n: basket.length }) : undefined}
           >
             {/* L'icône vit dans sa propre pastille : c'est elle que la
                 sélection colore, pas le bouton entier (voir styles.css). */}
             <span className="onglet-pastille">
               <Icone nom={icone} taille={22} />
+              {cle === 'panier' && basket.length > 0 && (
+                // La clé change avec le nombre : React remonte la
+                // pastille, et son animation de rebond rejoue à chaque
+                // plat ajouté ou retiré, où qu'on soit dans l'app.
+                <span className="onglet-compteur" key={basket.length} aria-hidden="true">
+                  {basket.length}
+                </span>
+              )}
             </span>
             {label}
           </button>
@@ -928,7 +962,12 @@ export default function App() {
       </nav>
 
       {visiteEnCours && (
-        <TourGuide ongletActuel={onglet} onOnglet={forcerOnglet} onTerminer={terminerOnboarding} />
+        <TourGuide
+          ongletActuel={onglet}
+          nbPanier={basket.length}
+          onOnglet={forcerOnglet}
+          onTerminer={terminerOnboarding}
+        />
       )}
     </div>
   )

@@ -5,6 +5,7 @@ import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
+import VignettePlaceholder from '../components/VignettePlaceholder'
 
 interface Props {
   recette: Recipe
@@ -99,10 +100,11 @@ export default function DetailRecette({
 
       <div
         className="detail-vignette vignette"
+        data-sans-photo={recette.image ? undefined : 'true'}
         aria-hidden="true"
         style={{ '--teinte': teinteRecette(recette.titre) } as React.CSSProperties}
       >
-        {recette.titre.charAt(0)}
+        {!recette.image && <VignettePlaceholder recette={recette} avecPhrase />}
         <ImageRecette src={recette.image} />
         <span className="badge-temps">
           <Icone nom="minuteur" taille={14} /> {t('detail.minutes', { n: recette.temps })}
@@ -164,7 +166,7 @@ export default function DetailRecette({
         </button>
         <div className="rangee-boutons">
           <button className="discret" onClick={onCuisiner}>
-            <Icone nom="grill" taille={18} /> {t('detail.cuisiner')}
+            <Icone nom="marmite" taille={18} /> {t('detail.cuisiner')}
           </button>
           <button className="discret" onClick={onModifier}>
             {t('detail.modifier')}

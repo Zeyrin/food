@@ -70,6 +70,16 @@ d'accueil — il n'y a rien à perdre, on n'est encore nulle part. Dans Réglage
 frappe changerait la maison partagée : une faute de frappe suffirait. La sixième case
 remplie y ouvre donc une demande, et c'est le bouton qui l'exécute.
 
+**Le premier écran se lit en dix secondes, et son bouton tient dedans.** Le trafic arrive
+d'Instagram et de TikTok, sur un téléphone, souvent dans la vue web de l'app sociale. Le
+bouton principal est donc dans la photo d'accueil, visible sans défiler, et il dit « Voir
+les recettes » : il crée la maison quand même — c'est elle qui porte le panier —, mais le
+mot n'arrive que là où il sert, au partage. La visite guidée tient en trois étapes, dont la
+première se fait au doigt : on ajoute un plat, et la liste de courses existe déjà. Dans la
+vue web d'une app sociale, dont le stockage n'est pas celui de Safari ou Chrome, un bandeau
+propose de copier le lien de la maison pour la retrouver ailleurs
+(`src/lib/navigateurIntegre.ts`).
+
 **Ce qui traverse le réseau est ce qui se décide à deux** : la liste (cases cochées,
 produits écartés), le panier de la semaine qui voyage avec elle, le catalogue de recettes,
 et l'historique de cuisson — « on a mangé ça mardi » vaut pour les deux téléphones. Chaque
