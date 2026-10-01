@@ -28,9 +28,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy, rustfmt
+      # The compiler and its components come from wheel-up/rust-toolchain.toml,
+      # so CI lints with exactly what contributors run locally.
+      - name: Rust toolchain
+        run: rustup toolchain install
 
       - uses: Swatinem/rust-cache@v2
         with:
