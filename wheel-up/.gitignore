@@ -1,4 +1,0 @@
-/target
-*.wav
-!content/**/*.wav
-/screenshots
