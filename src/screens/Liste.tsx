@@ -11,6 +11,7 @@ import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 import AssietteRecette from '../components/AssietteRecette'
+import { NATIF, partagerTexte } from '../lib/natif'
 
 interface Props {
   items: ListItem[]
@@ -138,6 +139,10 @@ export default function Liste({
     const texte = composerTexte(restant)
     mesurer('liste_envoyee', { lignes: restant.length, partageNatif: 'share' in navigator ? 1 : 0 })
     try {
+      if (NATIF) {
+        await partagerTexte(t('liste.titrePartage'), texte)
+        return
+      }
       if (navigator.share) {
         await navigator.share({ title: t('liste.titrePartage'), text: texte })
         return
@@ -149,6 +154,8 @@ export default function Liste({
       // Fermer la feuille de partage sans choisir n'est pas un échec :
       // afficher un repli à ce moment-là serait absurde.
       if ((e as Error)?.name === 'AbortError') return
+      // Le plugin natif ne lève pas d'AbortError : il dit « canceled ».
+      if (NATIF && /cancel/i.test((e as Error)?.message ?? '')) return
       setTexteAPartager(texte)
     }
   }

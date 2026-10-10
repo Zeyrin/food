@@ -12,6 +12,7 @@ import type { ConfigMagasins } from '../lib/magasins'
 import { magasinDuRayon } from '../lib/magasins'
 import { RAYONS, RAYONS_ORDONNES, type RayonId } from '../types'
 import Icone from '../components/Icone'
+import { pageSite } from '../lib/plateforme'
 
 /**
  * Ni iOS ni Android n'exposent l'un l'API de l'autre : sur iPhone,
@@ -510,7 +511,7 @@ export default function Reglages({
       <h2>{t('reglages.donneesTitre')}</h2>
       <p className="aide">
         {t('reglages.donneesTexte')}{' '}
-        <a href="/donnees.html" target="_blank" rel="noopener noreferrer">
+        <a href={pageSite('/donnees.html')} target="_blank" rel="noopener noreferrer">
           {t('reglages.donneesLien')}
         </a>
         .
@@ -519,7 +520,7 @@ export default function Reglages({
       <h2>{t('reglages.creditsPhoto')}</h2>
       <p className="aide">
         {t('reglages.creditsPhotoTexte')}{' '}
-        <a href="/credits.html" target="_blank" rel="noopener noreferrer">
+        <a href={pageSite('/credits.html')} target="_blank" rel="noopener noreferrer">
           {t('reglages.voirListe')}
         </a>
         .

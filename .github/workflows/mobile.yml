@@ -1,0 +1,85 @@
+# Les deux apps des stores, construites depuis le même bundle que le site.
+# macOS coûte cher en minutes : ce workflow ne part que si le natif bouge,
+# ou à la main (onglet Actions → Mobile → Run).
+name: Mobile
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'android/**'
+      - 'ios/**'
+      - 'capacitor.config.ts'
+      - 'src/lib/natif.ts'
+      - '.github/workflows/mobile.yml'
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    env:
+      # Le contexte `secrets` n'est pas lisible dans un `if:` d'étape.
+      SIGNE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npm run build
+      - run: npx cap sync android
+
+      # Sans secrets, on sort un APK de debug à installer à la main. Avec
+      # eux, le bundle signé qu'on téléverse dans la Play Console.
+      - name: Keystore
+        if: env.SIGNE == 'true'
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/fffood.jks"
+
+      - name: APK de debug
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      - name: Bundle Play Store signé
+        if: env.SIGNE == 'true'
+        working-directory: android
+        run: >
+          ./gradlew bundleRelease
+          -Pandroid.injected.signing.store.file="$RUNNER_TEMP/fffood.jks"
+          -Pandroid.injected.signing.store.password="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+          -Pandroid.injected.signing.key.alias="${{ secrets.ANDROID_KEY_ALIAS }}"
+          -Pandroid.injected.signing.key.password="${{ secrets.ANDROID_KEY_PASSWORD }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fffood-android
+          path: |
+            android/app/build/outputs/apk/debug/*.apk
+            android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: ignore
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx cap sync ios
+
+      # Une compilation pour simulateur, sans signature : elle prouve que
+      # le projet et ses paquets Swift tiennent. L'archive pour l'App Store
+      # se fait dans Xcode, avec le compte Apple Developer (voir STORES.md).
+      - name: Build simulateur
+        working-directory: ios/App
+        run: >
+          xcodebuild -project App.xcodeproj -scheme App
+          -configuration Debug -sdk iphonesimulator
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO build
