@@ -53,6 +53,7 @@ import { ecouterClicNotification } from './lib/minuteurs'
 import { NATIF, ecouterClicNotificationNative } from './lib/natif'
 import { useMagasins } from './hooks/useMagasins'
 import Reglages from './screens/Reglages'
+import Logo from './components/Logo'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
 import { useEtatSynchro } from './hooks/useEtatSynchro'
@@ -668,9 +669,7 @@ export default function App() {
   if (!foyerCharge) {
     return (
       <div className="attente" role="status" aria-label={t('app.chargement')}>
-        <span className="accueil-sceau" aria-hidden="true">
-          <Icone nom="grill" taille={30} />
-        </span>
+        <Logo className="accueil-sceau" taille={68} />
       </div>
     )
   }

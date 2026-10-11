@@ -16,7 +16,7 @@
     "mobile": "npm run build && cap sync",
     "mobile:android": "npm run mobile && cap open android",
     "mobile:ios": "npm run mobile && cap open ios",
-    "mobile:assets": "node scripts/rasteriser-assets.mjs && capacitor-assets generate --iconBackgroundColor \"#1b3a2f\" --iconBackgroundColorDark \"#1b3a2f\" --splashBackgroundColor \"#fff8ef\" --splashBackgroundColorDark \"#16150f\" --android --ios"
+    "mobile:assets": "node scripts/rasteriser-assets.mjs && capacitor-assets generate --iconBackgroundColor \"#385e16\" --iconBackgroundColorDark \"#385e16\" --splashBackgroundColor \"#fff8ef\" --splashBackgroundColorDark \"#16150f\" --android --ios"
   },
   "dependencies": {
     "@capacitor-community/keep-awake": "^8.0.1",

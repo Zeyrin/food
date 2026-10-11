@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import ChampCode from '../components/ChampCode'
 import Icone from '../components/Icone'
+import Logo from '../components/Logo'
 import { LONGUEUR_CODE } from '../lib/codeFoyer'
 import { useLangue } from '../lib/i18n'
 import type { FoyerPrecedent } from '../lib/local'
@@ -149,9 +150,7 @@ export default function Bienvenue({
         <img className="accueil-hero-photo" src={PHOTO_HERO} alt="" aria-hidden="true" />
         <div className="accueil-hero-voile" aria-hidden="true" />
         <div className="accueil-hero-corps">
-          <span className="accueil-hero-sceau" aria-hidden="true">
-            <Icone nom="grill" taille={22} />
-          </span>
+          <Logo className="accueil-hero-sceau" taille={44} />
           <p className="accueil-hero-marque">FFFood</p>
           <h1 className="accueil-hero-titre">
             <span className="accueil-hero-question">
