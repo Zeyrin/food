@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { registerSW } from 'virtual:pwa-register'
+import { NATIF } from '../lib/natif'
 
 /**
  * Le service worker ne cherche une nouvelle version qu'au chargement de
@@ -52,6 +53,10 @@ export function useMiseAJour(): MiseAJour {
       url.searchParams.delete('maj')
       window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash)
     }
+
+    // Dans l'app des stores, les fichiers viennent du paquet installé :
+    // pas de service worker, la nouvelle version arrive par le store.
+    if (NATIF) return
 
     const majSW = registerSW({
       immediate: true,

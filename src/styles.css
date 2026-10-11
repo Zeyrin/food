@@ -324,14 +324,9 @@ p.aide a {
 /* Le sceau : le carré arrondi de l'icône d'app, seul repère de cet écran
    d'attente — et de l'écran de panne, qui le partage. */
 .accueil-sceau {
-  display: inline-grid;
-  place-items: center;
-  width: 68px;
-  height: 68px;
-  border-radius: 22px;
-  background: linear-gradient(to bottom, color-mix(in srgb, var(--accent) 90%, white), var(--accent));
-  color: var(--sur-accent);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), var(--ombre-nette);
+  display: block;
+  border-radius: 22%;
+  box-shadow: var(--ombre-nette);
 }
 
 .attente .accueil-sceau {
@@ -496,16 +491,10 @@ p.aide a {
 }
 
 .accueil-hero-sceau {
-  display: inline-grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  margin-bottom: 10px;
-  border-radius: 16px;
-  background: rgb(255 255 255 / 0.16);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.28);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  display: block;
+  margin: 0 auto 10px;
+  border-radius: 22%;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.28), 0 6px 18px -4px rgb(0 0 0 / 0.4);
 }
 
 .accueil-hero-marque {

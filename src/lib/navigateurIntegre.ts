@@ -11,6 +11,8 @@
  * Reconnue à l'agent utilisateur, que ces apps signent toutes. Une
  * inconnue répond `null` : on ne dérange personne sur une supposition.
  */
+import { originePartage } from './plateforme'
+
 const SIGNATURES: readonly [RegExp, string][] = [
   [/Instagram/i, 'Instagram'],
   [/BytedanceWebview|musical_ly|TikTok|ByteLocale/i, 'TikTok'],
@@ -28,5 +30,5 @@ export function navigateurIntegre(ua: string = typeof navigator === 'undefined' 
 
 /** L'adresse qui rouvre cette maison ailleurs : le lien de partage du foyer. */
 export function lienMaison(foyer: string): string {
-  return `${location.origin}/#/f/${foyer}`
+  return `${originePartage()}/#/f/${foyer}`
 }

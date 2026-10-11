@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { NATIF, garderEcranAllume } from '../lib/natif'
 
 /**
  * Garde l'écran allumé pendant la cuisson. Le verrou saute dès que
@@ -8,6 +9,11 @@ import { useEffect } from 'react'
  */
 export function useWakeLock(actif: boolean): void {
   useEffect(() => {
+    if (NATIF) {
+      if (!actif) return
+      void garderEcranAllume(true)
+      return () => void garderEcranAllume(false)
+    }
     if (!actif || !('wakeLock' in navigator)) return
 
     let verrou: WakeLockSentinel | null = null

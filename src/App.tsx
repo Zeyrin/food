@@ -50,8 +50,10 @@ import BandeauIntegre from './components/BandeauIntegre'
 import PanneauMinuteurs from './components/PanneauMinuteurs'
 import { useMinuteurs } from './hooks/useMinuteurs'
 import { ecouterClicNotification } from './lib/minuteurs'
+import { NATIF, ecouterClicNotificationNative } from './lib/natif'
 import { useMagasins } from './hooks/useMagasins'
 import Reglages from './screens/Reglages'
+import Logo from './components/Logo'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
 import { useEtatSynchro } from './hooks/useEtatSynchro'
@@ -350,7 +352,10 @@ export default function App() {
   // Toucher la notification d'un minuteur ramène ici : le service worker
   // focalise la fenêtre (ou la rouvre), et nous dit d'ouvrir le panneau —
   // y compris s'il avait été refermé pendant que ça sonnait encore.
-  useEffect(() => ecouterClicNotification(() => setPanneauMinuteurs(true)), [])
+  useEffect(() => {
+    const ouvrir = () => setPanneauMinuteurs(true)
+    return NATIF ? ecouterClicNotificationNative(ouvrir) : ecouterClicNotification(ouvrir)
+  }, [])
 
   // Le panier n'a pas d'état à lui : il fait partie de la liste du foyer.
   // Une seule source de vérité, une seule écriture réseau — impossible que
@@ -664,9 +669,7 @@ export default function App() {
   if (!foyerCharge) {
     return (
       <div className="attente" role="status" aria-label={t('app.chargement')}>
-        <span className="accueil-sceau" aria-hidden="true">
-          <Icone nom="grill" taille={30} />
-        </span>
+        <Logo className="accueil-sceau" taille={68} />
       </div>
     )
   }

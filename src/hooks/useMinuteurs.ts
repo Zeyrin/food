@@ -9,6 +9,12 @@ import {
   notifierMinuteur,
   type Minuteur,
 } from '../lib/minuteurs'
+import {
+  NATIF,
+  demanderNotificationsNatives,
+  fermerNotificationsNatives,
+  programmerMinuteurs,
+} from '../lib/natif'
 
 /**
  * Horloge partagée : un seul battement pour tous les minuteurs.
@@ -84,6 +90,12 @@ export function useMinuteurs(): Minuteurs {
 
   useEffect(() => ecrireMinuteurs(minuteurs), [minuteurs])
 
+  // En natif, l'alerte est programmée d'avance auprès du système : le
+  // JavaScript ne tourne plus quand l'app est en arrière-plan.
+  useEffect(() => {
+    if (NATIF) void programmerMinuteurs(minuteurs)
+  }, [minuteurs])
+
   // Mémoïsés : sans ça, chaque tic d'horloge fabriquait deux tableaux
   // neufs, et les composants qui les reçoivent en props se re-rendaient
   // même quand rien n'avait changé pour eux. `liste` ne dépend même pas
@@ -102,7 +114,8 @@ export function useMinuteurs(): Minuteurs {
       debloquerAudio()
       // Même raison de calendrier : la permission de notifier se demande
       // sur un geste, et celui-ci dit exactement « préviens-moi ».
-      demanderNotifications()
+      if (NATIF) void demanderNotificationsNatives()
+      else demanderNotifications()
       const depart = Date.now()
       setMinuteurs((prec) => [
         ...prec,
@@ -148,7 +161,7 @@ export function useMinuteurs(): Minuteurs {
   const sonnentMaintenant = useRef(sonnent)
   sonnentMaintenant.current = sonnent
   useEffect(() => {
-    if (!document.hidden) return
+    if (NATIF || !document.hidden) return
     for (const m of sonnentMaintenant.current) {
       if (notifies.current.has(m.id)) continue
       notifies.current.add(m.id)
@@ -162,7 +175,8 @@ export function useMinuteurs(): Minuteurs {
   useEffect(() => {
     const surRetour = () => {
       if (document.hidden) return
-      fermerNotifications()
+      if (NATIF) void fermerNotificationsNatives()
+      else fermerNotifications()
       notifies.current.clear()
     }
     document.addEventListener('visibilitychange', surRetour)
