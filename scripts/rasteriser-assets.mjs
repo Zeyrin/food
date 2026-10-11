@@ -5,7 +5,7 @@ const fichiers = ['icon', 'icon-foreground', 'splash', 'splash-dark']
 for (const nom of fichiers) {
   await sharp(`assets/${nom}.svg`).png().toFile(`assets/${nom}.png`)
 }
-await sharp({ create: { width: 1024, height: 1024, channels: 4, background: '#385e16' } })
+await sharp({ create: { width: 1024, height: 1024, channels: 4, background: '#141414' } })
   .png()
   .toFile('assets/icon-background.png')
 // Carré plein pour la PWA : Android découpe lui-même son masque.

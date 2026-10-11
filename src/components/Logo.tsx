@@ -4,10 +4,10 @@
  * l'accueil montrent exactement ce qu'on a touché sur l'écran d'accueil.
  * Les couleurs sont fixes : c'est un logo, il ne suit pas le thème.
  */
-const FOND = '#385e16'
+const FOND = '#141414'
 const TRAITS: [string, string][] = [
-  ['M133 356V116H283', '#a53c3e'],
-  ['M181 378V138H331', '#cefda3'],
+  ['M133 356V116H283', '#ff5a36'],
+  ['M181 378V138H331', '#c6ff4a'],
   ['M229 400V160H379M229 272H335', '#fff8ef'],
 ]
 
