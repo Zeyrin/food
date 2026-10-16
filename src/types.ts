@@ -85,6 +85,8 @@ export interface Recipe {
   description?: string
   /** Tour de main, affiché en mode cuisson. `astuces[i]` accompagne `etapes[i]`. */
   astuces?: string[]
+  /** Adresse de la page d'où la recette a été importée, pour y retourner. */
+  source?: string
 }
 
 /** Une recette retenue pour la semaine, avec son nombre de parts. */

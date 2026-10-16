@@ -99,6 +99,7 @@ export function validerRecette(json: unknown): { recette: Recipe } | { erreurs: 
       ...(estPhotoLivree(r.image) ? { image: r.image } : {}),
       ...(typeof r.description === 'string' && r.description ? { description: r.description } : {}),
       ...(Array.isArray(r.astuces) ? { astuces: r.astuces as string[] } : {}),
+      ...(typeof r.source === 'string' && /^https?:\/\//.test(r.source) ? { source: r.source } : {}),
     },
   }
 }

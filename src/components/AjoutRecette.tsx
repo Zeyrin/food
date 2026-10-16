@@ -4,6 +4,7 @@ import { useLangue } from '../lib/i18n'
 import Icone from './Icone'
 import FormulaireRecette from './FormulaireRecette'
 import CollageIA from './CollageIA'
+import ImportLien from './ImportLien'
 
 /**
  * L'ajout d'une recette, tel qu'il s'ouvre dans l'écran « Proposer ».
@@ -21,7 +22,7 @@ interface Props {
   tagsConnus: string[]
 }
 
-type Methode = 'main' | 'ia'
+type Methode = 'main' | 'ia' | 'lien'
 
 export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tagsConnus }: Props) {
   const { t } = useLangue()
@@ -74,6 +75,13 @@ export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tags
         <>
           <p className="aide">{t('ajouter.choixTitre')}</p>
           <div className="choix-methodes">
+            <button className="carte-methode" onClick={() => setMethode('lien')}>
+              <span className="carte-methode-rond">
+                <Icone nom="lien" taille={22} />
+              </span>
+              <b>{t('ajouter.choixLienTitre')}</b>
+              <em>{t('ajouter.choixLienTexte')}</em>
+            </button>
             <button className="carte-methode" onClick={() => setMethode('main')}>
               <span className="carte-methode-rond">
                 <Icone nom="crayon" taille={22} />
@@ -100,6 +108,16 @@ export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tags
           }}
           onAnnuler={() => setMethode(null)}
           libelleAnnuler={t('ajouter.retourAuChoix')}
+        />
+      ) : methode === 'lien' ? (
+        <ImportLien
+          titresExistants={titresExistants}
+          tagsConnus={tagsConnus}
+          onAjouter={async (recette) => {
+            await onAjouter(recette)
+            setBilan({ nombre: 1, titre: recette.titre })
+          }}
+          onRetour={() => setMethode(null)}
         />
       ) : (
         <CollageIA

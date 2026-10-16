@@ -15,6 +15,7 @@ const K_FOYER = 'foyer'
 const K_CODE_FOYER = 'codeFoyer'
 const K_MAGASINS = 'magasins'
 const K_FOYER_PRECEDENT = 'foyerPrecedent'
+const K_PRENOM = 'prenomProfil'
 
 const HISTORIQUE_VIDE: Historique = { derniereFois: {}, verdicts: {} }
 
@@ -187,4 +188,13 @@ export async function quitterFoyer(): Promise<void> {
   if (id) await noterFoyerQuitte(id)
   await effacer(K_FOYER)
   await effacer(K_CODE_FOYER)
+}
+
+/** Le prénom affiché sur le profil. Propre à l'appareil : pas de compte, rien ne part sur le réseau. */
+export async function lirePrenom(): Promise<string> {
+  return lire<string>(K_PRENOM, '')
+}
+
+export async function ecrirePrenom(prenom: string): Promise<void> {
+  await ecrire(K_PRENOM, prenom)
 }
