@@ -2,6 +2,7 @@ import { createClient, type RealtimeChannel } from '@supabase/supabase-js'
 import type { ListState, Recipe } from '../types'
 import { traduire } from './i18n'
 import type { Historique } from './propose'
+import { planifierCorpus, recettesVisibles } from './corpusFoyer'
 import { signalerSynchroOk, signalerSynchroRefusee } from './etatSynchro'
 
 const url = import.meta.env.VITE_SUPABASE_URL
@@ -218,7 +219,8 @@ export function suivreListe(foyer: string, onChange: (etat: ListState) => void):
 /**
  * Le catalogue du foyer. Vide si Supabase n'est pas configuré —
  * à l'appelant de retomber sur le corpus de départ dans ce cas
- * (voir semerCorpusInitial et App.tsx).
+ * (voir synchroniserCorpus et App.tsx). Sans les recettes masquées ni
+ * les doublons.
  *
  * Lève si la lecture échoue plutôt que de rendre une liste vide : un
  * `select` refusé (policy mal réglée) ressemblait trait pour trait à
@@ -227,8 +229,21 @@ export function suivreListe(foyer: string, onChange: (etat: ListState) => void):
  * lors que l'`insert`, lui, passait.
  */
 export async function lireRecettes(foyer: string): Promise<Recipe[]> {
+  return recettesVisibles(await lireLignesRecettes(foyer))
+}
+
+/**
+ * Toutes les lignes du foyer, masquées et doublons compris, dans l'ordre
+ * où elles ont été écrites : c'est ce qui permet de savoir quelles
+ * recettes du corpus il a déjà reçues.
+ */
+async function lireLignesRecettes(foyer: string): Promise<Recipe[]> {
   if (!supabase || !(await assurerAcces(foyer))) return []
-  const { data, error } = await supabase.from('recettes').select('recette').eq('foyer', foyer)
+  const { data, error } = await supabase
+    .from('recettes')
+    .select('recette')
+    .eq('foyer', foyer)
+    .order('cree_le', { ascending: true })
   if (error) throw new Error(`Lecture du catalogue refusée : ${error.message}`)
   return (data ?? []).map((ligne) => ligne.recette as Recipe)
 }
@@ -267,27 +282,46 @@ export async function supprimerRecette(foyer: string, recipeId: string): Promise
 }
 
 /**
- * Peuple un foyer tout neuf avec le corpus de départ (src/data/recipes.json).
- * On garde les ids d'origine (« mapo-tofu », etc.) : l'historique local
- * (marquerCuisine) y fait référence, les changer casserait le lien.
- * N'écrit rien si le foyer a déjà des recettes — pas de doublon au
- * rechargement.
+ * Supprime une recette venue du corpus : la ligne est gardée, marquée
+ * `masquee`, pour que `synchroniserCorpus` ne la réinsère pas à
+ * l'ouverture suivante (voir lib/corpusFoyer.ts).
  */
-export async function semerCorpusInitial(foyer: string, corpus: Recipe[]): Promise<Recipe[]> {
-  if (!supabase || !(await assurerAcces(foyer))) return []
-  const { count, error: erreurCompte } = await supabase
-    .from('recettes')
-    .select('id', { count: 'exact', head: true })
-    .eq('foyer', foyer)
-  if (erreurCompte) throw new Error(`Lecture du catalogue refusée : ${erreurCompte.message}`)
-  // Déjà semé entre-temps — l'autre téléphone du foyer a été plus
-  // rapide. On relit ce qu'il a écrit au lieu de rendre `[]`, qui
-  // s'affichait comme un catalogue vide jusqu'au rechargement suivant.
-  if (count && count > 0) return lireRecettes(foyer)
+export async function masquerRecette(foyer: string, recette: Recipe): Promise<void> {
+  await modifierRecette(foyer, { ...recette, masquee: true })
+}
 
-  const { error } = await supabase.from('recettes').insert(corpus.map((recette) => ({ foyer, recette })))
-  if (error) throw new Error(`Échec du seed initial : ${error.message}`)
-  return corpus
+/**
+ * Met le catalogue du foyer à jour avec le corpus embarqué
+ * (src/data/recipes.json), puis rend ce qu'il faut afficher.
+ *
+ * Un foyer tout neuf reçoit tout le corpus. Un foyer existant reçoit
+ * les recettes ajoutées au corpus depuis sa création, et les photos
+ * arrivées après coup — sans quoi une nouvelle recette n'apparaissait
+ * que dans les foyers créés après elle. Ce que le foyer a supprimé
+ * reste supprimé.
+ *
+ * On garde les ids d'origine (« mapo-tofu », etc.) : l'historique
+ * (marquerCuisine) y fait référence, les changer casserait le lien.
+ */
+export async function synchroniserCorpus(foyer: string, corpus: Recipe[]): Promise<Recipe[]> {
+  if (!supabase || !(await assurerAcces(foyer))) return []
+  const client = supabase
+  const { aInserer, aCompleter, visibles } = planifierCorpus(await lireLignesRecettes(foyer), corpus)
+
+  if (aInserer.length > 0) {
+    const { error } = await client.from('recettes').insert(aInserer.map((recette) => ({ foyer, recette })))
+    if (error) throw new Error(`Mise à jour du catalogue refusée : ${error.message}`)
+  }
+  // La photo manquante ne vaut pas d'erreur : le catalogue reste juste,
+  // la vignette teintée fait l'affaire jusqu'à la prochaine ouverture.
+  await Promise.all(
+    aCompleter.map((recette) =>
+      modifierRecette(foyer, recette).catch((e: unknown) =>
+        console.warn(`Photo de « ${recette.id} » non enregistrée : ${e}`),
+      ),
+    ),
+  )
+  return visibles
 }
 
 /**

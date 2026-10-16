@@ -24,14 +24,14 @@ import {
   ecrireListe,
   lireHistoriqueFoyer,
   lireListe,
-  lireRecettes,
+  masquerRecette,
   modifierRecette,
-  semerCorpusInitial,
   supabase,
   supprimerRecette,
   suivreHistorique,
   suivreListe,
   suivreRecettes,
+  synchroniserCorpus,
 } from './lib/sync'
 import { creerFoyerAvecCode, reclamerFoyer, reprendreFoyer, resoudreCode } from './lib/foyer'
 import { mouvementReduit } from './lib/mouvement'
@@ -507,9 +507,10 @@ export default function App() {
     if (foyerCharge) void ecrireBasket(basket)
   }, [foyerCharge, basket])
 
-  // Le catalogue vit entièrement dans Supabase. Un foyer tout neuf
-  // (aucune ligne dans `recettes`) est peuplé une fois avec le corpus
-  // de départ ; les foyers déjà semés se contentent de le lire. Sans
+  // Le catalogue vit entièrement dans Supabase. À chaque ouverture, le
+  // foyer reçoit les recettes du corpus qu'il n'a pas encore : tout le
+  // corpus pour un foyer neuf, les nouveautés pour un foyer existant
+  // (voir lib/corpusFoyer.ts). Sans
   // Supabase configuré, on retombe sur le corpus en mémoire — l'app
   // reste utilisable, juste sans synchro.
   useEffect(() => {
@@ -520,8 +521,7 @@ export default function App() {
     }
     void (async () => {
       try {
-        const existantes = await lireRecettes(foyer)
-        setRecipes(existantes.length > 0 ? existantes : await semerCorpusInitial(foyer, CORPUS))
+        setRecipes(await synchroniserCorpus(foyer, CORPUS))
       } catch (e) {
         // Lecture ou semis refusé (policy, réseau) : on affiche le
         // corpus embarqué au build plutôt qu'un catalogue vide. L'app
@@ -637,13 +637,17 @@ export default function App() {
   const supprimer = useCallback(
     async (recipeId: string) => {
       if (!foyer) return
-      await supprimerRecette(foyer, recipeId)
+      // Une recette du corpus est masquée plutôt qu'effacée : effacée,
+      // elle reviendrait à la prochaine ouverture avec le reste du corpus.
+      const recette = recipes.find((r) => r.id === recipeId)
+      if (recette && CORPUS.some((r) => r.id === recipeId)) await masquerRecette(foyer, recette)
+      else await supprimerRecette(foyer, recipeId)
       mesurer('recette_supprimee')
       setRecipes((prec) => prec.filter((r) => r.id !== recipeId))
       majBasket(basket.filter((e) => e.recipeId !== recipeId))
       reculer()
     },
-    [foyer, basket, majBasket, reculer],
+    [foyer, recipes, basket, majBasket, reculer],
   )
 
   const verdict = useCallback(

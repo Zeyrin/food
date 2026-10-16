@@ -85,6 +85,12 @@ export interface Recipe {
   description?: string
   /** Tour de main, affiché en mode cuisson. `astuces[i]` accompagne `etapes[i]`. */
   astuces?: string[]
+  /**
+   * Recette du corpus que le foyer a supprimée. La ligne reste en base pour
+   * qu'elle ne revienne pas à la prochaine mise à jour du corpus
+   * (voir lib/corpusFoyer.ts) ; elle ne s'affiche plus nulle part.
+   */
+  masquee?: boolean
 }
 
 /** Une recette retenue pour la semaine, avec son nombre de parts. */
