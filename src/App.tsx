@@ -4,7 +4,7 @@ import corpus from './data/recipes.json'
 import type { BasketEntry, ListState, Onglet, Recipe, Verdict } from './types'
 import { buildList, redimensionnerRecette } from './lib/aggregate'
 import { cuisineRecemment, tousLesTags, type Historique } from './lib/propose'
-import { estFavorite } from './lib/favoris'
+import { estFavorite, favoris } from './lib/favoris'
 import {
   ecrireBasket,
   lireBasket,
@@ -12,6 +12,8 @@ import {
   lireFoyer,
   lireFoyerPrecedent,
   lireHistorique,
+  lirePrenom,
+  ecrirePrenom,
   marquerCuisine,
   oublierFoyerPrecedent,
   quitterFoyer,
@@ -53,6 +55,7 @@ import { ecouterClicNotification } from './lib/minuteurs'
 import { NATIF, ecouterClicNotificationNative } from './lib/natif'
 import { useMagasins } from './hooks/useMagasins'
 import Reglages from './screens/Reglages'
+import Profil from './screens/Profil'
 import Logo from './components/Logo'
 import Icone from './components/Icone'
 import { useEnLigne } from './hooks/useEnLigne'
@@ -79,6 +82,7 @@ type Vue =
   | { type: 'edition'; recette: Recipe }
   | { type: 'cuisson'; recipeId: string }
   | { type: 'reglages' }
+  | { type: 'profil' }
 
 const ETAT_VIDE: ListState = { coche: {}, dejaPossede: {} }
 const PILE_INITIALE: Vue[] = [{ type: 'onglet', onglet: 'propose' }]
@@ -315,6 +319,7 @@ export default function App() {
   // La maison quittée sur cet appareil : lue à l'amorçage comme le reste,
   // elle n'est offerte que par l'écran d'accueil.
   const [foyerPrecedent, setFoyerPrecedent] = useState<FoyerPrecedent | null>(null)
+  const [prenom, setPrenom] = useState('')
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const enLigne = useEnLigne()
@@ -376,6 +381,7 @@ export default function App() {
         const panier = await lireBasket()
         setEtatListe((prec) => ({ ...prec, panier }))
         setHistorique(await lireHistorique())
+        setPrenom(await lirePrenom())
         setFoyer(await lireFoyer())
         setCodeFoyer(await lireCodeFoyer())
         setFoyerPrecedent(await lireFoyerPrecedent())
@@ -780,6 +786,24 @@ export default function App() {
         />
       )
     }
+  } else if (vueActuelle.type === 'profil') {
+    ecranPleinePage = (
+      <Profil
+        prenom={prenom}
+        onPrenom={(p) => {
+          setPrenom(p)
+          void ecrirePrenom(p)
+        }}
+        collection={favoris(recipes, historique)}
+        historique={historique}
+        onDetail={(recipeId) => {
+          mesurer('fiche_ouverte', { source: 'profil' })
+          irVers({ type: 'detail', recipeId })
+        }}
+        onAjouter={ouvrirAjout}
+        onFermer={reculer}
+      />
+    )
   } else if (vueActuelle.type === 'reglages') {
     ecranPleinePage = (
       <Reglages
@@ -804,6 +828,15 @@ export default function App() {
       data-sous-ecran={sousEcran ? 'true' : undefined}
       data-minuteur={minuteurs.liste.length > 0 ? 'true' : undefined}
     >
+      {vueActuelle.type !== 'reglages' && vueActuelle.type !== 'profil' && (
+        <button
+          className="bouton-rond-discret bouton-profil-global"
+          onClick={() => irVers({ type: 'profil' })}
+          aria-label={t('app.profil')}
+        >
+          <Icone nom="profil" taille={20} />
+        </button>
+      )}
       {vueActuelle.type !== 'reglages' && (
         <button
           className="bouton-rond-discret bouton-reglages-global"

@@ -33,8 +33,12 @@ export type Nom =
   | 'crayon'
   | 'etincelle'
   | 'copier'
+  | 'lien'
+  | 'profil'
 
 const TRACES: Record<Nom, string> = {
+  lien: 'M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1 M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1',
+  profil: 'M12 12a4 4 0 100-8 4 4 0 000 8z M4 21a8 8 0 0116 0',
   menu: 'M4 6h16M4 12h16M4 18h16',
   etoile:
     'M12 3l2.4 5.5L20 9l-4.6 3.8L16.9 19 12 15.8 7.1 19l1.5-6.2L4 9l5.6-.5L12 3z',

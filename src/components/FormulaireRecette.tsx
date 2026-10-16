@@ -31,6 +31,12 @@ interface Props {
    * `sticky` y flotterait par-dessus le catalogue affiché en dessous.
    */
   actionsCollantes?: boolean
+  /**
+   * Une recette à relire avant de l'enregistrer (import depuis un lien) :
+   * les cases sont préremplies comme en modification, mais c'est bien un
+   * ajout — nouveau plat, doublon refusé, bouton « Ajouter ».
+   */
+  brouillon?: Recipe
   /** « Annuler » sur un écran plein page, « Changer de méthode » en section. */
   libelleAnnuler?: string
 }
@@ -74,22 +80,24 @@ export default function FormulaireRecette({
   titresExistants,
   tagsConnus,
   recetteInitiale,
+  brouillon,
   actionsCollantes = false,
   libelleAnnuler,
 }: Props) {
   const { t } = useLangue()
   const prefixe = useId()
   const edition = recetteInitiale !== undefined
+  const depart = recetteInitiale ?? brouillon
 
-  const [titre, setTitre] = useState(recetteInitiale?.titre ?? '')
-  const [temps, setTemps] = useState(recetteInitiale ? String(recetteInitiale.temps) : '')
-  const [portions, setPortions] = useState(recetteInitiale ? String(recetteInitiale.portions) : '2')
-  const [description, setDescription] = useState(recetteInitiale?.description ?? '')
-  const [tags, setTags] = useState<string[]>(recetteInitiale?.tags ?? [])
+  const [titre, setTitre] = useState(depart?.titre ?? '')
+  const [temps, setTemps] = useState(depart && depart.temps > 0 ? String(depart.temps) : '')
+  const [portions, setPortions] = useState(depart ? String(depart.portions) : '2')
+  const [description, setDescription] = useState(depart?.description ?? '')
+  const [tags, setTags] = useState<string[]>(depart?.tags ?? [])
   const [nouveauTag, setNouveauTag] = useState('')
   const [ingredients, setIngredients] = useState<LigneIngredient[]>(() =>
-    recetteInitiale
-      ? recetteInitiale.ingredients.map((ing) => ({
+    depart
+      ? depart.ingredients.map((ing) => ({
           cle: nouvelleCle(),
           nom: ing.nom,
           quantite: String(ing.quantite),
@@ -100,11 +108,11 @@ export default function FormulaireRecette({
       : [ingredientVide(), ingredientVide(), ingredientVide()],
   )
   const [etapes, setEtapes] = useState<LigneEtape[]>(() =>
-    recetteInitiale
-      ? recetteInitiale.etapes.map((texte, i) => ({
+    depart
+      ? depart.etapes.map((texte, i) => ({
           cle: nouvelleCle(),
           texte,
-          astuce: recetteInitiale.astuces?.[i] ?? '',
+          astuce: depart.astuces?.[i] ?? '',
         }))
       : [etapeVide(), etapeVide()],
   )
@@ -177,7 +185,7 @@ export default function FormulaireRecette({
     }
 
     const recette: Recipe = {
-      id: recetteInitiale?.id ?? crypto.randomUUID(),
+      id: depart?.id ?? crypto.randomUUID(),
       titre: titrePropre,
       temps: minutes,
       portions: parts,
@@ -194,6 +202,7 @@ export default function FormulaireRecette({
       // recette rouverte pour corriger une quantité ne doit pas
       // perdre sa photo au passage.
       ...(recetteInitiale?.image ? { image: recetteInitiale.image } : {}),
+      ...(depart?.source ? { source: depart.source } : {}),
       ...(description.trim() ? { description: description.trim() } : {}),
       // Les astuces suivent les étapes une à une : elles sont saisies
       // sous l'étape qu'elles accompagnent, donc l'alignement tient

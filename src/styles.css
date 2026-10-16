@@ -960,6 +960,14 @@ html[data-defile='true'] .entete-app {
   z-index: 11;
 }
 
+/* À gauche du bouton des réglages (40px + 8px d'écart). */
+.bouton-profil-global {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  right: 64px;
+  z-index: 11;
+}
+
 /* --- Barre d'onglets ----------------------------------------------------- */
 
 .espaceur-action-flottante {
@@ -1014,6 +1022,7 @@ html[data-defile='true'] .entete-app {
 @media (max-width: 899px) {
   [data-sous-ecran='true'] nav.onglets,
   [data-sous-ecran='true'] .bouton-reglages-global,
+  [data-sous-ecran='true'] .bouton-profil-global,
   [data-sous-ecran='true'] .pastille-hors-ligne {
     display: none;
   }
@@ -5671,4 +5680,107 @@ button.vignette-mini-bouton:active {
     text-decoration: underline;
     text-underline-offset: 3px;
   }
+}
+
+
+/* --- Profil et collection ------------------------------------------------ */
+
+.profil-identite {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+}
+
+.profil-avatar {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent, #ff5a36);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.profil-prenom {
+  flex: 1;
+  display: grid;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+
+.profil-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 12px 0 4px;
+  text-align: center;
+}
+
+.profil-stats b {
+  display: block;
+  font-size: 1.6rem;
+}
+
+.profil-stats span {
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
+.profil-collection {
+  list-style: none;
+  margin: 12px 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.profil-recette {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+.profil-recette-pastille {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: hsl(var(--teinte) 55% 80%);
+}
+
+.profil-recette-texte {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+}
+
+.profil-recette-texte b,
+.profil-recette-texte em {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profil-recette-texte em {
+  font-style: normal;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.lien-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
 }

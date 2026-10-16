@@ -304,6 +304,7 @@ const fr: Dico = {
     minutes: '{{n}} min',
   },
   detail: {
+    source: 'Recette de {{site}}',
     retour: 'Retour',
     favori: 'Favori',
     moinsDeParts: 'Moins de parts',
@@ -325,6 +326,40 @@ const fr: Dico = {
     supprimerDuCatalogue: 'Supprimer du catalogue',
     minutes: '{{n}} min',
   },
+  import: {
+    texte:
+      "Collez l'adresse d'une recette (Marmiton, 750g, Ricardo, un blog…). L'app lit la page, puis vous laisse tout relire avant d'ajouter.",
+    champ: 'Adresse de la recette',
+    bouton: 'Importer la recette',
+    lecture: 'Lecture de la page…',
+    adresseInvalide: "Ce n'est pas une adresse web valide. Exemple : https://www.marmiton.org/…",
+    erreurReseau: "Impossible de joindre le serveur d'import. Vérifiez votre connexion — ou ajoutez la recette à la main.",
+    erreurServeur: "L'import a échoué. Essayez un autre lien, ou ajoutez la recette à la main.",
+    aRelire:
+      "Recette lue sur la page. Vérifiez les quantités, les unités et les rayons : ils sont déduits du texte et peuvent être à corriger.",
+    autreLien: 'Essayer un autre lien',
+  },
+  profil: {
+    titre: 'Mon profil',
+    fermer: 'Fermer le profil',
+    prenom: 'Prénom',
+    prenomPlaceholder: 'Votre prénom',
+    statCollection: 'dans la collection',
+    statCuisines: 'plats cuisinés',
+    statImportees: 'importées',
+    collectionTitre: 'Ma collection de recettes',
+    collectionVide:
+      "Votre collection se remplit toute seule : les recettes que vous ajoutez (à la main, par un lien ou avec une IA) et les plats notés « À refaire ».",
+    ajouter: 'Ajouter une recette',
+    filtres: 'Filtrer la collection',
+    filtre: {
+      toutes: 'Toutes',
+      importees: 'Importées',
+      maison: 'Écrites',
+      refaire: 'À refaire',
+    },
+    aRefaire: 'à refaire',
+  },
   ajouter: {
     // La section « Ajouter une recette » de l'écran Proposer.
     sectionTitre: 'Ajouter une recette',
@@ -338,6 +373,9 @@ const fr: Dico = {
     choixIaTitre: 'Je la fais écrire par une IA',
     choixIaTexte:
       "Vous dites ce que vous voulez manger, l'app prépare le message à envoyer à ChatGPT ou Claude, et vous recollez sa réponse ici.",
+    choixLienTitre: "J'ai un lien",
+    choixLienTexte:
+      "Collez l'adresse d'une recette trouvée sur un site : l'app la lit et remplit le formulaire pour vous.",
     retourAuChoix: 'Changer de méthode',
 
     // Le formulaire, champ par champ.
@@ -449,6 +487,7 @@ const fr: Dico = {
     corps: "{{titre}} — c'est prêt.",
   },
   app: {
+    profil: 'Mon profil',
     synchroRefusee: 'Synchro bloquée',
     chargement: 'Chargement…',
     reglages: 'Réglages',
@@ -828,6 +867,7 @@ const en: Dico = {
     minutes: '{{n}} min',
   },
   detail: {
+    source: 'Recipe from {{site}}',
     retour: 'Back',
     favori: 'Favorite',
     moinsDeParts: 'Fewer servings',
@@ -849,6 +889,40 @@ const en: Dico = {
     supprimerDuCatalogue: 'Delete from catalog',
     minutes: '{{n}} min',
   },
+  import: {
+    texte:
+      'Paste the address of a recipe (a food site, a blog…). The app reads the page, then lets you review everything before adding.',
+    champ: 'Recipe address',
+    bouton: 'Import the recipe',
+    lecture: 'Reading the page…',
+    adresseInvalide: 'That is not a valid web address. Example: https://www.example.com/…',
+    erreurReseau: 'Cannot reach the import server. Check your connection — or add the recipe by hand.',
+    erreurServeur: 'The import failed. Try another link, or add the recipe by hand.',
+    aRelire:
+      'Recipe read from the page. Check the amounts, units and aisles: they are guessed from the text and may need fixing.',
+    autreLien: 'Try another link',
+  },
+  profil: {
+    titre: 'My profile',
+    fermer: 'Close profile',
+    prenom: 'First name',
+    prenomPlaceholder: 'Your first name',
+    statCollection: 'in the collection',
+    statCuisines: 'dishes cooked',
+    statImportees: 'imported',
+    collectionTitre: 'My recipe collection',
+    collectionVide:
+      'Your collection fills itself: the recipes you add (by hand, from a link or with an AI) and the dishes rated "Make again".',
+    ajouter: 'Add a recipe',
+    filtres: 'Filter the collection',
+    filtre: {
+      toutes: 'All',
+      importees: 'Imported',
+      maison: 'Written',
+      refaire: 'Make again',
+    },
+    aRefaire: 'make again',
+  },
   ajouter: {
     sectionTitre: 'Add a recipe',
     sectionSousTitre: 'Write it yourself, or have an AI write it.',
@@ -861,6 +935,9 @@ const en: Dico = {
     choixIaTitre: 'Have an AI write it',
     choixIaTexte:
       'You say what you feel like eating, the app prepares the message to send to ChatGPT or Claude, and you paste its reply back here.',
+    choixLienTitre: 'I have a link',
+    choixLienTexte:
+      'Paste the address of a recipe from a website: the app reads it and fills in the form for you.',
     retourAuChoix: 'Change method',
 
     blocPlat: 'The dish',
@@ -966,6 +1043,7 @@ const en: Dico = {
     corps: "{{titre}} — it's ready.",
   },
   app: {
+    profil: 'My profile',
     synchroRefusee: 'Sync blocked',
     chargement: 'Loading…',
     reglages: 'Settings',

@@ -25,6 +25,14 @@ interface Props {
   onFermer: () => void
 }
 
+const hoteDe = (url: string) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return url
+  }
+}
+
 export default function DetailRecette({
   recette,
   portions,
@@ -143,6 +151,12 @@ export default function DetailRecette({
           </span>
         ))}
       </div>
+
+      {recette.source && (
+        <a className="lien-source" href={recette.source} target="_blank" rel="noopener noreferrer">
+          <Icone nom="lien" taille={14} /> {t('detail.source', { site: hoteDe(recette.source) })}
+        </a>
+      )}
 
       <h2>{t('detail.ingredients')}</h2>
       {doses.map((ing) => (
