@@ -11983,5 +11983,120 @@
       "Faire épaissir le reste du lait de coco avec la fécule délayée, 2 min à feu doux, pour la sauce à napper.",
       "Dresser le riz avec les joues de mangue tranchées, napper de sauce et parsemer de sésame grillé."
     ]
+  },
+  {
+    "id": "aioli-provencal",
+    "titre": "Aïoli provençal",
+    "temps": 50,
+    "portions": 4,
+    "tags": [
+      "français",
+      "poisson",
+      "léger"
+    ],
+    "ingredients": [
+      {
+        "nom": "dos de cabillaud",
+        "quantite": 600,
+        "unite": "g",
+        "rayon": "viande-poisson"
+      },
+      {
+        "nom": "pomme de terre",
+        "quantite": 600,
+        "unite": "g",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "carotte",
+        "quantite": 4,
+        "unite": "piece",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "haricots verts",
+        "quantite": 300,
+        "unite": "g",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "chou-fleur",
+        "quantite": 0.5,
+        "unite": "piece",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "brocoli",
+        "quantite": 1,
+        "unite": "piece",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "courgette",
+        "quantite": 2,
+        "unite": "piece",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "tomate cerise",
+        "quantite": 200,
+        "unite": "g",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "œuf",
+        "quantite": 6,
+        "unite": "piece",
+        "rayon": "cremerie"
+      },
+      {
+        "nom": "ail",
+        "quantite": 4,
+        "unite": "piece",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "citron",
+        "quantite": 1,
+        "unite": "piece",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "moutarde",
+        "quantite": 1,
+        "unite": "cc",
+        "rayon": "epicerie",
+        "placard": true
+      },
+      {
+        "nom": "huile d'olive",
+        "quantite": 20,
+        "unite": "cl",
+        "rayon": "epicerie",
+        "placard": true
+      },
+      {
+        "nom": "sel",
+        "quantite": 2,
+        "unite": "cc",
+        "rayon": "epicerie",
+        "placard": true
+      },
+      {
+        "nom": "poivre noir",
+        "quantite": 1,
+        "unite": "cc",
+        "rayon": "epicerie",
+        "placard": true
+      }
+    ],
+    "etapes": [
+      "Cuire 10 min à l'eau frémissante les œufs, plongés dans l'eau déjà chaude, puis les passer sous l'eau froide et les écaler.",
+      "Préparer l'aïoli : écraser l'ail dégermé avec une pincée de sel jusqu'à obtenir une purée, ajouter 1 jaune d'œuf (prélevé sur un œuf cru en plus, ou sur un œuf dur écrasé) et la moutarde.",
+      "Verser l'huile d'olive en filet très fin en fouettant sans cesse, jusqu'à ce que la sauce épaississe. Ajouter le jus d'un demi-citron et rectifier le sel. Garder au frais.",
+      "Cuire à la vapeur ou à l'eau salée, chacun son temps : pommes de terre 20 min, carottes 15 min, chou-fleur et brocoli 8 min, haricots verts 6 min, courgettes 5 min. Les légumes doivent rester légèrement croquants.",
+      "Saler et poivrer les dos de cabillaud, les pocher 8 à 10 min dans une eau frémissante citronnée, ou les cuire à la poêle 4 min par face avec un filet d'huile.",
+      "Dresser le poisson, les légumes, les œufs durs coupés en deux et les tomates cerises sur un grand plat, avec l'aïoli à part dans un petit bol."
+    ]
   }
 ]
