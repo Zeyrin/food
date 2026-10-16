@@ -12117,7 +12117,7 @@
       },
       {
         "nom": "pomme",
-        "quantite": 2,
+        "quantite": 3,
         "unite": "piece",
         "rayon": "fruits-legumes"
       },
@@ -12145,12 +12145,6 @@
         "unite": "cs",
         "rayon": "epicerie",
         "placard": true
-      },
-      {
-        "nom": "lait de coco",
-        "quantite": 40,
-        "unite": "cl",
-        "rayon": "epicerie"
       },
       {
         "nom": "bouillon (cube)",
@@ -12207,12 +12201,12 @@
       }
     ],
     "etapes": [
-      "Couper le poulet en gros dés, émincer les oignons, hacher l'ail et râper le gingembre. Peler les pommes, les épépiner et les couper en cubes de 2 cm : plus petits, ils fondraient dans la sauce.",
+      "Couper le poulet en gros dés, émincer les oignons, hacher l'ail et râper le gingembre. Peler les pommes, les épépiner et les couper en petits dés : elles vont fondre pour faire la sauce.",
       "Faire dorer le poulet 4 à 5 min dans l'huile chaude d'une cocotte, sans le cuire à cœur, puis le réserver sur une assiette.",
       "Dans la même cocotte, faire fondre les oignons 5 min à feu moyen, puis ajouter l'ail, le gingembre et le curry. Remuer 1 min : les épices doivent embaumer sans brûler.",
-      "Ajouter les pommes, les raisins secs, le lait de coco et le cube émietté dans 10 cl d'eau. Porter à frémissement et laisser cuire 10 min à couvert : les pommes s'attendrissent et adoucissent la sauce.",
+      "Ajouter les pommes et le cube émietté dans 30 cl d'eau. Laisser cuire 15 min à couvert et à feu doux, jusqu'à ce que les pommes se défassent.",
       "Pendant ce temps, rincer le riz et le cuire dans 1,5 fois son volume d'eau salée, 12 min à couvert, puis le laisser reposer 5 min hors du feu.",
-      "Remettre le poulet et son jus dans la cocotte et poursuivre 8 à 10 min à découvert, jusqu'à ce que la sauce nappe la cuillère et que le poulet soit cuit à cœur.",
+      "Écraser les pommes à la fourchette, ou mixer pour une sauce lisse. Remettre le poulet et son jus avec les raisins secs, et poursuivre 8 à 10 min à découvert, jusqu'à ce que la sauce nappe la cuillère et que le poulet soit cuit à cœur. Rallonger d'un peu d'eau si elle épaissit trop.",
       "Saler, poivrer, ajouter le jus du citron vert et servir sur le riz, parsemé de coriandre ciselée."
     ]
   }
