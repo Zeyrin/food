@@ -12098,5 +12098,122 @@
       "Saler et poivrer les dos de cabillaud, les pocher 8 à 10 min dans une eau frémissante citronnée, ou les cuire à la poêle 4 min par face avec un filet d'huile.",
       "Dresser le poisson, les légumes, les œufs durs coupés en deux et les tomates cerises sur un grand plat, avec l'aïoli à part dans un petit bol."
     ]
+  },
+  {
+    "id": "curry-poulet-pommes",
+    "titre": "Curry de poulet aux pommes",
+    "temps": 45,
+    "portions": 4,
+    "tags": [
+      "réconfort",
+      "une casserole"
+    ],
+    "ingredients": [
+      {
+        "nom": "blanc de poulet",
+        "quantite": 600,
+        "unite": "g",
+        "rayon": "viande-poisson"
+      },
+      {
+        "nom": "pomme",
+        "quantite": 2,
+        "unite": "piece",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "oignon",
+        "quantite": 2,
+        "unite": "piece",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "ail",
+        "quantite": 2,
+        "unite": "piece",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "gingembre frais",
+        "quantite": 15,
+        "unite": "g",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "curry en poudre",
+        "quantite": 2,
+        "unite": "cs",
+        "rayon": "epicerie",
+        "placard": true
+      },
+      {
+        "nom": "lait de coco",
+        "quantite": 40,
+        "unite": "cl",
+        "rayon": "epicerie"
+      },
+      {
+        "nom": "bouillon (cube)",
+        "quantite": 1,
+        "unite": "piece",
+        "rayon": "epicerie",
+        "placard": true
+      },
+      {
+        "nom": "raisins secs",
+        "quantite": 40,
+        "unite": "g",
+        "rayon": "epicerie",
+        "placard": true
+      },
+      {
+        "nom": "citron vert",
+        "quantite": 1,
+        "unite": "piece",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "coriandre fraîche",
+        "quantite": 1,
+        "unite": "botte",
+        "rayon": "fruits-legumes"
+      },
+      {
+        "nom": "riz basmati",
+        "quantite": 300,
+        "unite": "g",
+        "rayon": "epicerie"
+      },
+      {
+        "nom": "huile de tournesol",
+        "quantite": 2,
+        "unite": "cs",
+        "rayon": "epicerie",
+        "placard": true
+      },
+      {
+        "nom": "sel",
+        "quantite": 1,
+        "unite": "cc",
+        "rayon": "epicerie",
+        "placard": true
+      },
+      {
+        "nom": "poivre noir",
+        "quantite": 1,
+        "unite": "cc",
+        "rayon": "epicerie",
+        "placard": true
+      }
+    ],
+    "etapes": [
+      "Couper le poulet en gros dés, émincer les oignons, hacher l'ail et râper le gingembre. Peler les pommes, les épépiner et les couper en cubes de 2 cm : plus petits, ils fondraient dans la sauce.",
+      "Faire dorer le poulet 4 à 5 min dans l'huile chaude d'une cocotte, sans le cuire à cœur, puis le réserver sur une assiette.",
+      "Dans la même cocotte, faire fondre les oignons 5 min à feu moyen, puis ajouter l'ail, le gingembre et le curry. Remuer 1 min : les épices doivent embaumer sans brûler.",
+      "Ajouter les pommes, les raisins secs, le lait de coco et le cube émietté dans 10 cl d'eau. Porter à frémissement et laisser cuire 10 min à couvert : les pommes s'attendrissent et adoucissent la sauce.",
+      "Pendant ce temps, rincer le riz et le cuire dans 1,5 fois son volume d'eau salée, 12 min à couvert, puis le laisser reposer 5 min hors du feu.",
+      "Remettre le poulet et son jus dans la cocotte et poursuivre 8 à 10 min à découvert, jusqu'à ce que la sauce nappe la cuillère et que le poulet soit cuit à cœur.",
+      "Saler, poivrer, ajouter le jus du citron vert et servir sur le riz, parsemé de coriandre ciselée."
+    ]
   }
 ]
