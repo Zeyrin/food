@@ -65,9 +65,13 @@ async function telecharger(depart: URL): Promise<string> {
       redirect: 'manual',
       signal: AbortSignal.timeout(8000),
       headers: {
-        'user-agent': 'Mozilla/5.0 (compatible; FFFood recipe import)',
-        accept: 'text/html,application/xhtml+xml',
-        'accept-language': 'fr,en;q=0.8',
+        'user-agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'accept-language': 'fr-FR,fr;q=0.9,en;q=0.7',
+        'sec-fetch-dest': 'document',
+        'sec-fetch-mode': 'navigate',
+        'upgrade-insecure-requests': '1',
       },
     }).catch(() => {
       throw new Erreur(502, 'Le site ne répond pas.')
@@ -77,6 +81,12 @@ async function telecharger(depart: URL): Promise<string> {
       if (!suite) throw new Erreur(502, 'Redirection invalide.')
       url = new URL(suite, url)
       continue
+    }
+    if (reponse.status === 403 || reponse.status === 429 || reponse.status === 401) {
+      throw new Erreur(
+        502,
+        "Ce site refuse la lecture automatique de ses pages. Essayez un autre site, ou ajoutez la recette à la main (ou avec une IA).",
+      )
     }
     if (!reponse.ok) throw new Erreur(502, `Le site a répondu ${reponse.status}.`)
     if (!/html|xml/i.test(reponse.headers.get('content-type') ?? '')) {
