@@ -20,17 +20,23 @@ def arrow_text(d, xy, t, font, col):
 def logo(d, col): d.text((70, 56), "fffood", font=f(34), fill=col)
 
 # Slide 1
-im = Image.new("RGB", (W, H), DK); d = ImageDraw.Draw(im); logo(d, YE)
+im = Image.new("RGB", (W, H), DK)
 y = 230
+if c.get("photo"):
+    ph = Image.open(c["photo"]).convert("RGB"); ph = ph.resize((W, int(ph.height * W / ph.width)), Image.LANCZOS)
+    im.paste(ph, (0, 0)); g = Image.new("L", (1, ph.height))
+    for k in range(ph.height): g.putpixel((0, k), int(30 + 225 * (k / ph.height) ** 2.2))
+    im.paste(Image.new("RGB", (W, ph.height), DK), (0, 0), g.resize((W, ph.height))); y = 430
+d = ImageDraw.Draw(im); logo(d, YE)
 for l in c["s1_lines"]:
-    d.text((70, y), l, font=fit(d, l, 95, 940), fill=WH); y += 118
-y += 30; kf = fit(d, c["kw"], 170, 860)
+    d.text((70, y), l, font=fit(d, l, 95, 940), fill=WH); y += 108 if c.get("photo") else 118
+y += 20; kf = fit(d, c["kw"], 170, 860)
 bb = d.textbbox((0, 0), c["kw"], font=kf)
 d.rectangle((50, y, 50 + bb[2] + 60, y + bb[3] + 50), fill=YE)
 d.text((80, y + 15), c["kw"], font=kf, fill=DK); y += bb[3] + 110
 d.text((70, y), c["s1_sub"], font=fit(d, c["s1_sub"], 44, 940, "Medium"), fill=GR)
-d.rounded_rectangle((70, 1130, 480, 1230), 50, fill=OR)
-arrow_text(d, (275, 1180), "La raison →", f(44), WH)
+d.rounded_rectangle((70, 1165, 480, 1265), 50, fill=OR)
+arrow_text(d, (275, 1215), "La raison →", f(44), WH)
 im.save(out + "-1.png")
 
 # Slide 2
