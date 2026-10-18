@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react'
 import type { Recipe } from '../types'
+import corpus from '../data/recipes.json'
 import { etapeEnTexte, formatQuantite, redimensionnerRecette } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
+import { mesurer } from '../lib/mesure'
+import { NATIF, partagerTexte } from '../lib/natif'
+import { ORIGINE_PUBLIQUE } from '../lib/plateforme'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 import VignettePlaceholder from '../components/VignettePlaceholder'
@@ -24,6 +28,13 @@ interface Props {
   onSupprimer: () => Promise<void>
   onFermer: () => void
 }
+
+/**
+ * Les plats du catalogue ont une page publique (scripts/prerender.mjs) ;
+ * une recette collée par le foyer n'existe que chez lui, elle n'a rien
+ * à partager.
+ */
+const PAGES_PUBLIQUES = new Set(corpus.map((r) => r.id))
 
 const hoteDe = (url: string) => {
   try {
@@ -94,6 +105,33 @@ export default function DetailRecette({
   }
 
   const doses = redimensionnerRecette(recette, choix).ingredients
+
+  /**
+   * Le lien partagé vise la page publique du plat, pas l'app : elle se lit
+   * sans maison ni JavaScript, s'affiche en aperçu dans une conversation,
+   * et c'est elle qu'on veut voir citée ailleurs. Toujours l'adresse du
+   * site, même depuis l'app des stores.
+   */
+  const [lienCopie, setLienCopie] = useState(false)
+  const partager = async () => {
+    const url = `${ORIGINE_PUBLIQUE}/recette/${recette.id}/`
+    mesurer('recette_partagee', { partageNatif: NATIF || 'share' in navigator ? 1 : 0 })
+    try {
+      if (NATIF) {
+        await partagerTexte(recette.titre, url)
+        return
+      }
+      if (navigator.share) {
+        await navigator.share({ title: recette.titre, url })
+        return
+      }
+      await navigator.clipboard.writeText(url)
+      setLienCopie(true)
+      setTimeout(() => setLienCopie(false), 2000)
+    } catch {
+      /* feuille de partage fermée sans choisir : rien à dire */
+    }
+  }
 
   return (
     <>
@@ -186,6 +224,11 @@ export default function DetailRecette({
             {t('detail.modifier')}
           </button>
         </div>
+        {PAGES_PUBLIQUES.has(recette.id) && (
+          <button className="discret pleine-largeur" onClick={partager}>
+            <Icone nom="lien" taille={18} /> {lienCopie ? t('detail.lienCopie') : t('detail.partager')}
+          </button>
+        )}
         {confirmation ? (
           <div className="bloc-confirmation" role="alertdialog" aria-label={t('detail.supprimerDuCatalogue')}>
             <p>{t('detail.supprimerConfirmation', { titre: recette.titre })}</p>

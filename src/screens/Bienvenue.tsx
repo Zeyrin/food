@@ -8,6 +8,7 @@ import type { FoyerPrecedent } from '../lib/local'
 import { partageActif } from '../lib/sync'
 import { navigateurIntegre } from '../lib/navigateurIntegre'
 import { mesurer } from '../lib/mesure'
+import { pageSite } from '../lib/plateforme'
 
 interface Props {
   onCreer: () => Promise<void>
@@ -225,6 +226,14 @@ export default function Bienvenue({
           </div>
         </li>
       </ol>
+
+      {/* Le catalogue existe aussi en pages publiques (scripts/prerender.mjs),
+          lisibles sans créer de maison. C'est aussi le seul lien de l'app
+          vers elles : sans lui, un moteur qui lit cet écran ne les trouve
+          que par le sitemap. */}
+      <p className="accueil-note">
+        <a href={pageSite('/recette/')}>{t('bienvenue.catalogue')}</a>
+      </p>
 
       <div className="accueil-actions">
         {/* Quitter une maison ne l'efface pas : elle reste joignable par

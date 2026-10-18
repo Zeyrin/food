@@ -123,6 +123,7 @@ const fr: Dico = {
     // maison quand même — c'est elle qui porte le panier et la liste —,
     // le mot arrive plus tard, là où il sert (le partage).
     voirLesRecettes: 'Voir les recettes',
+    catalogue: 'Parcourir le catalogue sans créer de maison',
     voirLaRecette: 'Voir la recette',
     recetteAttendue: 'Votre recette vous attend : {{titre}}',
     ctaNote: 'Gratuit, sans compte, sans pub.',
@@ -325,6 +326,8 @@ const fr: Dico = {
     suppressionEchouee: 'La suppression a échoué. Vérifiez votre connexion et réessayez.',
     supprimerDuCatalogue: 'Supprimer du catalogue',
     minutes: '{{n}} min',
+    partager: 'Partager la recette',
+    lienCopie: 'Lien copié',
   },
   import: {
     texte:
@@ -703,6 +706,7 @@ const en: Dico = {
     ou: 'or',
     creation: 'Creating…',
     voirLesRecettes: 'See the recipes',
+    catalogue: 'Browse the catalog without an account (in French)',
     voirLaRecette: 'See the recipe',
     recetteAttendue: 'Your recipe is waiting: {{titre}}',
     ctaNote: 'Free, no account, no ads.',
@@ -888,6 +892,8 @@ const en: Dico = {
     suppressionEchouee: 'Could not delete. Check your connection and try again.',
     supprimerDuCatalogue: 'Delete from catalog',
     minutes: '{{n}} min',
+    partager: 'Share the recipe',
+    lienCopie: 'Link copied',
   },
   import: {
     texte:
