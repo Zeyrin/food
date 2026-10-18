@@ -1,1 +1,12 @@
-[{"date":"2026-10-18","recette":"magret-canard-pommes","theme":"cuisson à froid / fonte du gras (magret)"}]
+[
+ {
+  "date": "2026-10-18",
+  "recette": "magret-canard-pommes",
+  "theme": "cuisson à froid / fonte du gras (magret)"
+ },
+ {
+  "date": "2026-10-18",
+  "recette": "riz-saute-oeuf",
+  "theme": "riz de la veille / amidon"
+ }
+]

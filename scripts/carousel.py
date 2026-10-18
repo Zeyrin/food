@@ -47,7 +47,7 @@ kf = fit(d, c["kw"], 124, W - 2 * M); d.text((M - 4, y - 6), c["kw"], font=kf, f
 d.text((M, y), c["s1_sub"], font=fit(d, c["s1_sub"], 34, W - 2 * M, "Light"), fill=GR)
 d.line((M, 1250, W - M, 1250), fill="#3A3330", width=2)
 arrow(d, (W - M, 1290), "La raison  →", f(30, "Medium"), WH, "r")
-im.save(out + "-1.png")
+im.save(out + "-1.jpg", quality=92)
 
 # Slide 2 — le secret
 im = Image.new("RGB", (W, H), CR); d = ImageDraw.Draw(im); head(d, DK, 2, im)
@@ -65,7 +65,7 @@ d.line((M, y, W - M, y), fill="#E8DFD2", width=2)
 d.rounded_rectangle((M, 1080, W - M, 1240), 24, fill=DK)
 spaced(d, (M + 50, 1112), "RÉSULTAT", f(20, "Medium"), GR, 5)
 d.text((M + 50, 1150), c["result"], font=fit(d, c["result"], 44, W - 2 * M - 100), fill=YE)
-im.save(out + "-2.png")
+im.save(out + "-2.jpg", quality=92)
 
 # Slide 3 — la recette + ce que fait l'app
 im = Image.new("RGB", (W, H), CR); d = ImageDraw.Draw(im); head(d, DK, 3, im)
@@ -98,9 +98,9 @@ for t in ("Gratuit", "Sans compte", "Marche hors ligne"):
     d.text((x + 22, 1136), t, font=f(26, "Medium"), fill=DK, anchor="lm"); x += tw + 60
 d.rectangle((0, 1230, W, H), fill=OR)
 arrow(d, (W // 2, 1290), "Essaie gratuitement  →  fffood.fr", f(40), WH, "m")
-im.save(out + "-3.png")
+im.save(out + "-3.jpg", quality=92)
 
-ims = [Image.open(out + f"-{i}.png").resize((360, 450)) for i in (1, 2, 3)]
+ims = [Image.open(out + f"-{i}.jpg").resize((360, 450)) for i in (1, 2, 3)]
 m = Image.new("RGB", (1100, 450), "white")
 for i, x in enumerate(ims): m.paste(x, (i * 370, 0))
 m.save(sys.argv[3])
