@@ -81,8 +81,8 @@ d.text((tx, 345), "Déjà dans fffood.", font=f(28, "Medium"), fill=DK)
 d.line((M, 440, W - M, 440), fill="#E8DFD2", width=2)
 spaced(d, (M, 480), "FFFOOD, EN 4 GESTES", f(24, "Medium"), OR)
 steps = [("Choisis tes repas", "de la semaine, parmi +130 recettes"),
-         ("La liste se fait seule", "ingrédients additionnés, tu coches"),
-         ("Partage-la en un lien", "le foyer voit la même liste, en direct"),
+         ("La liste se fait seule", "tu dis ce que tu as, on te dit le reste"),
+         ("Partage-la en un lien", "tes potes voient la même liste, en direct"),
          ("Cuisine pas à pas", "étapes claires et minuteurs intégrés")]
 y = 540
 for i, (a, b) in enumerate(steps, 1):
