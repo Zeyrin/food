@@ -12,6 +12,9 @@ import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 import AssietteRecette from '../components/AssietteRecette'
 import { NATIF, partagerTexte } from '../lib/natif'
+import { LIEN_SIGNATURE } from '../lib/invitation'
+import { partageActif } from '../lib/sync'
+import { useInviter } from '../hooks/useInviter'
 
 interface Props {
   items: ListItem[]
@@ -22,6 +25,9 @@ interface Props {
   prochaineCuisson: Recipe | null
   onVersCuisson: () => void
   onVersReglages: () => void
+  /** La maison et le prénom d'ici : de quoi inviter quelqu'un à faire les courses. */
+  foyer: string
+  prenom: string
 }
 
 const itemLibreEnListItem = (item: ItemLibre): ListItem => ({
@@ -44,8 +50,11 @@ export default function Liste({
   prochaineCuisson,
   onVersCuisson,
   onVersReglages,
+  foyer,
+  prenom,
 }: Props) {
   const { t } = useLangue()
+  const invitation = useInviter(foyer, prenom)
 
   /**
    * Deux modes sur le même écran. « Tri » remplace l'inventaire du
@@ -132,6 +141,9 @@ export default function Liste({
           ].join('\n'),
         ),
       ]),
+      // Celui qui reçoit la liste par SMS n'a souvent pas l'app : une
+      // ligne en bas lui dit d'où elle vient, et comment faire la sienne.
+      t('liste.signature', { lien: LIEN_SIGNATURE }),
     ].join('\n\n')
   }
 
@@ -465,6 +477,18 @@ export default function Liste({
             {t('liste.plusieursMagasins')}{' '}
             <button className="lien-discret" onClick={onVersReglages}>
               {t('liste.reglerMagasins')}
+            </button>
+          </p>
+        )}
+
+        {/* Envoyer la liste règle le passage au magasin d'une semaine ;
+            inviter dans la maison règle toutes les suivantes, liste cochée
+            à deux en temps réel. */}
+        {partageActif && (
+          <p className="aide">
+            {t('liste.inviterQuestion')}{' '}
+            <button className="lien-discret" onClick={() => void invitation.inviter()} aria-live="polite">
+              {invitation.copie ? t('liste.lienCopie') : t('liste.inviter')}
             </button>
           </p>
         )}

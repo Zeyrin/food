@@ -16,10 +16,38 @@ import { Share } from '@capacitor/share'
 import { traduire } from './i18n'
 import type { Minuteur } from './minuteurs'
 
-export { NATIF } from './plateforme'
+import { NATIF } from './plateforme'
+
+export { NATIF }
 
 export async function partagerTexte(titre: string, texte: string): Promise<void> {
   await Share.share({ title: titre, text: texte })
+}
+
+/**
+ * La feuille de partage du système, sinon le presse-papiers. `'annule'`
+ * quand la feuille a été refermée sans choisir, ce qui n'est pas un échec ;
+ * lève quand ni l'un ni l'autre n'a marché, à l'appelant de montrer le
+ * texte à copier à la main.
+ */
+export async function partagerOuCopier(titre: string, texte: string): Promise<'partage' | 'copie' | 'annule'> {
+  try {
+    if (NATIF) {
+      await partagerTexte(titre, texte)
+      return 'partage'
+    }
+    if (navigator.share) {
+      await navigator.share({ title: titre, text: texte })
+      return 'partage'
+    }
+    await navigator.clipboard.writeText(texte)
+    return 'copie'
+  } catch (e) {
+    if ((e as Error)?.name === 'AbortError') return 'annule'
+    // Le plugin natif ne lève pas d'AbortError : il dit « canceled ».
+    if (NATIF && /cancel/i.test((e as Error)?.message ?? '')) return 'annule'
+    throw e
+  }
 }
 
 export async function garderEcranAllume(actif: boolean): Promise<void> {
