@@ -11,7 +11,9 @@
  *
  * Tout reste dans le fragment : ni le serveur ni les robots d'aperçu ne le
  * reçoivent, le secret de la maison et le prénom ne sortent pas de la
- * conversation où le lien a été collé.
+ * conversation où le lien a été collé. Le chemin `/rejoindre/`, lui, est vu
+ * des robots : c'est la page prérendue qui donne au lien son propre aperçu
+ * (voir `scripts/prerender.mjs`).
  *
  * Fonctions pures, testées.
  */
@@ -38,7 +40,7 @@ export function lireInvitation(hash: string): Invitation | null {
 
 export function lienInvitation(foyer: string, prenom: string, origine: string = originePartage()): string {
   const de = prenom.trim().slice(0, LONGUEUR_PRENOM)
-  return `${origine}/#/f/${foyer}${de ? `?de=${encodeURIComponent(de)}` : ''}`
+  return `${origine}/rejoindre/#/f/${foyer}${de ? `?de=${encodeURIComponent(de)}` : ''}`
 }
 
 /**
