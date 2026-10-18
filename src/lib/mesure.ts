@@ -47,6 +47,7 @@ export type Geste =
   | 'minuteur_lance'
   | 'recette_collee'
   | 'recette_modifiee'
+  | 'recette_partagee'
   | 'recette_supprimee'
   | 'panier_vide'
   | 'langue_changee'

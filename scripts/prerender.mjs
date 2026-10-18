@@ -68,10 +68,26 @@ function formatQuantite(ing) {
   return `${formatNombre(ing.quantite)} ${suffixe}`.trim()
 }
 
-/** « 250 g de lentilles corail », mais « 3 ail » n'a pas de « de ». */
+/**
+ * Les noms qui commencent par un h muet : « d'huile », mais « de haricots »
+ * et « de harissa ». La règle ne se devine pas, on liste ceux du corpus.
+ */
+const H_MUET = /^(huile|herbes?)\b/i
+
+/** « de » devant une consonne, « d' » devant une voyelle ou un h muet. */
+function de(nom) {
+  return /^[aeiouâàéèêîïôœù]/i.test(nom) || H_MUET.test(nom) ? `d'${nom}` : `de ${nom}`
+}
+
+/**
+ * « 250 g de lentilles corail », « 1 c. à s. d'huile d'olive ». Une pièce
+ * n'a pas d'unité écrite, donc pas de « de » : « 3 oignon ».
+ */
 function ligneIngredient(ing) {
   const quantite = formatQuantite(ing)
-  return quantite ? `${quantite} ${ing.nom}` : ing.nom
+  if (!quantite) return ing.nom
+  if (ing.unite === 'piece') return `${quantite} ${ing.nom}`
+  return `${quantite} ${de(ing.nom)}`
 }
 
 // --- Échappement ------------------------------------------------------------
@@ -80,6 +96,21 @@ const ECHAPPE = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ECHAPPE[c])
 
 // --- Métadonnées ------------------------------------------------------------
+
+const DESCRIPTION_MAX = 160
+const TITRE_MAX = 60
+
+/**
+ * « Mapo tofu — recette en 30 min | FFFood », sauf quand le plat a un nom
+ * long : au-delà de ~60 caractères Google tronque le titre, et c'est la
+ * marque qui disparaît en premier. La durée part avant le nom du plat.
+ */
+function titrePage(r) {
+  const complet = `${r.titre} — recette en ${r.temps} min | FFFood`
+  if (complet.length <= TITRE_MAX) return complet
+  const court = `${r.titre} — recette | FFFood`
+  return court.length <= TITRE_MAX ? court : `${r.titre} | FFFood`
+}
 
 /**
  * Une description qui dit ce qu'on va trouver. Les ingrédients principaux y
@@ -93,15 +124,43 @@ function description(r) {
     .slice(0, 4)
     .map((i) => i.nom)
   const debut = `${r.titre} : recette pour ${r.portions} ${r.portions > 1 ? 'personnes' : 'personne'}, prête en ${r.temps} min.`
-  if (tetes.length === 0) return `${debut} Ingrédients, quantités et étapes.`
-  // Les noms canoniques sont en minuscules (« tofu soyeux ») ; en tête de
-  // phrase, ça se lit comme une coquille dans un résultat de recherche.
-  const liste = tetes.join(', ').replace(/^./, (c) => c.toUpperCase())
-  return `${debut} ${liste}. Ingrédients, quantités et étapes.`
+  const fin = ' Ingrédients, quantités et étapes.'
+  // Au-delà de ~160 caractères, Google coupe l'extrait au milieu d'un mot.
+  // On retire des ingrédients plutôt que de tronquer, puis la phrase de fin.
+  for (let n = tetes.length; n > 0; n--) {
+    // Les noms canoniques sont en minuscules (« tofu soyeux ») ; en tête de
+    // phrase, ça se lit comme une coquille dans un résultat de recherche.
+    const liste = tetes.slice(0, n).join(', ').replace(/^./, (c) => c.toUpperCase())
+    const texte = `${debut} ${liste}.${fin}`
+    if (texte.length <= DESCRIPTION_MAX) return texte
+    if (n === 1) return `${debut} ${liste}.`.length <= DESCRIPTION_MAX ? `${debut} ${liste}.` : debut
+  }
+  return `${debut}${fin}`
 }
+
+/** Les photos de `public/plats/` sont toutes en 800×600 ; l'affiche en 1200×630. */
+const TAILLE_PHOTO = [800, 600]
+const TAILLE_AFFICHE = [1200, 630]
 
 const urlRecette = (r) => `${SITE}/recette/${r.id}/`
 const urlImage = (r) => (r.image ? `${SITE}${r.image}` : `${SITE}/og.jpg`)
+
+/**
+ * Les tags du corpus qui disent quel moment du repas c'est. Le premier
+ * trouvé gagne ; sans aucun, c'est un plat.
+ */
+const CATEGORIES = { dessert: 'Dessert', entrée: 'Entrée', soupe: 'Soupe' }
+
+/** Les tags qui disent d'où vient le plat, au format qu'attend `recipeCuisine`. */
+const CUISINES = {
+  français: 'Française',
+  italien: 'Italienne',
+  thaïlandais: 'Thaïlandaise',
+  japonais: 'Japonaise',
+  mexicain: 'Mexicaine',
+  asiatique: 'Asiatique',
+  'moyen-orient': 'Moyen-Orient',
+}
 
 /**
  * Le balisage que les moteurs lisent pour afficher une recette autrement
@@ -110,15 +169,21 @@ const urlImage = (r) => (r.image ? `${SITE}${r.image}` : `${SITE}/og.jpg`)
  * résultat enrichi.
  */
 function jsonLd(r) {
-  return JSON.stringify({
-    '@context': 'https://schema.org',
+  const categorie = r.tags.map((t) => CATEGORIES[t]).find(Boolean) ?? 'Plat principal'
+  const cuisine = r.tags.map((t) => CUISINES[t]).find(Boolean)
+  const recette = {
     '@type': 'Recipe',
     name: r.titre,
     description: description(r),
     url: urlRecette(r),
+    // Pas d'image de repli ici : l'affiche du site dans le balisage d'un
+    // plat précis serait une photo trompeuse, et Google le sanctionne.
     ...(r.image ? { image: [urlImage(r)] } : {}),
+    author: { '@type': 'Organization', name: 'FFFood', url: `${SITE}/` },
     totalTime: `PT${r.temps}M`,
     recipeYield: `${r.portions} portions`,
+    recipeCategory: categorie,
+    ...(cuisine ? { recipeCuisine: cuisine } : {}),
     keywords: r.tags.join(', '),
     recipeIngredient: r.ingredients.map(ligneIngredient),
     recipeInstructions: r.etapes.map((texte, i) => ({
@@ -126,7 +191,20 @@ function jsonLd(r) {
       position: i + 1,
       text: texte,
     })),
-  }).replace(/</g, '\\u003c')
+  }
+  // Le fil d'Ariane remplace l'adresse brute sous le titre du résultat.
+  const ariane = {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'FFFood', item: `${SITE}/` },
+      { '@type': 'ListItem', position: 2, name: 'Recettes', item: `${SITE}/recette/` },
+      { '@type': 'ListItem', position: 3, name: r.titre, item: urlRecette(r) },
+    ],
+  }
+  return JSON.stringify({ '@context': 'https://schema.org', '@graph': [recette, ariane] }).replace(
+    /</g,
+    '\\u003c',
+  )
 }
 
 // --- Gabarit ----------------------------------------------------------------
@@ -140,9 +218,9 @@ function jsonLd(r) {
 const STYLE = `
 :root{--papier:#fff8ef;--carte:#fff;--carte-basse:#fdf3da;--encre:#201b0c;--encre-douce:#43493c;--trait:#c3c9b8;--accent:#385e16;--accent-doux:#cefda3;--sur-accent:#fff;--rayon:24px}
 @media (prefers-color-scheme:dark){:root{--papier:#16150f;--carte:#201e17;--carte-basse:#262319;--encre:#f3f0e6;--encre-douce:#b8bcae;--trait:#3a3d31;--accent:#a6d47e;--accent-doux:#2b5008;--sur-accent:#0c2000}}
-@font-face{font-family:'Bricolage Grotesque';font-weight:700;font-display:swap;src:url('/fonts/bricolage-700.ttf') format('truetype')}
-@font-face{font-family:'Hanken Grotesk';font-weight:400;font-display:swap;src:url('/fonts/hanken-400.ttf') format('truetype')}
-@font-face{font-family:'Hanken Grotesk';font-weight:600;font-display:swap;src:url('/fonts/hanken-600.ttf') format('truetype')}
+@font-face{font-family:'Bricolage Grotesque';font-weight:700;font-display:swap;src:url('/fonts/bricolage-700.woff2') format('woff2')}
+@font-face{font-family:'Hanken Grotesk';font-weight:400;font-display:swap;src:url('/fonts/hanken-400.woff2') format('woff2')}
+@font-face{font-family:'Hanken Grotesk';font-weight:600;font-display:swap;src:url('/fonts/hanken-600.woff2') format('woff2')}
 *{box-sizing:border-box}
 body{margin:0;background:var(--papier);color:var(--encre);font-family:'Hanken Grotesk',ui-sans-serif,system-ui,sans-serif;font-size:17px;line-height:1.6}
 main,header.site{max-width:44rem;margin:0 auto;padding:0 1.25rem}
@@ -171,7 +249,7 @@ ul.liens .q{display:block;color:var(--encre-douce);font-size:.9rem}
 footer{max-width:44rem;margin:0 auto;padding:3rem 1.25rem;color:var(--encre-douce);font-size:.9rem}
 `.trim()
 
-function page({ titre, desc, url, image, largeImage, corps, jsonld }) {
+function page({ titre, desc, url, image, imageTaille, largeImage, corps, jsonld, robots = 'index, follow' }) {
   return `<!doctype html>
 <html lang="fr">
 <head>
@@ -180,14 +258,19 @@ function page({ titre, desc, url, image, largeImage, corps, jsonld }) {
 <meta name="theme-color" content="#385e16">
 <title>${esc(titre)}</title>
 <meta name="description" content="${esc(desc)}">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="${esc(url)}">
+<meta name="robots" content="${robots}">
+${url ? `<link rel="canonical" href="${esc(url)}">` : ''}
+<link rel="preload" href="/fonts/hanken-400.woff2" as="font" type="font/woff2" crossorigin>
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="FFFood">
-<meta property="og:url" content="${esc(url)}">
+<meta property="og:locale" content="fr_FR">
+${url ? `<meta property="og:url" content="${esc(url)}">` : ''}
 <meta property="og:title" content="${esc(titre)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:image" content="${esc(image)}">
+<meta property="og:image:width" content="${imageTaille[0]}">
+<meta property="og:image:height" content="${imageTaille[1]}">
+<meta property="og:image:alt" content="${esc(titre)}">
 <meta name="twitter:card" content="${largeImage ? 'summary_large_image' : 'summary'}">
 <meta name="twitter:title" content="${esc(titre)}">
 <meta name="twitter:description" content="${esc(desc)}">
@@ -220,16 +303,56 @@ ${corps}
  * Trois plats qui partagent un tag. Une page isolée que rien ne relie au reste
  * est une page que rien ne fait explorer — ni un robot, ni quelqu'un qui vient
  * d'arriver et à qui ce plat-là ne dit rien.
+ *
+ * Proches d'abord : deux tags en commun valent mieux qu'un (au-delà, on ne
+ * départage plus). À proximité égale, on prend le plat qui a reçu le moins
+ * de liens jusqu'ici : prendre les premiers du corpus renvoyait toutes les
+ * pages vers les quatre mêmes plats, et laissait 115 recettes sans un seul
+ * lien entrant. Le dernier départage est un hachage de la paire plutôt que
+ * le hasard : tant que le corpus ne change pas, les liens ne bougent pas
+ * d'un déploiement à l'autre.
  */
-function voisines(r) {
-  const tags = new Set(r.tags)
-  return recipes
-    .filter((autre) => autre.id !== r.id && autre.tags.some((t) => tags.has(t)))
-    .slice(0, 3)
+function calculerVoisines() {
+  const recus = new Map(recipes.map((r) => [r.id, 0]))
+  const voisines = new Map()
+  for (const r of recipes) {
+    const tags = new Set(r.tags)
+    const choix = recipes
+      .filter((autre) => autre.id !== r.id)
+      .map((autre) => ({
+        autre,
+        proximite: Math.min(2, autre.tags.filter((t) => tags.has(t)).length),
+        ordre: hachage(`${r.id}>${autre.id}`),
+      }))
+      .filter((v) => v.proximite > 0)
+      .sort(
+        (a, b) =>
+          b.proximite - a.proximite ||
+          recus.get(a.autre.id) - recus.get(b.autre.id) ||
+          a.ordre - b.ordre,
+      )
+      .slice(0, 3)
+      .map((v) => v.autre)
+    for (const v of choix) recus.set(v.id, recus.get(v.id) + 1)
+    voisines.set(r.id, choix)
+  }
+  return voisines
 }
 
+/** FNV-1a : assez pour mélanger des identifiants, sans dépendance. */
+function hachage(texte) {
+  let h = 0x811c9dc5
+  for (let i = 0; i < texte.length; i++) {
+    h ^= texte.charCodeAt(i)
+    h = Math.imul(h, 0x01000193)
+  }
+  return h >>> 0
+}
+
+const VOISINES = calculerVoisines()
+
 function pageRecette(r) {
-  const proches = voisines(r)
+  const proches = VOISINES.get(r.id)
   const corps = `<main>
   ${r.image ? `<img class="plat" src="${esc(r.image)}" width="800" height="600" alt="${esc(r.titre)}">` : ''}
   <h1>${esc(r.titre)}</h1>
@@ -275,12 +398,13 @@ ${proches
 </main>`
 
   return page({
-    titre: `${r.titre} — recette en ${r.temps} min | FFFood`,
+    titre: titrePage(r),
     desc: description(r),
     url: urlRecette(r),
     // Sans photo, l'affiche du site plutôt que l'icône de l'app : un
     // aperçu de lien grand format se partage mieux qu'un carré de 512 px.
     image: urlImage(r),
+    imageTaille: r.image ? TAILLE_PHOTO : TAILLE_AFFICHE,
     largeImage: true,
     corps,
     jsonld: jsonLd(r),
@@ -311,9 +435,36 @@ ${tries
     desc: `Le catalogue FFFood : ${tries.length} recettes avec ingrédients, quantités et étapes. Choisissez vos repas de la semaine, la liste de courses s'en déduit.`,
     url: `${SITE}/recette/`,
     image: `${SITE}/og.jpg`,
+    imageTaille: TAILLE_AFFICHE,
     largeImage: true,
     corps,
     jsonld: null,
+  })
+}
+
+// --- Page introuvable ------------------------------------------------------
+
+/**
+ * Vercel sert `404.html` pour toute adresse inconnue. Sans elle, une recette
+ * renommée ou un lien mal copié tombait sur une page en texte brut, sans un
+ * lien pour continuer.
+ */
+function page404() {
+  const corps = `<main>
+  <h1>Cette page n'existe pas</h1>
+  <p class="meta">Le lien est peut-être incomplet, ou la recette a changé de nom.</p>
+  <a class="cta" href="/recette/">Voir toutes les recettes</a>
+</main>`
+  return page({
+    titre: 'Page introuvable | FFFood',
+    desc: "Cette page n'existe pas. Retrouvez toutes les recettes FFFood.",
+    url: null,
+    image: `${SITE}/og.jpg`,
+    imageTaille: TAILLE_AFFICHE,
+    largeImage: true,
+    corps,
+    jsonld: null,
+    robots: 'noindex',
   })
 }
 
@@ -352,6 +503,7 @@ function ecrire(chemin, contenu) {
 
 for (const r of recipes) ecrire(`recette/${r.id}/index.html`, pageRecette(r))
 ecrire('recette/index.html', pageIndex())
+ecrire('404.html', page404())
 ecrire('sitemap.xml', sitemap())
 
-console.log(`Prérendu : ${recipes.length} recettes + l'index, et le sitemap.`)
+console.log(`Prérendu : ${recipes.length} recettes + l'index, la page 404 et le sitemap.`)
