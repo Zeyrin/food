@@ -108,21 +108,33 @@ export async function ecrireMagasins(config: ConfigMagasins): Promise<void> {
 
 /**
  * L'identifiant du foyer est le secret de partage. Il arrive par
- * l'URL (#/f/<uuid>), ou a déjà été choisi sur cet appareil ; sinon
- * `null` — à l'appelant de proposer explicitement d'en créer un ou
- * d'en rejoindre un par code (voir écran Bienvenue), plutôt que
- * d'en générer un en douce à chaque nouvel appareil.
+ * l'URL (#/f/<uuid>, lu par `lireInvitation`), ou a déjà été choisi sur
+ * cet appareil ; sinon `null` — à l'appelant de proposer explicitement
+ * d'en créer un ou d'en rejoindre un par code (voir écran Bienvenue),
+ * plutôt que d'en générer un en douce à chaque nouvel appareil.
  *
- * Le lien prime même si l'enregistrement échoue : sans stockage, on
- * ouvre quand même le foyer qu'on vient de nous partager.
+ * Le lien n'est adopté d'office que sur un appareil sans maison : il prime
+ * alors même si l'enregistrement échoue, on ouvre quand même le foyer
+ * qu'on vient de nous partager. Sur un appareil qui a déjà la sienne, le
+ * lien la remplaçait sans un mot, et sans même la noter comme « maison
+ * d'avant » : un lien touché par curiosité suffisait à perdre sa semaine.
+ * On garde donc la maison d'ici, et `arrivee` dit à l'app de demander.
  */
-export async function lireFoyer(): Promise<string | null> {
-  const depuisUrl = location.hash.match(/\/f\/([0-9a-f-]{36})/i)?.[1]
-  if (depuisUrl) {
+export type ArriveeParLien = 'nouvelle' | 'autreMaison' | 'memeMaison'
+
+export async function lireFoyer(
+  depuisUrl: string | null,
+): Promise<{ foyer: string | null; arrivee: ArriveeParLien | null }> {
+  const enregistre = await lire<string | null>(K_FOYER, null)
+  if (!depuisUrl) return { foyer: enregistre, arrivee: null }
+  if (!enregistre) {
     await ecrire(K_FOYER, depuisUrl)
-    return depuisUrl
+    return { foyer: depuisUrl, arrivee: 'nouvelle' }
   }
-  return lire<string | null>(K_FOYER, null)
+  return {
+    foyer: enregistre,
+    arrivee: enregistre.toLowerCase() === depuisUrl.toLowerCase() ? 'memeMaison' : 'autreMaison',
+  }
 }
 
 /**

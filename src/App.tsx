@@ -48,6 +48,8 @@ import Bienvenue from './screens/Bienvenue'
 import TourGuide from './components/TourGuide'
 import BandeauMinuteur from './components/BandeauMinuteur'
 import BandeauMiseAJour from './components/BandeauMiseAJour'
+import InvitationMaison, { type EtatInvitation } from './components/InvitationMaison'
+import { lireInvitation, type Invitation } from './lib/invitation'
 import BandeauIntegre from './components/BandeauIntegre'
 import PanneauMinuteurs from './components/PanneauMinuteurs'
 import { useMinuteurs } from './hooks/useMinuteurs'
@@ -319,6 +321,9 @@ export default function App() {
   // La maison quittée sur cet appareil : lue à l'amorçage comme le reste,
   // elle n'est offerte que par l'écran d'accueil.
   const [foyerPrecedent, setFoyerPrecedent] = useState<FoyerPrecedent | null>(null)
+  // Arrivé par un lien d'invitation : de quoi dire où l'on est, ou
+  // demander avant de quitter sa maison (voir InvitationMaison).
+  const [invitation, setInvitation] = useState<(Invitation & { etat: EtatInvitation }) | null>(null)
   const [prenom, setPrenom] = useState('')
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -382,7 +387,20 @@ export default function App() {
         setEtatListe((prec) => ({ ...prec, panier }))
         setHistorique(await lireHistorique())
         setPrenom(await lirePrenom())
-        setFoyer(await lireFoyer())
+        const invite = lireInvitation(location.hash)
+        const { foyer: lu, arrivee } = await lireFoyer(invite?.foyer ?? null)
+        setFoyer(lu)
+        if (invite) {
+          // Lu une fois pour toutes : un rechargement, ou un départ de la
+          // maison plus tard, ne doit pas y ramener par ce vieux fragment.
+          history.replaceState(history.state, '', location.pathname + location.search)
+          if (arrivee === 'nouvelle') {
+            setInvitation({ ...invite, etat: 'bienvenue' })
+            mesurer('foyer_rejoint', { voie: 'invitation' })
+          } else if (arrivee === 'autreMaison') {
+            setInvitation({ ...invite, etat: 'confirmer' })
+          }
+        }
         setCodeFoyer(await lireCodeFoyer())
         setFoyerPrecedent(await lireFoyerPrecedent())
       } finally {
@@ -810,6 +828,8 @@ export default function App() {
         magasins={magasins.config}
         onMagasins={magasins.definir}
         codeFoyer={codeFoyer}
+        foyer={foyer}
+        prenom={prenom}
         miseAJour={miseAJour}
         onRejoindre={rejoindreDepuisReglages}
         onRejoindreLien={rejoindreLienDepuisReglages}
@@ -879,6 +899,22 @@ export default function App() {
         />
       )}
 
+      {invitation && !visiteEnCours && (
+        <InvitationMaison
+          etat={invitation.etat}
+          de={invitation.de}
+          onRejoindre={async () => {
+            const ok = await rejoindreParLien(invitation.foyer)
+            if (ok) setInvitation(null)
+            return ok
+          }}
+          onFermer={() => {
+            if (invitation.etat === 'confirmer') mesurer('invitation_refusee')
+            setInvitation(null)
+          }}
+        />
+      )}
+
       {ecranPleinePage ?? (
         <>
           {onglet === 'propose' && (
@@ -934,6 +970,8 @@ export default function App() {
               magasins={magasins.config}
               onVersCuisson={() => changerOnglet('cuisson')}
               onVersReglages={() => irVers({ type: 'reglages' })}
+              foyer={foyer}
+              prenom={prenom}
             />
           )}
 

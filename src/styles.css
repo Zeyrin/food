@@ -5641,6 +5641,25 @@ html[data-gele='true'] body {
   gap: 8px;
 }
 
+/* L'invitation reprend la carte du bandeau des apps sociales, mais
+   flotte en haut de l'écran : elle arrive sur n'importe quel onglet, et
+   la demande « rejoindre ? » ne doit pas se perdre sous la grille. */
+.bandeau-invitation {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 12;
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--carte);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-haute);
+}
+
+.bandeau-invitation b {
+  color: var(--encre);
+}
+
 /* --- Panier : la photo et le titre ouvrent la fiche ------------------------
    Remis à plat : un bouton qui garde l'allure de la vignette et du titre,
    avec pour seul signe l'appui — la vignette s'enfonce, le titre prend

@@ -7,6 +7,7 @@ import { reinitialiserCache, VERSION_APP } from '../lib/miseAJour'
 import { useLangue } from '../lib/i18n'
 import { useEtatSynchro } from '../hooks/useEtatSynchro'
 import { partageActif } from '../lib/sync'
+import { useInviter } from '../hooks/useInviter'
 import { mesurer } from '../lib/mesure'
 import type { ConfigMagasins } from '../lib/magasins'
 import { magasinDuRayon } from '../lib/magasins'
@@ -29,6 +30,9 @@ interface Props {
   magasins: ConfigMagasins
   onMagasins: (config: ConfigMagasins) => void
   codeFoyer: string | null
+  /** La maison et le prénom d'ici : de quoi construire le lien d'invitation. */
+  foyer: string
+  prenom: string
   miseAJour: MiseAJour
   onRejoindre: (code: string) => Promise<boolean>
   /** Entrée par l'UUID d'un lien de partage collé dans le champ. */
@@ -42,6 +46,8 @@ export default function Reglages({
   magasins,
   onMagasins,
   codeFoyer,
+  foyer,
+  prenom,
   miseAJour,
   onRejoindre,
   onRejoindreLien,
@@ -58,6 +64,7 @@ export default function Reglages({
   const [confirmationQuitter, setConfirmationQuitter] = useState(false)
   const [reinitialisation, setReinitialisation] = useState(false)
   const [copie, setCopie] = useState(false)
+  const invitation = useInviter(foyer, prenom)
   /**
    * Ce qu'on s'apprête à rejoindre, en attente de confirmation.
    *
@@ -322,6 +329,23 @@ export default function Reglages({
           changer, et la confirmation de départ parlait d'un code affiché
           deux écrans plus haut. */}
       <h2>{t('reglages.votreFoyer')}</h2>
+
+      {/* Le lien d'abord, le code ensuite : un toucher dans une
+          conversation vaut mieux que six caractères à recopier. Le code
+          reste pour ce qui se dit à voix haute, ou d'un écran à l'autre. */}
+      {partageActif && (
+        <>
+          <p className="aide">{t('reglages.inviterAide')}</p>
+          <button
+            className="principal suite pleine-largeur"
+            onClick={() => void invitation.inviter()}
+            aria-live="polite"
+          >
+            <Icone nom={invitation.copie ? 'coche' : 'lien'} taille={18} />
+            {invitation.copie ? t('reglages.lienCopie') : t('reglages.inviter')}
+          </button>
+        </>
+      )}
 
       {codeFoyer && (
         <div className="carte-code-foyer">

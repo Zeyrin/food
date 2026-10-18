@@ -32,6 +32,8 @@ export type Geste =
   | 'creation_echouee'
   | 'foyer_cree'
   | 'foyer_rejoint'
+  | 'invitation_envoyee'
+  | 'invitation_refusee'
   | 'visite_terminee'
   | 'visite_passee'
   | 'fiche_ouverte'

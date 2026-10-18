@@ -54,6 +54,9 @@ const fr: Dico = {
       "Donnez-le à qui partage cette maison : il l'entre sur son écran d'accueil, et vous tenez la même liste.",
     copierCode: 'Copier le code',
     codeCopie: 'Copié',
+    inviter: "Inviter quelqu'un",
+    inviterAide: 'Envoyez le lien de la maison par message : un toucher suffit pour partager la même liste.',
+    lienCopie: 'Lien copié',
     partageInactif:
       "Le partage n'est pas configuré sur cette installation : l'app fonctionne seule sur cet appareil.",
     rejoindreAutreFoyer: 'Rejoindre un autre foyer',
@@ -163,6 +166,24 @@ const fr: Dico = {
     copie: 'Lien copié, collez-le dans votre navigateur',
     fermer: 'Masquer',
   },
+  invitation: {
+    // Arrivée par un lien d'invitation (voir components/InvitationMaison.tsx).
+    bienvenueDe: 'Bienvenue dans la maison de {{de}} !',
+    bienvenue: 'Bienvenue dans cette maison partagée !',
+    bienvenueTexte: 'La liste de courses, le panier et les recettes sont les mêmes pour tous ceux qui y sont : cochez un produit, il est coché chez les autres.',
+    compris: 'Compris',
+    confirmerDe: '{{de}} vous invite dans sa maison.',
+    confirmer: 'Ce lien vous invite dans une autre maison.',
+    confirmerTexte: "Vous y partagerez sa liste de courses. Votre maison actuelle n'est pas supprimée, vous pourrez y revenir.",
+    rejoindre: 'Rejoindre',
+    rester: 'Rester dans la mienne',
+  },
+  inviter: {
+    titre: 'Rejoins ma maison FFFood',
+    messageDe: "{{de}} t'invite à partager sa liste de courses sur FFFood : on choisit les repas de la semaine, la liste se fait toute seule et se coche à plusieurs. Gratuit, sans compte : {{lien}}",
+    message: "Je t'invite à partager ma liste de courses sur FFFood : on choisit les repas de la semaine, la liste se fait toute seule et se coche à plusieurs. Gratuit, sans compte : {{lien}}",
+    copierAMain: "Lien d'invitation à copier",
+  },
   placeholders: {
     // La légende de l'assiette dessinée qui remplace une photo absente
     // (voir `VignettePlaceholder`). Un clin d'œil au dessin et une
@@ -268,6 +289,10 @@ const fr: Dico = {
     cuisson: 'Cuisson',
     listeDeCourses: 'Liste de courses — semaine {{n}}',
     titrePartage: 'Liste de courses',
+    signature: 'Liste faite avec FFFood, gratuit et sans compte : {{lien}}',
+    inviterQuestion: "Quelqu'un d'autre fait les courses ?",
+    inviter: 'Invitez-le dans la maison.',
+    lienCopie: 'Lien copié !',
     magasinSansNom: 'Autre magasin',
     plusieursMagasins: 'Vous faites plusieurs magasins ?',
     reglerMagasins: 'Dites lesquels.',
@@ -648,6 +673,9 @@ const en: Dico = {
       'Hand it to whoever shares this household: they enter it on their welcome screen, and you hold the same list.',
     copierCode: 'Copy the code',
     codeCopie: 'Copied',
+    inviter: 'Invite someone',
+    inviterAide: 'Send the household link in a message: one tap and you share the same list.',
+    lienCopie: 'Link copied',
     partageInactif:
       'Sharing is not configured on this install: the app works on this device alone.',
     rejoindreAutreFoyer: 'Join another household',
@@ -741,6 +769,23 @@ const en: Dico = {
     copier: 'Copy link',
     copie: 'Link copied, paste it into your browser',
     fermer: 'Hide',
+  },
+  invitation: {
+    bienvenueDe: "Welcome to {{de}}'s household!",
+    bienvenue: 'Welcome to this shared household!',
+    bienvenueTexte: 'The shopping list, basket and recipes are the same for everyone in it: tick an item and it is ticked for the others too.',
+    compris: 'Got it',
+    confirmerDe: '{{de}} invites you to their household.',
+    confirmer: 'This link invites you to another household.',
+    confirmerTexte: "You'll share their shopping list. Your current household isn't deleted, you can go back to it.",
+    rejoindre: 'Join',
+    rester: 'Stay in mine',
+  },
+  inviter: {
+    titre: 'Join my FFFood household',
+    messageDe: "{{de}} invites you to share their shopping list on FFFood: pick the week's meals, the list builds itself and you tick it off together. Free, no account: {{lien}}",
+    message: "Join my shopping list on FFFood: pick the week's meals, the list builds itself and we tick it off together. Free, no account: {{lien}}",
+    copierAMain: 'Invite link to copy',
   },
   placeholders: {
     sansPhoto: {
@@ -836,6 +881,10 @@ const en: Dico = {
     cuisson: 'Cooking',
     listeDeCourses: 'Shopping list — week {{n}}',
     titrePartage: 'Shopping list',
+    signature: 'List made with FFFood, free and no account: {{lien}}',
+    inviterQuestion: 'Someone else doing the shopping?',
+    inviter: 'Invite them to the household.',
+    lienCopie: 'Link copied!',
     magasinSansNom: 'Other shop',
     plusieursMagasins: 'Shopping in more than one place?',
     reglerMagasins: 'Tell the app where.',
