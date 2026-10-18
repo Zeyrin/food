@@ -25,6 +25,11 @@ interface Props {
    * lui promet plutôt qu'un catalogue en général.
    */
   recetteAttendue?: string | null
+  /**
+   * Arrivé par un lien de menu (`#/m/…`) : combien de plats, et de qui.
+   * Le menu lui-même attend dans l'app, une fois la maison créée.
+   */
+  menuAttendu?: { plats: number; de: string | null } | null
 }
 
 /** Là où l'attente et l'erreur s'affichent : à côté du geste qui les a produites. */
@@ -46,6 +51,7 @@ export default function Bienvenue({
   onReprendre,
   onOublierPrecedent,
   recetteAttendue = null,
+  menuAttendu = null,
 }: Props) {
   const { t } = useLangue()
   const appSociale = navigateurIntegre()
@@ -53,7 +59,7 @@ export default function Bienvenue({
   // Le haut de l'entonnoir : sans lui, on voit combien de maisons sont
   // créées mais pas combien de visiteurs sont repartis sans en créer.
   useEffect(() => {
-    mesurer('accueil_vu', { entree: recetteAttendue ? 'recette' : 'directe', integre: appSociale ?? 'non' })
+    mesurer('accueil_vu', { entree: menuAttendu ? 'menu' : recetteAttendue ? 'recette' : 'directe', integre: appSociale ?? 'non' })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   const [code, setCode] = useState('')
@@ -165,14 +171,26 @@ export default function Bienvenue({
               bouton qu'un visiteur venu d'une vidéo doit trouver, et il
               devait jusqu'ici faire défiler plus d'un écran pour y arriver. */}
           <div className="accueil-hero-actions">
-            {recetteAttendue && (
-              <p className="accueil-hero-attendue">{t('bienvenue.recetteAttendue', { titre: recetteAttendue })}</p>
+            {menuAttendu ? (
+              <p className="accueil-hero-attendue">
+                {t(menuAttendu.de ? 'menu.attenduDe' : 'menu.attendu', {
+                  de: menuAttendu.de ?? '',
+                  n: menuAttendu.plats,
+                  s: menuAttendu.plats > 1 ? 's' : '',
+                })}
+              </p>
+            ) : (
+              recetteAttendue && (
+                <p className="accueil-hero-attendue">{t('bienvenue.recetteAttendue', { titre: recetteAttendue })}</p>
+              )
             )}
             {messageErreur('creation')}
             <button className="principal accueil-hero-cta" onClick={creer} disabled={enCours !== null}>
               {enCours === 'creation'
                 ? t('bienvenue.creation')
-                : recetteAttendue
+                : menuAttendu
+                  ? t('menu.voirLeMenu')
+                  : recetteAttendue
                   ? t('bienvenue.voirLaRecette')
                   : t('bienvenue.voirLesRecettes')}
               {enCours !== 'creation' && <Icone nom="suivant" taille={20} />}
