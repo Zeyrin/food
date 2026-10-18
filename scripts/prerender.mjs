@@ -493,6 +493,50 @@ ${urls
 `
 }
 
+// --- Page d'invitation -------------------------------------------------------
+
+/**
+ * `/rejoindre/` : l'app elle-même, sous une autre adresse, pour que le lien
+ * d'invitation dans une maison (`/rejoindre/#/f/<uuid>`) ait son propre
+ * aperçu. Le fragment ne part jamais au serveur ni aux robots d'aperçu :
+ * WhatsApp ou iMessage ne voient que `/rejoindre/`, et montraient jusqu'ici
+ * l'affiche générique de l'accueil, qui ne dit pas qu'on vous invite.
+ *
+ * Copie de `dist/index.html` dont seules les balises d'aperçu changent : le
+ * même bundle démarre, lit le fragment et ouvre la maison. Chaque
+ * remplacement est vérifié — une balise renommée dans index.html ne doit
+ * pas laisser partir en silence une page qui annonce l'accueil.
+ */
+function pageRejoindre() {
+  const titre = 'On fait les courses ensemble ?'
+  const desc =
+    "Une seule liste de courses pour toute la maison : ce que l'un coche, l'autre le voit cocher. Gratuit, sans compte."
+  const image = `${SITE}/og-invitation.jpg`
+  const remplacements = [
+    [/<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${esc(desc)}" />`],
+    // Une page par maison, toutes identiques : rien à indexer.
+    [/<meta name="robots" content="[^"]*" \/>/, '<meta name="robots" content="noindex, follow" />'],
+    [/<meta property="og:url" content="[^"]*" \/>/, `<meta property="og:url" content="${SITE}/rejoindre/" />`],
+    [/<meta property="og:title" content="[^"]*" \/>/, `<meta property="og:title" content="${esc(titre)}" />`],
+    [/<meta property="og:description" content="[^"]*" \/>/, `<meta property="og:description" content="${esc(desc)}" />`],
+    [/<meta property="og:image" content="[^"]*" \/>/, `<meta property="og:image" content="${image}" />`],
+    [
+      /<meta property="og:image:alt" content="[^"]*" \/>/,
+      `<meta property="og:image:alt" content="${esc(`${titre} Une liste de courses cochée à deux. FFFood`)}" />`,
+    ],
+    [/<meta name="twitter:image" content="[^"]*" \/>/, `<meta name="twitter:image" content="${image}" />`],
+    [/<meta name="twitter:title" content="[^"]*" \/>/, `<meta name="twitter:title" content="${esc(titre)}" />`],
+    [/<meta name="twitter:description" content="[^"]*" \/>/, `<meta name="twitter:description" content="${esc(desc)}" />`],
+    [/<title>[^<]*<\/title>/, `<title>${esc(titre)} · FFFood</title>`],
+  ]
+  let html = readFileSync(join(dist, 'index.html'), 'utf8')
+  for (const [motif, valeur] of remplacements) {
+    if (!motif.test(html)) throw new Error(`Page /rejoindre/ : balise introuvable dans index.html (${motif})`)
+    html = html.replace(motif, valeur)
+  }
+  return html
+}
+
 // --- Écriture ---------------------------------------------------------------
 
 function ecrire(chemin, contenu) {
@@ -505,5 +549,6 @@ for (const r of recipes) ecrire(`recette/${r.id}/index.html`, pageRecette(r))
 ecrire('recette/index.html', pageIndex())
 ecrire('404.html', page404())
 ecrire('sitemap.xml', sitemap())
+ecrire('rejoindre/index.html', pageRejoindre())
 
-console.log(`Prérendu : ${recipes.length} recettes + l'index, la page 404 et le sitemap.`)
+console.log(`Prérendu : ${recipes.length} recettes + l'index, la page 404, la page d'invitation et le sitemap.`)

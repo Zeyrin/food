@@ -18,7 +18,7 @@ test('ignore ce qui n\'est pas une invitation', () => {
 
 test('le lien rouvre la même invitation', () => {
   const lien = lienInvitation(UUID, '  Zoé & Léa ', 'https://www.fffood.fr')
-  assert.equal(lien.startsWith(`https://www.fffood.fr/#/f/${UUID}?de=`), true)
+  assert.equal(lien.startsWith(`https://www.fffood.fr/rejoindre/#/f/${UUID}?de=`), true)
   assert.deepEqual(lireInvitation(new URL(lien).hash), { foyer: UUID, de: 'Zoé & Léa' })
-  assert.equal(lienInvitation(UUID, ' ', 'https://www.fffood.fr'), `https://www.fffood.fr/#/f/${UUID}`)
+  assert.equal(lienInvitation(UUID, ' ', 'https://www.fffood.fr'), `https://www.fffood.fr/rejoindre/#/f/${UUID}`)
 })

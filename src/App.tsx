@@ -393,7 +393,9 @@ export default function App() {
         if (invite) {
           // Lu une fois pour toutes : un rechargement, ou un départ de la
           // maison plus tard, ne doit pas y ramener par ce vieux fragment.
-          history.replaceState(history.state, '', location.pathname + location.search)
+          // `/rejoindre/` n'existe que pour l'aperçu du lien : on revient à
+          // l'adresse de l'app.
+          history.replaceState(history.state, '', location.pathname.replace(/^\/rejoindre\/?/, '/') + location.search)
           if (arrivee === 'nouvelle') {
             setInvitation({ ...invite, etat: 'bienvenue' })
             mesurer('foyer_rejoint', { voie: 'invitation' })
