@@ -159,6 +159,98 @@ export default function Propose({
     setRecherche('')
   }
 
+  /**
+   * Une carte de recette, pour la grille comme pour les rangées. `repere`
+   * marque la carte que la visite guidée fait ajouter : la première
+   * affichée à l'écran, quelle que soit la section qui la porte.
+   */
+  const carte = (r: Recipe, i: number, cle: string, repere: boolean) => (
+    <div
+      key={cle}
+      className="carte carte-recette"
+      role="button"
+      tabIndex={0}
+      data-panier={dansPanier(r.id) ? 'true' : undefined}
+      onClick={() => onDetail(r.id)}
+      // La barre d'espace ouvre aussi la fiche (un vrai bouton le
+      // ferait), mais seulement si le focus est sur la carte —
+      // sinon elle doublerait le clic du bouton « + » imbriqué.
+      onKeyDown={(e) => {
+        if (e.target !== e.currentTarget) return
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onDetail(r.id)
+        }
+      }}
+      style={
+        {
+          '--teinte': teinteRecette(r.titre),
+          // Le rang n'échelonne que la première hauteur d'écran :
+          // au-delà, `styles.css` ne joue plus l'entrée du tout
+          // (`:nth-child(-n + 8)`) — ces cartes sont hors champ,
+          // et les animer coûtait une couche de composition
+          // chacune pour un effet que personne ne voit.
+          '--rang': Math.min(i, 7),
+        } as React.CSSProperties
+      }
+    >
+      <div className="vignette" data-sans-photo={r.image ? undefined : 'true'} aria-hidden="true">
+        {!r.image && <VignettePlaceholder recette={r} />}
+        <ImageRecette src={r.image} />
+        <span className="badge-temps">
+          <Icone nom="minuteur" taille={12} /> {formatMinutes(r.temps, t)}
+        </span>
+        {estFavorite(r, historique) && (
+          <span className="badge-favori" title={t('propose.favori')}>
+            <Icone nom="coeur" taille={14} />
+          </span>
+        )}
+        <button
+          className="bouton-ajout bouton-ajout-flottant"
+          // Le premier plat de la grille est celui que la visite
+          // guidée fait ajouter (voir data/onboarding.ts).
+          data-tour={repere ? 'plat-exemple' : undefined}
+          onClick={(e) => {
+            e.stopPropagation()
+            basculer(r)
+          }}
+          aria-pressed={dansPanier(r.id)}
+          aria-label={
+            dansPanier(r.id)
+              ? t('propose.retirerDuPanier', { titre: r.titre })
+              : t('propose.ajouterAuPanier', { titre: r.titre })
+          }
+        >
+          <Icone nom={dansPanier(r.id) ? 'coche' : 'plus'} taille={20} />
+        </button>
+      </div>
+      <div className="carte-recette-corps">
+        <h3>{r.titre}</h3>
+        {motifs.has(r.id) && (
+          <p className="motif-recherche">{t('propose.contient', { motif: motifs.get(r.id) ?? '' })}</p>
+        )}
+      </div>
+    </div>
+  )
+
+  // Les rangées thématiques ne servent qu'au catalogue brut : dès qu'une
+  // recherche ou un filtre est posé, la grille répond déjà à la question.
+  const rangees = useMemo(() => {
+    if (nombreFiltres > 0 || recherche.trim()) return []
+    const liste: { cle: string; titre: string; sousTitre?: string; recettes: Recipe[] }[] = []
+    const rapides = proposer(recipes, historique, { tempsMax: 30, nombre: 10 })
+    if (rapides.length >= 3) {
+      liste.push({ cle: 'rapide', titre: t('propose.rangeeRapide'), sousTitre: t('propose.rangeeRapideSous'), recettes: rapides })
+    }
+    const aimees = proposer(recipes, historique, { nombre: recipes.length })
+      .filter((r) => estFavorite(r, historique))
+      .slice(0, 10)
+    if (aimees.length > 0) {
+      liste.push({ cle: 'favoris', titre: t('propose.rangeeFavoris'), recettes: aimees })
+    }
+    return liste
+  }, [recipes, historique, nombreFiltres, recherche, t])
+
   return (
     <div className="ecran-propose">
       <header className="entete-app entete-propose">
@@ -302,75 +394,28 @@ export default function Propose({
             )}
           </div>
         ) : (
-          <div className="grille-recettes">
-            {affichees.map((r, i) => (
-              <div
-                key={r.id}
-                className="carte carte-recette"
-                role="button"
-                tabIndex={0}
-                data-panier={dansPanier(r.id) ? 'true' : undefined}
-                onClick={() => onDetail(r.id)}
-                // La barre d'espace ouvre aussi la fiche (un vrai bouton le
-                // ferait), mais seulement si le focus est sur la carte —
-                // sinon elle doublerait le clic du bouton « + » imbriqué.
-                onKeyDown={(e) => {
-                  if (e.target !== e.currentTarget) return
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    onDetail(r.id)
-                  }
-                }}
-                style={
-                  {
-                    '--teinte': teinteRecette(r.titre),
-                    // Le rang n'échelonne que la première hauteur d'écran :
-                    // au-delà, `styles.css` ne joue plus l'entrée du tout
-                    // (`:nth-child(-n + 8)`) — ces cartes sont hors champ,
-                    // et les animer coûtait une couche de composition
-                    // chacune pour un effet que personne ne voit.
-                    '--rang': Math.min(i, 7),
-                  } as React.CSSProperties
-                }
-              >
-                <div className="vignette" data-sans-photo={r.image ? undefined : 'true'} aria-hidden="true">
-                  {!r.image && <VignettePlaceholder recette={r} />}
-                  <ImageRecette src={r.image} />
-                  <span className="badge-temps">
-                    <Icone nom="minuteur" taille={12} /> {formatMinutes(r.temps, t)}
-                  </span>
-                  {estFavorite(r, historique) && (
-                    <span className="badge-favori" title={t('propose.favori')}>
-                      <Icone nom="coeur" taille={14} />
-                    </span>
-                  )}
-                  <button
-                    className="bouton-ajout bouton-ajout-flottant"
-                    // Le premier plat de la grille est celui que la visite
-                    // guidée fait ajouter (voir data/onboarding.ts).
-                    data-tour={i === 0 ? 'plat-exemple' : undefined}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      basculer(r)
-                    }}
-                    aria-pressed={dansPanier(r.id)}
-                    aria-label={
-                      dansPanier(r.id)
-                        ? t('propose.retirerDuPanier', { titre: r.titre })
-                        : t('propose.ajouterAuPanier', { titre: r.titre })
-                    }
-                  >
-                    <Icone nom={dansPanier(r.id) ? 'coche' : 'plus'} taille={20} />
-                  </button>
+          <div className="catalogue">
+            {/* Le catalogue entier d'un coup, c'est une centaine de plats :
+                trop de choix ralentit le choix (loi de Hick). Avant la grille,
+                deux rangées courtes font le premier tri à la place de
+                l'utilisateur — ce qui se fait vite ce soir, ce qu'on a aimé —
+                comme les rayons d'une appli de livraison. Elles s'effacent dès
+                qu'on cherche ou qu'on filtre : on sait alors ce qu'on veut. */}
+            {rangees.map((rangee, n) => (
+              <section key={rangee.cle} className="section-catalogue" aria-labelledby={`rangee-${rangee.cle}`}>
+                <h2 className="titre-rangee" id={`rangee-${rangee.cle}`}>
+                  {rangee.titre}
+                  {rangee.sousTitre && <em>{rangee.sousTitre}</em>}
+                </h2>
+                <div className="grille-recettes rangee-recettes">
+                  {rangee.recettes.map((r, i) => carte(r, i, `${rangee.cle}-${r.id}`, n === 0 && i === 0))}
                 </div>
-                <div className="carte-recette-corps">
-                  <h3>{r.titre}</h3>
-                  {motifs.has(r.id) && (
-                    <p className="motif-recherche">{t('propose.contient', { motif: motifs.get(r.id) ?? '' })}</p>
-                  )}
-                </div>
-              </div>
+              </section>
             ))}
+            {rangees.length > 0 && <h2 className="titre-rangee">{t('propose.toutLeCatalogue')}</h2>}
+            <div className="grille-recettes">
+              {affichees.map((r, i) => carte(r, i, r.id, rangees.length === 0 && i === 0))}
+            </div>
           </div>
         )}
       </div>

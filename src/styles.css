@@ -1540,6 +1540,74 @@ button.carte:active {
   align-items: start;
 }
 
+/* Rangées thématiques en tête du catalogue (« Vite fait ce soir »,
+   « Vos favoris ») : mêmes cartes que la grille, alignées sur une ligne
+   qui défile du pouce et déborde jusqu'aux bords de l'écran. La carte
+   suivante, coupée au bord, dit qu'il y en a d'autres. */
+/* Colonne de grille sur desktop : sans `min-width: 0`, la largeur de la
+   rangée défilante (toutes ses cartes bout à bout) devenait la largeur
+   minimale de la colonne, et la page entière débordait à droite. */
+.catalogue {
+  min-width: 0;
+}
+
+.section-catalogue {
+  margin-bottom: 8px;
+}
+
+.titre-rangee {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin: 8px 0 12px;
+  font-size: 21px;
+  letter-spacing: -0.015em;
+}
+
+.titre-rangee em {
+  color: var(--encre-douce);
+  font-family: var(--texte);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.grille-recettes.rangee-recettes {
+  display: flex;
+  /* Dans une rangée, toutes les cartes à la même hauteur : côte à côte
+     sur une ligne, un titre court laissait une carte plus basse que ses
+     voisines. */
+  align-items: stretch;
+  gap: 12px;
+  margin: 0 -20px;
+  padding: 2px 20px 14px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 20px;
+  scrollbar-width: none;
+  /* Le bord droit s'estompe : la carte coupée se lit comme une suite. */
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+}
+
+.grille-recettes.rangee-recettes::-webkit-scrollbar {
+  display: none;
+}
+
+.grille-recettes.rangee-recettes .carte-recette {
+  flex: 0 0 min(42vw, 168px);
+  scroll-snap-align: start;
+  /* Rendues tout de suite : une rangée est courte, et la sauter laissait
+     des cartes vides le temps d'un défilement horizontal. */
+  content-visibility: visible;
+}
+
+.grille-recettes.rangee-recettes .carte-recette-corps h3 {
+  font-size: 15px;
+}
+
 /* Le catalogue s'affiche d'un coup, une quarantaine de cartes, dont
    quatre ou six tiennent à l'écran. `content-visibility: auto` dit au
    navigateur de ne pas mettre en page ni dessiner celles qui sont hors
