@@ -1903,6 +1903,74 @@ button.carte:active {
   box-shadow: var(--ombre);
 }
 
+/* Sur téléphone, la photo prend toute la largeur, bord à bord, comme
+   l'image d'ouverture d'une appli de recettes : c'est le plat qu'on
+   vient voir, pas un encart dans une page. Seuls les coins du bas
+   s'arrondissent, là où la fiche commence. */
+/* La légende sous l'assiette remonte au-dessus des chiffres qui
+   chevauchent le bas de la photo. */
+.detail-vignette .vignette-placeholder {
+  bottom: 40px;
+}
+
+@media (max-width: 899px) {
+  .detail-vignette {
+    margin: 8px -20px 0;
+    border-radius: 0 0 var(--rayon-grand) var(--rayon-grand);
+    box-shadow: none;
+  }
+}
+
+/* Temps · ingrédients · étapes : trois cases égales, le chiffre en gros,
+   l'intitulé en petit au-dessus. Posées à cheval sur le bas de la photo
+   pour qu'on les lise comme la légende du plat. */
+.fiche-stats {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: -28px 8px 0;
+  padding: 14px 4px;
+  border-radius: var(--rayon);
+  background: var(--carte);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-haute);
+}
+
+.fiche-stats > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.fiche-stats > div + div {
+  border-left: 1px solid var(--filet-fort);
+}
+
+.fiche-stats dt {
+  color: var(--encre-douce);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.fiche-stats dd {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-family: var(--affichage);
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.fiche-stats dd svg {
+  color: var(--accent);
+}
+
 /* Supprimer une recette du catalogue ne se propose pas avec le poids
    d'une action qu'on vient chercher : même cible tactile, mais sans
    contour — la pilule rouge pleine largeur, empilée sous « Ajouter au
@@ -2103,15 +2171,65 @@ button.discret.danger {
 .reglage-parts {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
   gap: 12px;
   margin-top: 16px;
+  padding: 10px 10px 10px 18px;
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet);
 }
 
-/* Poussé au bout de la ligne : collé au compteur, « revenir à 4 » se
-   lisait dans la foulée de « Parts ». */
-.reglage-parts .lien-discret {
-  margin-left: auto;
+.reglage-parts-texte {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.reglage-parts-texte b {
+  font-size: 16px;
+}
+
+/* Sur la fiche, le compteur se manipule souvent : des boutons de 44 px,
+   la taille qu'un pouce atteint sans viser (loi de Fitts), au lieu des
+   34 px du panier où la carte est plus serrée. */
+.reglage-parts .compteur {
+  margin-top: 0;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--carte);
+  box-shadow: inset 0 0 0 1px var(--filet);
+}
+
+.reglage-parts .compteur button {
+  width: 44px;
+  height: 44px;
+}
+
+.reglage-parts .compteur span {
+  min-width: 3ch;
+  font-size: 22px;
+  color: var(--encre);
+}
+
+/* Les ingrédients de la fiche portent le même pictogramme que les tuiles
+   « Chez moi » : un ingrédient se reconnaît pareil d'un écran à l'autre. */
+.rangee-ingredient {
+  gap: 12px;
+}
+
+.emoji-ingredient {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: var(--carte-haute);
+  font-size: 22px;
+  line-height: 1;
 }
 
 .lien-discret {
