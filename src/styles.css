@@ -4408,24 +4408,52 @@ button.carte-panier-bouton .carte-panier-corps {
    `auto` en bas sur .etape-titre) centrent les deux ensemble dans la
    zone qui défile, sans figer la hauteur ni rogner une étape longue. */
 .doses-etape {
-  margin: auto 0 16px;
+  margin: auto 0 18px;
   padding: 0;
   list-style: none;
   display: flex;
   flex: none;
   flex-wrap: wrap;
-  gap: 6px 14px;
+  gap: 8px;
   font-size: 16px;
   line-height: 1.3;
-  opacity: 0.85;
 }
 
-/* Le nom en retrait, la dose en avant : c'est le nombre qu'on vient
-   chercher, le nom ne sert qu'à savoir de quoi il parle. */
-.doses-etape li {
+/* L'indice de glissement, sous l'étape 1 : discret, centré, et absent
+   là où il n'y a pas de doigt pour glisser. */
+.astuce-glisser {
   display: flex;
-  gap: 5px;
-  align-items: baseline;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 0 8px;
+  font-size: 13px;
+  opacity: 0.55;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .astuce-glisser {
+    display: none;
+  }
+}
+
+/* Une pastille par ingrédient, son pictogramme devant : à 60 cm, on
+   repère « 🌾 250 g » d'un coup d'œil, là où une ligne de mots collés
+   (« 250 g semoule fine 2 citron ») se lisait comme une phrase. Le nom
+   en retrait, la dose en avant : c'est le nombre qu'on vient chercher. */
+.doses-etape li {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 9%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.doses-etape li > span {
+  font-size: 18px;
+  line-height: 1;
 }
 
 .doses-etape b {

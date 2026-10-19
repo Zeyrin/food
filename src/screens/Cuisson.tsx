@@ -6,6 +6,7 @@ import { useWakeLock } from '../hooks/useWakeLock'
 import type { Minuteurs } from '../hooks/useMinuteurs'
 import { ecrireProgression, lireProgression, oublierProgression } from '../lib/progressionCuisson'
 import { useLangue } from '../lib/i18n'
+import { emojiIngredient } from '../lib/emojiIngredient'
 import { recetteAffichee } from '../lib/traduireRecette'
 import BandeauMinuteur from '../components/BandeauMinuteur'
 import { mesurer } from '../lib/mesure'
@@ -108,12 +109,16 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
   const doses = useMemo(() => {
     const source = recette.etapes[index]
     if (source === undefined) return []
-    const parNom = new Map(affichee.ingredients.map((ing) => [ing.nom, ing.affichage]))
-    return dosesDeLEtape(source, recette.ingredients).map((ing) => ({
-      cle: ing.nom,
-      nom: parNom.get(ing.nom) ?? ing.nom,
-      quantite: formatQuantite(ing),
-    }))
+    const parNom = new Map(affichee.ingredients.map((ing) => [ing.nom, ing]))
+    return dosesDeLEtape(source, recette.ingredients).map((ing) => {
+      const complet = parNom.get(ing.nom)
+      return {
+        cle: ing.nom,
+        nom: complet?.affichage ?? ing.nom,
+        quantite: formatQuantite(ing),
+        emoji: emojiIngredient(ing.nom, complet?.rayon ?? 'autre'),
+      }
+    })
   }, [recette, affichee, index])
 
   const fini = index >= recette.etapes.length
@@ -152,7 +157,10 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
 
         <h2>{t('cuisson.titreIngredients', { n: affichee.ingredients.length })}</h2>
         {affichee.ingredients.map((ing) => (
-          <div className="rangee rangee-lecture" key={ing.nom}>
+          <div className="rangee rangee-lecture rangee-ingredient" key={ing.nom}>
+            <span className="emoji-ingredient" aria-hidden="true">
+              {emojiIngredient(ing.nom, ing.rayon)}
+            </span>
             <span className="nom">{ing.affichage}</span>
             <span className="qte">{formatQuantite(ing)}</span>
           </div>
@@ -351,6 +359,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           <ul className="doses-etape" aria-label={t('cuisson.dosesDeLEtape')}>
             {doses.map((d) => (
               <li key={d.cle}>
+                <span aria-hidden="true">{d.emoji}</span>
                 <b>{d.quantite}</b> {d.nom}
               </li>
             ))}
@@ -385,6 +394,14 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           </div>
         )}
       </div>
+
+      {/* Un geste ne se devine pas : sur la première étape, une ligne dit
+          qu'on peut glisser. Écrans tactiles seulement (voir styles.css). */}
+      {index === 0 && recette.etapes.length > 1 && (
+        <p className="astuce-glisser" aria-hidden="true">
+          <Icone nom="precedent" taille={14} /> {t('cuisson.astuceGlisser')} <Icone nom="suivant" taille={14} />
+        </p>
+      )}
 
       <div className="cuisson-actions">
         {index > 0 && (
