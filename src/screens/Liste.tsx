@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ItemLibre, ListItem, ListState, RayonId, Recipe } from '../types'
 import { RAYONS, RAYONS_ORDONNES } from '../types'
 import type { ConfigMagasins, Magasin } from '../lib/magasins'
@@ -8,6 +8,7 @@ import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { useLangue } from '../lib/i18n'
 import { mesurer } from '../lib/mesure'
+import { emojiIngredient } from '../lib/emojiIngredient'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 import AssietteRecette from '../components/AssietteRecette'
@@ -84,6 +85,35 @@ export default function Liste({
   const [texteAPartager, setTexteAPartager] = useState<string | null>(null)
   const [copiee, setCopiee] = useState(false)
 
+  /**
+   * Une case cochée en magasin descend dans « Dans le caddie », en bas de
+   * liste — ce qui reste à prendre reste groupé en haut, sans trou. Mais
+   * pas tout de suite : la ligne garde sa place le temps que la coche se
+   * dessine, sinon le doigt voit disparaître ce qu'il vient de toucher
+   * et ne sait plus s'il a coché la bonne.
+   */
+  const [enSursis, setEnSursis] = useState<Set<string>>(() => new Set())
+  const minuteursSursis = useRef(new Map<string, number>())
+  useEffect(() => {
+    const minuteurs = minuteursSursis.current
+    return () => minuteurs.forEach((id) => clearTimeout(id))
+  }, [])
+  const garderEnPlace = (key: string) => {
+    clearTimeout(minuteursSursis.current.get(key))
+    setEnSursis((prec) => new Set(prec).add(key))
+    minuteursSursis.current.set(
+      key,
+      window.setTimeout(() => {
+        minuteursSursis.current.delete(key)
+        setEnSursis((prec) => {
+          const suivant = new Set(prec)
+          suivant.delete(key)
+          return suivant
+        })
+      }, 900),
+    )
+  }
+
   const itemsLibres = (etat.items ?? []).map(itemLibreEnListItem)
   const tousLesItems = [...items, ...itemsLibres]
 
@@ -94,6 +124,7 @@ export default function Liste({
     // c'est mesuré ici plutôt que dans un effet — `restants` n'est calculé
     // qu'après un retour anticipé, un hook y serait conditionnel.
     if (cle === 'coche') {
+      if (suivant.coche[key]) garderEnPlace(key)
       const aAcheterApres = [...items, ...(etat.items ?? []).map(itemLibreEnListItem)].filter(
         (i) => !suivant.dejaPossede[i.key],
       )
@@ -249,93 +280,195 @@ export default function Liste({
 
   // Le parcours de courses : un arrêt après l'autre, chacun rangé par
   // rayon (voir lib/magasins.ts).
-  const groupes = grouperPourCourses(aAcheter, magasins)
-  const plusieursMagasins = groupes.length > 1
+  // Ce qui est déjà dans le caddie quitte les rayons (voir `enSursis`).
+  const aPrendre = aAcheter.filter((i) => !etat.coche[i.key] || enSursis.has(i.key))
+  const dansLeCaddie = aAcheter.filter((i) => etat.coche[i.key] && !enSursis.has(i.key))
+  const groupes = grouperPourCourses(aPrendre, magasins)
+  // Sur la liste entière, pas sur ce qui reste : un magasin terminé ne
+  // doit pas faire disparaître les intitulés des autres.
+  const plusieursMagasins = grouperPourCourses(aAcheter, magasins).length > 1
   const TitreRayon = plusieursMagasins ? 'h3' : 'h2'
 
+  /**
+   * Deux étapes, numérotées, plutôt que deux onglets au même poids : on
+   * ne choisit pas entre « chez moi » et « au magasin », on fait l'un
+   * puis l'autre. Le numéro dit l'ordre, la coche dit que la première
+   * est faite — c'est ce qui manquait pour comprendre à quoi sert l'écran
+   * qu'on voit en premier.
+   */
   const bascule = (
-    <div className="bascule-mode">
-      <button className="bascule-mode-bouton" aria-pressed={mode === 'tri'} onClick={() => setMode('tri')}>
+    <div className="etapes-liste" role="tablist">
+      <button
+        className="etape-liste"
+        role="tab"
+        aria-selected={mode === 'tri'}
+        data-faite={mode === 'courses' ? 'true' : undefined}
+        onClick={() => setMode('tri')}
+      >
+        <span className="etape-liste-numero" aria-hidden="true">
+          {mode === 'courses' ? <Icone nom="coche" taille={14} /> : '1'}
+        </span>
         {t('liste.modeTri')}
       </button>
+      <span className="etape-liste-trait" aria-hidden="true" />
       <button
-        className="bascule-mode-bouton"
-        aria-pressed={mode === 'courses'}
+        className="etape-liste"
+        role="tab"
+        aria-selected={mode === 'courses'}
         onClick={() => setMode('courses')}
       >
+        <span className="etape-liste-numero" aria-hidden="true">
+          2
+        </span>
         {t('liste.modeCourses')}
       </button>
     </div>
   )
 
   if (mode === 'tri') {
+    const chezMoi = tousLesItems.length - aAcheter.length
     return (
       <>
         {entete}
-        <div className="corps-liste">
+        <div className="corps-liste corps-chez-moi">
           {bascule}
-          {composeur}
-          <p className="aide">{t('liste.triTexte')}</p>
 
-          {/* Rangé par rayon, comme la liste magasin : devant le frigo
-              puis le placard, on vérifie un endroit à la fois — les frais
-              d'un coup, l'épicerie d'un autre — au lieu de sauter de l'un
-              à l'autre au fil de l'alphabet. */}
+          <section className="carte-chez-moi" aria-labelledby="titre-chez-moi">
+            <p className="carte-chez-moi-etape">{t('liste.etapeSur', { n: 1 })}</p>
+            <h2 id="titre-chez-moi">{t('liste.triTitre')}</h2>
+            <p className="carte-chez-moi-texte">{t('liste.triTexte')}</p>
+            {/* Les deux tas, comptés en direct : chaque toucher fait passer
+                un produit de l'un à l'autre, et on voit la liste de courses
+                maigrir avant même de l'ouvrir. */}
+            <div className="compteurs-chez-moi" aria-live="polite">
+              <span className="compteur-chez-moi" data-tas="courses">
+                <Icone nom="panier" taille={18} />
+                <b>{aAcheter.length}</b> {t('liste.aAcheter')}
+              </span>
+              <span className="compteur-chez-moi" data-tas="maison">
+                <Icone nom="coche" taille={18} />
+                <b>{chezMoi}</b> {t('liste.dejaChezMoi')}
+              </span>
+            </div>
+            {/* Le sel, l'huile, les épices ne figurent jamais ici (les
+                ingrédients « placard » des recettes) : sans le dire, on
+                cherche le sel dans la grille et on croit à un oubli. */}
+            <p className="placard-note">
+              <span aria-hidden="true">🧂</span> {t('liste.placardNote')}
+            </p>
+          </section>
+
+          {/* Des tuiles plutôt que des lignes, à la façon de Bring! : un
+              pictogramme se reconnaît avant qu'on lise le mot, et trois par
+              rangée font tenir un rayon entier sur l'écran. Rangées par
+              rayon, comme la liste magasin : les frais d'un coup devant le
+              frigo, l'épicerie d'un autre devant le placard. Une tuile
+              touchée passe au vert, cochée « chez moi » — elle ne
+              disparaît pas, pour qu'un faux geste se rattrape aussitôt. */}
           {RAYONS_ORDONNES.map((rayon) => {
             const lignes = tousLesItems.filter((i) => i.rayon === rayon)
             if (lignes.length === 0) return null
+            const faits = lignes.filter((i) => etat.dejaPossede[i.key]).length
             return (
-              <div key={rayon}>
+              <section key={rayon} className="rayon-chez-moi">
                 <h2 className="entete-section">
                   <span className="badge-section" data-rayon={rayon}>
                     <Icone nom={RAYONS[rayon].icone} taille={20} />
                   </span>
                   {labelRayon(rayon)}
+                  <span className="entete-rayon-compte">
+                    {faits}/{lignes.length}
+                  </span>
                 </h2>
-                {lignes.map((item) => {
-                  const deja = etat.dejaPossede[item.key] === true
-                  return (
-                    <button
-                      className="rangee"
-                      key={item.key}
-                      data-coche={deja}
-                      // `data-coche` ne pilote que le style : sans `aria-pressed`,
-                      // un lecteur d'écran annonce un bouton sans jamais dire si
-                      // le produit est coché.
-                      aria-pressed={deja}
-                      onClick={() => basculer('dejaPossede', item.key)}
-                    >
-                      <span className="case">{deja && <Icone nom="coche" taille={18} />}</span>
-                      <span className="nom">{item.nom}</span>
-                      <span className="qte">{formatQuantite(item)}</span>
-                    </button>
-                  )
-                })}
-              </div>
+                <div className="tuiles">
+                  {lignes.map((item) => {
+                    const deja = etat.dejaPossede[item.key] === true
+                    return (
+                      <button
+                        className="tuile"
+                        key={item.key}
+                        data-chez-moi={deja ? 'true' : undefined}
+                        // `data-chez-moi` ne pilote que le style : sans
+                        // `aria-pressed`, un lecteur d'écran annonce un bouton
+                        // sans jamais dire si le produit est coché.
+                        aria-pressed={deja}
+                        onClick={() => basculer('dejaPossede', item.key)}
+                      >
+                        <span className="tuile-emoji" aria-hidden="true">
+                          {emojiIngredient(item.nom, item.rayon)}
+                        </span>
+                        <span className="tuile-nom">{item.nom}</span>
+                        <span className="tuile-qte">
+                          {deja ? t('liste.chezMoi') : formatQuantite(item)}
+                        </span>
+                        <span className="tuile-coche" aria-hidden="true">
+                          <Icone nom="coche" taille={14} />
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </section>
             )
           })}
 
+          <div className="espaceur-action-flottante" aria-hidden="true" />
+        </div>
+
+        {/* La suite reste sous le pouce, avec le compte à jour : on sait à
+            tout moment combien de produits partiront sur la liste. */}
+        <div className="action-flottante">
           <button
             className="principal"
             onClick={() => {
-              // Combien la passe « ce que j'ai déjà » retire réellement :
-              // c'est la question qui juge le concept entier.
+              // Combien la passe « chez moi » retire réellement : c'est la
+              // question qui juge le concept entier.
               mesurer('tri_termine', {
                 total: tousLesItems.length,
-                ecartes: tousLesItems.length - aAcheter.length,
+                ecartes: chezMoi,
               })
               setMode('courses')
+              window.scrollTo({ top: 0 })
             }}
           >
             {t('liste.passerAuxCourses', { n: aAcheter.length })}
+            <Icone nom="suivant" taille={20} />
           </button>
-
-          {/* Même raison que côté "Liste magasin" : sans cet espaceur, le
-              bouton flottant chevauche ce bouton une fois scrollé en bas. */}
-          <div className="espaceur-action-flottante" aria-hidden="true" />
         </div>
-        {boutonAjout}
       </>
+    )
+  }
+
+  const ligneCourses = (item: ListItem) => {
+    const coche = etat.coche[item.key] === true
+    const libre = estLibre(item)
+    return (
+      <div className="rangee-avec-suppr" key={item.key}>
+        <button
+          className="rangee"
+          data-coche={coche}
+          aria-pressed={coche}
+          onClick={() => basculer('coche', item.key)}
+        >
+          <span className="case">{coche && <Icone nom="coche" taille={18} />}</span>
+          <span className="nom-groupe">
+            <span className="nom">{item.nom}</span>
+            {item.origines.length > 1 && (
+              <span className="nom-partage">{t('liste.pourPlats', { liste: item.origines.join(', ') })}</span>
+            )}
+          </span>
+          {!libre && <span className="qte">{formatQuantite(item)}</span>}
+        </button>
+        {libre && (
+          <button
+            className="bouton-suppr"
+            onClick={() => retirerItem(item.key.replace('libre|', ''))}
+            aria-label={t('liste.retirer', { nom: item.nom })}
+          >
+            <Icone nom="fermer" taille={16} />
+          </button>
+        )}
+      </div>
     )
   }
 
@@ -465,42 +598,24 @@ export default function Liste({
                   </span>
                   {labelRayon(rayon)}
                 </TitreRayon>
-                {lignes.map((item) => {
-                  const coche = etat.coche[item.key] === true
-                  const libre = estLibre(item)
-                  return (
-                    <div className="rangee-avec-suppr" key={item.key}>
-                      <button
-                        className="rangee"
-                        data-coche={coche}
-                        aria-pressed={coche}
-                        onClick={() => basculer('coche', item.key)}
-                      >
-                        <span className="case">{coche && <Icone nom="coche" taille={18} />}</span>
-                        <span className="nom-groupe">
-                          <span className="nom">{item.nom}</span>
-                          {item.origines.length > 1 && (
-                            <span className="nom-partage">{t('liste.pourPlats', { liste: item.origines.join(', ') })}</span>
-                          )}
-                        </span>
-                        {!libre && <span className="qte">{formatQuantite(item)}</span>}
-                      </button>
-                      {libre && (
-                        <button
-                          className="bouton-suppr"
-                          onClick={() => retirerItem(item.key.replace('libre|', ''))}
-                          aria-label={t('liste.retirer', { nom: item.nom })}
-                        >
-                          <Icone nom="fermer" taille={16} />
-                        </button>
-                      )}
-                    </div>
-                  )
-                })}
+                {lignes.map(ligneCourses)}
               </div>
             ))}
           </section>
         ))}
+
+        {dansLeCaddie.length > 0 && (
+          <details className="caddie">
+            <summary>
+              <span className="badge-section badge-caddie">
+                <Icone nom="panier" taille={18} />
+              </span>
+              {t('liste.dansLeCaddie', { n: dansLeCaddie.length })}
+              <Icone nom="suivant" taille={16} />
+            </summary>
+            {dansLeCaddie.map(ligneCourses)}
+          </details>
+        )}
 
         {/* Le découpage par magasin ne se devine pas : tant qu'il n'y en
             a qu'un, l'écran ne montre que des rayons, et rien ne dit

@@ -3023,41 +3023,355 @@ button.pastille-synchro:active {
   text-wrap: balance;
 }
 
-.bascule-mode {
+/* --- Liste : deux étapes, « chez moi » puis « au magasin » ----------------
+
+   Un stepper plutôt qu'une bascule : les deux moitiés de l'écran ne se
+   valent pas, elles se suivent. Le numéro rond dit l'ordre ; la première
+   étape terminée prend une coche ; le trait entre les deux se remplit. */
+.etapes-liste {
   display: flex;
-  gap: 4px;
-  background: var(--carte-haute);
-  border-radius: 999px;
-  padding: 4px;
-  margin: 4px 0 20px;
-  /* Le rail est un creux, le bouton actif un curseur posé dedans. */
-  box-shadow: inset 0 1px 2px rgb(32 27 12 / 0.06), inset 0 0 0 1px var(--filet);
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 16px;
 }
 
-.bascule-mode-bouton {
-  flex: 1;
+.etape-liste {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   min-height: 44px;
+  padding: 0 14px 0 6px;
   border: 0;
   border-radius: 999px;
   background: transparent;
   color: var(--encre-douce);
   font: inherit;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
+  transition: background-color var(--court4) var(--standard), color var(--court4) var(--standard),
+    transform var(--court3) var(--ressort);
+}
+
+.etape-liste:active {
+  transform: scale(0.96);
+}
+
+.etape-liste[aria-selected='true'] {
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+.etape-liste-numero {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--carte-haute);
+  box-shadow: inset 0 0 0 1.5px var(--trait);
+  font-family: var(--affichage);
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
   transition: background-color var(--court4) var(--standard), color var(--court4) var(--standard);
 }
 
-.bascule-mode-bouton[aria-pressed='true'] {
-  background: var(--accent-doux);
-  color: var(--accent);
-  box-shadow: 0 1px 2px rgb(32 27 12 / 0.08);
+.etape-liste[aria-selected='true'] .etape-liste-numero,
+.etape-liste[data-faite='true'] .etape-liste-numero {
+  background: var(--accent);
+  color: var(--sur-accent);
+  box-shadow: none;
+}
+
+.etape-liste-trait {
+  flex: 1;
+  min-width: 12px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--trait);
+}
+
+.etape-liste[data-faite='true'] + .etape-liste-trait {
+  background: var(--accent);
 }
 
 @media (hover: hover) {
-  .bascule-mode-bouton:not([aria-pressed='true']):hover {
+  .etape-liste:not([aria-selected='true']):hover {
     color: var(--encre);
   }
+}
+
+/* La carte qui dit ce qu'on attend de soi. C'était une ligne d'aide grise
+   au-dessus d'une liste de cases : on ne savait pas si cocher voulait dire
+   « à acheter » ou « je l'ai ». Ici, une question, la consigne, et les
+   deux tas comptés en direct. */
+.carte-chez-moi {
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+  border-radius: var(--rayon-grand);
+  background: linear-gradient(160deg, var(--carte-basse), var(--carte-haute));
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+}
+
+.carte-chez-moi::after {
+  content: '🏠';
+  position: absolute;
+  right: -10px;
+  top: -14px;
+  font-size: 104px;
+  line-height: 1;
+  opacity: 0.12;
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+
+.carte-chez-moi > * {
+  position: relative;
+  z-index: 1;
+}
+
+.carte-chez-moi-etape {
+  margin: 0;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.carte-chez-moi h2 {
+  margin: 6px 0 6px;
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.carte-chez-moi-texte {
+  margin: 0;
+  color: var(--encre-douce);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.compteurs-chez-moi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.compteur-chez-moi {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--carte);
+  color: var(--encre-douce);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--filet);
+}
+
+.compteur-chez-moi b {
+  color: var(--encre);
+  font-family: var(--affichage);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.compteur-chez-moi[data-tas='maison'] {
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+.compteur-chez-moi[data-tas='maison'] b {
+  color: var(--accent);
+}
+
+.placard-note {
+  margin: 14px 0 0;
+  color: var(--encre-douce);
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+/* En-tête de rayon de la passe « chez moi » : le compte « 2/5 » à
+   droite dit ce qu'il reste à vérifier dans ce coin de cuisine. */
+.entete-rayon-compte {
+  margin-left: auto;
+  color: var(--encre-douce);
+  font-family: var(--texte);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tuiles à la Bring! : trois par rangée sur un téléphone, un pictogramme
+   qu'on reconnaît avant de lire. Neutre = part sur la liste ; touchée =
+   verte, cochée, « Chez moi » à la place de la quantité. Le changement
+   tient à trois signaux à la fois (fond, coche, libellé) : jamais à la
+   seule couleur. */
+.tuiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.tuile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  min-height: 118px;
+  padding: 14px 8px 12px;
+  border: 0;
+  border-radius: var(--rayon);
+  background: var(--carte);
+  color: var(--encre);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--court3) var(--ressort), background-color var(--court4) var(--standard),
+    box-shadow var(--court4) var(--standard);
+}
+
+.tuile:active {
+  transform: scale(0.94);
+}
+
+.tuile-emoji {
+  font-size: 34px;
+  line-height: 1.1;
+  transition: transform var(--court4) var(--ressort), opacity var(--court4) var(--standard);
+}
+
+.tuile-nom {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.tuile-nom::first-letter {
+  text-transform: uppercase;
+}
+
+.tuile-qte {
+  margin-top: auto;
+  color: var(--encre-douce);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tuile-coche {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--sur-accent);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity var(--court3) var(--standard), transform var(--court4) var(--ressort);
+}
+
+.tuile[data-chez-moi='true'] {
+  background: var(--accent-doux);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.tuile[data-chez-moi='true'] .tuile-emoji {
+  transform: scale(0.9);
+  opacity: 0.75;
+}
+
+.tuile[data-chez-moi='true'] .tuile-nom,
+.tuile[data-chez-moi='true'] .tuile-qte {
+  color: var(--accent);
+}
+
+.tuile[data-chez-moi='true'] .tuile-qte {
+  font-weight: 700;
+}
+
+.tuile[data-chez-moi='true'] .tuile-coche {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (hover: hover) {
+  .tuile:not([data-chez-moi='true']):hover {
+    box-shadow: inset 0 0 0 1px var(--filet-fort), var(--ombre);
+  }
+}
+
+/* Sous la barre d'onglets, l'action « Passer aux courses » flotte : la
+   carte du haut doit pouvoir défiler sous elle sans s'y cogner. */
+.corps-chez-moi .rayon-chez-moi:last-of-type {
+  margin-bottom: 8px;
+}
+
+/* « Dans le caddie » : ce qui est pris descend ici, replié. Ouvert, il
+   montre les lignes barrées, qu'un toucher remet en rayon. */
+.caddie {
+  margin-top: 28px;
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet);
+}
+
+.caddie summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--pouce);
+  padding: 8px 14px;
+  border-radius: var(--rayon);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 700;
+}
+
+.caddie summary::-webkit-details-marker {
+  display: none;
+}
+
+.caddie summary > svg {
+  margin-left: auto;
+  color: var(--encre-douce);
+  transition: transform var(--court4) var(--standard);
+}
+
+.caddie[open] summary > svg {
+  transform: rotate(90deg);
+}
+
+.badge-caddie {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  color: var(--accent);
+  background: var(--accent-doux);
+}
+
+.caddie > .rangee-avec-suppr {
+  padding: 0 8px;
 }
 
 .carte-panier {
@@ -3561,6 +3875,33 @@ button.carte-panier-bouton .carte-panier-corps {
      ouvert, minuteur en cours) est coupée dans cette réserve et non au
      milieu d'une ligne de texte contre le filet des boutons. */
   padding: 8px 0 18px;
+}
+
+/* L'étape entre du côté d'où on vient : de la droite en avançant, de
+   la gauche en reculant. Un glissement court (24 px) et un fondu — de
+   quoi sentir la page tourner, pas de quoi attendre qu'elle ait fini. */
+@media (prefers-reduced-motion: no-preference) {
+  .cuisson-corps[data-sens='avant'] {
+    animation: etape-avant var(--moyen2) var(--sortie) both;
+  }
+
+  .cuisson-corps[data-sens='arriere'] {
+    animation: etape-arriere var(--moyen2) var(--sortie) both;
+  }
+}
+
+@keyframes etape-avant {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes etape-arriere {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
 }
 
 /* Les doses de l'étape, sorties de la phrase et posées juste au-dessus.
