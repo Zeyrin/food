@@ -1540,6 +1540,95 @@ button.carte:active {
   align-items: start;
 }
 
+/* Onglet Cuisson : le prochain plat en grand, son bouton dessous. Une
+   seule carte au premier plan — ce qu'on fait maintenant — et le reste
+   de la semaine en petit plus bas. */
+.carte-a-la-une {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 8px 0 8px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--rayon-grand);
+  background: var(--carte);
+  color: var(--encre);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-haute);
+  transition: transform var(--court3) var(--ressort);
+}
+
+.carte-a-la-une:active {
+  transform: scale(0.985);
+}
+
+.carte-a-la-une .vignette {
+  aspect-ratio: 16 / 10;
+}
+
+.carte-a-la-une .vignette img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Le dessin garde la taille qu'il a sur la fiche : à pleine largeur,
+   l'assiette débordait du cadre en hauteur. */
+.carte-a-la-une .assiette {
+  width: 56%;
+}
+
+.carte-a-la-une-corps {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px 18px;
+}
+
+.carte-a-la-une-corps .carte-resume-label {
+  color: var(--accent);
+}
+
+.carte-a-la-une-corps h2 {
+  margin: 2px 0 0;
+  font-size: 24px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.carte-a-la-une-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0 12px;
+  color: var(--encre-douce);
+  font-size: 15px;
+}
+
+/* Un faux bouton : la carte entière est la cible, ceci la désigne. */
+.carte-a-la-une-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--pouce);
+  border-radius: 999px;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--accent) 92%, white), var(--accent));
+  color: var(--sur-accent);
+  font-size: 17px;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), var(--ombre-nette);
+}
+
+.titre-suite-cuisson {
+  margin-top: 24px;
+}
+
 /* Rangées thématiques en tête du catalogue (« Vite fait ce soir »,
    « Vos favoris ») : mêmes cartes que la grille, alignées sur une ligne
    qui défile du pouce et déborde jusqu'aux bords de l'écran. La carte
