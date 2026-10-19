@@ -421,13 +421,11 @@ const fr: Dico = {
 
     choixTitre: "Comment voulez-vous l'ajouter ?",
     choixMainTitre: "Je l'écris moi-même",
-    choixMainTexte: 'Un formulaire guidé : le nom, les ingrédients avec leurs quantités, les étapes.',
-    choixIaTitre: 'Je la fais écrire par une IA',
-    choixIaTexte:
-      "Vous dites ce que vous voulez manger, l'app prépare le message à envoyer à ChatGPT ou Claude, et vous recollez sa réponse ici.",
+    choixMainTexte: 'Nom, ingrédients, étapes : un formulaire guidé.',
+    choixIaTitre: "Une IA l'écrit pour moi",
+    choixIaTexte: 'ChatGPT ou Claude l\'écrit, vous collez sa réponse.',
     choixLienTitre: "J'ai un lien",
-    choixLienTexte:
-      "Collez l'adresse d'une recette trouvée sur un site : l'app la lit et remplit le formulaire pour vous.",
+    choixLienTexte: 'Marmiton, 750g, un blog… l\'app remplit tout.',
     retourAuChoix: 'Changer de méthode',
 
     // Le formulaire, champ par champ.
@@ -1034,13 +1032,11 @@ const en: Dico = {
 
     choixTitre: 'How do you want to add it?',
     choixMainTitre: 'I write it myself',
-    choixMainTexte: 'A guided form: the name, the ingredients with their amounts, the steps.',
-    choixIaTitre: 'Have an AI write it',
-    choixIaTexte:
-      'You say what you feel like eating, the app prepares the message to send to ChatGPT or Claude, and you paste its reply back here.',
+    choixMainTexte: 'Name, ingredients, steps: a guided form.',
+    choixIaTitre: 'An AI writes it for me',
+    choixIaTexte: 'ChatGPT or Claude writes it, you paste the reply.',
     choixLienTitre: 'I have a link',
-    choixLienTexte:
-      'Paste the address of a recipe from a website: the app reads it and fills in the form for you.',
+    choixLienTexte: 'From any recipe site: the app fills it all in.',
     retourAuChoix: 'Change method',
 
     blocPlat: 'The dish',
