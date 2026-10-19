@@ -82,6 +82,7 @@ const fr: Dico = {
     quitter: 'Quitter',
     quitterTexte: 'Retour à l\'écran d\'accueil, pour en créer un nouveau ou en rejoindre un autre par code.',
     quitterFoyerBouton: 'Quitter le foyer',
+    aPropos: 'À propos',
     versionTitre: "Version de l'app",
     versionTexte:
       "L'app se met à jour toute seule : au démarrage, elle vérifie s'il y a du neuf et l'installe. Ce bouton force la vérification tout de suite.",
@@ -724,6 +725,7 @@ const en: Dico = {
     quitter: 'Leave',
     quitterTexte: 'Back to the welcome screen, to create a new one or join another by code.',
     quitterFoyerBouton: 'Leave the household',
+    aPropos: 'About',
     versionTitre: 'App version',
     versionTexte:
       'The app updates itself: on startup it checks for something new and installs it. This button forces the check right now.',

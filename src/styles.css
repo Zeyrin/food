@@ -6841,3 +6841,38 @@ button.vignette-mini-bouton:active {
   font-size: 0.85rem;
   opacity: 0.8;
 }
+
+/* --- Réglages : groupes en cartes ------------------------------------------
+
+   Comme les réglages du téléphone : chaque sujet dans sa carte, le titre
+   en tête, l'explication en petit. Avant, neuf titres et leurs
+   paragraphes se suivaient sur le papier sans rien pour dire où un sujet
+   finissait — l'écran se lisait comme une notice. */
+.groupe-reglages {
+  margin: 16px 0 0;
+  padding: 2px 18px 18px;
+  border-radius: var(--rayon);
+  background: var(--carte);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+}
+
+.groupe-reglages > h2 {
+  margin: 16px 0 6px;
+  font-size: 19px;
+}
+
+.groupe-reglages .aide {
+  font-size: 14.5px;
+}
+
+.groupe-reglages .titre-secondaire {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--filet-fort);
+}
+
+.groupe-reglages > h2 + .titre-secondaire {
+  margin-top: 4px;
+  padding-top: 0;
+  border-top: 0;
+}

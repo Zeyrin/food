@@ -175,32 +175,253 @@ export default function Reglages({
         </button>
       </header>
 
-      <h2>{t('reglages.langue')}</h2>
-      <div className="rangee-boutons" role="group" aria-label={t('reglages.langue')}>
-        <button
-          className="discret"
-          aria-pressed={langue === 'fr'}
-          onClick={() => {
-            mesurer('langue_changee', { vers: 'fr' })
-            definirLangue('fr')
+      {/* Groupes en cartes, comme les réglages du téléphone, et rangés par
+          fréquence d'usage : la maison qu'on partage d'abord — c'est pour
+          inviter quelqu'un qu'on ouvre cet écran —, puis les magasins, la
+          langue, l'installation, la présentation, et ce qui relève de
+          l'« à propos » en dernier. */}
+      <section className="groupe-reglages">
+        {/* Le foyer, d'un seul tenant : le code qu'on donne, la maison qu'on
+            rejoint, celle qu'on quitte. Ces trois-là étaient dispersés de
+            part et d'autre de la version de l'app — on lisait « Code à
+            partager » sans voir qu'un peu plus bas se trouvait de quoi en
+            changer, et la confirmation de départ parlait d'un code affiché
+            deux écrans plus haut. */}
+        <h2>{t('reglages.votreFoyer')}</h2>
+
+        {/* Le lien d'abord, le code ensuite : un toucher dans une
+            conversation vaut mieux que six caractères à recopier. Le code
+            reste pour ce qui se dit à voix haute, ou d'un écran à l'autre. */}
+        {partageActif && (
+          <>
+            <p className="aide">{t('reglages.inviterAide')}</p>
+            <button
+              className="principal suite pleine-largeur"
+              onClick={() => void invitation.inviter()}
+              aria-live="polite"
+            >
+              <Icone nom={invitation.copie ? 'coche' : 'lien'} taille={18} />
+              {invitation.copie ? t('reglages.lienCopie') : t('reglages.inviter')}
+            </button>
+          </>
+        )}
+
+        {codeFoyer && (
+          <div className="carte-code-foyer">
+            <p className="carte-resume-label">{t('reglages.codeAPartager')}</p>
+            <p className="carte-code-foyer-valeur">{codeFoyer}</p>
+            <p className="carte-code-foyer-aide">{t('reglages.codeAPartagerAide')}</p>
+            {copiable && (
+              <button
+                className="discret carte-code-foyer-copier"
+                onClick={() => void copier()}
+                aria-live="polite"
+              >
+                <Icone nom={copie ? 'coche' : 'copier'} taille={18} />
+                {copie ? t('reglages.codeCopie') : t('reglages.copierCode')}
+              </button>
+            )}
+          </div>
+        )}
+
+        <h3 className="titre-secondaire">{t('reglages.rejoindreAutreFoyer')}</h3>
+        <p className="aide">{t('reglages.rejoindreAutreFoyerTexte')}</p>
+
+        {/* Dire pourquoi ça ne marchera pas, plutôt que de laisser saisir six
+            caractères pour répondre « code introuvable » — même raison qu'à
+            l'accueil. */}
+        {!partageActif && <p className="aide">{t('reglages.partageInactif')}</p>}
+
+        <ChampCode
+          valeur={code}
+          onChange={(v) => {
+            setCode(v)
+            setErreur(null)
+            // Retoucher la saisie retire la demande qu'elle avait ouverte :
+            // sinon le bouton de confirmation porterait encore l'ancien code.
+            setDemande(null)
           }}
-        >
-          Français
+          onComplet={(c) => setDemande({ type: 'code', code: c })}
+          onLien={(foyer) => setDemande({ type: 'lien', foyer })}
+          onLienSansFoyer={() => setErreur(t('reglages.lienSansFoyer'))}
+          desactive={!partageActif}
+          invalide={erreur !== null && code.length > 0}
+          label={t('reglages.codeLabel')}
+          aideId="reglages-code-indice"
+        />
+        <p className="aide-champ" id="reglages-code-indice">
+          {t('reglages.codeIndice')}
+        </p>
+
+        {erreur && (
+          <div className="bloc-erreurs" role="alert">
+            <p>{erreur}</p>
+          </div>
+        )}
+
+        {demande ? (
+          <div
+            className="bloc-confirmation"
+            role="alertdialog"
+            aria-label={t('reglages.rejoindreAutreFoyer')}
+          >
+            <p>
+              {demande.type === 'code'
+                ? t('reglages.confirmerCode', { code: demande.code })
+                : t('reglages.confirmerLien')}
+            </p>
+            <p>{t('reglages.confirmerGarde')}</p>
+            <div className="rangee-boutons">
+              <button className="discret" onClick={() => setDemande(null)} disabled={enCours}>
+                {t('reglages.annuler')}
+              </button>
+              <button className="discret accent" onClick={() => void rejoindre()} disabled={enCours}>
+                {enCours ? t('reglages.recherche') : t('reglages.rejoindre')}
+              </button>
+            </div>
+          </div>
+        ) : (
+          // Sans demande ouverte, le bouton n'a rien à exécuter : il sert à
+          // rouvrir la confirmation qu'on vient d'annuler.
+          <button
+            className="discret suite pleine-largeur"
+            onClick={() => {
+              if (code.length === LONGUEUR_CODE) setDemande({ type: 'code', code })
+            }}
+            disabled={!partageActif || code.length !== LONGUEUR_CODE || enCours}
+          >
+            {t('reglages.rejoindre')}
+          </button>
+        )}
+
+        <h3 className="titre-secondaire">{t('reglages.quitterFoyer')}</h3>
+        {confirmationQuitter ? (
+          <div className="bloc-confirmation" role="alertdialog" aria-label={t('reglages.quitterFoyer')}>
+            <p>
+              {t('reglages.quitterConfirmation', {
+                code: codeFoyer ? t('reglages.quitterConfirmationCode', { code: codeFoyer }) : '',
+              })}
+            </p>
+            <div className="rangee-boutons">
+              <button className="discret" onClick={() => setConfirmationQuitter(false)}>
+                {t('reglages.annuler')}
+              </button>
+              <button className="discret danger" onClick={onQuitter}>
+                {t('reglages.quitter')}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <p className="aide">{t('reglages.quitterTexte')}</p>
+            <button className="discret suite pleine-largeur" onClick={() => setConfirmationQuitter(true)}>
+              {t('reglages.quitterFoyerBouton')}
+            </button>
+          </>
+        )}
+      </section>
+
+      <section className="groupe-reglages">
+        {/* Les rayons sont les mêmes pour tout le monde, les magasins non :
+            la plupart des gens font un seul magasin, certains prennent
+            leurs légumes ailleurs. D'où un magasin par défaut — la liste
+            n'est alors qu'une suite de rayons — et l'ajout d'un second qui
+            coupe la liste en autant d'arrêts. */}
+        <h2>{t('reglages.magasinsTitre')}</h2>
+        <p className="aide">{t('reglages.magasinsTexte')}</p>
+
+        {magasins.magasins.map((m, i) => (
+          <div className="rangee-magasin" key={m.id}>
+            <input
+              className="champ-texte"
+              value={m.nom}
+              placeholder={i === 0 ? t('reglages.magasinPrincipal') : t('reglages.magasinSansNom')}
+              onChange={(e) => renommer(m.id, e.target.value)}
+              aria-label={t('reglages.nomDuMagasin', { n: i + 1 })}
+            />
+            {i > 0 && (
+              <button
+                className="bouton-suppr pivot-monter"
+                onClick={() => monterMagasin(i)}
+                aria-label={t('reglages.monterMagasin', { nom: nomAffiche(m.nom, i) })}
+              >
+                <Icone nom="precedent" taille={18} />
+              </button>
+            )}
+            {magasins.magasins.length > 1 && (
+              <button
+                className="bouton-suppr"
+                onClick={() => supprimerMagasin(m.id)}
+                aria-label={t('reglages.supprimerMagasin', { nom: nomAffiche(m.nom, i) })}
+              >
+                <Icone nom="fermer" taille={16} />
+              </button>
+            )}
+          </div>
+        ))}
+
+        <button className="discret suite pleine-largeur" onClick={ajouterMagasin}>
+          <Icone nom="plus-cercle" taille={18} /> {t('reglages.ajouterMagasin')}
         </button>
-        <button
-          className="discret"
-          aria-pressed={langue === 'en'}
-          onClick={() => {
-            mesurer('langue_changee', { vers: 'en' })
-            definirLangue('en')
-          }}
-        >
-          English
-        </button>
-      </div>
+
+        {magasins.magasins.length > 1 && (
+          <>
+            <h3 className="titre-secondaire">{t('reglages.routageTitre')}</h3>
+            <p className="aide">{t('reglages.routageTexte')}</p>
+            {RAYONS_ORDONNES.map((rayon) => (
+              <div className="rangee-routage" key={rayon}>
+                <span className="rangee-routage-rayon">
+                  <span className="badge-section" data-rayon={rayon}>
+                    <Icone nom={RAYONS[rayon].icone} taille={18} />
+                  </span>
+                  {labelRayon(rayon)}
+                </span>
+                <select
+                  className="champ-select"
+                  value={magasinDuRayon(rayon, magasins).id}
+                  onChange={(e) => affecter(rayon, e.target.value)}
+                  aria-label={t('reglages.ouPrendreRayon', { rayon: labelRayon(rayon) })}
+                >
+                  {magasins.magasins.map((m, i) => (
+                    <option key={m.id} value={m.id}>
+                      {nomAffiche(m.nom, i)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ))}
+          </>
+        )}
+      </section>
+
+      <section className="groupe-reglages">
+        <h2>{t('reglages.langue')}</h2>
+        <div className="rangee-boutons" role="group" aria-label={t('reglages.langue')}>
+          <button
+            className="discret"
+            aria-pressed={langue === 'fr'}
+            onClick={() => {
+              mesurer('langue_changee', { vers: 'fr' })
+              definirLangue('fr')
+            }}
+          >
+            Français
+          </button>
+          <button
+            className="discret"
+            aria-pressed={langue === 'en'}
+            onClick={() => {
+              mesurer('langue_changee', { vers: 'en' })
+              definirLangue('en')
+            }}
+          >
+            English
+          </button>
+        </div>
+      </section>
 
       {installation.etat !== 'installee' && (
-        <>
+        <section className="groupe-reglages">
           <h2>{t('reglages.installerTitre')}</h2>
           <p className="aide">{t('reglages.installerTexte')}</p>
           {installation.etat === 'possible' ? (
@@ -242,313 +463,108 @@ export default function Reglages({
           ) : (
             <p className="aide">{t('reglages.installerOrdinateur')}</p>
           )}
-        </>
+        </section>
       )}
 
-      {/* Les rayons sont les mêmes pour tout le monde, les magasins non :
-          la plupart des gens font un seul magasin, certains prennent
-          leurs légumes ailleurs. D'où un magasin par défaut — la liste
-          n'est alors qu'une suite de rayons — et l'ajout d'un second qui
-          coupe la liste en autant d'arrêts. */}
-      <h2>{t('reglages.magasinsTitre')}</h2>
-      <p className="aide">{t('reglages.magasinsTexte')}</p>
+      <section className="groupe-reglages">
+        <h2>{t('reglages.decouvrirTitre')}</h2>
+        <p className="aide">{t('reglages.decouvrirTexte')}</p>
+        <button className="discret suite pleine-largeur" onClick={onRevoirPresentation}>
+          <Icone nom="etoile" taille={18} /> {t('reglages.revoirPresentation')}
+        </button>
+      </section>
 
-      {magasins.magasins.map((m, i) => (
-        <div className="rangee-magasin" key={m.id}>
-          <input
-            className="champ-texte"
-            value={m.nom}
-            placeholder={i === 0 ? t('reglages.magasinPrincipal') : t('reglages.magasinSansNom')}
-            onChange={(e) => renommer(m.id, e.target.value)}
-            aria-label={t('reglages.nomDuMagasin', { n: i + 1 })}
-          />
-          {i > 0 && (
-            <button
-              className="bouton-suppr pivot-monter"
-              onClick={() => monterMagasin(i)}
-              aria-label={t('reglages.monterMagasin', { nom: nomAffiche(m.nom, i) })}
-            >
-              <Icone nom="precedent" taille={18} />
-            </button>
-          )}
-          {magasins.magasins.length > 1 && (
-            <button
-              className="bouton-suppr"
-              onClick={() => supprimerMagasin(m.id)}
-              aria-label={t('reglages.supprimerMagasin', { nom: nomAffiche(m.nom, i) })}
-            >
-              <Icone nom="fermer" taille={16} />
-            </button>
-          )}
-        </div>
-      ))}
-
-      <button className="discret suite pleine-largeur" onClick={ajouterMagasin}>
-        <Icone nom="plus-cercle" taille={18} /> {t('reglages.ajouterMagasin')}
-      </button>
-
-      {magasins.magasins.length > 1 && (
-        <>
-          <h3 className="titre-secondaire">{t('reglages.routageTitre')}</h3>
-          <p className="aide">{t('reglages.routageTexte')}</p>
-          {RAYONS_ORDONNES.map((rayon) => (
-            <div className="rangee-routage" key={rayon}>
-              <span className="rangee-routage-rayon">
-                <span className="badge-section" data-rayon={rayon}>
-                  <Icone nom={RAYONS[rayon].icone} taille={18} />
-                </span>
-                {labelRayon(rayon)}
-              </span>
-              <select
-                className="champ-select"
-                value={magasinDuRayon(rayon, magasins).id}
-                onChange={(e) => affecter(rayon, e.target.value)}
-                aria-label={t('reglages.ouPrendreRayon', { rayon: labelRayon(rayon) })}
-              >
-                {magasins.magasins.map((m, i) => (
-                  <option key={m.id} value={m.id}>
-                    {nomAffiche(m.nom, i)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ))}
-        </>
-      )}
-
-      <h2>{t('reglages.decouvrirTitre')}</h2>
-      <p className="aide">{t('reglages.decouvrirTexte')}</p>
-      <button className="discret suite pleine-largeur" onClick={onRevoirPresentation}>
-        <Icone nom="etoile" taille={18} /> {t('reglages.revoirPresentation')}
-      </button>
-
-      {/* Le foyer, d'un seul tenant : le code qu'on donne, la maison qu'on
-          rejoint, celle qu'on quitte. Ces trois-là étaient dispersés de
-          part et d'autre de la version de l'app — on lisait « Code à
-          partager » sans voir qu'un peu plus bas se trouvait de quoi en
-          changer, et la confirmation de départ parlait d'un code affiché
-          deux écrans plus haut. */}
-      <h2>{t('reglages.votreFoyer')}</h2>
-
-      {/* Le lien d'abord, le code ensuite : un toucher dans une
-          conversation vaut mieux que six caractères à recopier. Le code
-          reste pour ce qui se dit à voix haute, ou d'un écran à l'autre. */}
-      {partageActif && (
-        <>
-          <p className="aide">{t('reglages.inviterAide')}</p>
+      <section className="groupe-reglages">
+        <h2>{t('reglages.aPropos')}</h2>
+        <h3 className="titre-secondaire">{t('reglages.versionTitre')}</h3>
+        <p className="aide">{t('reglages.versionTexte')}</p>
+        <p className="version-app">
+          {t('reglages.versionInstallee')} : <b>{VERSION_APP}</b>
+        </p>
+        {miseAJour.disponible ? (
+          <button className="discret suite pleine-largeur" onClick={miseAJour.appliquer}>
+            <Icone nom="rafraichir" taille={18} /> {t('reglages.majInstaller')}
+          </button>
+        ) : (
           <button
-            className="principal suite pleine-largeur"
-            onClick={() => void invitation.inviter()}
-            aria-live="polite"
+            className="discret suite pleine-largeur"
+            onClick={miseAJour.verifier}
+            disabled={miseAJour.verification === 'en-cours'}
           >
-            <Icone nom={invitation.copie ? 'coche' : 'lien'} taille={18} />
-            {invitation.copie ? t('reglages.lienCopie') : t('reglages.inviter')}
+            <Icone nom="rafraichir" taille={18} />
+            {miseAJour.verification === 'en-cours'
+              ? t('reglages.majVerification')
+              : miseAJour.verification === 'a-jour'
+                ? t('reglages.majAJour')
+                : t('reglages.majVerifier')}
           </button>
-        </>
-      )}
+        )}
 
-      {codeFoyer && (
-        <div className="carte-code-foyer">
-          <p className="carte-resume-label">{t('reglages.codeAPartager')}</p>
-          <p className="carte-code-foyer-valeur">{codeFoyer}</p>
-          <p className="carte-code-foyer-aide">{t('reglages.codeAPartagerAide')}</p>
-          {copiable && (
-            <button
-              className="discret carte-code-foyer-copier"
-              onClick={() => void copier()}
-              aria-live="polite"
-            >
-              <Icone nom={copie ? 'coche' : 'copier'} taille={18} />
-              {copie ? t('reglages.codeCopie') : t('reglages.copierCode')}
-            </button>
-          )}
-        </div>
-      )}
-
-      <h3 className="titre-secondaire">{t('reglages.rejoindreAutreFoyer')}</h3>
-      <p className="aide">{t('reglages.rejoindreAutreFoyerTexte')}</p>
-
-      {/* Dire pourquoi ça ne marchera pas, plutôt que de laisser saisir six
-          caractères pour répondre « code introuvable » — même raison qu'à
-          l'accueil. */}
-      {!partageActif && <p className="aide">{t('reglages.partageInactif')}</p>}
-
-      <ChampCode
-        valeur={code}
-        onChange={(v) => {
-          setCode(v)
-          setErreur(null)
-          // Retoucher la saisie retire la demande qu'elle avait ouverte :
-          // sinon le bouton de confirmation porterait encore l'ancien code.
-          setDemande(null)
-        }}
-        onComplet={(c) => setDemande({ type: 'code', code: c })}
-        onLien={(foyer) => setDemande({ type: 'lien', foyer })}
-        onLienSansFoyer={() => setErreur(t('reglages.lienSansFoyer'))}
-        desactive={!partageActif}
-        invalide={erreur !== null && code.length > 0}
-        label={t('reglages.codeLabel')}
-        aideId="reglages-code-indice"
-      />
-      <p className="aide-champ" id="reglages-code-indice">
-        {t('reglages.codeIndice')}
-      </p>
-
-      {erreur && (
-        <div className="bloc-erreurs" role="alert">
-          <p>{erreur}</p>
-        </div>
-      )}
-
-      {demande ? (
-        <div
-          className="bloc-confirmation"
-          role="alertdialog"
-          aria-label={t('reglages.rejoindreAutreFoyer')}
-        >
-          <p>
-            {demande.type === 'code'
-              ? t('reglages.confirmerCode', { code: demande.code })
-              : t('reglages.confirmerLien')}
-          </p>
-          <p>{t('reglages.confirmerGarde')}</p>
-          <div className="rangee-boutons">
-            <button className="discret" onClick={() => setDemande(null)} disabled={enCours}>
-              {t('reglages.annuler')}
-            </button>
-            <button className="discret accent" onClick={() => void rejoindre()} disabled={enCours}>
-              {enCours ? t('reglages.recherche') : t('reglages.rejoindre')}
-            </button>
+        {/* Le cas où le cache s'entête malgré tout : jusqu'ici il fallait
+            supprimer les données de l'app — ce qui emportait le foyer, le
+            panier et la liste avec. Ici, seuls les fichiers en cache
+            partent, les données restent. */}
+        {reinitialisation ? (
+          <div
+            className="bloc-confirmation"
+            role="alertdialog"
+            aria-label={t('reglages.reinstallerLabel')}
+          >
+            <p>{t('reglages.reinstallerConfirmation')}</p>
+            <div className="rangee-boutons">
+              <button className="discret" onClick={() => setReinitialisation(false)}>
+                {t('reglages.annuler')}
+              </button>
+              <button className="discret" onClick={() => void reinitialiserCache()}>
+                {t('reglages.reinstallerBouton')}
+              </button>
+            </div>
           </div>
-        </div>
-      ) : (
-        // Sans demande ouverte, le bouton n'a rien à exécuter : il sert à
-        // rouvrir la confirmation qu'on vient d'annuler.
-        <button
-          className="discret suite pleine-largeur"
-          onClick={() => {
-            if (code.length === LONGUEUR_CODE) setDemande({ type: 'code', code })
-          }}
-          disabled={!partageActif || code.length !== LONGUEUR_CODE || enCours}
-        >
-          {t('reglages.rejoindre')}
-        </button>
-      )}
-
-      <h3 className="titre-secondaire">{t('reglages.quitterFoyer')}</h3>
-      {confirmationQuitter ? (
-        <div className="bloc-confirmation" role="alertdialog" aria-label={t('reglages.quitterFoyer')}>
-          <p>
-            {t('reglages.quitterConfirmation', {
-              code: codeFoyer ? t('reglages.quitterConfirmationCode', { code: codeFoyer }) : '',
-            })}
-          </p>
-          <div className="rangee-boutons">
-            <button className="discret" onClick={() => setConfirmationQuitter(false)}>
-              {t('reglages.annuler')}
-            </button>
-            <button className="discret danger" onClick={onQuitter}>
-              {t('reglages.quitter')}
-            </button>
-          </div>
-        </div>
-      ) : (
-        <>
-          <p className="aide">{t('reglages.quitterTexte')}</p>
-          <button className="discret suite pleine-largeur" onClick={() => setConfirmationQuitter(true)}>
-            {t('reglages.quitterFoyerBouton')}
+        ) : (
+          <button className="lien-discret lien-maj" onClick={() => setReinitialisation(true)}>
+            {t('reglages.reinstallerLien')}
           </button>
-        </>
-      )}
+        )}
 
-      <h2>{t('reglages.versionTitre')}</h2>
-      <p className="aide">{t('reglages.versionTexte')}</p>
-      <p className="version-app">
-        {t('reglages.versionInstallee')} : <b>{VERSION_APP}</b>
-      </p>
-      {miseAJour.disponible ? (
-        <button className="discret suite pleine-largeur" onClick={miseAJour.appliquer}>
-          <Icone nom="rafraichir" taille={18} /> {t('reglages.majInstaller')}
-        </button>
-      ) : (
-        <button
-          className="discret suite pleine-largeur"
-          onClick={miseAJour.verifier}
-          disabled={miseAJour.verification === 'en-cours'}
-        >
-          <Icone nom="rafraichir" taille={18} />
-          {miseAJour.verification === 'en-cours'
-            ? t('reglages.majVerification')
-            : miseAJour.verification === 'a-jour'
-              ? t('reglages.majAJour')
-              : t('reglages.majVerifier')}
-        </button>
-      )}
+        {/* Diagnostic de synchro. C'est ici qu'atterrit la pastille « Synchro
+            bloquée » : un refus du serveur ne se rattrape pas tout seul, et
+            le message brut de Supabase est la seule piste exploitable pour
+            savoir laquelle des trois causes habituelles s'applique. */}
+        {etatSynchro === 'refuse' && (
+          <>
+            <h3 className="titre-secondaire">{t('reglages.synchroTitre')}</h3>
+            <div className="bloc-erreurs" role="status">
+              <p>{t('reglages.synchroTexte')}</p>
+              {motif && <p><code>{motif}</code></p>}
+            </div>
+          </>
+        )}
 
-      {/* Le cas où le cache s'entête malgré tout : jusqu'ici il fallait
-          supprimer les données de l'app — ce qui emportait le foyer, le
-          panier et la liste avec. Ici, seuls les fichiers en cache
-          partent, les données restent. */}
-      {reinitialisation ? (
-        <div
-          className="bloc-confirmation"
-          role="alertdialog"
-          aria-label={t('reglages.reinstallerLabel')}
-        >
-          <p>{t('reglages.reinstallerConfirmation')}</p>
-          <div className="rangee-boutons">
-            <button className="discret" onClick={() => setReinitialisation(false)}>
-              {t('reglages.annuler')}
-            </button>
-            <button className="discret" onClick={() => void reinitialiserCache()}>
-              {t('reglages.reinstallerBouton')}
-            </button>
-          </div>
-        </div>
-      ) : (
-        <button className="lien-discret lien-maj" onClick={() => setReinitialisation(true)}>
-          {t('reglages.reinstallerLien')}
-        </button>
-      )}
+        {/* Les photos de plats viennent en partie de Wikimedia Commons, sous
+            licences Creative Commons qui demandent de citer l'auteur : la page
+            de crédits doit donc être atteignable depuis l'app, pas seulement
+            depuis le dépôt. */}
+        {/* La page de données est servie avec l'app, comme les crédits : une
+            politique de confidentialité qui n'est atteignable que depuis le
+            dépôt ne remplit pas son office. */}
+        <h3 className="titre-secondaire">{t('reglages.donneesTitre')}</h3>
+        <p className="aide">
+          {t('reglages.donneesTexte')}{' '}
+          <a href={pageSite('/donnees.html')} target="_blank" rel="noopener noreferrer">
+            {t('reglages.donneesLien')}
+          </a>
+          .
+        </p>
 
-      {/* Diagnostic de synchro. C'est ici qu'atterrit la pastille « Synchro
-          bloquée » : un refus du serveur ne se rattrape pas tout seul, et
-          le message brut de Supabase est la seule piste exploitable pour
-          savoir laquelle des trois causes habituelles s'applique. */}
-      {etatSynchro === 'refuse' && (
-        <>
-          <h2>{t('reglages.synchroTitre')}</h2>
-          <div className="bloc-erreurs" role="status">
-            <p>{t('reglages.synchroTexte')}</p>
-            {motif && <p><code>{motif}</code></p>}
-          </div>
-        </>
-      )}
-
-      {/* Les photos de plats viennent en partie de Wikimedia Commons, sous
-          licences Creative Commons qui demandent de citer l'auteur : la page
-          de crédits doit donc être atteignable depuis l'app, pas seulement
-          depuis le dépôt. */}
-      {/* La page de données est servie avec l'app, comme les crédits : une
-          politique de confidentialité qui n'est atteignable que depuis le
-          dépôt ne remplit pas son office. */}
-      <h2>{t('reglages.donneesTitre')}</h2>
-      <p className="aide">
-        {t('reglages.donneesTexte')}{' '}
-        <a href={pageSite('/donnees.html')} target="_blank" rel="noopener noreferrer">
-          {t('reglages.donneesLien')}
-        </a>
-        .
-      </p>
-
-      <h2>{t('reglages.creditsPhoto')}</h2>
-      <p className="aide">
-        {t('reglages.creditsPhotoTexte')}{' '}
-        <a href={pageSite('/credits.html')} target="_blank" rel="noopener noreferrer">
-          {t('reglages.voirListe')}
-        </a>
-        .
-      </p>
+        <h3 className="titre-secondaire">{t('reglages.creditsPhoto')}</h3>
+        <p className="aide">
+          {t('reglages.creditsPhotoTexte')}{' '}
+          <a href={pageSite('/credits.html')} target="_blank" rel="noopener noreferrer">
+            {t('reglages.voirListe')}
+          </a>
+          .
+        </p>
+      </section>
     </>
   )
 }
