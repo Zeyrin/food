@@ -106,9 +106,11 @@ export default function Panier({
    * de l'ingrédient, donc stable d'une semaine à l'autre — revenaient
    * déjà cochées sur la liste suivante.
    */
+  // Un geste de fin de semaine, rare : il ferme l'écran sans titre de
+  // section à lui — un intitulé « Vider le panier » au même rang que
+  // « Compléter ma semaine » lui donnait le poids d'une étape du parcours.
   const viderLePanier = (
-    <>
-      <h2>{t('panier.viderLePanier')}</h2>
+    <div className="zone-vider">
       {confirmation ? (
         <div className="bloc-confirmation" role="alertdialog" aria-label={t('panier.viderLePanier')}>
           <p>{t('panier.viderConfirmation', { n: basket.length, s: basket.length > 1 ? 's' : '' })}</p>
@@ -129,13 +131,13 @@ export default function Panier({
         </div>
       ) : (
         <>
-          <p className="aide">{t('panier.viderTexte')}</p>
-          <button className="discret suite pleine-largeur" onClick={() => setConfirmation(true)}>
+          <button className="discret danger pleine-largeur" onClick={() => setConfirmation(true)}>
             {t('panier.viderLePanier')}
           </button>
+          <p className="aide zone-vider-texte">{t('panier.viderTexte')}</p>
         </>
       )}
-    </>
+    </div>
   )
 
   const complements = (
@@ -143,11 +145,11 @@ export default function Panier({
       <h2>{t('panier.completerSemaine')}</h2>
       <div className="bento-deux-colonnes">
         <button className="carte-bento" onClick={onVersPropose}>
-          <Icone nom="plus-cercle" taille={28} />
+          <Icone nom="etoile" taille={24} />
           <p>{t('panier.ajouterPlatRapide')}</p>
         </button>
         <button className="carte-bento neutre" onClick={onAjouterRecette}>
-          <Icone nom="plus-cercle" taille={28} />
+          <Icone nom="crayon" taille={24} />
           <p>{t('panier.nouvelleRecette')}</p>
         </button>
       </div>

@@ -3784,14 +3784,16 @@ button.carte-panier-bouton .carte-panier-corps {
   color: var(--encre-douce);
 }
 
+/* Deux raccourcis, pas deux destinations : une icône et un libellé sur
+   une ligne. Hauts de 160 px, ils occupaient un demi-écran sous le panier
+   et repoussaient le bouton de la liste — le seul qu'on vient chercher. */
 .carte-bento {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
   width: 100%;
-  height: 160px;
-  padding: 20px;
+  min-height: 72px;
+  padding: 12px 14px;
   border: 0;
   border-radius: var(--rayon);
   background: var(--accent-doux);
@@ -3824,11 +3826,32 @@ button.carte-panier-bouton .carte-panier-corps {
   transform: scale(0.98);
 }
 
+.zone-vider {
+  margin-top: 28px;
+}
+
+/* Les « − / + » des parts au panier : 40 px plutôt que 34 — on les
+   touche plusieurs fois de suite, souvent d'une main. */
+.carte-panier .compteur button {
+  width: 40px;
+  height: 40px;
+}
+
+.zone-vider-texte {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  text-align: center;
+}
+
+.carte-bento svg {
+  flex: none;
+}
+
 .carte-bento p {
   margin: 0;
   text-align: left;
   font-family: var(--affichage);
-  font-size: 18px;
+  font-size: 15.5px;
   font-weight: 600;
   line-height: 1.2;
 }
@@ -3925,7 +3948,9 @@ button.carte-panier-bouton .carte-panier-corps {
   font-family: var(--affichage);
   font-size: 20px;
   font-weight: 700;
-  color: var(--terracotta);
+  /* À l'encre : le terracotta se garde pour ce qui se rattrape (voir la
+     règle 3 en tête de feuille), et un nombre de parts n'en est pas. */
+  color: var(--encre);
   font-variant-numeric: tabular-nums;
 }
 
