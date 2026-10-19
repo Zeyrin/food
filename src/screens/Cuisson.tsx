@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Recipe, Verdict } from '../types'
 import { dosesDeLEtape, etapeEnTexte, formatQuantite } from '../lib/aggregate'
-import { formatDuree, minuteursDeLEtape } from '../lib/duree'
+import { formatDuree, formatMinutes, minuteursDeLEtape } from '../lib/duree'
 import { useWakeLock } from '../hooks/useWakeLock'
 import type { Minuteurs } from '../hooks/useMinuteurs'
 import { ecrireProgression, lireProgression, oublierProgression } from '../lib/progressionCuisson'
@@ -102,7 +102,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           {!recette.image && <VignettePlaceholder recette={recette} />}
           <ImageRecette src={recette.image} />
           <span className="badge-temps">
-            <Icone nom="minuteur" taille={14} /> {t('detail.minutes', { n: recette.temps })}
+            <Icone nom="minuteur" taille={14} /> {formatMinutes(recette.temps, t)}
           </span>
         </div>
 

@@ -2,6 +2,7 @@ import type { BasketEntry, Recipe } from '../types'
 import { teinteRecette } from '../lib/identite'
 import { cuisineRecemment, type Historique } from '../lib/propose'
 import { useLangue } from '../lib/i18n'
+import { formatMinutes } from '../lib/duree'
 import { titreRecette } from '../lib/traduireRecette'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
@@ -87,7 +88,7 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
                 {!r.image && <VignettePlaceholder recette={r} />}
                 <ImageRecette src={r.image} />
                 <span className="badge-temps">
-                  <Icone nom="minuteur" taille={12} /> {t('cuissonListe.minutes', { n: r.temps })}
+                  <Icone nom="minuteur" taille={12} /> {formatMinutes(r.temps, t)}
                 </span>
               </div>
               <div className="carte-recette-corps">

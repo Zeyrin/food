@@ -4,6 +4,7 @@ import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { cuisineRecemment, type Historique } from '../lib/propose'
 import { useLangue } from '../lib/i18n'
+import { formatMinutes } from '../lib/duree'
 import { mesurer } from '../lib/mesure'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
@@ -36,12 +37,6 @@ export default function Panier({
 }: Props) {
   const { t } = useLangue()
 
-  /** « 150 » → « 2 h 30 ». Une durée de semaine se lit en heures. */
-  const formatMinutes = (minutes: number) => {
-    if (minutes < 60) return t('panier.minutes', { n: minutes })
-    const reste = minutes % 60
-    return t('panier.heures', { h: Math.floor(minutes / 60), reste: reste ? ` ${reste}` : '' })
-  }
 
   const byId = new Map(recipes.map((r) => [r.id, r]))
   const [confirmation, setConfirmation] = useState(false)
@@ -208,7 +203,7 @@ export default function Panier({
             <p className="carte-resume-sous">
               {t('panier.semaine', { n: numeroSemaine(), parts, s: parts > 1 ? 's' : '' })}
             </p>
-            <p className="carte-resume-detail">{t('panier.tempsCuisine', { temps: formatMinutes(tempsTotal) })}</p>
+            <p className="carte-resume-detail">{t('panier.tempsCuisine', { temps: formatMinutes(tempsTotal, t) })}</p>
           </div>
           <span className="pastille-etat" data-fini={aCuisiner === 0 ? 'true' : undefined}>
             {aCuisiner === 0 ? t('panier.toutCuisine') : t('panier.aCuisiner', { n: aCuisiner })}

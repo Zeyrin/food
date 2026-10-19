@@ -30,6 +30,24 @@ export function formatDuree(secondes: number): string {
 }
 
 /**
+ * « 210 » → « 3 h 30 », « 25 » → « 25 min ». Pour un temps de recette :
+ * au-delà d'une heure, « 210 MIN » oblige à faire la division de tête.
+ * Prend la fonction de traduction de l'écran, pour suivre la langue
+ * choisie au moment du rendu.
+ */
+export function formatMinutes(
+  minutes: number,
+  t: (chemin: string, variables?: Record<string, string | number>) => string = traduire,
+): string {
+  if (minutes < 60) return t('panier.minutes', { n: minutes })
+  const reste = minutes % 60
+  return t('panier.heures', {
+    h: Math.floor(minutes / 60),
+    reste: reste ? ` ${String(reste).padStart(2, '0')}` : '',
+  })
+}
+
+/**
  * Nomme un minuteur avec ce que l'étape demande de faire juste avant
  * d'annoncer sa durée : dans « Faire dorer les lardons à sec 4 min »,
  * tout ce qui précède « 4 min ».

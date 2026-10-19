@@ -992,6 +992,52 @@ html[data-defile='true'] .entete-app {
   margin-top: 10px;
 }
 
+/* Une seule ligne collée en bas : l'action qu'on vient faire sur la
+   fiche (le panier) prend la place, « Cuisiner » se range à côté. Deux
+   gestes, une hauteur de pouce — le reste de l'écran est à la recette. */
+.barre-actions-ligne {
+  display: flex;
+  gap: 10px;
+}
+
+.barre-actions-ligne .principal {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  margin-top: 0;
+}
+
+.barre-actions-ligne .bouton-cuisiner {
+  flex: 0 0 auto;
+  width: auto;
+  min-height: var(--pouce);
+  padding: 0 20px;
+  background: var(--carte);
+}
+
+/* Sur un petit écran, l'icône de marmite suffit : le libellé ferait
+   passer celui du panier sur deux lignes. */
+@media (max-width: 359px) {
+  .barre-actions-ligne .bouton-cuisiner span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+.actions-secondaires {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--filet-fort);
+}
+
+.actions-secondaires > * + * {
+  margin-top: 10px;
+}
+
 /* Le fond de page ne sert qu'à dégager la barre d'onglets — ces écrans
    n'en ont pas, et la barre d'actions doit finir au ras du bas. */
 #root:has(.barre-actions) {
@@ -1977,6 +2023,15 @@ button.discret.danger {
   cursor: default;
 }
 
+/* Les noms d'ingrédients sont écrits en minuscules dans les recettes —
+   c'est la clé d'agrégation, elle doit le rester. À l'écran, une liste
+   qui commence chaque ligne par une capitale se lit comme une liste, pas
+   comme une phrase coupée. La majuscule est donc de présentation seule :
+   le texte copié ou envoyé garde le nom tel qu'il est. */
+.rangee .nom::first-letter {
+  text-transform: uppercase;
+}
+
 .rangee[data-coche='true'] .nom {
   text-decoration: line-through;
   color: var(--encre-douce);
@@ -2322,62 +2377,65 @@ h3.entete-section {
   }
 }
 
-/* Tiroir des filtres (écran Proposer) : replié une ligne, déplié la
-   liste entière — même logique que .tiroir-ingredients (Cuisson), sur
-   une surface claire plutôt que le fond sombre du mode cuisson. */
-.tiroir-filtres {
-  margin: 4px 0 16px;
-  border-radius: var(--rayon);
-  background: var(--carte-basse);
-  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+/* Filtres de l'écran Proposer. Sur téléphone, une seule rangée qui
+   défile du pouce et déborde jusqu'aux bords de l'écran : la puce coupée
+   au bord droit dit qu'il y en a d'autres, sans flèche ni libellé. Le
+   masque estompe les deux extrémités pour que la coupe se lise comme une
+   suite, pas comme un défaut de mise en page. */
+.filtres {
+  margin: 4px -20px 12px;
 }
 
-.tiroir-filtres summary {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 48px;
-  padding: 0 16px;
-  border-radius: var(--rayon);
-  cursor: pointer;
-  list-style: none;
-  font-weight: 700;
-  transition: color var(--court3) var(--standard);
-}
-
-@media (hover: hover) {
-  .tiroir-filtres summary:hover {
-    color: var(--accent);
-  }
-}
-
-.tiroir-filtres summary::-webkit-details-marker {
+.filtres-titre {
   display: none;
 }
 
-.tiroir-filtres summary em {
+.puces-defilantes {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 20px;
+  margin: 0;
+  /* De la place pour le rebond d'appui (scale) et l'ombre des puces, que
+     `overflow` rognerait sinon. */
+  padding: 4px 20px 8px;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 28px), transparent);
+}
+
+.puces-defilantes::-webkit-scrollbar {
+  display: none;
+}
+
+.puces-defilantes .puce {
+  scroll-snap-align: start;
+  white-space: nowrap;
+}
+
+.puce-temps {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.puce-effacer em,
+.filtres-titre em {
   font-style: normal;
   font-size: 12px;
   font-weight: 700;
-  padding: 2px 8px;
+  min-width: 20px;
+  padding: 1px 7px;
   border-radius: 999px;
+  background: var(--terracotta-doux);
+  color: var(--terracotta);
+  text-align: center;
+}
+
+.filtres-titre em {
   background: var(--accent-doux);
   color: var(--accent);
-}
-
-.tiroir-filtres summary svg {
-  margin-left: auto;
-  color: var(--encre-douce);
-  transition: transform var(--court4) var(--standard);
-}
-
-.tiroir-filtres[open] summary svg {
-  transform: rotate(90deg);
-}
-
-.tiroir-filtres .puces {
-  margin: 0;
-  padding: 0 16px 16px;
 }
 
 button.principal {
@@ -2857,6 +2915,34 @@ button.pastille-synchro:active {
 .carte-resume-bento .carte-resume-label {
   color: var(--accent);
   opacity: 0.8;
+}
+
+/* Jauge des courses : une piste pâle, le rempli à l'accent. Elle grandit
+   par `scaleX` depuis la gauche plutôt que par sa largeur — le seul
+   moyen de l'animer sans remesurer la carte à chaque case cochée. */
+.jauge-courses {
+  position: relative;
+  z-index: 1;
+  height: 8px;
+  margin-top: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.jauge-courses span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transform-origin: left center;
+  transition: transform var(--moyen3) var(--sortie);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jauge-courses span {
+    transition: none;
+  }
 }
 
 /* La photo du plat en fond, le titre posé dessus sur un voile qui remonte
@@ -4891,20 +4977,36 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
     margin-top: 24px;
   }
 
-  .corps-propose .tiroir-filtres {
+  .corps-propose .filtres {
     position: sticky;
     top: 96px;
     margin: 0;
+    padding: 16px;
+    border-radius: var(--rayon);
+    background: var(--carte-basse);
+    box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+  }
+
+  .corps-propose .filtres-titre {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px;
+    font-weight: 700;
   }
 
   .corps-propose .puces {
     flex-direction: column;
     overflow: visible;
     gap: 6px;
+    padding: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .corps-propose .puce {
     width: 100%;
+    justify-content: flex-start;
     text-align: left;
   }
 

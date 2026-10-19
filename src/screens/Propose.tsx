@@ -4,6 +4,7 @@ import { type Historique, proposer, tousLesTags } from '../lib/propose'
 import { estFavorite } from '../lib/favoris'
 import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
+import { formatMinutes } from '../lib/duree'
 import { mesurer } from '../lib/mesure'
 import { comportementDefilement } from '../lib/mouvement'
 import Icone from '../components/Icone'
@@ -51,17 +52,6 @@ export default function Propose({
 }: Props) {
   const { t } = useLangue()
   const [recherche, setRecherche] = useState('')
-  /**
-   * Le tiroir de filtres est une colonne latérale sur desktop (il y a la
-   * place, il reste ouvert), mais sur un téléphone le nuage de tags fait
-   * une pleine hauteur d'écran : ouvert par défaut, il repoussait toutes
-   * les recettes sous la ligne de flottaison. On atterrit donc sur le
-   * catalogue, les filtres à un doigt — leur nombre s'affiche sur le
-   * résumé replié.
-   */
-  const [filtresOuverts, setFiltresOuverts] = useState(
-    () => window.matchMedia('(min-width: 900px)').matches,
-  )
   const [tempsMax, setTempsMax] = useState<number | null>(null)
   const [favorisSeuls, setFavorisSeuls] = useState(false)
   const [tags, setTags] = useState<string[]>([])
@@ -225,33 +215,25 @@ export default function Propose({
           )}
         </div>
 
-        <details
-          className="tiroir-filtres"
-          open={filtresOuverts}
-          onToggle={(e) => setFiltresOuverts(e.currentTarget.open)}
-          data-tour="filtres-propose"
-        >
-          <summary>
-            <span>{t('propose.filtres')}</span>
+        {/* Les filtres restent sous les yeux, en une rangée qui défile du
+            pouce : repliés dans un tiroir, personne ne les ouvrait, et
+            dépliés en nuage ils repoussaient la grille sous la ligne de
+            flottaison. Une seule ligne règle les deux. Sur desktop, la même
+            liste devient une colonne fixe à gauche de la grille. */}
+        <div className="filtres" data-tour="filtres-propose">
+          <p className="filtres-titre">
+            {t('propose.filtres')}
             {nombreFiltres > 0 && <em>{nombreFiltres}</em>}
-            <Icone nom="suivant" taille={16} />
-          </summary>
-          <div className="puces">
+          </p>
+          <div className="puces puces-defilantes" role="group" aria-label={t('propose.filtres')}>
+            {/* En tête de rangée, avec le compte : un filtre actif peut être
+                hors champ, au bout de la rangée — celle-ci dit qu'il existe
+                et le retire d'un doigt. */}
             {nombreFiltres > 0 && (
               <button className="puce puce-effacer" onClick={toutEffacer}>
-                <Icone nom="fermer" taille={14} /> {t('propose.toutEffacer')}
+                <Icone nom="fermer" taille={14} /> {t('propose.toutEffacer')} <em>{nombreFiltres}</em>
               </button>
             )}
-            {TEMPS.map((mn) => (
-              <button
-                key={mn}
-                className="puce"
-                aria-pressed={tempsMax === mn}
-                onClick={() => setTempsMax(tempsMax === mn ? null : mn)}
-              >
-                {t('propose.minutesMax', { n: mn })}
-              </button>
-            ))}
             {/* La catégorie tient dans une puce, au milieu des autres
                 filtres : c'est une façon de plus de trancher dans le même
                 catalogue, pas un cinquième onglet — les favoris restent des
@@ -263,6 +245,16 @@ export default function Propose({
             >
               <Icone nom="coeur" taille={14} /> {t('propose.favoris')}
             </button>
+            {TEMPS.map((mn) => (
+              <button
+                key={mn}
+                className="puce puce-temps"
+                aria-pressed={tempsMax === mn}
+                onClick={() => setTempsMax(tempsMax === mn ? null : mn)}
+              >
+                <Icone nom="minuteur" taille={14} /> {t('propose.minutesMax', { n: mn })}
+              </button>
+            ))}
             {tousLesTags(recipes).map((tag) => (
               <button
                 key={tag}
@@ -274,7 +266,7 @@ export default function Propose({
               </button>
             ))}
           </div>
-        </details>
+        </div>
 
         {affichees.length === 0 ? (
           <div className="vide">
@@ -289,8 +281,8 @@ export default function Propose({
                   ? t('propose.aucuneRecette')
                   : t('propose.catalogueVide')}
             </p>
-            {/* Un cul-de-sac sans issue sinon : les filtres qui ont vidé
-                l'écran sont repliés dans le tiroir, hors de vue. */}
+            {/* Un cul-de-sac sans issue sinon : le filtre qui a vidé
+                l'écran est peut-être hors champ, au bout de la rangée. */}
             {nombreFiltres > 0 || recherche.trim() !== '' ? (
               <button className="discret suite" onClick={toutEffacer}>
                 {t('propose.effacerFiltres')}
@@ -341,7 +333,7 @@ export default function Propose({
                   {!r.image && <VignettePlaceholder recette={r} />}
                   <ImageRecette src={r.image} />
                   <span className="badge-temps">
-                    <Icone nom="minuteur" taille={12} /> {t('propose.minutes', { n: r.temps })}
+                    <Icone nom="minuteur" taille={12} /> {formatMinutes(r.temps, t)}
                   </span>
                   {estFavorite(r, historique) && (
                     <span className="badge-favori" title={t('propose.favori')}>

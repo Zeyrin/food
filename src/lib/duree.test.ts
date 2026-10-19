@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import corpus from '../data/recipes.json'
-import { formatDuree, minuteursDeLEtape } from './duree'
+import { formatDuree, formatMinutes, minuteursDeLEtape } from './duree'
 
 const secondes = (texte: string) => minuteursDeLEtape(texte).map((m) => m.secondes)
 const noms = (texte: string) => minuteursDeLEtape(texte).map((m) => m.nom)
@@ -58,3 +58,10 @@ for (const r of corpus as Array<{ id: string; etapes: string[] }>) {
 }
 
 console.log('ok')
+
+// Un temps de recette au-delà d'une heure se lit en heures, les minutes
+// sur deux chiffres comme sur une horloge.
+assert.equal(formatMinutes(25), '25 min')
+assert.equal(formatMinutes(60), '1 h')
+assert.equal(formatMinutes(210), '3 h 30')
+assert.equal(formatMinutes(125), '2 h 05')

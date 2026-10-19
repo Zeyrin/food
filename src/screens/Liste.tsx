@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ItemLibre, ListItem, ListState, RayonId, Recipe } from '../types'
-import { RAYONS } from '../types'
+import { RAYONS, RAYONS_ORDONNES } from '../types'
 import type { ConfigMagasins, Magasin } from '../lib/magasins'
 import { grouperPourCourses } from '../lib/magasins'
 import { formatQuantite } from '../lib/aggregate'
@@ -277,23 +277,41 @@ export default function Liste({
           {composeur}
           <p className="aide">{t('liste.triTexte')}</p>
 
-          {tousLesItems.map((item) => {
-            const deja = etat.dejaPossede[item.key] === true
+          {/* Rangé par rayon, comme la liste magasin : devant le frigo
+              puis le placard, on vérifie un endroit à la fois — les frais
+              d'un coup, l'épicerie d'un autre — au lieu de sauter de l'un
+              à l'autre au fil de l'alphabet. */}
+          {RAYONS_ORDONNES.map((rayon) => {
+            const lignes = tousLesItems.filter((i) => i.rayon === rayon)
+            if (lignes.length === 0) return null
             return (
-              <button
-                className="rangee"
-                key={item.key}
-                data-coche={deja}
-                // `data-coche` ne pilote que le style : sans `aria-pressed`,
-                // un lecteur d'écran annonce un bouton sans jamais dire si
-                // le produit est coché.
-                aria-pressed={deja}
-                onClick={() => basculer('dejaPossede', item.key)}
-              >
-                <span className="case">{deja && <Icone nom="coche" taille={18} />}</span>
-                <span className="nom">{item.nom}</span>
-                <span className="qte">{formatQuantite(item)}</span>
-              </button>
+              <div key={rayon}>
+                <h2 className="entete-section">
+                  <span className="badge-section" data-rayon={rayon}>
+                    <Icone nom={RAYONS[rayon].icone} taille={20} />
+                  </span>
+                  {labelRayon(rayon)}
+                </h2>
+                {lignes.map((item) => {
+                  const deja = etat.dejaPossede[item.key] === true
+                  return (
+                    <button
+                      className="rangee"
+                      key={item.key}
+                      data-coche={deja}
+                      // `data-coche` ne pilote que le style : sans `aria-pressed`,
+                      // un lecteur d'écran annonce un bouton sans jamais dire si
+                      // le produit est coché.
+                      aria-pressed={deja}
+                      onClick={() => basculer('dejaPossede', item.key)}
+                    >
+                      <span className="case">{deja && <Icone nom="coche" taille={18} />}</span>
+                      <span className="nom">{item.nom}</span>
+                      <span className="qte">{formatQuantite(item)}</span>
+                    </button>
+                  )
+                })}
+              </div>
             )
           })}
 
@@ -335,6 +353,22 @@ export default function Liste({
             <h2 className="carte-resume-nombre">
               {aAcheter.length - restants} <span>/ {aAcheter.length}</span>
             </h2>
+            {/* Le chiffre dit où on en est, la jauge dit combien il reste :
+                en rayon, on la lit du coin de l'œil sans lire le nombre. */}
+            <div
+              className="jauge-courses"
+              role="progressbar"
+              aria-label={t('liste.progression')}
+              aria-valuemin={0}
+              aria-valuemax={aAcheter.length}
+              aria-valuenow={aAcheter.length - restants}
+            >
+              <span
+                style={{
+                  transform: `scaleX(${aAcheter.length ? (aAcheter.length - restants) / aAcheter.length : 1})`,
+                }}
+              />
+            </div>
           </div>
           {/* La tuile prenait pour fond une teinte tirée du titre : un
               magenta ou un cyan tombait à côté du vert de la tuile
