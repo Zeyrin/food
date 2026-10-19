@@ -6148,6 +6148,31 @@ html[data-gele='true'] body {
   color: var(--encre-douce);
 }
 
+/* Sur téléphone, entre deux sections du catalogue : une ligne fine, le
+   sous-titre en moins. Le geste est rare, il n'a pas à peser autant
+   qu'une rangée de plats. */
+@media (max-width: 899px) {
+  .catalogue .zone-ajout {
+    margin: 4px 0 20px;
+  }
+
+  .bande-ajout {
+    padding: 8px 14px 8px 8px;
+    border-width: 1.5px;
+    border-radius: 999px;
+  }
+
+  .bande-ajout-rond {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .bande-ajout-texte em {
+    display: none;
+  }
+}
+
 .panneau-ajout {
   padding: 16px;
   border: 2px solid var(--accent-doux);

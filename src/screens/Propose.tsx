@@ -251,6 +251,38 @@ export default function Propose({
     return liste
   }, [recipes, historique, nombreFiltres, recherche, t])
 
+  // L'ajout d'une recette passe après la première rangée : on ouvre
+  // l'écran pour choisir un plat, pas pour en écrire un — le premier écran
+  // montre donc des plats. Il reste avant la grille, là où l'on s'aperçoit
+  // qu'il en manque un ; et dans l'état vide, où c'est la seule suite.
+  const zoneAjout = (
+    <div className="zone-ajout" ref={ancreAjout}>
+      {ajoutOuvert ? (
+        <AjoutRecette
+          onAjouter={onAjouterRecette}
+          onFerme={() => onAjoutOuvert(false)}
+          titresExistants={recipes.map((r) => r.titre)}
+          tagsConnus={tousLesTags(recipes)}
+        />
+      ) : (
+        <button
+          className="bande-ajout"
+          onClick={() => onAjoutOuvert(true)}
+          data-tour="ajout-propose"
+        >
+          <span className="bande-ajout-rond">
+            <Icone nom="plus" taille={22} />
+          </span>
+          <span className="bande-ajout-texte">
+            <b>{t('ajouter.sectionTitre')}</b>
+            <em>{t('ajouter.sectionSousTitre')}</em>
+          </span>
+          <Icone nom="suivant" taille={18} />
+        </button>
+      )}
+    </div>
+  )
+
   return (
     <div className="ecran-propose">
       <header className="entete-app entete-propose">
@@ -285,32 +317,6 @@ export default function Propose({
 
       <div className="corps-propose">
         {bandeau}
-        <div className="zone-ajout" ref={ancreAjout}>
-          {ajoutOuvert ? (
-            <AjoutRecette
-              onAjouter={onAjouterRecette}
-              onFerme={() => onAjoutOuvert(false)}
-              titresExistants={recipes.map((r) => r.titre)}
-              tagsConnus={tousLesTags(recipes)}
-            />
-          ) : (
-            <button
-              className="bande-ajout"
-              onClick={() => onAjoutOuvert(true)}
-              data-tour="ajout-propose"
-            >
-              <span className="bande-ajout-rond">
-                <Icone nom="plus" taille={22} />
-              </span>
-              <span className="bande-ajout-texte">
-                <b>{t('ajouter.sectionTitre')}</b>
-                <em>{t('ajouter.sectionSousTitre')}</em>
-              </span>
-              <Icone nom="suivant" taille={18} />
-            </button>
-          )}
-        </div>
-
         {/* Les filtres restent sous les yeux, en une rangée qui défile du
             pouce : repliés dans un tiroir, personne ne les ouvrait, et
             dépliés en nuage ils repoussaient la grille sous la ligne de
@@ -365,34 +371,37 @@ export default function Propose({
         </div>
 
         {affichees.length === 0 ? (
-          <div className="vide">
-            {/* « Aucune recette ne correspond » laisserait croire à un
-                catalogue épuisé alors que la catégorie est simplement
-                encore vide : elle se remplit toute seule, mais seulement
-                si on sait comment. */}
-            <p>
-              {favorisSeuls
-                ? t('propose.aucunFavori')
-                : nombreFiltres > 0 || recherche.trim() !== ''
-                  ? t('propose.aucuneRecette')
-                  : t('propose.catalogueVide')}
-            </p>
-            {/* Un cul-de-sac sans issue sinon : le filtre qui a vidé
-                l'écran est peut-être hors champ, au bout de la rangée. */}
-            {nombreFiltres > 0 || recherche.trim() !== '' ? (
-              <button className="discret suite" onClick={toutEffacer}>
-                {t('propose.effacerFiltres')}
-              </button>
-            ) : (
-              // Catalogue vide, aucun filtre en cause : la seule chose à
-              // faire depuis cet écran est d'y mettre une recette.
-              !ajoutOuvert && (
-                <button className="principal suite" onClick={() => onAjoutOuvert(true)}>
-                  {t('ajouter.sectionTitre')}
+          <>
+            {zoneAjout}
+            <div className="vide">
+              {/* « Aucune recette ne correspond » laisserait croire à un
+                  catalogue épuisé alors que la catégorie est simplement
+                  encore vide : elle se remplit toute seule, mais seulement
+                  si on sait comment. */}
+              <p>
+                {favorisSeuls
+                  ? t('propose.aucunFavori')
+                  : nombreFiltres > 0 || recherche.trim() !== ''
+                    ? t('propose.aucuneRecette')
+                    : t('propose.catalogueVide')}
+              </p>
+              {/* Un cul-de-sac sans issue sinon : le filtre qui a vidé
+                  l'écran est peut-être hors champ, au bout de la rangée. */}
+              {nombreFiltres > 0 || recherche.trim() !== '' ? (
+                <button className="discret suite" onClick={toutEffacer}>
+                  {t('propose.effacerFiltres')}
                 </button>
-              )
-            )}
-          </div>
+              ) : (
+                // Catalogue vide, aucun filtre en cause : la seule chose à
+                // faire depuis cet écran est d'y mettre une recette.
+                !ajoutOuvert && (
+                  <button className="principal suite" onClick={() => onAjoutOuvert(true)}>
+                    {t('ajouter.sectionTitre')}
+                  </button>
+                )
+              )}
+            </div>
+          </>
         ) : (
           <div className="catalogue">
             {/* Le catalogue entier d'un coup, c'est une centaine de plats :
@@ -412,6 +421,7 @@ export default function Propose({
                 </div>
               </section>
             ))}
+            {zoneAjout}
             {rangees.length > 0 && <h2 className="titre-rangee">{t('propose.toutLeCatalogue')}</h2>}
             <div className="grille-recettes">
               {affichees.map((r, i) => carte(r, i, r.id, rangees.length === 0 && i === 0))}
