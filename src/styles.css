@@ -1059,6 +1059,119 @@ html[data-defile='true'] .entete-app {
   margin: 0 auto;
 }
 
+/* Barre panier de l'écran Proposer, à la façon des applis de livraison :
+   ce qu'on a choisi à gauche (les assiettes, le compte), où aller ensuite
+   à droite. Une seule cible pleine largeur, dans la zone que le pouce
+   atteint sans changer de prise. */
+.barre-panier {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 600px;
+  min-height: 64px;
+  margin: 0 auto;
+  padding: 8px 10px 8px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--accent) 92%, white), var(--accent));
+  color: var(--sur-accent);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), var(--ombre-nette), var(--ombre-haute);
+  animation: barre-panier-entree var(--moyen3) var(--sortie) both;
+  transition: transform var(--court3) var(--ressort);
+}
+
+.barre-panier:active {
+  transform: scale(0.98);
+}
+
+@keyframes barre-panier-entree {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+.barre-panier-plats {
+  display: flex;
+  flex: none;
+  padding-left: 2px;
+}
+
+/* Les assiettes se chevauchent comme des avatars : trois au plus, les
+   dernières ajoutées — celle qu'on vient de toucher apparaît à droite. */
+.barre-panier-plat {
+  position: relative;
+  display: block;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: hsl(var(--teinte) 65% 88%);
+  box-shadow: 0 0 0 2.5px var(--accent);
+}
+
+.barre-panier-plat + .barre-panier-plat {
+  margin-left: -16px;
+}
+
+.barre-panier-plat > * {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.barre-panier-texte {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.barre-panier-texte b {
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.barre-panier-texte em {
+  font-size: 13px;
+  font-style: normal;
+  opacity: 0.8;
+}
+
+.barre-panier-action {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 0 12px 0 16px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.16);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+@media (max-width: 359px) {
+  .barre-panier-texte em {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .barre-panier {
+    animation: none;
+  }
+}
+
 /* Écrans plein page (détail, ajout/édition, réglages) sur mobile : le
    rail est un rail desktop, pas un onglet — en dessous de 900px il
    redevient la barre de tabs du bas et n'a pas sa place au-dessus d'un

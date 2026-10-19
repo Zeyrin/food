@@ -9,6 +9,7 @@ import { numeroSemaine } from '../lib/semaine'
 import { useLangue } from '../lib/i18n'
 import { mesurer } from '../lib/mesure'
 import { emojiIngredient } from '../lib/emojiIngredient'
+import { vibrer } from '../lib/haptique'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 import AssietteRecette from '../components/AssietteRecette'
@@ -26,6 +27,8 @@ interface Props {
   prochaineCuisson: Recipe | null
   onVersCuisson: () => void
   onVersReglages: () => void
+  /** Liste vide : retour au catalogue, d'où elle se remplit. */
+  onVersPropose: () => void
   /** La maison et le prénom d'ici : de quoi inviter quelqu'un à faire les courses. */
   foyer: string
   prenom: string
@@ -51,6 +54,7 @@ export default function Liste({
   prochaineCuisson,
   onVersCuisson,
   onVersReglages,
+  onVersPropose,
   foyer,
   prenom,
 }: Props) {
@@ -131,7 +135,12 @@ export default function Liste({
       const restantsApres = aAcheterApres.filter((i) => !suivant.coche[i.key]).length
       if (restantsApres === 0 && aAcheterApres.length > 0) {
         mesurer('courses_terminees', { produits: aAcheterApres.length })
+        vibrer('succes')
+      } else {
+        vibrer(suivant.coche[key] ? 'leger' : 'retrait')
       }
+    } else {
+      vibrer(suivant.dejaPossede[key] ? 'leger' : 'retrait')
     }
 
     onEtat(suivant)
@@ -268,7 +277,14 @@ export default function Liste({
         {entete}
         <div className="corps-liste">
           {composeur}
-          <p className="vide">{t('liste.videTexte')}</p>
+          {/* Un état vide dit pourquoi il l'est et mène à la suite : la
+              liste naît du panier, le bouton y conduit. */}
+          <div className="vide">
+            <p>{t('liste.videTexte')}</p>
+            <button className="principal suite" onClick={onVersPropose}>
+              {t('liste.choisirDesPlats')}
+            </button>
+          </div>
         </div>
         {boutonAjout}
       </>

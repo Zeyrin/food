@@ -6,6 +6,7 @@ import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
 import { formatMinutes } from '../lib/duree'
 import { mesurer } from '../lib/mesure'
+import { vibrer } from '../lib/haptique'
 import { comportementDefilement } from '../lib/mouvement'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
@@ -29,6 +30,7 @@ interface Props {
   onAjoutOuvert: (ouvert: boolean) => void
   /** Un avis posé en tête du catalogue, sous l'en-tête (voir `BandeauIntegre`). */
   bandeau?: React.ReactNode
+  onVersPanier: () => void
 }
 
 const TEMPS = [20, 30, 45] as const
@@ -49,6 +51,7 @@ export default function Propose({
   ajoutOuvert,
   onAjoutOuvert,
   bandeau,
+  onVersPanier,
 }: Props) {
   const { t } = useLangue()
   const [recherche, setRecherche] = useState('')
@@ -136,6 +139,7 @@ export default function Propose({
       filtres: nombreFiltres,
       recherche: recherche.trim() ? 1 : 0,
     })
+    vibrer(dedans ? 'retrait' : 'leger')
     onBasket(
       dedans
         ? basket.filter((e) => e.recipeId !== recette.id)
@@ -370,6 +374,43 @@ export default function Propose({
           </div>
         )}
       </div>
+
+      {/* La suite du parcours, sous le pouce, dès le premier plat choisi —
+          comme le panier des applis de livraison. La pastille de l'onglet
+          compte les plats, mais ne dit pas qu'il faut y aller ensuite :
+          cette barre le dit, et montre ce qu'on a déjà mis dedans. */}
+      {basket.length > 0 && !ajoutOuvert && (
+        <>
+          <div className="espaceur-action-flottante" aria-hidden="true" />
+          <div className="action-flottante">
+            <button className="barre-panier" onClick={onVersPanier}>
+              <span className="barre-panier-plats" aria-hidden="true">
+                {basket.slice(-3).map((e) => {
+                  const r = recipes.find((x) => x.id === e.recipeId)
+                  return (
+                    <span
+                      key={e.recipeId}
+                      className="barre-panier-plat"
+                      style={{ '--teinte': teinteRecette(r?.titre ?? '') } as React.CSSProperties}
+                    >
+                      {r && !r.image && <VignettePlaceholder recette={r} />}
+                      <ImageRecette src={r?.image} />
+                    </span>
+                  )
+                })}
+              </span>
+              <span className="barre-panier-texte">
+                <b>{basket.length === 1 ? t('propose.barrePanierUn') : t('propose.barrePanier', { n: basket.length })}</b>
+                <em>{t('propose.barrePanierParts', { n: basket.reduce((n, e) => n + e.portions, 0) })}</em>
+              </span>
+              <span className="barre-panier-action">
+                {t('propose.voirPanier')}
+                <Icone nom="suivant" taille={18} />
+              </span>
+            </button>
+          </div>
+        </>
+      )}
     </div>
   )
 }

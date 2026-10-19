@@ -13,9 +13,11 @@ interface Props {
   basket: BasketEntry[]
   historique: Historique
   onCuisiner: (recipeId: string) => void
+  /** Rien à cuisiner : retour au catalogue choisir les plats. */
+  onVersPropose: () => void
 }
 
-export default function CuissonListe({ recipes, basket, historique, onCuisiner }: Props) {
+export default function CuissonListe({ recipes, basket, historique, onCuisiner, onVersPropose }: Props) {
   const { t, langue } = useLangue()
   const byId = new Map(recipes.map((r) => [r.id, r]))
 
@@ -42,7 +44,12 @@ export default function CuissonListe({ recipes, basket, historique, onCuisiner }
     return (
       <>
         {entete}
-        <p className="vide">{t('cuissonListe.videTexte')}</p>
+        <div className="vide">
+          <p>{t('cuissonListe.videTexte')}</p>
+          <button className="principal suite" onClick={onVersPropose}>
+            {t('liste.choisirDesPlats')}
+          </button>
+        </div>
       </>
     )
   }
