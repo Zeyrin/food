@@ -861,6 +861,25 @@ button.principal.accueil-hero-cta {
   text-wrap: pretty;
 }
 
+/* Le lien vers le catalogue public gardait le bleu souligné du
+   navigateur, seule tache hors palette de l'écran d'accueil. Il prend
+   l'accent de l'app, avec une flèche qui dit qu'on sort de l'écran. */
+.accueil-note a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-underline-offset: 4px;
+}
+
+.accueil-note a::after {
+  content: '→';
+}
+
 /* Ce que le champ accepte, dit sous le champ : le collage d'un lien ne
    se devine pas, et personne n'essaie ce qu'il croit interdit. */
 .accueil-indice {
@@ -6790,22 +6809,34 @@ button.vignette-mini-bouton:active {
   font-size: 0.85rem;
 }
 
+/* Les trois chiffres du profil dans une carte, séparés d'un filet —
+   même forme que le bandeau Temps · Ingrédients · Étapes de la fiche.
+   Posés à nu sur le papier, ils flottaient entre deux cartes. */
 .profil-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
   margin: 12px 0 4px;
+  padding: 14px 4px;
+  border-radius: var(--rayon);
+  background: var(--carte);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
   text-align: center;
+}
+
+.profil-stats > * + * {
+  border-left: 1px solid var(--filet-fort);
 }
 
 .profil-stats b {
   display: block;
+  font-family: var(--affichage);
   font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .profil-stats span {
+  color: var(--encre-douce);
   font-size: 0.78rem;
-  opacity: 0.75;
 }
 
 .profil-collection {
