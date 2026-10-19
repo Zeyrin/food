@@ -495,50 +495,41 @@ export default function Liste({
         {bascule}
         {composeur}
 
-        <div className="bento-deux-colonnes">
-          <div className="carte-resume carte-resume-bento">
-            <Icone nom="panier" taille={96} />
+        {/* Un seul bandeau compact au lieu de deux tuiles et d'un bouton :
+            en magasin, l'écran appartient à la liste. Le compte, la jauge,
+            et l'envoi par message à portée de pouce sur la même ligne. */}
+        <div className="resume-courses">
+          <div className="resume-courses-texte">
             <p className="carte-resume-label">{t('liste.progression')}</p>
-            <h2 className="carte-resume-nombre">
-              {aAcheter.length - restants} <span>/ {aAcheter.length}</span>
-            </h2>
-            {/* Le chiffre dit où on en est, la jauge dit combien il reste :
-                en rayon, on la lit du coin de l'œil sans lire le nombre. */}
-            <div
-              className="jauge-courses"
-              role="progressbar"
-              aria-label={t('liste.progression')}
-              aria-valuemin={0}
-              aria-valuemax={aAcheter.length}
-              aria-valuenow={aAcheter.length - restants}
-            >
-              <span
-                style={{
-                  transform: `scaleX(${aAcheter.length ? (aAcheter.length - restants) / aAcheter.length : 1})`,
-                }}
-              />
-            </div>
+            <p className="resume-courses-nombre">
+              <b>{aAcheter.length - restants}</b> / {aAcheter.length}
+            </p>
           </div>
-          {/* La tuile prenait pour fond une teinte tirée du titre : un
-              magenta ou un cyan tombait à côté du vert de la tuile
-              voisine, hors de la palette de l'app. Le plat a sa photo —
-              elle dit mieux ce qui attend en cuisine, et la teinte reste
-              le repli des recettes qui n'en ont pas. */}
-          {prochaineCuisson && (
-            <div
-              className="carte-prochaine-cuisson"
-              style={{ '--teinte': teinteRecette(prochaineCuisson.titre) } as React.CSSProperties}
+          {restants > 0 && (
+            <button
+              className="resume-courses-envoyer"
+              onClick={() => void envoyer(aAcheter.filter((i) => !etat.coche[i.key]))}
             >
-              {!prochaineCuisson.image && (
-                <AssietteRecette titre={prochaineCuisson.titre} ingredients={prochaineCuisson.ingredients} />
-              )}
-              <ImageRecette src={prochaineCuisson.image} />
-              <div className="carte-prochaine-cuisson-texte">
-                <p className="carte-resume-label">{t('liste.prochaineCuisson')}</p>
-                <p className="carte-prochaine-cuisson-titre">{prochaineCuisson.titre}</p>
-              </div>
-            </div>
+              <Icone nom={copiee ? 'coche' : 'lien'} taille={16} />
+              {copiee ? t('liste.listeCopiee') : t('liste.envoyer')}
+            </button>
           )}
+          {/* Le chiffre dit où on en est, la jauge dit combien il reste :
+              en rayon, on la lit du coin de l'œil sans lire le nombre. */}
+          <div
+            className="jauge-courses"
+            role="progressbar"
+            aria-label={t('liste.progression')}
+            aria-valuemin={0}
+            aria-valuemax={aAcheter.length}
+            aria-valuenow={aAcheter.length - restants}
+          >
+            <span
+              style={{
+                transform: `scaleX(${aAcheter.length ? (aAcheter.length - restants) / aAcheter.length : 1})`,
+              }}
+            />
+          </div>
         </div>
 
         {/* Fin des courses — dernière case cochée, ou rien à acheter parce
@@ -564,16 +555,6 @@ export default function Liste({
               <Icone nom="marmite" taille={18} /> {t('liste.passerALaCuisson')}
             </button>
           </div>
-        )}
-
-        {/* Placé en tête, avant la longue liste : on envoie sa liste
-            avant de partir, pas après avoir fait défiler dix-sept
-            produits. */}
-        {restants > 0 && (
-          <button className="discret pleine-largeur" onClick={() => void envoyer(aAcheter.filter((i) => !etat.coche[i.key]))}>
-            <Icone nom={copiee ? 'coche' : 'liste'} taille={18} />
-            {copiee ? t('liste.listeCopiee') : t('liste.envoyerListe')}
-          </button>
         )}
 
         {texteAPartager !== null && (
@@ -656,6 +637,28 @@ export default function Liste({
               {invitation.copie ? t('liste.lienCopie') : t('liste.inviter')}
             </button>
           </p>
+        )}
+
+        {/* Ce qui attend en cuisine, en fin de liste — là où on a fini les
+            courses. La tuile prenait pour fond une teinte tirée du titre : un
+            magenta ou un cyan tombait à côté du vert de la tuile
+            voisine, hors de la palette de l'app. Le plat a sa photo —
+            elle dit mieux ce qui attend en cuisine, et la teinte reste
+            le repli des recettes qui n'en ont pas. */}
+        {prochaineCuisson && (
+          <div
+            className="carte-prochaine-cuisson"
+            style={{ '--teinte': teinteRecette(prochaineCuisson.titre) } as React.CSSProperties}
+          >
+            {!prochaineCuisson.image && (
+              <AssietteRecette titre={prochaineCuisson.titre} ingredients={prochaineCuisson.ingredients} />
+            )}
+            <ImageRecette src={prochaineCuisson.image} />
+            <div className="carte-prochaine-cuisson-texte">
+              <p className="carte-resume-label">{t('liste.prochaineCuisson')}</p>
+              <p className="carte-prochaine-cuisson-titre">{prochaineCuisson.titre}</p>
+            </div>
+          </div>
         )}
 
         <div className="rangee-boutons espace-haut">

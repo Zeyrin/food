@@ -3216,6 +3216,70 @@ button.pastille-synchro:active {
   opacity: 0.8;
 }
 
+/* Bandeau des courses : compte à gauche, « Envoyer » à droite, la jauge
+   sur toute la largeur dessous. ~100 px là où deux tuiles et un bouton
+   en prenaient 300 avant le premier produit. */
+.resume-courses {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 4px 12px;
+  margin-bottom: 8px;
+  padding: 14px 16px 16px;
+  border-radius: var(--rayon);
+  background: var(--accent-doux);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.resume-courses .carte-resume-label {
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+.resume-courses-nombre {
+  margin: 2px 0 0;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+
+.resume-courses-nombre b {
+  font-family: var(--affichage);
+  font-size: 30px;
+  letter-spacing: -0.02em;
+}
+
+.resume-courses-envoyer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--carte);
+  color: var(--encre);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+  transition: transform var(--court3) var(--ressort);
+}
+
+.resume-courses-envoyer:active {
+  transform: scale(0.95);
+}
+
+.resume-courses .jauge-courses {
+  grid-column: 1 / -1;
+  margin-top: 10px;
+}
+
+.caddie + .aide {
+  margin-top: 16px;
+}
+
 /* Jauge des courses : une piste pâle, le rempli à l'accent. Elle grandit
    par `scaleX` depuis la gauche plutôt que par sa largeur — le seul
    moyen de l'animer sans remesurer la carte à chaque case cochée. */
@@ -3760,6 +3824,24 @@ button.carte-panier-bouton .carte-panier-corps {
 .carte-prochaine-cuisson:has(.assiette) {
   align-items: flex-start;
   min-height: 150px;
+}
+
+/* En fin de liste, sur toute la largeur : une bande basse, le titre à
+   gauche, l'assiette à droite à moitié hors cadre. */
+.corps-liste > .carte-prochaine-cuisson,
+.corps-liste > .carte-prochaine-cuisson:has(.assiette) {
+  align-items: center;
+  min-height: 88px;
+  margin-top: 24px;
+  padding: 16px 20px;
+}
+
+.corps-liste > .carte-prochaine-cuisson .assiette {
+  width: 104px;
+  top: 50%;
+  bottom: auto;
+  right: -14px;
+  transform: translateY(-50%);
 }
 
 .carte-panier-corps {
