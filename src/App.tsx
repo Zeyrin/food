@@ -7,7 +7,9 @@ import { cuisineRecemment, tousLesTags, type Historique } from './lib/propose'
 import { estFavorite, favoris } from './lib/favoris'
 import {
   ecrireBasket,
+  ecrireCatalogue,
   lireBasket,
+  lireCatalogue,
   lireCodeFoyer,
   lireFoyer,
   lireFoyerPrecedent,
@@ -355,6 +357,12 @@ export default function App() {
   const [prenom, setPrenom] = useState('')
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
+  // Le catalogue à l'écran vient-il du foyer, ou n'est-ce qu'une
+  // amorce (copie locale, corpus embarqué) en attendant Supabase ?
+  // Porte le foyer concerné, pas un simple booléen : au changement de
+  // maison, le rendu qui suit a encore les plats de la précédente.
+  const [catalogueDe, setCatalogueDe] = useState<string | null>(null)
+  const catalogueConfirme = foyer !== null && catalogueDe === foyer
   const enLigne = useEnLigne()
   const { etat: etatSynchro } = useEtatSynchro()
 
@@ -519,6 +527,7 @@ export default function App() {
     setFoyer(null)
     setCodeFoyer(null)
     setRecipes([])
+    setCatalogueDe(null)
     // Sans ça, la liste et le panier de l'ancien foyer restent en mémoire
     // et seraient réécrits dans le prochain foyer rejoint.
     setEtatListe(ETAT_VIDE)
@@ -574,28 +583,55 @@ export default function App() {
   // de départ ; les foyers déjà semés se contentent de le lire. Sans
   // Supabase configuré, on retombe sur le corpus en mémoire — l'app
   // reste utilisable, juste sans synchro.
+  //
+  // Attendre Supabase avant d'afficher quoi que ce soit laissait l'écran
+  // vide plusieurs secondes à chaque lancement. On amorce donc tout de
+  // suite : la dernière copie reçue sur cet appareil, ou à défaut le
+  // corpus embarqué (premier lancement sur ce foyer). La réponse du
+  // réseau remplace l'amorce, quelle qu'elle soit, dès qu'elle arrive.
   useEffect(() => {
     if (!foyer) return
     if (!supabase) {
       setRecipes(CORPUS)
       return
     }
+    let recu = false
+    let annule = false
+    const recevoir = (recettes: Recipe[]) => {
+      if (annule) return
+      recu = true
+      setRecipes(recettes)
+      setCatalogueDe(foyer)
+    }
+    setRecipes(CORPUS)
+    void lireCatalogue(foyer).then((copie) => {
+      if (copie && copie.length > 0 && !recu && !annule) setRecipes(copie)
+    })
     void (async () => {
       try {
         const existantes = await lireRecettes(foyer)
-        setRecipes(existantes.length > 0 ? existantes : await semerCorpusInitial(foyer, CORPUS))
+        recevoir(existantes.length > 0 ? existantes : await semerCorpusInitial(foyer, CORPUS))
       } catch (e) {
-        // Lecture ou semis refusé (policy, réseau) : on affiche le
-        // corpus embarqué au build plutôt qu'un catalogue vide. L'app
-        // reste entièrement utilisable — proposer, panier, liste,
-        // cuisson — et rien n'est écrit dans le foyer tant que la
-        // lecture ne repasse pas.
-        console.warn(`Catalogue du foyer indisponible, corpus embarqué affiché : ${e}`)
-        setRecipes(CORPUS)
+        // Lecture ou semis refusé (policy, réseau) : on garde l'amorce
+        // plutôt qu'un catalogue vide. L'app reste entièrement
+        // utilisable — proposer, panier, liste, cuisson — et rien n'est
+        // écrit dans le foyer tant que la lecture ne repasse pas.
+        console.warn(`Catalogue du foyer indisponible, copie locale ou corpus embarqué affiché : ${e}`)
       }
     })()
-    return suivreRecettes(foyer, setRecipes)
+    const desabonner = suivreRecettes(foyer, recevoir)
+    return () => {
+      annule = true
+      desabonner()
+    }
   }, [foyer])
+
+  // Ce qui vient du foyer (lecture, temps réel, ajouts et retouches faits
+  // ici) devient la copie du prochain lancement. Jamais l'amorce : le
+  // corpus embarqué n'est pas le catalogue de ce foyer.
+  useEffect(() => {
+    if (foyer && catalogueConfirme) void ecrireCatalogue(foyer, recipes)
+  }, [foyer, catalogueConfirme, recipes])
 
   /**
    * `/#/r/<id>` ouvre directement une fiche. C'est le lien que portent
@@ -615,13 +651,16 @@ export default function App() {
     if (detailOuvertDepuisUrl.current || recipes.length === 0) return
     const recipeId = location.hash.match(/^#\/r\/([a-z0-9-]+)$/i)?.[1]
     if (!recipeId) return
+    // Une recette absente de l'amorce peut encore arriver avec le
+    // catalogue du foyer : on n'abandonne qu'une fois celui-ci reçu.
+    if (!catalogueConfirme && !recipes.some((r) => r.id === recipeId)) return
     detailOuvertDepuisUrl.current = true
     history.replaceState(history.state, '', location.pathname + location.search)
     if (recipes.some((r) => r.id === recipeId)) {
       mesurer('fiche_ouverte', { source: 'lien' })
       irVers({ type: 'detail', recipeId })
     }
-  }, [recipes, irVers])
+  }, [recipes, catalogueConfirme, irVers])
 
   // L'historique suit le même chemin que la liste : il vit dans le
   // foyer. Le local sert d'amorce hors ligne et de repli tant que
