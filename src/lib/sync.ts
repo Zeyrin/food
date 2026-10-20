@@ -2,7 +2,7 @@ import { createClient, type RealtimeChannel } from '@supabase/supabase-js'
 import type { ListState, Recipe } from '../types'
 import { traduire } from './i18n'
 import type { Historique } from './propose'
-import { signalerSynchroOk, signalerSynchroRefusee } from './etatSynchro'
+import { leverRefusSi, signalerSynchroOk, signalerSynchroRefusee } from './etatSynchro'
 
 const url = import.meta.env.VITE_SUPABASE_URL
 const key = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -133,14 +133,87 @@ const VIDE: ListState = { coche: {}, dejaPossede: {} }
  * Sans ça, un abonnement qui échoue (table absente de la publication
  * `supabase_realtime`, policy manquante, réseau coupé) ne dit rien du
  * tout : l'app a l'air de marcher, elle ne reçoit simplement jamais
- * rien. On ignore CLOSED, qui est le statut normal au démontage.
+ * rien.
+ *
+ * Mais un CHANNEL_ERROR n'est pas forcément une panne. Le WebSocket
+ * tombe dès que le téléphone met l'appli en arrière-plan, passe du
+ * wifi à la 4G ou que le jeton de session se renouvelle ; le client
+ * Supabase rejoint alors le canal tout seul quelques secondes plus
+ * tard et rappelle ce callback avec SUBSCRIBED. Signaler le premier
+ * CHANNEL_ERROR affichait « Synchro bloquée » pour une coupure de
+ * deux secondes — et le bandeau restait, rien ne le levant à la
+ * reconnexion. On laisse donc au canal le temps de revenir, et on
+ * lève le refus quand tous les canaux tombés sont revenus.
+ *
+ * On ignore CLOSED, qui est le statut normal au démontage.
  */
-const journaliserStatut = (nom: string) => (statut: string) => {
-  if (statut === 'CHANNEL_ERROR' || statut === 'TIMED_OUT') {
-    console.warn(`Realtime « ${nom} » : ${statut} — la synchro entre appareils ne remontera pas.`)
-    signalerSynchroRefusee(`Realtime « ${nom} » : ${statut}`)
-  } else if (statut === 'SUBSCRIBED') {
-    console.info(`Realtime « ${nom} » : abonné.`)
+const DELAI_AVANT_ALERTE_MS = 30_000
+const canauxEnPanne = new Set<() => void>()
+
+/**
+ * Un canal tombé dont l'alerte n'est pas encore partie, avec de quoi
+ * relancer son compte à rebours. Le changement d'appli est le cas
+ * courant : le système coupe le WebSocket dès que l'appli passe en
+ * arrière-plan, et y empêche la reconnexion. Le délai de grâce
+ * s'écoulait donc pendant qu'on était dans une autre appli, et on
+ * retrouvait « Synchro bloquée » en revenant — alors que le canal
+ * allait se rejoindre dans la seconde.
+ */
+const canauxTombes = new Set<() => void>()
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') return
+    // Une coupure d'arrière-plan n'est pas une panne : on oublie ce qui
+    // s'est passé pendant l'absence et on relance le délai de grâce pour
+    // chaque canal encore tombé…
+    for (const relancer of canauxTombes) relancer()
+    // …sans attendre le prochain essai programmé (jusqu'à 10 s) ni le
+    // battement de cœur qui découvrirait la socket morte : on rouvre tout
+    // de suite, et les canaux se rejoignent derrière.
+    if (supabase && !supabase.realtime.isConnected()) supabase.realtime.connect()
+  })
+}
+
+const journaliserStatut = (nom: string) => {
+  let alerte: ReturnType<typeof setTimeout> | undefined
+  let motif = ''
+
+  const armer = () => {
+    clearTimeout(alerte)
+    alerte = setTimeout(() => {
+      alerte = undefined
+      // Hors ligne, le bandeau dédié le dit déjà, et la reconnexion
+      // suivra le retour du réseau. En arrière-plan, la coupure est
+      // normale : le retour au premier plan relancera le délai.
+      if (!navigator.onLine || document.visibilityState !== 'visible') return
+      canauxEnPanne.add(armer)
+      signalerSynchroRefusee(motif)
+    }, DELAI_AVANT_ALERTE_MS)
+  }
+
+  const retabli = () => {
+    clearTimeout(alerte)
+    alerte = undefined
+    canauxTombes.delete(armer)
+  }
+
+  return (statut: string, erreur?: Error) => {
+    if (statut === 'CHANNEL_ERROR' || statut === 'TIMED_OUT') {
+      motif = `Realtime « ${nom} » : ${statut}${erreur ? ` (${erreur.message})` : ''}`
+      console.warn(`${motif} — nouvel essai automatique.`)
+      if (!canauxTombes.has(armer)) {
+        canauxTombes.add(armer)
+        armer()
+      }
+    } else if (statut === 'SUBSCRIBED') {
+      retabli()
+      console.info(`Realtime « ${nom} » : abonné.`)
+      if (canauxEnPanne.delete(armer) && canauxEnPanne.size === 0) leverRefusSi('Realtime')
+    } else if (statut === 'CLOSED') {
+      retabli()
+      canauxEnPanne.delete(armer)
+    }
   }
 }
 

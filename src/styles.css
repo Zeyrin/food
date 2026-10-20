@@ -4504,6 +4504,46 @@ button.carte-panier-bouton .carte-panier-corps {
   }
 }
 
+/* « Commencer la cuisson » : l'écran sombre s'ouvre en cercle depuis le
+   bouton touché (`--entree-x/y`, posés par Cuisson.tsx) jusqu'au coin le
+   plus éloigné, par-dessus la fiche restée montée dessous. Le contenu
+   suit d'un temps, une fois le fond posé : on voit la cuisine s'allumer
+   avant de lire la première étape.
+
+   Hors de la garde `prefers-reduced-motion` exprès : la règle globale
+   réduit la durée à presque rien, et l'`animationend` qui démonte la
+   fiche dessous part quand même — sous `animation: none`, il ne
+   partirait jamais. */
+.cuisson-focus[data-entree] {
+  animation: cuisson-ouvrir var(--long2) var(--sortie) backwards;
+}
+
+.cuisson-focus[data-entree] > :not(.cuisson-corps) {
+  animation: cuisson-contenu var(--moyen4) var(--sortie) 180ms backwards;
+}
+
+/* L'étape garde son glissement d'entrée (`etape-avant`), retardé pour
+   arriver avec le reste plutôt que sous le cercle. */
+.cuisson-focus[data-entree] .cuisson-corps {
+  animation-delay: 220ms;
+}
+
+@keyframes cuisson-ouvrir {
+  from {
+    clip-path: circle(24px at var(--entree-x) var(--entree-y));
+  }
+  to {
+    clip-path: circle(var(--entree-rayon) at var(--entree-x) var(--entree-y));
+  }
+}
+
+@keyframes cuisson-contenu {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
 /* Les doses de l'étape, sorties de la phrase et posées juste au-dessus.
    On les lit d'un coup d'œil — « 60 g ail », « 400 g tofu soyeux » —
    pendant que la consigne en dessous reste une phrase. En ligne et non
