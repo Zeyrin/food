@@ -88,6 +88,17 @@ type Vue =
   | { type: 'reglages' }
   | { type: 'profil' }
 
+/**
+ * Le nom d'un écran tel qu'il part dans la mesure : une valeur fixe par
+ * type de vue, jamais l'identifiant de la recette ouverte.
+ */
+function nomEcran(vue: Vue): string {
+  if (vue.type === 'onglet') return vue.onglet
+  if (vue.type === 'detail') return 'fiche'
+  if (vue.type === 'cuisson') return 'cuisson_recette'
+  return vue.type
+}
+
 const ETAT_VIDE: ListState = { coche: {}, dejaPossede: {} }
 const PILE_INITIALE: Vue[] = [{ type: 'onglet', onglet: 'propose' }]
 const CLE_PILE = 'courses:pile'
@@ -323,6 +334,18 @@ export default function App() {
   // La maison quittée sur cet appareil : lue à l'amorçage comme le reste,
   // elle n'est offerte que par l'écran d'accueil.
   const [foyerPrecedent, setFoyerPrecedent] = useState<FoyerPrecedent | null>(null)
+
+  // Un écran vu par changement d'écran : l'adresse ne bouge pas (voir
+  // lib/mesure.ts), c'est donc le seul moyen de savoir où l'on va. Rien
+  // tant qu'on est sur l'accueil (déjà compté par `accueil_vu`) ni
+  // pendant la visite guidée, qui fait défiler les onglets elle-même.
+  const ecran = nomEcran(vueActuelle)
+  const ecranPrecedent = useRef<string | null>(null)
+  useEffect(() => {
+    if (!foyer || !onboardingVu || ecranPrecedent.current === ecran) return
+    mesurer('ecran_vu', { ecran, depuis: ecranPrecedent.current ?? 'ouverture' })
+    ecranPrecedent.current = ecran
+  }, [ecran, foyer, onboardingVu])
   // Arrivé par un lien d'invitation : de quoi dire où l'on est, ou
   // demander avant de quitter sa maison (voir InvitationMaison).
   const [invitation, setInvitation] = useState<(Invitation & { etat: EtatInvitation }) | null>(null)
@@ -776,7 +799,7 @@ export default function App() {
   const onglet = vueActuelle.type === 'onglet' ? vueActuelle.onglet : 'propose'
   const estOnglet = vueActuelle.type === 'onglet'
 
-  // Écrans plein page (détail, ajout/édition, réglages) : sur mobile ils
+  // Écrans plein page (détail, ajout/édition, profil) : sur mobile ils
   // restent immersifs comme avant (le CSS masque le rail en dessous de
   // 900px via `data-sous-ecran`), mais sur desktop le rail d'onglets et
   // les repères globaux (réglages, hors ligne) sont le squelette
@@ -856,7 +879,10 @@ export default function App() {
     )
   }
 
-  const sousEcran = ecranPleinePage !== null
+  // Réglages fait exception : ce n'est pas un écran immersif mais un
+  // lieu de l'app comme un autre, d'où l'on doit pouvoir repartir vers
+  // n'importe quel onglet sans passer par « retour ».
+  const sousEcran = ecranPleinePage !== null && vueActuelle.type !== 'reglages'
   // Les plats du menu reçu que ce catalogue connaît : le lien ne porte
   // que des recettes du corpus, mais une maison a pu en supprimer.
   const platsMenu = menuRecu?.plats.filter((p) => recipes.some((r) => r.id === p.recipeId)) ?? []
