@@ -1064,6 +1064,13 @@ html[data-defile='true'] .entete-app {
 }
 
 .action-flottante {
+  /* Nommée pour sortir du cliché « root » des transitions d'écran (voir
+     plus bas, `chrome-nav`) : sinon la barre glissait et s'estompait avec
+     l'écran qui part pendant que sa jumelle arrivait avec l'autre — deux
+     boutons verts superposés, décalés, le temps du fondu. Seule, elle
+     reste en place et passe d'un écran à l'autre sans bouger. Un écran
+     n'en monte jamais qu'une à la fois, condition pour porter ce nom. */
+  view-transition-name: action-flottante;
   position: fixed;
   left: 0;
   right: 0;
@@ -1105,6 +1112,11 @@ html[data-defile='true'] .entete-app {
 
 .barre-panier:active {
   transform: scale(0.98);
+}
+
+/* Déjà là en arrivant sur l'écran : pas d'entrée à rejouer. */
+.barre-panier[data-sans-entree='true'] {
+  animation: none;
 }
 
 @keyframes barre-panier-entree {
@@ -1893,7 +1905,7 @@ button.carte:active {
   }
 }
 
-.grille-recettes .carte-recette:nth-child(-n + 8) .assiette {
+.ecran-propose[data-entree='true'] .grille-recettes .carte-recette:nth-child(-n + 8) .assiette {
   animation: assiette-poser var(--long2) var(--sortie) backwards;
   animation-delay: calc(var(--rang, 0) * 30ms + 60ms);
 }
@@ -1949,6 +1961,18 @@ button.carte:active {
   top: 8px;
   right: 8px;
   padding: 5px;
+}
+
+/* Pas de verre dépoli dans la grille : un `backdrop-filter` par badge,
+   deux par carte sur une centaine de cartes, et chaque image de
+   défilement devait reflouter tout ce qui passait dessous — c'est ce qui
+   faisait ramer l'écran Proposer sur téléphone. À cette taille, un fond
+   presque opaque se lit pareil. */
+.grille-recettes .badge-temps,
+.grille-recettes .badge-favori {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: color-mix(in srgb, var(--carte) 94%, transparent);
 }
 
 .grille-recettes .bouton-ajout-flottant {
@@ -2144,7 +2168,10 @@ button.discret.danger {
   }
 }
 
-.grille-recettes .carte-recette:nth-child(-n + 8) {
+/* Une fois par session, à la première ouverture du catalogue : rejouée à
+   chaque retour sur l'onglet, la cascade se superposait au glissement de
+   la transition d'écran et la grille semblait se recharger. */
+.ecran-propose[data-entree='true'] .grille-recettes .carte-recette:nth-child(-n + 8) {
   animation: monter var(--moyen4) var(--sortie) backwards;
   animation-delay: calc(var(--rang, 0) * 30ms);
 }
@@ -2221,7 +2248,19 @@ button.discret.danger {
   border-radius: inherit;
   box-shadow: inset 0 0 0 3px var(--accent);
   pointer-events: none;
+}
+
+/* Seule la carte qu'on vient de toucher s'anime (`data-anime`, posé par
+   Propose.tsx) : sans cette garde, toutes celles déjà au panier
+   rejouaient liseré, rebond et onde à chaque montage de l'écran. */
+.carte-recette[data-panier='true'][data-anime='true']::after {
   animation: lisere-entree var(--court4) var(--sortie);
+}
+
+.carte-recette:not([data-anime='true']) .bouton-ajout,
+.carte-recette:not([data-anime='true']) .bouton-ajout svg,
+.carte-recette:not([data-anime='true']) .bouton-ajout-flottant::after {
+  animation: none;
 }
 
 @keyframes lisere-entree {

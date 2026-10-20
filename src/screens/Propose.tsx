@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { BasketEntry, Recipe } from '../types'
 import { type Historique, proposer, tousLesTags } from '../lib/propose'
 import { estFavorite } from '../lib/favoris'
@@ -34,6 +34,13 @@ interface Props {
 }
 
 const TEMPS = [20, 30, 45] as const
+
+/**
+ * La cascade d'entrée des cartes ne se joue qu'à la première ouverture du
+ * catalogue dans la session (voir `data-entree` dans styles.css). Au
+ * niveau du module : l'écran est démonté à chaque changement d'onglet.
+ */
+let catalogueDejaVu = false
 
 const normaliser = (s: string) =>
   s
@@ -128,10 +135,8 @@ export default function Propose({
     return { affichees: liste, motifs }
   }, [recipes, historique, tempsMax, tags, favorisSeuls, recherche])
 
-  const dansPanier = (id: string) => basket.some((e) => e.recipeId === id)
-
   const basculer = (recette: Recipe) => {
-    const dedans = dansPanier(recette.id)
+    const dedans = basket.some((e) => e.recipeId === recette.id)
     // Depuis quel écran, et avec quels filtres actifs : c'est ce qui dit si
     // le tri sert à quelque chose. Jamais le titre du plat.
     mesurer(dedans ? 'plat_retire_du_panier' : 'plat_ajoute_au_panier', {
@@ -159,78 +164,48 @@ export default function Propose({
     setRecherche('')
   }
 
+  // Une carte de recette se contente de savoir si elle est au panier : un
+  // `Set` répond sans reparcourir le panier, trois fois par carte.
+  const idsPanier = useMemo(() => new Set(basket.map((e) => e.recipeId)), [basket])
+  const tagsConnus = useMemo(() => tousLesTags(recipes), [recipes])
+
+  /**
+   * La dernière carte touchée, seule autorisée à jouer l'animation
+   * d'ajout. Sans elle, chaque carte déjà au panier rejouait liseré,
+   * rebond et onde à chaque montage de l'écran — en revenant d'une fiche
+   * ou d'un autre onglet, la grille entière clignotait.
+   */
+  const [derniereBasculee, setDerniereBasculee] = useState<string | null>(null)
+
+  // Les cartes sont mémoïsées : leurs rappels doivent garder la même
+  // identité d'un rendu à l'autre, sinon le mémo ne sert à rien. Ils
+  // passent par une référence tenue à jour à chaque rendu.
+  const rappels = useRef({ basculer, onDetail })
+  rappels.current = { basculer, onDetail }
+  const ouvrirCarte = useCallback((id: string) => rappels.current.onDetail(id), [])
+  const basculerCarte = useCallback((r: Recipe) => {
+    setDerniereBasculee(r.id)
+    rappels.current.basculer(r)
+  }, [])
+
   /**
    * Une carte de recette, pour la grille comme pour les rangées. `repere`
    * marque la carte que la visite guidée fait ajouter : la première
    * affichée à l'écran, quelle que soit la section qui la porte.
    */
   const carte = (r: Recipe, i: number, cle: string, repere: boolean) => (
-    <div
+    <CarteRecette
       key={cle}
-      className="carte carte-recette"
-      role="button"
-      tabIndex={0}
-      data-panier={dansPanier(r.id) ? 'true' : undefined}
-      onClick={() => onDetail(r.id)}
-      // La barre d'espace ouvre aussi la fiche (un vrai bouton le
-      // ferait), mais seulement si le focus est sur la carte —
-      // sinon elle doublerait le clic du bouton « + » imbriqué.
-      onKeyDown={(e) => {
-        if (e.target !== e.currentTarget) return
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onDetail(r.id)
-        }
-      }}
-      style={
-        {
-          '--teinte': teinteRecette(r.titre),
-          // Le rang n'échelonne que la première hauteur d'écran :
-          // au-delà, `styles.css` ne joue plus l'entrée du tout
-          // (`:nth-child(-n + 8)`) — ces cartes sont hors champ,
-          // et les animer coûtait une couche de composition
-          // chacune pour un effet que personne ne voit.
-          '--rang': Math.min(i, 7),
-        } as React.CSSProperties
-      }
-    >
-      <div className="vignette" data-sans-photo={r.image ? undefined : 'true'} aria-hidden="true">
-        {!r.image && <VignettePlaceholder recette={r} />}
-        <ImageRecette src={r.image} />
-        <span className="badge-temps">
-          <Icone nom="minuteur" taille={12} /> {formatMinutes(r.temps, t)}
-        </span>
-        {estFavorite(r, historique) && (
-          <span className="badge-favori" title={t('propose.favori')}>
-            <Icone nom="coeur" taille={14} />
-          </span>
-        )}
-        <button
-          className="bouton-ajout bouton-ajout-flottant"
-          // Le premier plat de la grille est celui que la visite
-          // guidée fait ajouter (voir data/onboarding.ts).
-          data-tour={repere ? 'plat-exemple' : undefined}
-          onClick={(e) => {
-            e.stopPropagation()
-            basculer(r)
-          }}
-          aria-pressed={dansPanier(r.id)}
-          aria-label={
-            dansPanier(r.id)
-              ? t('propose.retirerDuPanier', { titre: r.titre })
-              : t('propose.ajouterAuPanier', { titre: r.titre })
-          }
-        >
-          <Icone nom={dansPanier(r.id) ? 'coche' : 'plus'} taille={20} />
-        </button>
-      </div>
-      <div className="carte-recette-corps">
-        <h3>{r.titre}</h3>
-        {motifs.has(r.id) && (
-          <p className="motif-recherche">{t('propose.contient', { motif: motifs.get(r.id) ?? '' })}</p>
-        )}
-      </div>
-    </div>
+      recette={r}
+      rang={Math.min(i, 7)}
+      repere={repere}
+      dansPanier={idsPanier.has(r.id)}
+      favorite={estFavorite(r, historique)}
+      motif={motifs.get(r.id)}
+      animer={derniereBasculee === r.id}
+      onOuvrir={ouvrirCarte}
+      onBasculer={basculerCarte}
+    />
   )
 
   // Les rangées thématiques ne servent qu'au catalogue brut : dès qu'une
@@ -262,7 +237,7 @@ export default function Propose({
           onAjouter={onAjouterRecette}
           onFerme={() => onAjoutOuvert(false)}
           titresExistants={recipes.map((r) => r.titre)}
-          tagsConnus={tousLesTags(recipes)}
+          tagsConnus={tagsConnus}
         />
       ) : (
         <button
@@ -283,8 +258,23 @@ export default function Propose({
     </div>
   )
 
+  /**
+   * La barre panier monte du bas quand le premier plat est choisi, pas à
+   * chaque arrivée sur l'écran : revenue d'un autre onglet avec un panier
+   * déjà rempli, elle rejouait son entrée par-dessus la transition d'écran
+   * et se dédoublait le temps du fondu. Elle est alors simplement là.
+   */
+  const entree = useRef(!catalogueDejaVu)
+  useEffect(() => {
+    catalogueDejaVu = true
+  }, [])
+
+  const barreVisible = basket.length > 0 && !ajoutOuvert
+  const barreDejaLa = useRef(barreVisible)
+  if (!barreVisible) barreDejaLa.current = false
+
   return (
-    <div className="ecran-propose">
+    <div className="ecran-propose" data-entree={entree.current ? 'true' : undefined}>
       <header className="entete-app entete-propose">
         <div className="entete-app-titre">
           <Icone nom="grill" />
@@ -357,7 +347,7 @@ export default function Propose({
                 <Icone nom="minuteur" taille={14} /> {t('propose.minutesMax', { n: mn })}
               </button>
             ))}
-            {tousLesTags(recipes).map((tag) => (
+            {tagsConnus.map((tag) => (
               <button
                 key={tag}
                 className="puce"
@@ -434,11 +424,15 @@ export default function Propose({
           comme le panier des applis de livraison. La pastille de l'onglet
           compte les plats, mais ne dit pas qu'il faut y aller ensuite :
           cette barre le dit, et montre ce qu'on a déjà mis dedans. */}
-      {basket.length > 0 && !ajoutOuvert && (
+      {barreVisible && (
         <>
           <div className="espaceur-action-flottante" aria-hidden="true" />
           <div className="action-flottante">
-            <button className="barre-panier" onClick={onVersPanier}>
+            <button
+              className="barre-panier"
+              data-sans-entree={barreDejaLa.current ? 'true' : undefined}
+              onClick={onVersPanier}
+            >
               <span className="barre-panier-plats" aria-hidden="true">
                 {basket.slice(-3).map((e) => {
                   const r = recipes.find((x) => x.id === e.recipeId)
@@ -469,3 +463,102 @@ export default function Propose({
     </div>
   )
 }
+interface PropsCarte {
+  recette: Recipe
+  rang: number
+  repere: boolean
+  dansPanier: boolean
+  favorite: boolean
+  motif?: string
+  /** La carte qu'on vient de toucher : la seule qui joue l'animation d'ajout. */
+  animer: boolean
+  onOuvrir: (id: string) => void
+  onBasculer: (recette: Recipe) => void
+}
+
+/**
+ * Mémoïsée : l'écran re-rend à chaque frappe dans la recherche, à chaque
+ * ajout au panier, et à chaque seconde quand un minuteur tourne (l'horloge
+ * vit en haut de l'app). Recomposer la centaine de cartes du catalogue à
+ * chaque fois faisait ramer le défilement ; seules celles dont une prop
+ * change sont maintenant re-rendues.
+ */
+const CarteRecette = memo(function CarteRecette({
+  recette: r,
+  rang,
+  repere,
+  dansPanier,
+  favorite,
+  motif,
+  animer,
+  onOuvrir,
+  onBasculer,
+}: PropsCarte) {
+  const { t } = useLangue()
+  return (
+    <div
+      className="carte carte-recette"
+      role="button"
+      tabIndex={0}
+      data-panier={dansPanier ? 'true' : undefined}
+      data-anime={animer ? 'true' : undefined}
+      onClick={() => onOuvrir(r.id)}
+      // La barre d'espace ouvre aussi la fiche (un vrai bouton le
+      // ferait), mais seulement si le focus est sur la carte —
+      // sinon elle doublerait le clic du bouton « + » imbriqué.
+      onKeyDown={(e) => {
+        if (e.target !== e.currentTarget) return
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onOuvrir(r.id)
+        }
+      }}
+      style={
+        {
+          '--teinte': teinteRecette(r.titre),
+          // Le rang n'échelonne que la première hauteur d'écran :
+          // au-delà, `styles.css` ne joue plus l'entrée du tout
+          // (`:nth-child(-n + 8)`) — ces cartes sont hors champ,
+          // et les animer coûtait une couche de composition
+          // chacune pour un effet que personne ne voit.
+          '--rang': rang,
+        } as React.CSSProperties
+      }
+    >
+      <div className="vignette" data-sans-photo={r.image ? undefined : 'true'} aria-hidden="true">
+        {!r.image && <VignettePlaceholder recette={r} />}
+        <ImageRecette src={r.image} />
+        <span className="badge-temps">
+          <Icone nom="minuteur" taille={12} /> {formatMinutes(r.temps, t)}
+        </span>
+        {favorite && (
+          <span className="badge-favori" title={t('propose.favori')}>
+            <Icone nom="coeur" taille={14} />
+          </span>
+        )}
+        <button
+          className="bouton-ajout bouton-ajout-flottant"
+          // Le premier plat de la grille est celui que la visite
+          // guidée fait ajouter (voir data/onboarding.ts).
+          data-tour={repere ? 'plat-exemple' : undefined}
+          onClick={(e) => {
+            e.stopPropagation()
+            onBasculer(r)
+          }}
+          aria-pressed={dansPanier}
+          aria-label={
+            dansPanier
+              ? t('propose.retirerDuPanier', { titre: r.titre })
+              : t('propose.ajouterAuPanier', { titre: r.titre })
+          }
+        >
+          <Icone nom={dansPanier ? 'coche' : 'plus'} taille={20} />
+        </button>
+      </div>
+      <div className="carte-recette-corps">
+        <h3>{r.titre}</h3>
+        {motif && <p className="motif-recherche">{t('propose.contient', { motif })}</p>}
+      </div>
+    </div>
+  )
+})
