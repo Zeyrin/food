@@ -148,30 +148,71 @@ const VIDE: ListState = { coche: {}, dejaPossede: {} }
  * On ignore CLOSED, qui est le statut normal au démontage.
  */
 const DELAI_AVANT_ALERTE_MS = 30_000
-const canauxEnPanne = new Set<string>()
+const canauxEnPanne = new Set<() => void>()
+
+/**
+ * Un canal tombé dont l'alerte n'est pas encore partie, avec de quoi
+ * relancer son compte à rebours. Le changement d'appli est le cas
+ * courant : le système coupe le WebSocket dès que l'appli passe en
+ * arrière-plan, et y empêche la reconnexion. Le délai de grâce
+ * s'écoulait donc pendant qu'on était dans une autre appli, et on
+ * retrouvait « Synchro bloquée » en revenant — alors que le canal
+ * allait se rejoindre dans la seconde.
+ */
+const canauxTombes = new Set<() => void>()
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') return
+    // Une coupure d'arrière-plan n'est pas une panne : on oublie ce qui
+    // s'est passé pendant l'absence et on relance le délai de grâce pour
+    // chaque canal encore tombé…
+    for (const relancer of canauxTombes) relancer()
+    // …sans attendre le prochain essai programmé (jusqu'à 10 s) ni le
+    // battement de cœur qui découvrirait la socket morte : on rouvre tout
+    // de suite, et les canaux se rejoignent derrière.
+    if (supabase && !supabase.realtime.isConnected()) supabase.realtime.connect()
+  })
+}
 
 const journaliserStatut = (nom: string) => {
   let alerte: ReturnType<typeof setTimeout> | undefined
+  let motif = ''
+
+  const armer = () => {
+    clearTimeout(alerte)
+    alerte = setTimeout(() => {
+      alerte = undefined
+      // Hors ligne, le bandeau dédié le dit déjà, et la reconnexion
+      // suivra le retour du réseau. En arrière-plan, la coupure est
+      // normale : le retour au premier plan relancera le délai.
+      if (!navigator.onLine || document.visibilityState !== 'visible') return
+      canauxEnPanne.add(armer)
+      signalerSynchroRefusee(motif)
+    }, DELAI_AVANT_ALERTE_MS)
+  }
+
+  const retabli = () => {
+    clearTimeout(alerte)
+    alerte = undefined
+    canauxTombes.delete(armer)
+  }
+
   return (statut: string, erreur?: Error) => {
     if (statut === 'CHANNEL_ERROR' || statut === 'TIMED_OUT') {
-      console.warn(`Realtime « ${nom} » : ${statut}${erreur ? ` (${erreur.message})` : ''} — nouvel essai automatique.`)
-      alerte ??= setTimeout(() => {
-        alerte = undefined
-        // Hors ligne, le bandeau dédié le dit déjà, et la reconnexion
-        // suivra le retour du réseau.
-        if (!navigator.onLine) return
-        canauxEnPanne.add(nom)
-        signalerSynchroRefusee(`Realtime « ${nom} » : ${statut}${erreur ? ` (${erreur.message})` : ''}`)
-      }, DELAI_AVANT_ALERTE_MS)
+      motif = `Realtime « ${nom} » : ${statut}${erreur ? ` (${erreur.message})` : ''}`
+      console.warn(`${motif} — nouvel essai automatique.`)
+      if (!canauxTombes.has(armer)) {
+        canauxTombes.add(armer)
+        armer()
+      }
     } else if (statut === 'SUBSCRIBED') {
-      clearTimeout(alerte)
-      alerte = undefined
+      retabli()
       console.info(`Realtime « ${nom} » : abonné.`)
-      if (canauxEnPanne.delete(nom) && canauxEnPanne.size === 0) leverRefusSi('Realtime')
+      if (canauxEnPanne.delete(armer) && canauxEnPanne.size === 0) leverRefusSi('Realtime')
     } else if (statut === 'CLOSED') {
-      clearTimeout(alerte)
-      alerte = undefined
-      canauxEnPanne.delete(nom)
+      retabli()
+      canauxEnPanne.delete(armer)
     }
   }
 }
