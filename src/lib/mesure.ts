@@ -4,7 +4,9 @@
  * Le compteur de pages ne dit rien ici : l'app est une SPA d'une seule
  * URL, et les 391 « pages vues » relevées sur 51 sessions étaient toutes
  * `/` — un changement d'écran passe par `history.pushState`, que le script
- * compte comme une page. On mesure donc des gestes, pas des pages.
+ * compte comme une page. On mesure donc des gestes, pas des pages — et
+ * chaque changement d'écran devient lui-même un geste, `ecran_vu`, avec
+ * l'écran d'arrivée et celui d'où l'on vient (voir `nomEcran` dans App).
  *
  * Trois règles tenues par ce module :
  *
@@ -29,6 +31,7 @@ interface Rybbit {
 /** Les gestes qui valent d'être comptés, et eux seuls. */
 export type Geste =
   | 'accueil_vu'
+  | 'ecran_vu'
   | 'creation_echouee'
   | 'foyer_cree'
   | 'foyer_rejoint'

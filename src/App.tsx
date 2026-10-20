@@ -88,6 +88,17 @@ type Vue =
   | { type: 'reglages' }
   | { type: 'profil' }
 
+/**
+ * Le nom d'un écran tel qu'il part dans la mesure : une valeur fixe par
+ * type de vue, jamais l'identifiant de la recette ouverte.
+ */
+function nomEcran(vue: Vue): string {
+  if (vue.type === 'onglet') return vue.onglet
+  if (vue.type === 'detail') return 'fiche'
+  if (vue.type === 'cuisson') return 'cuisson_recette'
+  return vue.type
+}
+
 const ETAT_VIDE: ListState = { coche: {}, dejaPossede: {} }
 const PILE_INITIALE: Vue[] = [{ type: 'onglet', onglet: 'propose' }]
 const CLE_PILE = 'courses:pile'
@@ -323,6 +334,18 @@ export default function App() {
   // La maison quittée sur cet appareil : lue à l'amorçage comme le reste,
   // elle n'est offerte que par l'écran d'accueil.
   const [foyerPrecedent, setFoyerPrecedent] = useState<FoyerPrecedent | null>(null)
+
+  // Un écran vu par changement d'écran : l'adresse ne bouge pas (voir
+  // lib/mesure.ts), c'est donc le seul moyen de savoir où l'on va. Rien
+  // tant qu'on est sur l'accueil (déjà compté par `accueil_vu`) ni
+  // pendant la visite guidée, qui fait défiler les onglets elle-même.
+  const ecran = nomEcran(vueActuelle)
+  const ecranPrecedent = useRef<string | null>(null)
+  useEffect(() => {
+    if (!foyer || !onboardingVu || ecranPrecedent.current === ecran) return
+    mesurer('ecran_vu', { ecran, depuis: ecranPrecedent.current ?? 'ouverture' })
+    ecranPrecedent.current = ecran
+  }, [ecran, foyer, onboardingVu])
   // Arrivé par un lien d'invitation : de quoi dire où l'on est, ou
   // demander avant de quitter sa maison (voir InvitationMaison).
   const [invitation, setInvitation] = useState<(Invitation & { etat: EtatInvitation }) | null>(null)
