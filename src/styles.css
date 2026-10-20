@@ -5820,6 +5820,52 @@ nav.onglets {
   view-transition-name: chrome-hors-ligne;
 }
 
+/* La barre d'actions collée en bas existe sur la fiche, la préparation
+   et le formulaire, au même endroit : prise dans le cliché « root »,
+   « Ajouter au panier | Cuisiner » glissait et s'estompait par-dessus
+   « Commencer » qui arrivait, deux rangées de boutons emmêlées le temps
+   du fondu. Nommée à part, elle reste en place : l'ancienne s'efface
+   vite, la nouvelle monte une fois la place libre. Un écran n'en monte
+   jamais qu'une, condition pour porter ce nom. */
+.barre-actions {
+  view-transition-name: barre-actions;
+}
+
+::view-transition-group(barre-actions) {
+  animation: none;
+}
+
+::view-transition-old(barre-actions) {
+  animation: barre-actions-sort var(--court3) var(--acceleree) both;
+}
+
+::view-transition-new(barre-actions) {
+  animation: barre-actions-entre var(--court4) var(--sortie) var(--court3) both;
+}
+
+/* Les deux clichés gardent chacun sa propre taille, ancrés en bas :
+   sans ça, la rangée à deux boutons et la colonne à deux lignes de
+   « Reprendre » s'étiraient l'une vers l'autre. */
+::view-transition-old(barre-actions),
+::view-transition-new(barre-actions) {
+  height: auto;
+  top: auto;
+  bottom: 0;
+}
+
+@keyframes barre-actions-sort {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes barre-actions-entre {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
 /* L'écran qui part accélère vers la sortie, celui qui arrive freine en
    se posant : c'est la paire de courbes que Material appelle
    « emphasized accelerate / decelerate ». Les deux moitiés partageaient
