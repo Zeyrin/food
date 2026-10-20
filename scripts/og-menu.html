@@ -1,0 +1,66 @@
+<!doctype html>
+<!--
+  Source de public/og-menu.jpg, l'image d'aperçu du lien d'un menu de la
+  semaine (page /menu/). Même famille que og.jpg et og-invitation.jpg :
+  fond sombre, sceau et nom en haut, la promesse en lime.
+  Pour la régénérer : ouvrir ce fichier dans Chromium en 1200×630 et
+  capturer la page en JPEG (qualité 85).
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: Bricolage; font-weight: 800; src: url(../public/fonts/bricolage-800.woff2); }
+  @font-face { font-family: Bricolage; font-weight: 600; src: url(../public/fonts/bricolage-600.woff2); }
+  @font-face { font-family: Hanken; font-weight: 400; src: url(../public/fonts/hanken-400.woff2); }
+  @font-face { font-family: Hanken; font-weight: 600; src: url(../public/fonts/hanken-600.woff2); }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    width: 1200px; height: 630px; overflow: hidden;
+    background: radial-gradient(circle at 85% 40%, #2a2a1c 0, #16150f 60%);
+    color: #fff8ef; font-family: Hanken, sans-serif;
+    display: grid; grid-template-columns: 1fr 400px; gap: 56px;
+    padding: 96px 80px 72px 72px;
+  }
+  .marque { display: flex; align-items: center; gap: 16px; font: 600 20px/1 Bricolage; letter-spacing: .2em; color: #e9e3d6; }
+  h1 { margin-top: 36px; font: 800 72px/1.02 Bricolage; letter-spacing: -.02em; }
+  h1 em { font-style: normal; color: #c6ff4a; }
+  p { margin-top: 28px; font-size: 26px; line-height: 1.45; color: #d8d2c4; max-width: 560px; }
+  .liste {
+    align-self: center; background: #fff8ef; color: #141414; border-radius: 28px;
+    padding: 28px 30px; box-shadow: 0 30px 80px rgba(0,0,0,.45); transform: rotate(2.5deg);
+  }
+  .liste h2 { font: 800 26px/1 Bricolage; margin-bottom: 18px; }
+  .rayon { font: 600 14px/1 Hanken; letter-spacing: .14em; text-transform: uppercase; color: #6b6f60; margin: 18px 0 10px; }
+  .item { display: flex; align-items: center; gap: 14px; font-size: 22px; padding: 7px 0; }
+  .case { width: 28px; height: 28px; border-radius: 9px; border: 2.5px solid #9aa08c; flex: none; display: grid; place-items: center; }
+  .fait .case { background: #33601a; border-color: #33601a; }
+  .fait .case::after { content: ''; width: 12px; height: 7px; border: solid #fff8ef; border-width: 0 0 3px 3px; transform: translateY(-2px) rotate(-45deg); }
+  .fait span { text-decoration: line-through; color: #8a8d80; }
+  .qui { margin-left: auto; font: 600 14px/1 Hanken; background: #c6ff4a; color: #141414; border-radius: 99px; padding: 6px 10px; }
+  .num { width: 30px; height: 30px; border-radius: 99px; background: #ff5a36; color: #fff8ef; font: 800 16px/30px Bricolage; text-align: center; flex: none; }
+  .total { margin-top: 18px; padding-top: 16px; border-top: 2px dashed #d6d0c2; font: 600 19px/1.2 Hanken; color: #33601a; }
+  .url { position: absolute; right: 48px; bottom: 40px; font: 800 24px/1 Bricolage; background: #c6ff4a; color: #141414; padding: 14px 22px; border-radius: 99px; }
+</style>
+</head>
+<body>
+  <div>
+    <div class="marque">
+      <svg width="52" height="52" viewBox="0 0 512 512"><rect width="512" height="512" rx="115" fill="#141414"/><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M133 356V116H283" stroke="#141414" stroke-width="88"/><path d="M133 356V116H283" stroke="#ff5a36" stroke-width="60"/><path d="M181 378V138H331" stroke="#141414" stroke-width="88"/><path d="M181 378V138H331" stroke="#c6ff4a" stroke-width="60"/><path d="M229 400V160H379M229 272H335" stroke="#141414" stroke-width="88"/><path d="M229 400V160H379M229 272H335" stroke="#fff8ef" stroke-width="60"/></g></svg>
+      FFFOOD
+    </div>
+    <h1>Mon menu de la semaine, <em>la liste est dedans.</em></h1>
+    <p>Ouvrez le lien : les plats arrivent dans votre panier, la liste de courses se fait toute seule.</p>
+  </div>
+  <div class="liste">
+    <h2>Cette semaine</h2>
+    <div class="item"><span class="num">1</span><span>Mapo tofu</span></div>
+    <div class="item"><span class="num">2</span><span>Curry pois chiches &amp; épinards</span></div>
+    <div class="item"><span class="num">3</span><span>Gratin dauphinois</span></div>
+    <div class="item"><span class="num">4</span><span>Pad thaï au poulet</span></div>
+    <div class="item"><span class="num">5</span><span>Dahl de lentilles corail</span></div>
+    <div class="total">→ 1 liste de courses, 27 produits</div>
+  </div>
+  <div class="url">fffood.fr</div>
+</body>
+</html>

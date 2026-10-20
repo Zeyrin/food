@@ -34,6 +34,7 @@ Choisir les repas de la semaine, en tirer la liste de courses, et cuisiner — �
 **👩‍🍳 Cuisiner** — étape par étape, en grand, l'écran reste allumé. Les doses de l'étape au-dessus, des **minuteurs** en un toucher, on glisse pour avancer.
 
 > **À deux, sans compte.** Un code de six caractères ou un lien suffit pour partager la maison : même panier, même liste cochée en temps réel, mêmes recettes.
+> Et pour donner des idées à quelqu'un d'autre, **le menu de la semaine s'envoie par un lien** : il remplit son panier d'un geste, sans entrer chez vous.
 
 <br />
 

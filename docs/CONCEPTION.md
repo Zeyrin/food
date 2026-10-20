@@ -101,6 +101,14 @@ l'écran puis republiée vide, et un code de foyer parfaitement valide déclaré
 parce que le téléphone était hors réseau. Les lectures de `src/lib/sync.ts` distinguent donc
 les deux — quitte à retomber sur le corpus embarqué, qui garde l'app entièrement utilisable.
 
+**Un menu s'envoie sans faire entrer l'autre chez soi.** Entre la recette seule (sa page
+statique) et la maison entière (le lien d'invitation), le panier de la semaine voyage comme
+un lien : `/menu/#/m/mapo-tofu:2,dahl-lentilles-corail:4?de=Camille`. Celui qui l'ouvre voit
+les plats et les met dans son panier d'un geste, sans rejoindre aucune maison
+(`src/lib/menuPartage.ts`). Seules les recettes du corpus y entrent : une recette écrite par
+la maison n'existe pas chez l'autre. Comme `/rejoindre/`, le chemin `/menu/` n'existe que
+pour donner au lien son propre aperçu (`public/og-menu.jpg`, source dans `scripts/`).
+
 **Les minuteurs appartiennent à l'app, pas à l'écran de cuisson.** On lance un minuteur
 précisément pour aller faire autre chose — vérifier un ingrédient sur la liste, répondre à
 un message. Ils continuent donc de tourner quel que soit l'écran affiché, un bandeau les

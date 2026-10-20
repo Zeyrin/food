@@ -49,6 +49,8 @@ import TourGuide from './components/TourGuide'
 import BandeauMinuteur from './components/BandeauMinuteur'
 import BandeauMiseAJour from './components/BandeauMiseAJour'
 import InvitationMaison, { type EtatInvitation } from './components/InvitationMaison'
+import MenuRecu from './components/MenuRecu'
+import { ajouterMenu, lireMenu, type MenuRecu as Menu } from './lib/menuPartage'
 import { lireInvitation, type Invitation } from './lib/invitation'
 import BandeauIntegre from './components/BandeauIntegre'
 import PanneauMinuteurs from './components/PanneauMinuteurs'
@@ -324,6 +326,9 @@ export default function App() {
   // Arrivé par un lien d'invitation : de quoi dire où l'on est, ou
   // demander avant de quitter sa maison (voir InvitationMaison).
   const [invitation, setInvitation] = useState<(Invitation & { etat: EtatInvitation }) | null>(null)
+  // Un menu reçu par lien (`#/m/…`, voir lib/menuPartage.ts), en attente
+  // du geste qui le met dans le panier.
+  const [menuRecu, setMenuRecu] = useState<Menu | null>(null)
   const [prenom, setPrenom] = useState('')
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -388,6 +393,14 @@ export default function App() {
         setHistorique(await lireHistorique())
         setPrenom(await lirePrenom())
         const invite = lireInvitation(location.hash)
+        const menu = lireMenu(location.hash)
+        if (menu) {
+          // Comme une invitation : lu une fois, puis retour à l'adresse de
+          // l'app. `/menu/` n'existe que pour l'aperçu du lien.
+          history.replaceState(history.state, '', location.pathname.replace(/^\/menu\/?/, '/') + location.search)
+          setMenuRecu(menu)
+          mesurer('menu_ouvert', { plats: menu.plats.length })
+        }
         const { foyer: lu, arrivee } = await lireFoyer(invite?.foyer ?? null)
         setFoyer(lu)
         if (invite) {
@@ -710,6 +723,7 @@ export default function App() {
     return (
       <Bienvenue
         recetteAttendue={attendue ? titreRecette(attendue, langue) : null}
+        menuAttendu={menuRecu && { plats: menuRecu.plats.length, de: menuRecu.de }}
         onCreer={creer}
         onRejoindre={rejoindre}
         onRejoindreLien={rejoindreParLien}
@@ -843,7 +857,14 @@ export default function App() {
   }
 
   const sousEcran = ecranPleinePage !== null
-  const visiteEnCours = !onboardingVu && estOnglet
+  // Les plats du menu reçu que ce catalogue connaît : le lien ne porte
+  // que des recettes du corpus, mais une maison a pu en supprimer.
+  const platsMenu = menuRecu?.plats.filter((p) => recipes.some((r) => r.id === p.recipeId)) ?? []
+  // Arrivé par un menu, la visite attend : sa première étape demande de
+  // choisir un plat, alors que le bandeau du menu en propose déjà cinq.
+  // Accepter le menu fait ce que la visite apprend (un panier, donc une
+  // liste) et la clôt ; la refuser la laisse se jouer normalement.
+  const visiteEnCours = !onboardingVu && estOnglet && platsMenu.length === 0
 
   return (
     <div
@@ -917,6 +938,25 @@ export default function App() {
         />
       )}
 
+      {menuRecu && platsMenu.length > 0 && !visiteEnCours && (
+        <MenuRecu
+          de={menuRecu.de}
+          titres={platsMenu.map((p) => recipes.find((r) => r.id === p.recipeId)?.titre ?? '')}
+          onAjouter={() => {
+            const suivant = ajouterMenu(basket, platsMenu)
+            mesurer('menu_ajoute', { plats: platsMenu.length, nouveaux: suivant.length - basket.length })
+            majBasket(suivant)
+            setMenuRecu(null)
+            if (!onboardingVu) terminerOnboarding()
+            changerOnglet('panier')
+          }}
+          onFermer={() => {
+            mesurer('menu_refuse')
+            setMenuRecu(null)
+          }}
+        />
+      )}
+
       {ecranPleinePage ?? (
         <>
           {onglet === 'propose' && (
@@ -954,6 +994,7 @@ export default function App() {
               onVersListe={() => changerOnglet('liste')}
               onAjouterRecette={ouvrirAjout}
               onViderPanier={viderPanier}
+              prenom={prenom}
             />
           )}
 

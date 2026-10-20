@@ -6,6 +6,7 @@ import { cuisineRecemment, type Historique } from '../lib/propose'
 import { useLangue } from '../lib/i18n'
 import { formatMinutes } from '../lib/duree'
 import { mesurer } from '../lib/mesure'
+import { usePartagerMenu } from '../hooks/usePartagerMenu'
 import Icone from '../components/Icone'
 import ImageRecette from '../components/ImageRecette'
 import AssietteRecette from '../components/AssietteRecette'
@@ -22,6 +23,8 @@ interface Props {
   onAjouterRecette: () => void
   /** Vide le panier *et* la liste (cases cochées comprises) — voir App.tsx. */
   onViderPanier: () => void
+  /** Signe le menu envoyé : « Camille te propose son menu ». */
+  prenom: string
 }
 
 export default function Panier({
@@ -34,8 +37,10 @@ export default function Panier({
   onVersListe,
   onAjouterRecette,
   onViderPanier,
+  prenom,
 }: Props) {
   const { t } = useLangue()
+  const menu = usePartagerMenu(basket, recipes, prenom)
 
 
   const byId = new Map(recipes.map((r) => [r.id, r]))
@@ -276,6 +281,18 @@ export default function Panier({
           )
         })}
       </div>
+
+      {/* Le menu de la semaine se montre déjà en story ou se raconte au
+          téléphone ; le lien fait qu'en face, on n'a pas à recopier les
+          plats un par un (voir lib/menuPartage.ts). */}
+      {menu.partageable && (
+        <>
+          <button className="discret pleine-largeur" onClick={() => void menu.partager()}>
+            <Icone nom="lien" taille={18} /> {menu.copie ? t('menu.lienCopie') : t('menu.envoyer')}
+          </button>
+          <p className="aide">{t('menu.envoyerTexte')}</p>
+        </>
+      )}
 
       {complements}
 

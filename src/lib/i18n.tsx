@@ -185,6 +185,25 @@ const fr: Dico = {
     message: "Je t'invite à partager ma liste de courses sur FFFood : on choisit les repas de la semaine, la liste se fait toute seule et se coche à plusieurs. Gratuit, sans compte : {{lien}}",
     copierAMain: "Lien d'invitation à copier",
   },
+  menu: {
+    // Le menu du panier envoyé à quelqu'un (voir lib/menuPartage.ts).
+    titrePartage: 'Mon menu de la semaine',
+    messageDe: "{{de}} te propose son menu de la semaine sur FFFood : {{plats}}. Ouvre le lien, les plats arrivent dans ton panier et la liste de courses se fait toute seule. Gratuit, sans compte : {{lien}}",
+    message: "Mon menu de la semaine sur FFFood : {{plats}}. Ouvre le lien, les plats arrivent dans ton panier et la liste de courses se fait toute seule. Gratuit, sans compte : {{lien}}",
+    etAutres: ' et {{n}} autre{{s}}',
+    copierAMain: 'Lien du menu à copier',
+    envoyer: 'Envoyer ce menu à quelqu\'un',
+    envoyerTexte: 'Ces plats arrivent dans son panier, avec la liste de courses qui va avec.',
+    lienCopie: 'Lien du menu copié',
+    // Arrivée par un lien de menu (voir components/MenuRecu.tsx).
+    recuDe: '{{de}} vous propose son menu : {{n}} plat{{s}}.',
+    recu: 'On vous propose un menu : {{n}} plat{{s}}.',
+    ajouter: 'Ajouter à mon panier',
+    nonMerci: 'Non merci',
+    attenduDe: '{{de}} vous a envoyé son menu : {{n}} plat{{s}}',
+    attendu: 'Un menu de {{n}} plat{{s}} vous attend',
+    voirLeMenu: 'Voir le menu',
+  },
   placeholders: {
     // La légende de l'assiette dessinée qui remplace une photo absente
     // (voir `VignettePlaceholder`). Un clin d'œil au dessin et une
@@ -809,6 +828,23 @@ const en: Dico = {
     messageDe: "{{de}} invites you to share their shopping list on FFFood: pick the week's meals, the list builds itself and you tick it off together. Free, no account: {{lien}}",
     message: "Join my shopping list on FFFood: pick the week's meals, the list builds itself and we tick it off together. Free, no account: {{lien}}",
     copierAMain: 'Invite link to copy',
+  },
+  menu: {
+    titrePartage: 'My menu for the week',
+    messageDe: "{{de}} is sharing their menu for the week on FFFood: {{plats}}. Open the link, the dishes land in your basket and the shopping list writes itself. Free, no account: {{lien}}",
+    message: "My menu for the week on FFFood: {{plats}}. Open the link, the dishes land in your basket and the shopping list writes itself. Free, no account: {{lien}}",
+    etAutres: ' and {{n}} other{{s}}',
+    copierAMain: 'Menu link to copy',
+    envoyer: 'Send this menu to someone',
+    envoyerTexte: 'These dishes land in their basket, with the shopping list that goes with them.',
+    lienCopie: 'Menu link copied',
+    recuDe: '{{de}} is sharing their menu: {{n}} recipe{{s}}.',
+    recu: "Here's a menu for you: {{n}} recipe{{s}}.",
+    ajouter: 'Add to my basket',
+    nonMerci: 'No thanks',
+    attenduDe: '{{de}} sent you their menu: {{n}} recipe{{s}}',
+    attendu: 'A menu of {{n}} recipe{{s}} is waiting for you',
+    voirLeMenu: 'See the menu',
   },
   placeholders: {
     sansPhoto: {
