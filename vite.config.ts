@@ -33,10 +33,15 @@ export default defineConfig({
         name: 'FFFood',
         short_name: 'FFFood',
         description: 'FFFood : recettes, panier de la semaine et liste de courses, sans compte.',
-        // La couleur du chrome navigateur est celle du haut de l'écran, pas
-        // celle de la marque : un bandeau vert foncé au-dessus d'une app
-        // couleur parchemin se lisait comme une barre d'un autre logiciel.
-        theme_color: '#fff8ef',
+        // Pas de `theme_color` : Chrome en peint la barre de gestes de
+        // l'app installée sur Android, d'une seule couleur faute de
+        // variante sombre — une bande crème sous l'app en mode sombre.
+        // Sans elle, la barre suit le thème du téléphone. Le haut de
+        // l'écran, lui, suit les deux <meta name="theme-color">
+        // d'index.html, clair et sombre. `undefined` plutôt qu'absente :
+        // vite-plugin-pwa fusionne ce manifeste avec ses valeurs par
+        // défaut, dont un `theme_color` vert.
+        theme_color: undefined,
         background_color: '#fff8ef',
         display: 'standalone',
         orientation: 'portrait',
