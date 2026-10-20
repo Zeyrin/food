@@ -18,7 +18,7 @@ const RAYONS_VALIDES = Object.keys(RAYONS) as RayonId[]
  */
 /**
  * Une photo doit être un fichier livré avec le build. Le champ acceptait
- * n'importe quelle URL, ce qui démentait les deux promesses du README :
+ * n'importe quelle URL, ce qui démentait les deux promesses de docs/CONCEPTION.md :
  * les photos tiennent hors ligne, et aucun lien extérieur ne peut mourir
  * en laissant un cadre vide. Une recette sans photo reste valide — la
  * vignette teintée prend le relais.

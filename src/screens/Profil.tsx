@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Recipe } from '../types'
 import { useLangue } from '../lib/i18n'
+import { formatMinutes } from '../lib/duree'
 import { ajouteeParLeFoyer } from '../lib/favoris'
 import { teinteRecette } from '../lib/identite'
 import type { Historique } from '../lib/propose'
@@ -148,7 +149,7 @@ export default function Profil({
                   <span className="profil-recette-texte">
                     <b>{titreRecette(r, langue)}</b>
                     <em>
-                      {t('detail.minutes', { n: r.temps })}
+                      {formatMinutes(r.temps, t)}
                       {r.source ? ` · ${hoteDe(r.source)}` : ''}
                       {refaire(r) ? ` · ${t('profil.aRefaire')}` : ''}
                     </em>

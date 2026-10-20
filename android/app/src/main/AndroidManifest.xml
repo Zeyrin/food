@@ -39,6 +39,9 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Le retour au doigt des coches (src/lib/haptique.ts). Permission
+         normale : accordée à l'installation, sans demande. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <!-- Minuteurs de cuisson : l'alerte doit tomber à l'heure, pas quand Android regroupe ses réveils. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 </manifest>

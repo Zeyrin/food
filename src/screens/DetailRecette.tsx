@@ -4,7 +4,9 @@ import corpus from '../data/recipes.json'
 import { etapeEnTexte, formatQuantite, redimensionnerRecette } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
+import { formatMinutes } from '../lib/duree'
 import { mesurer } from '../lib/mesure'
+import { emojiIngredient } from '../lib/emojiIngredient'
 import { NATIF, partagerTexte } from '../lib/natif'
 import { ORIGINE_PUBLIQUE } from '../lib/plateforme'
 import Icone from '../components/Icone'
@@ -152,14 +154,45 @@ export default function DetailRecette({
       >
         {!recette.image && <VignettePlaceholder recette={recette} avecPhrase />}
         <ImageRecette src={recette.image} />
-        <span className="badge-temps">
-          <Icone nom="minuteur" taille={14} /> {t('detail.minutes', { n: recette.temps })}
-        </span>
       </div>
+
+      {/* Les trois chiffres qu'on cherche avant de se décider, côte à côte
+          et à la même place sur toutes les fiches — comme sur les applis
+          de recettes : combien de temps, combien de choses à acheter,
+          combien d'étapes. Le temps vivait en pastille sur la photo, les
+          deux autres ne se lisaient qu'en comptant. */}
+      <dl className="fiche-stats">
+        <div>
+          <dt>{t('detail.temps')}</dt>
+          <dd>
+            <Icone nom="minuteur" taille={18} /> {formatMinutes(recette.temps, t)}
+          </dd>
+        </div>
+        <div>
+          <dt>{t('detail.ingredients')}</dt>
+          <dd>
+            <Icone nom="panier" taille={18} /> {recette.ingredients.length}
+          </dd>
+        </div>
+        <div>
+          <dt>{t('detail.etapes')}</dt>
+          <dd>
+            <Icone nom="liste" taille={18} /> {recette.etapes.length}
+          </dd>
+        </div>
+      </dl>
 
       {recette.description && <p className="aide detail-description">{recette.description}</p>}
 
       <div className="reglage-parts">
+        <div className="reglage-parts-texte">
+          <b>{t('detail.portions')}</b>
+          {choix !== recette.portions && (
+            <button className="lien-discret" onClick={() => changerParts(recette.portions)}>
+              {t('detail.revenirA', { n: recette.portions })}
+            </button>
+          )}
+        </div>
         <div className="compteur">
           <button onClick={() => changerParts(choix - 1)} aria-label={t('detail.moinsDeParts')}>
             <Icone nom="moins" taille={16} />
@@ -168,13 +201,7 @@ export default function DetailRecette({
           <button onClick={() => changerParts(choix + 1)} aria-label={t('detail.plusDeParts')}>
             <Icone nom="plus" taille={16} />
           </button>
-          <span className="compteur-label">{t('detail.part', { s: choix > 1 ? 's' : '' })}</span>
         </div>
-        {choix !== recette.portions && (
-          <button className="lien-discret" onClick={() => changerParts(recette.portions)}>
-            {t('detail.revenirA', { n: recette.portions })}
-          </button>
-        )}
       </div>
 
       <div className="puces-info">
@@ -198,7 +225,10 @@ export default function DetailRecette({
 
       <h2>{t('detail.ingredients')}</h2>
       {doses.map((ing) => (
-        <div className="rangee rangee-lecture" key={ing.nom}>
+        <div className="rangee rangee-lecture rangee-ingredient" key={ing.nom}>
+          <span className="emoji-ingredient" aria-hidden="true">
+            {emojiIngredient(ing.nom, ing.rayon)}
+          </span>
           <span className="nom">{ing.nom}</span>
           <span className="qte">{formatQuantite(ing)}</span>
         </div>
@@ -211,19 +241,14 @@ export default function DetailRecette({
         ))}
       </ol>
 
-      <div className="barre-actions">
-        <button className="principal" onClick={() => onBasculerPanier(choix)}>
-          <Icone nom={dansPanier ? 'coche' : 'plus'} taille={20} />
-          {dansPanier ? t('detail.retirerDuPanier') : t('detail.ajouterAuPanier')}
+      {/* Les gestes rares — retoucher, partager, retirer du catalogue —
+          vivent en fin de fiche, là où on a fini de lire. Dans la barre
+          collante, ils empilaient cinq boutons sur un tiers de l'écran et
+          cachaient les ingrédients qu'on était venu lire. */}
+      <div className="actions-secondaires">
+        <button className="discret pleine-largeur" onClick={onModifier}>
+          <Icone nom="crayon" taille={18} /> {t('detail.modifier')}
         </button>
-        <div className="rangee-boutons">
-          <button className="discret" onClick={onCuisiner}>
-            <Icone nom="marmite" taille={18} /> {t('detail.cuisiner')}
-          </button>
-          <button className="discret" onClick={onModifier}>
-            {t('detail.modifier')}
-          </button>
-        </div>
         {PAGES_PUBLIQUES.has(recette.id) && (
           <button className="discret pleine-largeur" onClick={partager}>
             <Icone nom="lien" taille={18} /> {lienCopie ? t('detail.lienCopie') : t('detail.partager')}
@@ -255,6 +280,19 @@ export default function DetailRecette({
             {t('detail.supprimerDuCatalogue')}
           </button>
         )}
+      </div>
+
+      <div className="barre-actions">
+        <div className="barre-actions-ligne">
+          <button className="principal" onClick={() => onBasculerPanier(choix)}>
+            <Icone nom={dansPanier ? 'coche' : 'plus'} taille={20} />
+            {dansPanier ? t('detail.retirerDuPanier') : t('detail.ajouterAuPanier')}
+          </button>
+          <button className="discret bouton-cuisiner" onClick={onCuisiner}>
+            <Icone nom="marmite" taille={20} />
+            <span>{t('detail.cuisiner')}</span>
+          </button>
+        </div>
       </div>
     </>
   )

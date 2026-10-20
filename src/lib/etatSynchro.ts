@@ -45,6 +45,18 @@ export function signalerSynchroRefusee(message: string): void {
   diffuser()
 }
 
+/**
+ * Lève le refus seulement s'il venait de la cause qui vient de se
+ * rétablir (`motif` qui commence par `prefixe`) : un canal temps réel
+ * qui se reconnecte ne dit rien d'une écriture refusée par une policy.
+ */
+export function leverRefusSi(prefixe: string): void {
+  if (etat !== 'refuse' || !motif?.startsWith(prefixe)) return
+  etat = 'inconnu'
+  motif = null
+  diffuser()
+}
+
 export function lireEtatSynchro(): EtatSynchro {
   return etat
 }
