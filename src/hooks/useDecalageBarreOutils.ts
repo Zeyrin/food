@@ -13,13 +13,23 @@ import { useEffect } from 'react'
  * hauteur du viewport de mise en page est exactement ce que la barre
  * d'outils masque en ce moment. On l'expose en variable CSS, utilisée
  * en plus de `env(safe-area-inset-bottom)` par les éléments collés en
- * bas — 0 partout ailleurs (desktop, Android, PWA installée en plein
- * écran), donc aucun effet sur ces plateformes.
+ * bas.
+ *
+ * Réservé à iOS : ailleurs, les éléments fixes suivent déjà la barre
+ * d'outils, et l'écart mesuré n'est qu'un état transitoire. Sur Firefox
+ * Android, quand la barre d'adresse revient en haut de page, la zone
+ * visible rétrécit le temps de l'animation — et la barre d'onglets
+ * remontait d'autant au lieu de rester collée en bas.
  */
+const estIOS = () =>
+  /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+  // iPadOS se présente comme un Mac ; seul le tactile le trahit.
+  (navigator.userAgent.includes('Macintosh') && navigator.maxTouchPoints > 1)
+
 export function useDecalageBarreOutils() {
   useEffect(() => {
     const vv = window.visualViewport
-    if (!vv) return
+    if (!vv || !estIOS()) return
 
     let frame = 0
     let pose = -1
