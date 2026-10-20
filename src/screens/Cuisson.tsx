@@ -123,6 +123,24 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
 
   const fini = index >= recette.etapes.length
 
+  /**
+   * L'entrée en cuisson part du bouton qu'on vient de toucher : l'écran
+   * sombre s'ouvre en cercle depuis son centre et recouvre la fiche,
+   * au lieu de la remplacer d'un coup. On retient le point de départ et
+   * le rayon qui atteint le coin le plus éloigné ; tant que le cercle
+   * grandit, la fiche reste montée dessous.
+   */
+  const [entree, setEntree] = useState<{ x: number; y: number; rayon: number } | null>(null)
+  const commencer = (e: React.MouseEvent<HTMLButtonElement>, depart: number) => {
+    const b = e.currentTarget.getBoundingClientRect()
+    const x = b.left + b.width / 2
+    const y = b.top + b.height / 2
+    const rayon = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))
+    setEntree({ x, y, rayon })
+    setSens('avant')
+    setIndex(depart)
+  }
+
   // On note l'étape en cours à chaque pas, et on oublie tout une fois
   // le plat terminé : reprendre une recette finie n'aurait aucun sens.
   useEffect(() => {
@@ -130,9 +148,13 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
     if (fini) oublierProgression(recette.id)
   }, [recette.id, index, fini])
 
-  if (index < 0) {
+  const apercu = (sousLaCuisson: boolean) => {
     return (
-      <div className="cuisson">
+      <div
+        className="cuisson"
+        aria-hidden={sousLaCuisson || undefined}
+        style={sousLaCuisson ? { pointerEvents: 'none' } : undefined}
+      >
         {/* Une flèche « précédent » sur un bouton « Quitter » disait deux
             choses à la fois : ici on n'a encore rien commencé, on revient
             juste en arrière. */}
@@ -183,9 +205,9 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
                   et sauter la moitié des étapes sans le voir. */}
               <button
                 className="principal"
-                onClick={() => {
+                onClick={(e) => {
                   mesurer('cuisson_reprise', { etape: reprise + 1, etapes: recette.etapes.length })
-                  setIndex(reprise)
+                  commencer(e, reprise)
                 }}
               >
                 <Icone nom="marmite" taille={20} />{' '}
@@ -193,9 +215,9 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
               </button>
               <button
                 className="discret pleine-largeur"
-                onClick={() => {
+                onClick={(e) => {
                   mesurer('cuisson_commencee', { etapes: recette.etapes.length, reprise: 0 })
-                  setIndex(0)
+                  commencer(e, 0)
                 }}
               >
                 {t('cuisson.repartirDuDebut')}
@@ -204,12 +226,12 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           ) : (
             <button
               className="principal"
-              onClick={() => {
+              onClick={(e) => {
                 mesurer('cuisson_commencee', {
                   etapes: recette.etapes.length,
                   minutes: recette.temps,
                 })
-                setIndex(0)
+                commencer(e, 0)
               }}
             >
               <Icone nom="marmite" taille={20} />{' '}
@@ -223,6 +245,8 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
       </div>
     )
   }
+
+  if (index < 0) return apercu(false)
 
   if (fini) {
     return (
@@ -286,8 +310,23 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
     )
   }
 
-  return (
-    <div className="cuisson-focus">
+  const focus = (
+    <div
+      className="cuisson-focus"
+      data-entree={entree ? '' : undefined}
+      style={
+        entree
+          ? ({
+              '--entree-x': `${entree.x}px`,
+              '--entree-y': `${entree.y}px`,
+              '--entree-rayon': `${entree.rayon}px`,
+            } as React.CSSProperties)
+          : undefined
+      }
+      onAnimationEnd={(e) => {
+        if (e.target === e.currentTarget && e.animationName === 'cuisson-ouvrir') setEntree(null)
+      }}
+    >
       <header className="cuisson-entete">
         <button className="cuisson-rond" onClick={onQuitter} aria-label={t('cuisson.quitterModeCuisson')}>
           <Icone nom="fermer" taille={20} />
@@ -425,5 +464,14 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
       </div>
 
     </div>
+  )
+
+  return entree ? (
+    <>
+      {apercu(true)}
+      {focus}
+    </>
+  ) : (
+    focus
   )
 }
