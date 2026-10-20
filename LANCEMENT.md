@@ -45,7 +45,7 @@ Choisir quoi manger, en tirer une liste, cuisiner : la catégorie est encombrée
 satisfait, et il faut le lire comme tel : **il n'y a pas de risque de marché ici,
 seulement un risque de distinction.**
 
-La distinction ne vient pas de la catégorie mais des deux décisions du README : un
+La distinction ne vient pas de la catégorie mais des deux décisions de docs/CONCEPTION.md : un
 corpus écrit à la main — chaque recette y est parce qu'on veut la manger, pas parce
 qu'un scraper l'a trouvée — et une app qui fonctionne hors ligne, sans compte, dans
 un magasin. Toute la communication (points 6 et 10) parle de ces deux choses, jamais
@@ -54,7 +54,7 @@ de « planifier ses repas », qui ne distingue rien.
 ### 2. Un MVP « suffisant » — ✅ acquis, et à défendre
 
 Le MVP existe et tourne : Proposer → Panier → Liste → Cuisson, 137 recettes, hors
-ligne, partage par lien, deux langues. La section « Ce qui n'est pas fait » du README
+ligne, partage par lien, deux langues. La section « Ce qui n'est pas fait » de docs/CONCEPTION.md
 (planning par jour, déstockage, ordre de rayons par magasin) **est** la frontière du
 MVP, et elle tient. Le point du playbook — « plus dur que vous ne croyez » — ne
 concerne donc plus le périmètre à atteindre mais celui à ne pas franchir : la
@@ -125,7 +125,7 @@ intention, qui sont les requêtes réelles :
 - par contrainte — végé, rapide, moins de 30 minutes, un seul plat ;
 - par moment — ce qui se cuisine en semaine, ce qui tient pour six.
 
-Trois règles héritées du README s'appliquent à ce contenu : il est **écrit au
+Trois règles héritées de docs/CONCEPTION.md s'appliquent à ce contenu : il est **écrit au
 build**, donc en français seulement ; il est **autonome** (pas de bundle, style en
 ligne, aucun lien extérieur qui puisse mourir) ; et il **renvoie vers `/#/r/<id>`**,
 jamais vers la racine — quelqu'un qui arrive sur un plat précis doit atterrir sur ce
@@ -177,5 +177,5 @@ l'honnêteté du produit achète.
 4. Répondre aux questions là où l'app répond vraiment.
 
 Les trois premiers points ne coûtent rien d'autre que du temps, et aucun ne demande
-de revenir sur une décision du README. C'est le test : **un plan de diffusion qui
+de revenir sur une décision de docs/CONCEPTION.md. C'est le test : **un plan de diffusion qui
 obligerait à ajouter un compte serait le mauvais plan.**
