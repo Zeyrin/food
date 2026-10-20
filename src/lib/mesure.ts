@@ -38,6 +38,7 @@ export type Geste =
   | 'menu_ouvert'
   | 'menu_ajoute'
   | 'menu_refuse'
+  | 'partage_recu'
   | 'visite_terminee'
   | 'visite_passee'
   | 'fiche_ouverte'

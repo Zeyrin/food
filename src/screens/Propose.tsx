@@ -26,6 +26,8 @@ interface Props {
    */
   ajoutOuvert: boolean
   onAjoutOuvert: (ouvert: boolean) => void
+  /** L'adresse d'une recette partagée vers FFFood depuis une autre app. */
+  lienPartage?: string | null
   /** Un avis posé en tête du catalogue, sous l'en-tête (voir `BandeauIntegre`). */
   bandeau?: React.ReactNode
 }
@@ -47,6 +49,7 @@ export default function Propose({
   onAjouterRecette,
   ajoutOuvert,
   onAjoutOuvert,
+  lienPartage = null,
   bandeau,
 }: Props) {
   const { t } = useLangue()
@@ -204,6 +207,7 @@ export default function Propose({
             <AjoutRecette
               onAjouter={onAjouterRecette}
               onFerme={() => onAjoutOuvert(false)}
+              lienPartage={lienPartage}
               titresExistants={recipes.map((r) => r.titre)}
               tagsConnus={tousLesTags(recipes)}
             />

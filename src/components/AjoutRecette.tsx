@@ -18,15 +18,21 @@ import ImportLien from './ImportLien'
 interface Props {
   onAjouter: (recette: Recipe) => Promise<void>
   onFerme: () => void
+  /**
+   * Une adresse reçue par le menu « Partager » du téléphone (voir
+   * `lib/partageRecu.ts`) : on ouvre directement le chemin « depuis un
+   * lien ». Chaîne vide : un partage sans adresse, le champ attend.
+   */
+  lienPartage?: string | null
   titresExistants: string[]
   tagsConnus: string[]
 }
 
 type Methode = 'main' | 'ia' | 'lien'
 
-export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tagsConnus }: Props) {
+export default function AjoutRecette({ onAjouter, onFerme, lienPartage = null, titresExistants, tagsConnus }: Props) {
   const { t } = useLangue()
-  const [methode, setMethode] = useState<Methode | null>(null)
+  const [methode, setMethode] = useState<Methode | null>(lienPartage === null ? null : 'lien')
   /** Ce qui vient d'entrer au catalogue, une fois le chemin terminé. */
   const [bilan, setBilan] = useState<{ nombre: number; titre?: string } | null>(null)
 
@@ -118,6 +124,7 @@ export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tags
             setBilan({ nombre: 1, titre: recette.titre })
           }}
           onRetour={() => setMethode(null)}
+          adresseInitiale={lienPartage ?? ''}
         />
       ) : (
         <CollageIA

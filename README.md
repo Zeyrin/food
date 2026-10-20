@@ -109,6 +109,13 @@ les plats et les met dans son panier d'un geste, sans rejoindre aucune maison
 la maison n'existe pas chez l'autre. Comme `/rejoindre/`, le chemin `/menu/` n'existe que
 pour donner au lien son propre aperçu (`public/og-menu.jpg`, source dans `scripts/`).
 
+**FFFood est dans le menu « Partager » du téléphone.** Une recette se trouve ailleurs (un
+blog, Instagram) ; l'importer demandait de copier l'adresse et de traverser trois écrans.
+Le manifeste déclare un `share_target` et l'app Android un intent `SEND` : les deux mènent
+à `/partage/?text=…`, qui ouvre l'import par lien déjà rempli et le lance
+(`src/lib/partageRecu.ts`, `MainActivity.java`). Rien n'entre au catalogue sans relecture,
+comme pour un lien collé. iOS demanderait une extension de partage native : pas fait.
+
 **Les minuteurs appartiennent à l'app, pas à l'écran de cuisson.** On lance un minuteur
 précisément pour aller faire autre chose — vérifier un ingrédient sur la liste, répondre à
 un message. Ils continuent donc de tourner quel que soit l'écran affiché, un bandeau les
