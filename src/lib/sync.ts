@@ -29,15 +29,23 @@ export const partageActif = supabase !== null
  * ouvrir cinquante sessions.
  */
 let sessionEnCours: Promise<boolean> | null = null
+/** L'utilisateur anonyme de la session, pour mémoriser son appartenance (voir `assurerAcces`). */
+let uidSession: string | null = null
 
 export function assurerSession(): Promise<boolean> {
   if (!supabase) return Promise.resolve(false)
   sessionEnCours ??= (async () => {
     const { data } = await supabase.auth.getSession()
-    if (data.session) return true
+    if (data.session) {
+      uidSession = data.session.user.id
+      return true
+    }
 
-    const { error } = await supabase.auth.signInAnonymously()
-    if (!error) return true
+    const { data: connexion, error } = await supabase.auth.signInAnonymously()
+    if (!error) {
+      uidSession = connexion.user?.id ?? null
+      return true
+    }
 
     // Réessayable au prochain appel plutôt que bloqué à vie sur une coupure
     // réseau passagère.
@@ -71,6 +79,58 @@ export function assurerSession(): Promise<boolean> {
  */
 const accesParFoyer = new Map<string, Promise<boolean>>()
 
+/**
+ * Mais ce rappel coûtait un aller-retour de plus, en série, avant la
+ * moindre lecture : le catalogue attendait session, puis `reclamer_foyer`,
+ * puis son propre `select`. On note donc, par couple (utilisateur, foyer),
+ * qu'une réclamation a déjà réussi. Le ménage de Supabase emporte
+ * l'utilisateur anonyme : la session suivante en ouvre un autre, dont
+ * l'identifiant n'est pas noté ici, et la réclamation repart d'elle-même.
+ * Pour le cas où l'appartenance aurait disparu sans changer d'identifiant,
+ * `lireRecettes` revérifie quand un catalogue revient vide.
+ */
+const PREFIXE_ACCES = 'fffood:acces:'
+
+function cleAcces(foyer: string): string | null {
+  return uidSession ? `${PREFIXE_ACCES}${uidSession}:${foyer}` : null
+}
+
+function accesMemorise(foyer: string): boolean {
+  const cle = cleAcces(foyer)
+  try {
+    return cle !== null && localStorage.getItem(cle) === '1'
+  } catch {
+    return false
+  }
+}
+
+function memoriserAcces(foyer: string, obtenu: boolean): void {
+  const cle = cleAcces(foyer)
+  if (!cle) return
+  try {
+    if (obtenu) localStorage.setItem(cle, '1')
+    else localStorage.removeItem(cle)
+  } catch {
+    /* stockage indisponible : on réclamera à chaque lancement, comme avant */
+  }
+}
+
+async function reclamer(foyer: string): Promise<boolean> {
+  const { error } = await supabase!.rpc('reclamer_foyer', { uuid_foyer: foyer })
+  if (error) {
+    accesParFoyer.delete(foyer)
+    memoriserAcces(foyer, false)
+    console.warn(`Accès au foyer refusé : ${error.message}`)
+    signalerSynchroRefusee(`Accès au foyer refusé : ${error.message}`)
+    return false
+  }
+  memoriserAcces(foyer, true)
+  return true
+}
+
+/** Foyers dont l'accès vient de la mémoire locale, pas d'une réclamation de cette session. */
+const accesPresume = new Set<string>()
+
 export function assurerAcces(foyer: string): Promise<boolean> {
   if (!supabase) return Promise.resolve(false)
 
@@ -78,17 +138,25 @@ export function assurerAcces(foyer: string): Promise<boolean> {
   if (!acces) {
     acces = (async () => {
       if (!(await assurerSession())) return false
-      const { error } = await supabase!.rpc('reclamer_foyer', { uuid_foyer: foyer })
-      if (error) {
-        accesParFoyer.delete(foyer)
-        console.warn(`Accès au foyer refusé : ${error.message}`)
-        signalerSynchroRefusee(`Accès au foyer refusé : ${error.message}`)
-        return false
+      if (accesMemorise(foyer)) {
+        accesPresume.add(foyer)
+        return true
       }
-      return true
+      return reclamer(foyer)
     })()
     accesParFoyer.set(foyer, acces)
   }
+  return acces
+}
+
+/**
+ * Réclame pour de bon un foyer dont l'accès n'était que présumé. Rend
+ * `false` quand il n'y avait rien à revérifier.
+ */
+async function reverifierAcces(foyer: string): Promise<boolean> {
+  if (!accesPresume.delete(foyer)) return false
+  const acces = reclamer(foyer)
+  accesParFoyer.set(foyer, acces)
   return acces
 }
 
@@ -98,6 +166,8 @@ export function assurerAcces(foyer: string): Promise<boolean> {
  */
 export function marquerAccesObtenu(foyer: string): void {
   accesParFoyer.set(foyer, Promise.resolve(true))
+  accesPresume.delete(foyer)
+  memoriserAcces(foyer, true)
 }
 
 /**
@@ -303,6 +373,10 @@ export async function lireRecettes(foyer: string): Promise<Recipe[]> {
   if (!supabase || !(await assurerAcces(foyer))) return []
   const { data, error } = await supabase.from('recettes').select('recette').eq('foyer', foyer)
   if (error) throw new Error(`Lecture du catalogue refusée : ${error.message}`)
+  // Zéro ligne, c'est aussi ce que rend la RLS à qui n'est plus membre.
+  // Un foyer semé n'est jamais vide : si l'accès n'était que présumé, on
+  // le réclame pour de bon et on relit, plutôt que de semer en double.
+  if ((data ?? []).length === 0 && (await reverifierAcces(foyer))) return lireRecettes(foyer)
   return (data ?? []).map((ligne) => ligne.recette as Recipe)
 }
 

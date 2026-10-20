@@ -1,5 +1,5 @@
 import { del, get, set } from 'idb-keyval'
-import type { BasketEntry, Verdict } from '../types'
+import type { BasketEntry, Recipe, Verdict } from '../types'
 import type { ConfigMagasins } from './magasins'
 import { CONFIG_PAR_DEFAUT, normaliserConfig } from './magasins'
 import type { Historique } from './propose'
@@ -16,6 +16,7 @@ const K_CODE_FOYER = 'codeFoyer'
 const K_MAGASINS = 'magasins'
 const K_FOYER_PRECEDENT = 'foyerPrecedent'
 const K_PRENOM = 'prenomProfil'
+const K_CATALOGUE = 'catalogue'
 
 const HISTORIQUE_VIDE: Historique = { derniereFois: {}, verdicts: {} }
 
@@ -88,6 +89,23 @@ export async function marquerCuisine(recipeId: string, verdict: Verdict): Promis
   }
   await ecrire(K_HISTORIQUE, suivant)
   return suivant
+}
+
+/**
+ * La dernière copie du catalogue reçue du foyer. Le catalogue vit dans
+ * Supabase, mais l'attendre à chaque lancement laissait l'écran vide le
+ * temps de la session, de l'accès au foyer et de la lecture — plusieurs
+ * secondes en 4G. On affiche cette copie tout de suite, et la réponse du
+ * réseau la remplace dès qu'elle arrive. Rangée avec son foyer : changer
+ * de maison ne doit pas montrer les plats de la précédente.
+ */
+export async function lireCatalogue(foyer: string): Promise<Recipe[] | null> {
+  const copie = await lire<{ foyer: string; recettes: Recipe[] } | null>(K_CATALOGUE, null)
+  return copie?.foyer === foyer ? copie.recettes : null
+}
+
+export async function ecrireCatalogue(foyer: string, recettes: Recipe[]): Promise<void> {
+  await ecrire(K_CATALOGUE, { foyer, recettes })
 }
 
 /**
@@ -200,6 +218,7 @@ export async function quitterFoyer(): Promise<void> {
   if (id) await noterFoyerQuitte(id)
   await effacer(K_FOYER)
   await effacer(K_CODE_FOYER)
+  await effacer(K_CATALOGUE)
 }
 
 /** Le prénom affiché sur le profil. Propre à l'appareil : pas de compte, rien ne part sur le réseau. */
