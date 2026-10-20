@@ -799,7 +799,7 @@ export default function App() {
   const onglet = vueActuelle.type === 'onglet' ? vueActuelle.onglet : 'propose'
   const estOnglet = vueActuelle.type === 'onglet'
 
-  // Écrans plein page (détail, ajout/édition, réglages) : sur mobile ils
+  // Écrans plein page (détail, ajout/édition, profil) : sur mobile ils
   // restent immersifs comme avant (le CSS masque le rail en dessous de
   // 900px via `data-sous-ecran`), mais sur desktop le rail d'onglets et
   // les repères globaux (réglages, hors ligne) sont le squelette
@@ -879,7 +879,10 @@ export default function App() {
     )
   }
 
-  const sousEcran = ecranPleinePage !== null
+  // Réglages fait exception : ce n'est pas un écran immersif mais un
+  // lieu de l'app comme un autre, d'où l'on doit pouvoir repartir vers
+  // n'importe quel onglet sans passer par « retour ».
+  const sousEcran = ecranPleinePage !== null && vueActuelle.type !== 'reglages'
   // Les plats du menu reçu que ce catalogue connaît : le lien ne porte
   // que des recettes du corpus, mais une maison a pu en supprimer.
   const platsMenu = menuRecu?.plats.filter((p) => recipes.some((r) => r.id === p.recipeId)) ?? []

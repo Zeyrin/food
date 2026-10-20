@@ -1225,7 +1225,7 @@ html[data-defile='true'] .entete-app {
   }
 }
 
-/* Écrans plein page (détail, ajout/édition, réglages) sur mobile : le
+/* Écrans plein page (détail, ajout/édition, profil) sur mobile : le
    rail est un rail desktop, pas un onglet — en dessous de 900px il
    redevient la barre de tabs du bas et n'a pas sa place au-dessus d'un
    écran immersif à bouton retour dédié. Le rail reste monté dans le DOM
