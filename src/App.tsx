@@ -972,6 +972,7 @@ export default function App() {
               onAjouterRecette={ajouter}
               ajoutOuvert={ajoutOuvert}
               onAjoutOuvert={setAjoutOuvert}
+              onVersPanier={() => changerOnglet('panier')}
               // Pas pendant la visite guidée : elle mesure la position du
               // premier plat, et un bandeau qui s'insère au-dessus la
               // décalerait. Il apparaît juste après.
@@ -1013,6 +1014,7 @@ export default function App() {
               magasins={magasins.config}
               onVersCuisson={() => changerOnglet('cuisson')}
               onVersReglages={() => irVers({ type: 'reglages' })}
+              onVersPropose={() => changerOnglet('propose')}
               foyer={foyer}
               prenom={prenom}
             />
@@ -1024,6 +1026,7 @@ export default function App() {
               basket={basket}
               historique={historique}
               onCuisiner={(recipeId) => irVers({ type: 'cuisson', recipeId })}
+              onVersPropose={() => changerOnglet('propose')}
             />
           )}
         </>

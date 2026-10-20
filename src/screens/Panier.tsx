@@ -4,6 +4,7 @@ import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { cuisineRecemment, type Historique } from '../lib/propose'
 import { useLangue } from '../lib/i18n'
+import { formatMinutes } from '../lib/duree'
 import { mesurer } from '../lib/mesure'
 import { usePartagerMenu } from '../hooks/usePartagerMenu'
 import Icone from '../components/Icone'
@@ -41,12 +42,6 @@ export default function Panier({
   const { t } = useLangue()
   const menu = usePartagerMenu(basket, recipes, prenom)
 
-  /** « 150 » → « 2 h 30 ». Une durée de semaine se lit en heures. */
-  const formatMinutes = (minutes: number) => {
-    if (minutes < 60) return t('panier.minutes', { n: minutes })
-    const reste = minutes % 60
-    return t('panier.heures', { h: Math.floor(minutes / 60), reste: reste ? ` ${reste}` : '' })
-  }
 
   const byId = new Map(recipes.map((r) => [r.id, r]))
   const [confirmation, setConfirmation] = useState(false)
@@ -116,9 +111,11 @@ export default function Panier({
    * de l'ingrédient, donc stable d'une semaine à l'autre — revenaient
    * déjà cochées sur la liste suivante.
    */
+  // Un geste de fin de semaine, rare : il ferme l'écran sans titre de
+  // section à lui — un intitulé « Vider le panier » au même rang que
+  // « Compléter ma semaine » lui donnait le poids d'une étape du parcours.
   const viderLePanier = (
-    <>
-      <h2>{t('panier.viderLePanier')}</h2>
+    <div className="zone-vider">
       {confirmation ? (
         <div className="bloc-confirmation" role="alertdialog" aria-label={t('panier.viderLePanier')}>
           <p>{t('panier.viderConfirmation', { n: basket.length, s: basket.length > 1 ? 's' : '' })}</p>
@@ -139,13 +136,13 @@ export default function Panier({
         </div>
       ) : (
         <>
-          <p className="aide">{t('panier.viderTexte')}</p>
-          <button className="discret suite pleine-largeur" onClick={() => setConfirmation(true)}>
+          <button className="discret danger pleine-largeur" onClick={() => setConfirmation(true)}>
             {t('panier.viderLePanier')}
           </button>
+          <p className="aide zone-vider-texte">{t('panier.viderTexte')}</p>
         </>
       )}
-    </>
+    </div>
   )
 
   const complements = (
@@ -153,11 +150,11 @@ export default function Panier({
       <h2>{t('panier.completerSemaine')}</h2>
       <div className="bento-deux-colonnes">
         <button className="carte-bento" onClick={onVersPropose}>
-          <Icone nom="plus-cercle" taille={28} />
+          <Icone nom="etoile" taille={24} />
           <p>{t('panier.ajouterPlatRapide')}</p>
         </button>
         <button className="carte-bento neutre" onClick={onAjouterRecette}>
-          <Icone nom="plus-cercle" taille={28} />
+          <Icone nom="crayon" taille={24} />
           <p>{t('panier.nouvelleRecette')}</p>
         </button>
       </div>
@@ -213,7 +210,7 @@ export default function Panier({
             <p className="carte-resume-sous">
               {t('panier.semaine', { n: numeroSemaine(), parts, s: parts > 1 ? 's' : '' })}
             </p>
-            <p className="carte-resume-detail">{t('panier.tempsCuisine', { temps: formatMinutes(tempsTotal) })}</p>
+            <p className="carte-resume-detail">{t('panier.tempsCuisine', { temps: formatMinutes(tempsTotal, t) })}</p>
           </div>
           <span className="pastille-etat" data-fini={aCuisiner === 0 ? 'true' : undefined}>
             {aCuisiner === 0 ? t('panier.toutCuisine') : t('panier.aCuisiner', { n: aCuisiner })}

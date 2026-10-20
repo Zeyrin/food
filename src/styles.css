@@ -861,6 +861,25 @@ button.principal.accueil-hero-cta {
   text-wrap: pretty;
 }
 
+/* Le lien vers le catalogue public gardait le bleu souligné du
+   navigateur, seule tache hors palette de l'écran d'accueil. Il prend
+   l'accent de l'app, avec une flèche qui dit qu'on sort de l'écran. */
+.accueil-note a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-underline-offset: 4px;
+}
+
+.accueil-note a::after {
+  content: '→';
+}
+
 /* Ce que le champ accepte, dit sous le champ : le collage d'un lien ne
    se devine pas, et personne n'essaie ce qu'il croit interdit. */
 .accueil-indice {
@@ -992,6 +1011,52 @@ html[data-defile='true'] .entete-app {
   margin-top: 10px;
 }
 
+/* Une seule ligne collée en bas : l'action qu'on vient faire sur la
+   fiche (le panier) prend la place, « Cuisiner » se range à côté. Deux
+   gestes, une hauteur de pouce — le reste de l'écran est à la recette. */
+.barre-actions-ligne {
+  display: flex;
+  gap: 10px;
+}
+
+.barre-actions-ligne .principal {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  margin-top: 0;
+}
+
+.barre-actions-ligne .bouton-cuisiner {
+  flex: 0 0 auto;
+  width: auto;
+  min-height: var(--pouce);
+  padding: 0 20px;
+  background: var(--carte);
+}
+
+/* Sur un petit écran, l'icône de marmite suffit : le libellé ferait
+   passer celui du panier sur deux lignes. */
+@media (max-width: 359px) {
+  .barre-actions-ligne .bouton-cuisiner span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+.actions-secondaires {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--filet-fort);
+}
+
+.actions-secondaires > * + * {
+  margin-top: 10px;
+}
+
 /* Le fond de page ne sert qu'à dégager la barre d'onglets — ces écrans
    n'en ont pas, et la barre d'actions doit finir au ras du bas. */
 #root:has(.barre-actions) {
@@ -1011,6 +1076,141 @@ html[data-defile='true'] .entete-app {
 .action-flottante .principal {
   max-width: 600px;
   margin: 0 auto;
+}
+
+/* Barre panier de l'écran Proposer, à la façon des applis de livraison :
+   ce qu'on a choisi à gauche (les assiettes, le compte), où aller ensuite
+   à droite. Une seule cible pleine largeur, dans la zone que le pouce
+   atteint sans changer de prise. */
+.barre-panier {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 600px;
+  min-height: 64px;
+  margin: 0 auto;
+  padding: 8px 10px 8px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--accent) 92%, white), var(--accent));
+  color: var(--sur-accent);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), var(--ombre-nette), var(--ombre-haute);
+  animation: barre-panier-entree var(--moyen3) var(--sortie) both;
+  transition: transform var(--court3) var(--ressort);
+}
+
+.barre-panier:active {
+  transform: scale(0.98);
+}
+
+@keyframes barre-panier-entree {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+.barre-panier-plats {
+  display: flex;
+  flex: none;
+  padding-left: 2px;
+}
+
+/* Les assiettes se chevauchent comme des avatars : trois au plus, les
+   dernières ajoutées — celle qu'on vient de toucher apparaît à droite. */
+.barre-panier-plat {
+  position: relative;
+  display: block;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: hsl(var(--teinte) 65% 88%);
+  box-shadow: 0 0 0 2.5px var(--accent);
+}
+
+.barre-panier-plat + .barre-panier-plat {
+  margin-left: -16px;
+}
+
+.barre-panier-plat > * {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.barre-panier-texte {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.barre-panier-texte b {
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.barre-panier-texte em {
+  font-size: 13px;
+  font-style: normal;
+  opacity: 0.8;
+}
+
+.barre-panier-action {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 0 12px 0 16px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.16);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.barre-panier-texte em {
+  white-space: nowrap;
+}
+
+/* Petits téléphones (≤ 380 px, beaucoup d'Android d'entrée de gamme) :
+   deux assiettes au lieu de trois, et un bouton plus serré — sinon le
+   compte « 3 plats », la seule information de la barre, se tronquait. */
+@media (max-width: 380px) {
+  .barre-panier {
+    gap: 10px;
+  }
+
+  .barre-panier-plat:nth-child(n + 3) {
+    display: none;
+  }
+
+  .barre-panier-action {
+    padding: 0 8px 0 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 330px) {
+  .barre-panier-texte em {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .barre-panier {
+    animation: none;
+  }
 }
 
 /* Écrans plein page (détail, ajout/édition, réglages) sur mobile : le
@@ -1381,6 +1581,163 @@ button.carte:active {
   align-items: start;
 }
 
+/* Onglet Cuisson : le prochain plat en grand, son bouton dessous. Une
+   seule carte au premier plan — ce qu'on fait maintenant — et le reste
+   de la semaine en petit plus bas. */
+.carte-a-la-une {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 8px 0 8px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--rayon-grand);
+  background: var(--carte);
+  color: var(--encre);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-haute);
+  transition: transform var(--court3) var(--ressort);
+}
+
+.carte-a-la-une:active {
+  transform: scale(0.985);
+}
+
+.carte-a-la-une .vignette {
+  aspect-ratio: 16 / 10;
+}
+
+.carte-a-la-une .vignette img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Le dessin garde la taille qu'il a sur la fiche : à pleine largeur,
+   l'assiette débordait du cadre en hauteur. */
+.carte-a-la-une .assiette {
+  width: 56%;
+}
+
+.carte-a-la-une-corps {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px 18px;
+}
+
+.carte-a-la-une-corps .carte-resume-label {
+  color: var(--accent);
+}
+
+.carte-a-la-une-corps h2 {
+  margin: 2px 0 0;
+  font-size: 24px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.carte-a-la-une-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0 12px;
+  color: var(--encre-douce);
+  font-size: 15px;
+}
+
+/* Un faux bouton : la carte entière est la cible, ceci la désigne. */
+.carte-a-la-une-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--pouce);
+  border-radius: 999px;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--accent) 92%, white), var(--accent));
+  color: var(--sur-accent);
+  font-size: 17px;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), var(--ombre-nette);
+}
+
+.titre-suite-cuisson {
+  margin-top: 24px;
+}
+
+/* Rangées thématiques en tête du catalogue (« Vite fait ce soir »,
+   « Vos favoris ») : mêmes cartes que la grille, alignées sur une ligne
+   qui défile du pouce et déborde jusqu'aux bords de l'écran. La carte
+   suivante, coupée au bord, dit qu'il y en a d'autres. */
+/* Colonne de grille sur desktop : sans `min-width: 0`, la largeur de la
+   rangée défilante (toutes ses cartes bout à bout) devenait la largeur
+   minimale de la colonne, et la page entière débordait à droite. */
+.catalogue {
+  min-width: 0;
+}
+
+.section-catalogue {
+  margin-bottom: 8px;
+}
+
+.titre-rangee {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin: 8px 0 12px;
+  font-size: 21px;
+  letter-spacing: -0.015em;
+}
+
+.titre-rangee em {
+  color: var(--encre-douce);
+  font-family: var(--texte);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.grille-recettes.rangee-recettes {
+  display: flex;
+  /* Dans une rangée, toutes les cartes à la même hauteur : côte à côte
+     sur une ligne, un titre court laissait une carte plus basse que ses
+     voisines. */
+  align-items: stretch;
+  gap: 12px;
+  margin: 0 -20px;
+  padding: 2px 20px 14px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 20px;
+  scrollbar-width: none;
+  /* Le bord droit s'estompe : la carte coupée se lit comme une suite. */
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+}
+
+.grille-recettes.rangee-recettes::-webkit-scrollbar {
+  display: none;
+}
+
+.grille-recettes.rangee-recettes .carte-recette {
+  flex: 0 0 min(42vw, 168px);
+  scroll-snap-align: start;
+  /* Rendues tout de suite : une rangée est courte, et la sauter laissait
+     des cartes vides le temps d'un défilement horizontal. */
+  content-visibility: visible;
+}
+
+.grille-recettes.rangee-recettes .carte-recette-corps h3 {
+  font-size: 15px;
+}
+
 /* Le catalogue s'affiche d'un coup, une quarantaine de cartes, dont
    quatre ou six tiennent à l'écran. `content-visibility: auto` dit au
    navigateur de ne pas mettre en page ni dessiner celles qui sont hors
@@ -1676,6 +2033,74 @@ button.carte:active {
   box-shadow: var(--ombre);
 }
 
+/* Sur téléphone, la photo prend toute la largeur, bord à bord, comme
+   l'image d'ouverture d'une appli de recettes : c'est le plat qu'on
+   vient voir, pas un encart dans une page. Seuls les coins du bas
+   s'arrondissent, là où la fiche commence. */
+/* La légende sous l'assiette remonte au-dessus des chiffres qui
+   chevauchent le bas de la photo. */
+.detail-vignette .vignette-placeholder {
+  bottom: 40px;
+}
+
+@media (max-width: 899px) {
+  .detail-vignette {
+    margin: 8px -20px 0;
+    border-radius: 0 0 var(--rayon-grand) var(--rayon-grand);
+    box-shadow: none;
+  }
+}
+
+/* Temps · ingrédients · étapes : trois cases égales, le chiffre en gros,
+   l'intitulé en petit au-dessus. Posées à cheval sur le bas de la photo
+   pour qu'on les lise comme la légende du plat. */
+.fiche-stats {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: -28px 8px 0;
+  padding: 14px 4px;
+  border-radius: var(--rayon);
+  background: var(--carte);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-haute);
+}
+
+.fiche-stats > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.fiche-stats > div + div {
+  border-left: 1px solid var(--filet-fort);
+}
+
+.fiche-stats dt {
+  color: var(--encre-douce);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.fiche-stats dd {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-family: var(--affichage);
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.fiche-stats dd svg {
+  color: var(--accent);
+}
+
 /* Supprimer une recette du catalogue ne se propose pas avec le poids
    d'une action qu'on vient chercher : même cible tactile, mais sans
    contour — la pilule rouge pleine largeur, empilée sous « Ajouter au
@@ -1876,15 +2301,65 @@ button.discret.danger {
 .reglage-parts {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
   gap: 12px;
   margin-top: 16px;
+  padding: 10px 10px 10px 18px;
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet);
 }
 
-/* Poussé au bout de la ligne : collé au compteur, « revenir à 4 » se
-   lisait dans la foulée de « Parts ». */
-.reglage-parts .lien-discret {
-  margin-left: auto;
+.reglage-parts-texte {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.reglage-parts-texte b {
+  font-size: 16px;
+}
+
+/* Sur la fiche, le compteur se manipule souvent : des boutons de 44 px,
+   la taille qu'un pouce atteint sans viser (loi de Fitts), au lieu des
+   34 px du panier où la carte est plus serrée. */
+.reglage-parts .compteur {
+  margin-top: 0;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--carte);
+  box-shadow: inset 0 0 0 1px var(--filet);
+}
+
+.reglage-parts .compteur button {
+  width: 44px;
+  height: 44px;
+}
+
+.reglage-parts .compteur span {
+  min-width: 3ch;
+  font-size: 22px;
+  color: var(--encre);
+}
+
+/* Les ingrédients de la fiche portent le même pictogramme que les tuiles
+   « Chez moi » : un ingrédient se reconnaît pareil d'un écran à l'autre. */
+.rangee-ingredient {
+  gap: 12px;
+}
+
+.emoji-ingredient {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: var(--carte-haute);
+  font-size: 22px;
+  line-height: 1;
 }
 
 .lien-discret {
@@ -1975,6 +2450,15 @@ button.discret.danger {
 
 .rangee-lecture {
   cursor: default;
+}
+
+/* Les noms d'ingrédients sont écrits en minuscules dans les recettes —
+   c'est la clé d'agrégation, elle doit le rester. À l'écran, une liste
+   qui commence chaque ligne par une capitale se lit comme une liste, pas
+   comme une phrase coupée. La majuscule est donc de présentation seule :
+   le texte copié ou envoyé garde le nom tel qu'il est. */
+.rangee .nom::first-letter {
+  text-transform: uppercase;
 }
 
 .rangee[data-coche='true'] .nom {
@@ -2322,62 +2806,65 @@ h3.entete-section {
   }
 }
 
-/* Tiroir des filtres (écran Proposer) : replié une ligne, déplié la
-   liste entière — même logique que .tiroir-ingredients (Cuisson), sur
-   une surface claire plutôt que le fond sombre du mode cuisson. */
-.tiroir-filtres {
-  margin: 4px 0 16px;
-  border-radius: var(--rayon);
-  background: var(--carte-basse);
-  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+/* Filtres de l'écran Proposer. Sur téléphone, une seule rangée qui
+   défile du pouce et déborde jusqu'aux bords de l'écran : la puce coupée
+   au bord droit dit qu'il y en a d'autres, sans flèche ni libellé. Le
+   masque estompe les deux extrémités pour que la coupe se lise comme une
+   suite, pas comme un défaut de mise en page. */
+.filtres {
+  margin: 4px -20px 12px;
 }
 
-.tiroir-filtres summary {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 48px;
-  padding: 0 16px;
-  border-radius: var(--rayon);
-  cursor: pointer;
-  list-style: none;
-  font-weight: 700;
-  transition: color var(--court3) var(--standard);
-}
-
-@media (hover: hover) {
-  .tiroir-filtres summary:hover {
-    color: var(--accent);
-  }
-}
-
-.tiroir-filtres summary::-webkit-details-marker {
+.filtres-titre {
   display: none;
 }
 
-.tiroir-filtres summary em {
+.puces-defilantes {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 20px;
+  margin: 0;
+  /* De la place pour le rebond d'appui (scale) et l'ombre des puces, que
+     `overflow` rognerait sinon. */
+  padding: 4px 20px 8px;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 28px), transparent);
+}
+
+.puces-defilantes::-webkit-scrollbar {
+  display: none;
+}
+
+.puces-defilantes .puce {
+  scroll-snap-align: start;
+  white-space: nowrap;
+}
+
+.puce-temps {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.puce-effacer em,
+.filtres-titre em {
   font-style: normal;
   font-size: 12px;
   font-weight: 700;
-  padding: 2px 8px;
+  min-width: 20px;
+  padding: 1px 7px;
   border-radius: 999px;
+  background: var(--terracotta-doux);
+  color: var(--terracotta);
+  text-align: center;
+}
+
+.filtres-titre em {
   background: var(--accent-doux);
   color: var(--accent);
-}
-
-.tiroir-filtres summary svg {
-  margin-left: auto;
-  color: var(--encre-douce);
-  transition: transform var(--court4) var(--standard);
-}
-
-.tiroir-filtres[open] summary svg {
-  transform: rotate(90deg);
-}
-
-.tiroir-filtres .puces {
-  margin: 0;
-  padding: 0 16px 16px;
 }
 
 button.principal {
@@ -2859,6 +3346,98 @@ button.pastille-synchro:active {
   opacity: 0.8;
 }
 
+/* Bandeau des courses : compte à gauche, « Envoyer » à droite, la jauge
+   sur toute la largeur dessous. ~100 px là où deux tuiles et un bouton
+   en prenaient 300 avant le premier produit. */
+.resume-courses {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 4px 12px;
+  margin-bottom: 8px;
+  padding: 14px 16px 16px;
+  border-radius: var(--rayon);
+  background: var(--accent-doux);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.resume-courses .carte-resume-label {
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+.resume-courses-nombre {
+  margin: 2px 0 0;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+
+.resume-courses-nombre b {
+  font-family: var(--affichage);
+  font-size: 30px;
+  letter-spacing: -0.02em;
+}
+
+.resume-courses-envoyer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--carte);
+  color: var(--encre);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+  transition: transform var(--court3) var(--ressort);
+}
+
+.resume-courses-envoyer:active {
+  transform: scale(0.95);
+}
+
+.resume-courses .jauge-courses {
+  grid-column: 1 / -1;
+  margin-top: 10px;
+}
+
+.caddie + .aide {
+  margin-top: 16px;
+}
+
+/* Jauge des courses : une piste pâle, le rempli à l'accent. Elle grandit
+   par `scaleX` depuis la gauche plutôt que par sa largeur — le seul
+   moyen de l'animer sans remesurer la carte à chaque case cochée. */
+.jauge-courses {
+  position: relative;
+  z-index: 1;
+  height: 8px;
+  margin-top: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.jauge-courses span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transform-origin: left center;
+  transition: transform var(--moyen3) var(--sortie);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jauge-courses span {
+    transition: none;
+  }
+}
+
 /* La photo du plat en fond, le titre posé dessus sur un voile qui remonte
    du bas. Le fond teinté tiré du titre reste dessous, en repli pour les
    recettes sans photo — mais il ne fait plus surface pleine : un magenta
@@ -2937,41 +3516,380 @@ button.pastille-synchro:active {
   text-wrap: balance;
 }
 
-.bascule-mode {
+/* --- Liste : deux étapes, « chez moi » puis « au magasin » ----------------
+
+   Un stepper plutôt qu'une bascule : les deux moitiés de l'écran ne se
+   valent pas, elles se suivent. Le numéro rond dit l'ordre ; la première
+   étape terminée prend une coche ; le trait entre les deux se remplit. */
+.etapes-liste {
   display: flex;
-  gap: 4px;
-  background: var(--carte-haute);
-  border-radius: 999px;
-  padding: 4px;
-  margin: 4px 0 20px;
-  /* Le rail est un creux, le bouton actif un curseur posé dedans. */
-  box-shadow: inset 0 1px 2px rgb(32 27 12 / 0.06), inset 0 0 0 1px var(--filet);
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 16px;
 }
 
-.bascule-mode-bouton {
-  flex: 1;
+.etape-liste {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   min-height: 44px;
+  padding: 0 14px 0 6px;
   border: 0;
   border-radius: 999px;
   background: transparent;
   color: var(--encre-douce);
   font: inherit;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
+  transition: background-color var(--court4) var(--standard), color var(--court4) var(--standard),
+    transform var(--court3) var(--ressort);
+}
+
+.etape-liste:active {
+  transform: scale(0.96);
+}
+
+.etape-liste[aria-selected='true'] {
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+.etape-liste-numero {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--carte-haute);
+  box-shadow: inset 0 0 0 1.5px var(--trait);
+  font-family: var(--affichage);
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
   transition: background-color var(--court4) var(--standard), color var(--court4) var(--standard);
 }
 
-.bascule-mode-bouton[aria-pressed='true'] {
-  background: var(--accent-doux);
-  color: var(--accent);
-  box-shadow: 0 1px 2px rgb(32 27 12 / 0.08);
+.etape-liste[aria-selected='true'] .etape-liste-numero,
+.etape-liste[data-faite='true'] .etape-liste-numero {
+  background: var(--accent);
+  color: var(--sur-accent);
+  box-shadow: none;
+}
+
+.etape-liste-trait {
+  flex: 1;
+  min-width: 12px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--trait);
+}
+
+.etape-liste[data-faite='true'] + .etape-liste-trait {
+  background: var(--accent);
 }
 
 @media (hover: hover) {
-  .bascule-mode-bouton:not([aria-pressed='true']):hover {
+  .etape-liste:not([aria-selected='true']):hover {
     color: var(--encre);
   }
+}
+
+/* La carte qui dit ce qu'on attend de soi. C'était une ligne d'aide grise
+   au-dessus d'une liste de cases : on ne savait pas si cocher voulait dire
+   « à acheter » ou « je l'ai ». Ici, une question, la consigne, et les
+   deux tas comptés en direct. */
+.carte-chez-moi {
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+  border-radius: var(--rayon-grand);
+  background: linear-gradient(160deg, var(--carte-basse), var(--carte-haute));
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+}
+
+.carte-chez-moi::after {
+  content: '🏠';
+  position: absolute;
+  right: -10px;
+  top: -14px;
+  font-size: 104px;
+  line-height: 1;
+  opacity: 0.12;
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+
+.carte-chez-moi > * {
+  position: relative;
+  z-index: 1;
+}
+
+.carte-chez-moi-etape {
+  margin: 0;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.carte-chez-moi h2 {
+  margin: 6px 0 6px;
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.carte-chez-moi-texte {
+  margin: 0;
+  color: var(--encre-douce);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.compteurs-chez-moi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* Les deux tas restent sur une ligne jusqu'aux petits écrans : passés
+   l'un sous l'autre, ils se lisaient comme deux informations sans lien
+   au lieu des deux plateaux d'une même balance. */
+@media (max-width: 380px) {
+  .carte-chez-moi {
+    padding: 18px 16px;
+  }
+
+  .carte-chez-moi h2 {
+    font-size: 25px;
+  }
+
+  .compteurs-chez-moi {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .compteur-chez-moi {
+    gap: 5px;
+    padding: 0 10px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+.compteur-chez-moi {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--carte);
+  color: var(--encre-douce);
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--filet);
+}
+
+.compteur-chez-moi b {
+  color: var(--encre);
+  font-family: var(--affichage);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.compteur-chez-moi[data-tas='maison'] {
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+
+.compteur-chez-moi[data-tas='maison'] b {
+  color: var(--accent);
+}
+
+.placard-note {
+  margin: 14px 0 0;
+  color: var(--encre-douce);
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+/* En-tête de rayon de la passe « chez moi » : le compte « 2/5 » à
+   droite dit ce qu'il reste à vérifier dans ce coin de cuisine. */
+.entete-rayon-compte {
+  margin-left: auto;
+  color: var(--encre-douce);
+  font-family: var(--texte);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tuiles à la Bring! : trois par rangée sur un téléphone, un pictogramme
+   qu'on reconnaît avant de lire. Neutre = part sur la liste ; touchée =
+   verte, cochée, « Chez moi » à la place de la quantité. Le changement
+   tient à trois signaux à la fois (fond, coche, libellé) : jamais à la
+   seule couleur. */
+.tuiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.tuile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  min-height: 118px;
+  padding: 14px 8px 12px;
+  border: 0;
+  border-radius: var(--rayon);
+  background: var(--carte);
+  color: var(--encre);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--court3) var(--ressort), background-color var(--court4) var(--standard),
+    box-shadow var(--court4) var(--standard);
+}
+
+.tuile:active {
+  transform: scale(0.94);
+}
+
+.tuile-emoji {
+  font-size: 34px;
+  line-height: 1.1;
+  transition: transform var(--court4) var(--ressort), opacity var(--court4) var(--standard);
+}
+
+.tuile-nom {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.tuile-nom::first-letter {
+  text-transform: uppercase;
+}
+
+.tuile-qte {
+  margin-top: auto;
+  color: var(--encre-douce);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tuile-coche {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--sur-accent);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity var(--court3) var(--standard), transform var(--court4) var(--ressort);
+}
+
+.tuile[data-chez-moi='true'] {
+  background: var(--accent-doux);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.tuile[data-chez-moi='true'] .tuile-emoji {
+  transform: scale(0.9);
+  opacity: 0.75;
+}
+
+.tuile[data-chez-moi='true'] .tuile-nom,
+.tuile[data-chez-moi='true'] .tuile-qte {
+  color: var(--accent);
+}
+
+.tuile[data-chez-moi='true'] .tuile-qte {
+  font-weight: 700;
+}
+
+.tuile[data-chez-moi='true'] .tuile-coche {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (hover: hover) {
+  .tuile:not([data-chez-moi='true']):hover {
+    box-shadow: inset 0 0 0 1px var(--filet-fort), var(--ombre);
+  }
+}
+
+/* Sous la barre d'onglets, l'action « Passer aux courses » flotte : la
+   carte du haut doit pouvoir défiler sous elle sans s'y cogner. */
+.corps-chez-moi .rayon-chez-moi:last-of-type {
+  margin-bottom: 8px;
+}
+
+/* « Dans le caddie » : ce qui est pris descend ici, replié. Ouvert, il
+   montre les lignes barrées, qu'un toucher remet en rayon. */
+.caddie {
+  margin-top: 28px;
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet);
+}
+
+.caddie summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--pouce);
+  padding: 8px 14px;
+  border-radius: var(--rayon);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 700;
+}
+
+.caddie summary::-webkit-details-marker {
+  display: none;
+}
+
+.caddie summary > svg {
+  margin-left: auto;
+  color: var(--encre-douce);
+  transition: transform var(--court4) var(--standard);
+}
+
+.caddie[open] summary > svg {
+  transform: rotate(90deg);
+}
+
+.badge-caddie {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  color: var(--accent);
+  background: var(--accent-doux);
+}
+
+.caddie > .rangee-avec-suppr {
+  padding: 0 8px;
 }
 
 .carte-panier {
@@ -3063,6 +3981,24 @@ button.carte-panier-bouton .carte-panier-corps {
   min-height: 150px;
 }
 
+/* En fin de liste, sur toute la largeur : une bande basse, le titre à
+   gauche, l'assiette à droite à moitié hors cadre. */
+.corps-liste > .carte-prochaine-cuisson,
+.corps-liste > .carte-prochaine-cuisson:has(.assiette) {
+  align-items: center;
+  min-height: 88px;
+  margin-top: 24px;
+  padding: 16px 20px;
+}
+
+.corps-liste > .carte-prochaine-cuisson .assiette {
+  width: 104px;
+  top: 50%;
+  bottom: auto;
+  right: -14px;
+  transform: translateY(-50%);
+}
+
 .carte-panier-corps {
   flex: 1;
   min-width: 0;
@@ -3085,14 +4021,16 @@ button.carte-panier-bouton .carte-panier-corps {
   color: var(--encre-douce);
 }
 
+/* Deux raccourcis, pas deux destinations : une icône et un libellé sur
+   une ligne. Hauts de 160 px, ils occupaient un demi-écran sous le panier
+   et repoussaient le bouton de la liste — le seul qu'on vient chercher. */
 .carte-bento {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
   width: 100%;
-  height: 160px;
-  padding: 20px;
+  min-height: 72px;
+  padding: 12px 14px;
   border: 0;
   border-radius: var(--rayon);
   background: var(--accent-doux);
@@ -3125,11 +4063,32 @@ button.carte-panier-bouton .carte-panier-corps {
   transform: scale(0.98);
 }
 
+.zone-vider {
+  margin-top: 28px;
+}
+
+/* Les « − / + » des parts au panier : 40 px plutôt que 34 — on les
+   touche plusieurs fois de suite, souvent d'une main. */
+.carte-panier .compteur button {
+  width: 40px;
+  height: 40px;
+}
+
+.zone-vider-texte {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  text-align: center;
+}
+
+.carte-bento svg {
+  flex: none;
+}
+
 .carte-bento p {
   margin: 0;
   text-align: left;
   font-family: var(--affichage);
-  font-size: 18px;
+  font-size: 15.5px;
   font-weight: 600;
   line-height: 1.2;
 }
@@ -3226,7 +4185,9 @@ button.carte-panier-bouton .carte-panier-corps {
   font-family: var(--affichage);
   font-size: 20px;
   font-weight: 700;
-  color: var(--terracotta);
+  /* À l'encre : le terracotta se garde pour ce qui se rattrape (voir la
+     règle 3 en tête de feuille), et un nombre de parts n'en est pas. */
+  color: var(--encre);
   font-variant-numeric: tabular-nums;
 }
 
@@ -3477,6 +4438,33 @@ button.carte-panier-bouton .carte-panier-corps {
   padding: 8px 0 18px;
 }
 
+/* L'étape entre du côté d'où on vient : de la droite en avançant, de
+   la gauche en reculant. Un glissement court (24 px) et un fondu — de
+   quoi sentir la page tourner, pas de quoi attendre qu'elle ait fini. */
+@media (prefers-reduced-motion: no-preference) {
+  .cuisson-corps[data-sens='avant'] {
+    animation: etape-avant var(--moyen2) var(--sortie) both;
+  }
+
+  .cuisson-corps[data-sens='arriere'] {
+    animation: etape-arriere var(--moyen2) var(--sortie) both;
+  }
+}
+
+@keyframes etape-avant {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes etape-arriere {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
 /* Les doses de l'étape, sorties de la phrase et posées juste au-dessus.
    On les lit d'un coup d'œil — « 60 g ail », « 400 g tofu soyeux » —
    pendant que la consigne en dessous reste une phrase. En ligne et non
@@ -3486,24 +4474,52 @@ button.carte-panier-bouton .carte-panier-corps {
    `auto` en bas sur .etape-titre) centrent les deux ensemble dans la
    zone qui défile, sans figer la hauteur ni rogner une étape longue. */
 .doses-etape {
-  margin: auto 0 16px;
+  margin: auto 0 18px;
   padding: 0;
   list-style: none;
   display: flex;
   flex: none;
   flex-wrap: wrap;
-  gap: 6px 14px;
+  gap: 8px;
   font-size: 16px;
   line-height: 1.3;
-  opacity: 0.85;
 }
 
-/* Le nom en retrait, la dose en avant : c'est le nombre qu'on vient
-   chercher, le nom ne sert qu'à savoir de quoi il parle. */
-.doses-etape li {
+/* L'indice de glissement, sous l'étape 1 : discret, centré, et absent
+   là où il n'y a pas de doigt pour glisser. */
+.astuce-glisser {
   display: flex;
-  gap: 5px;
-  align-items: baseline;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 0 8px;
+  font-size: 13px;
+  opacity: 0.55;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .astuce-glisser {
+    display: none;
+  }
+}
+
+/* Une pastille par ingrédient, son pictogramme devant : à 60 cm, on
+   repère « 🌾 250 g » d'un coup d'œil, là où une ligne de mots collés
+   (« 250 g semoule fine 2 citron ») se lisait comme une phrase. Le nom
+   en retrait, la dose en avant : c'est le nombre qu'on vient chercher. */
+.doses-etape li {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 9%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.doses-etape li > span {
+  font-size: 18px;
+  line-height: 1;
 }
 
 .doses-etape b {
@@ -4891,20 +5907,36 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
     margin-top: 24px;
   }
 
-  .corps-propose .tiroir-filtres {
+  .corps-propose .filtres {
     position: sticky;
     top: 96px;
     margin: 0;
+    padding: 16px;
+    border-radius: var(--rayon);
+    background: var(--carte-basse);
+    box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+  }
+
+  .corps-propose .filtres-titre {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px;
+    font-weight: 700;
   }
 
   .corps-propose .puces {
     flex-direction: column;
     overflow: visible;
     gap: 6px;
+    padding: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .corps-propose .puce {
     width: 100%;
+    justify-content: flex-start;
     text-align: left;
   }
 
@@ -5299,6 +6331,31 @@ html[data-gele='true'] body {
   color: var(--encre-douce);
 }
 
+/* Sur téléphone, entre deux sections du catalogue : une ligne fine, le
+   sous-titre en moins. Le geste est rare, il n'a pas à peser autant
+   qu'une rangée de plats. */
+@media (max-width: 899px) {
+  .catalogue .zone-ajout {
+    margin: 4px 0 20px;
+  }
+
+  .bande-ajout {
+    padding: 8px 14px 8px 8px;
+    border-width: 1.5px;
+    border-radius: 999px;
+  }
+
+  .bande-ajout-rond {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .bande-ajout-texte em {
+    display: none;
+  }
+}
+
 .panneau-ajout {
   padding: 16px;
   border: 2px solid var(--accent-doux);
@@ -5327,47 +6384,68 @@ html[data-gele='true'] body {
   gap: 12px;
 }
 
+/* Trois façons d'ajouter, en liste d'options : l'icône à gauche, le
+   titre et une ligne d'explication, le chevron qui dit « ça ouvre la
+   suite ». En cartes empilées, les trois tenaient plus d'un écran pour
+   un simple choix. */
 .carte-methode {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  padding: 18px;
-  border: 2px solid var(--trait);
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 14px;
+  row-gap: 2px;
+  min-height: 72px;
+  padding: 12px 14px;
+  border: 0;
   border-radius: var(--rayon);
   background: var(--carte-basse);
   color: var(--encre);
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition: border-color var(--court2) var(--standard), transform var(--court2) var(--standard);
+  box-shadow: inset 0 0 0 1px var(--filet);
+  transition: box-shadow var(--court2) var(--standard), transform var(--court3) var(--ressort);
 }
 
 .carte-methode:active {
-  transform: scale(0.99);
-  border-color: var(--accent);
+  transform: scale(0.98);
+  box-shadow: inset 0 0 0 2px var(--accent);
 }
 
 .carte-methode-rond {
-  width: 40px;
-  height: 40px;
+  grid-row: 1 / 3;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
-  border-radius: 50%;
+  border-radius: 14px;
   background: var(--accent-doux);
   color: var(--accent);
-  margin-bottom: 2px;
 }
 
 .carte-methode b {
+  align-self: end;
   font-family: var(--affichage);
-  font-size: 17px;
+  font-size: 16.5px;
   font-weight: 600;
 }
 
 .carte-methode em {
+  align-self: start;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   font-style: normal;
-  font-size: 14px;
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: var(--encre-douce);
+}
+
+.carte-methode > svg:last-child {
+  grid-column: 3;
+  grid-row: 1 / 3;
   color: var(--encre-douce);
 }
 
@@ -5731,22 +6809,34 @@ button.vignette-mini-bouton:active {
   font-size: 0.85rem;
 }
 
+/* Les trois chiffres du profil dans une carte, séparés d'un filet —
+   même forme que le bandeau Temps · Ingrédients · Étapes de la fiche.
+   Posés à nu sur le papier, ils flottaient entre deux cartes. */
 .profil-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
   margin: 12px 0 4px;
+  padding: 14px 4px;
+  border-radius: var(--rayon);
+  background: var(--carte);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
   text-align: center;
+}
+
+.profil-stats > * + * {
+  border-left: 1px solid var(--filet-fort);
 }
 
 .profil-stats b {
   display: block;
+  font-family: var(--affichage);
   font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .profil-stats span {
+  color: var(--encre-douce);
   font-size: 0.78rem;
-  opacity: 0.75;
 }
 
 .profil-collection {
@@ -5802,4 +6892,39 @@ button.vignette-mini-bouton:active {
   margin: 4px 0 0;
   font-size: 0.85rem;
   opacity: 0.8;
+}
+
+/* --- Réglages : groupes en cartes ------------------------------------------
+
+   Comme les réglages du téléphone : chaque sujet dans sa carte, le titre
+   en tête, l'explication en petit. Avant, neuf titres et leurs
+   paragraphes se suivaient sur le papier sans rien pour dire où un sujet
+   finissait — l'écran se lisait comme une notice. */
+.groupe-reglages {
+  margin: 16px 0 0;
+  padding: 2px 18px 18px;
+  border-radius: var(--rayon);
+  background: var(--carte);
+  box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+}
+
+.groupe-reglages > h2 {
+  margin: 16px 0 6px;
+  font-size: 19px;
+}
+
+.groupe-reglages .aide {
+  font-size: 14.5px;
+}
+
+.groupe-reglages .titre-secondaire {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--filet-fort);
+}
+
+.groupe-reglages > h2 + .titre-secondaire {
+  margin-top: 4px;
+  padding-top: 0;
+  border-top: 0;
 }

@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Recipe, Verdict } from '../types'
 import { dosesDeLEtape, etapeEnTexte, formatQuantite } from '../lib/aggregate'
-import { formatDuree, minuteursDeLEtape } from '../lib/duree'
+import { formatDuree, formatMinutes, minuteursDeLEtape } from '../lib/duree'
 import { useWakeLock } from '../hooks/useWakeLock'
 import type { Minuteurs } from '../hooks/useMinuteurs'
 import { ecrireProgression, lireProgression, oublierProgression } from '../lib/progressionCuisson'
 import { useLangue } from '../lib/i18n'
+import { emojiIngredient } from '../lib/emojiIngredient'
 import { recetteAffichee } from '../lib/traduireRecette'
 import BandeauMinuteur from '../components/BandeauMinuteur'
 import { mesurer } from '../lib/mesure'
@@ -52,6 +53,50 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
   // sait lire `dosesDeLEtape`.
   const affichee = useMemo(() => recetteAffichee(recette, langue), [recette, langue])
 
+  /**
+   * Changer d'étape d'un revers de doigt, comme on tourne la page d'un
+   * livre de cuisine posé à plat : les mains sont pleines de farine, viser
+   * « Suivant » en bas de l'écran demande plus que balayer n'importe où.
+   * Le sens retenu joue l'entrée de l'étape du bon côté. On ne termine
+   * jamais la recette par un glissement — la dernière étape se ferme par
+   * le bouton, exprès.
+   */
+  const [sens, setSens] = useState<'avant' | 'arriere'>('avant')
+  const aller = (cible: number) => {
+    if (cible < 0 || cible >= recette.etapes.length) return
+    setSens(cible < index ? 'arriere' : 'avant')
+    setIndex(cible)
+  }
+  const depart = useRef<{ x: number; y: number } | null>(null)
+  const debutGlisse = (e: React.TouchEvent) => {
+    const doigt = e.touches[0]
+    depart.current = doigt ? { x: doigt.clientX, y: doigt.clientY } : null
+  }
+  const finGlisse = (e: React.TouchEvent) => {
+    const debut = depart.current
+    const doigt = e.changedTouches[0]
+    depart.current = null
+    if (!debut || !doigt) return
+    const dx = doigt.clientX - debut.x
+    const dy = doigt.clientY - debut.y
+    // Un défilement vertical d'une étape longue ne doit pas tourner la page.
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return
+    aller(dx < 0 ? index + 1 : index - 1)
+  }
+
+  // Les flèches du clavier, pour une tablette avec clavier ou un écran
+  // d'ordinateur posé sur le plan de travail.
+  useEffect(() => {
+    if (index < 0) return
+    const touche = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLElement && e.target.closest('input, textarea')) return
+      if (e.key === 'ArrowRight') aller(index + 1)
+      if (e.key === 'ArrowLeft') aller(index - 1)
+    }
+    window.addEventListener('keydown', touche)
+    return () => window.removeEventListener('keydown', touche)
+  })
+
   const etape = affichee.etapes[index] ?? ''
   const proposes = useMemo(() => minuteursDeLEtape(etape), [etape])
 
@@ -64,12 +109,16 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
   const doses = useMemo(() => {
     const source = recette.etapes[index]
     if (source === undefined) return []
-    const parNom = new Map(affichee.ingredients.map((ing) => [ing.nom, ing.affichage]))
-    return dosesDeLEtape(source, recette.ingredients).map((ing) => ({
-      cle: ing.nom,
-      nom: parNom.get(ing.nom) ?? ing.nom,
-      quantite: formatQuantite(ing),
-    }))
+    const parNom = new Map(affichee.ingredients.map((ing) => [ing.nom, ing]))
+    return dosesDeLEtape(source, recette.ingredients).map((ing) => {
+      const complet = parNom.get(ing.nom)
+      return {
+        cle: ing.nom,
+        nom: complet?.affichage ?? ing.nom,
+        quantite: formatQuantite(ing),
+        emoji: emojiIngredient(ing.nom, complet?.rayon ?? 'autre'),
+      }
+    })
   }, [recette, affichee, index])
 
   const fini = index >= recette.etapes.length
@@ -102,13 +151,16 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           {!recette.image && <VignettePlaceholder recette={recette} />}
           <ImageRecette src={recette.image} />
           <span className="badge-temps">
-            <Icone nom="minuteur" taille={14} /> {t('detail.minutes', { n: recette.temps })}
+            <Icone nom="minuteur" taille={14} /> {formatMinutes(recette.temps, t)}
           </span>
         </div>
 
         <h2>{t('cuisson.titreIngredients', { n: affichee.ingredients.length })}</h2>
         {affichee.ingredients.map((ing) => (
-          <div className="rangee rangee-lecture" key={ing.nom}>
+          <div className="rangee rangee-lecture rangee-ingredient" key={ing.nom}>
+            <span className="emoji-ingredient" aria-hidden="true">
+              {emojiIngredient(ing.nom, ing.rayon)}
+            </span>
             <span className="nom">{ing.affichage}</span>
             <span className="qte">{formatQuantite(ing)}</span>
           </div>
@@ -253,7 +305,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
                 data-fait={i <= index}
                 aria-current={i === index ? 'step' : undefined}
                 aria-label={t('cuisson.allerAEtape', { n: i + 1 })}
-                onClick={() => setIndex(i)}
+                onClick={() => aller(i)}
               />
             ))}
           </div>
@@ -291,7 +343,13 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
 
       {/* Seule zone qui défile : une étape longue ne pousse plus les
           boutons hors de l'écran. */}
-      <div className="cuisson-corps" key={index}>
+      <div
+        className="cuisson-corps"
+        key={index}
+        data-sens={sens}
+        onTouchStart={debutGlisse}
+        onTouchEnd={finGlisse}
+      >
         {/* La dose n'est plus dans la phrase. « Faire revenir l'ail
             60 g dans la poêle » se lit deux fois : une pour la
             consigne, une pour le nombre. Les quantités montent donc
@@ -301,6 +359,7 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
           <ul className="doses-etape" aria-label={t('cuisson.dosesDeLEtape')}>
             {doses.map((d) => (
               <li key={d.cle}>
+                <span aria-hidden="true">{d.emoji}</span>
                 <b>{d.quantite}</b> {d.nom}
               </li>
             ))}
@@ -336,13 +395,27 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
         )}
       </div>
 
+      {/* Un geste ne se devine pas : sur la première étape, une ligne dit
+          qu'on peut glisser. Écrans tactiles seulement (voir styles.css). */}
+      {index === 0 && recette.etapes.length > 1 && (
+        <p className="astuce-glisser" aria-hidden="true">
+          <Icone nom="precedent" taille={14} /> {t('cuisson.astuceGlisser')} <Icone nom="suivant" taille={14} />
+        </p>
+      )}
+
       <div className="cuisson-actions">
         {index > 0 && (
-          <button className="bouton-cuisson bouton-cuisson-secondaire" onClick={() => setIndex(index - 1)}>
+          <button className="bouton-cuisson bouton-cuisson-secondaire" onClick={() => aller(index - 1)}>
             <Icone nom="precedent" taille={20} /> {t('cuisson.precedent')}
           </button>
         )}
-        <button className="bouton-cuisson bouton-cuisson-principal" onClick={() => setIndex(index + 1)}>
+        <button
+          className="bouton-cuisson bouton-cuisson-principal"
+          onClick={() => {
+            setSens('avant')
+            setIndex(index + 1)
+          }}
+        >
           {index + 1 === recette.etapes.length ? t('cuisson.termine') : (
             <>
               {t('cuisson.suivant')} <Icone nom="suivant" taille={20} />

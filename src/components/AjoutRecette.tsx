@@ -81,6 +81,7 @@ export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tags
               </span>
               <b>{t('ajouter.choixLienTitre')}</b>
               <em>{t('ajouter.choixLienTexte')}</em>
+              <Icone nom="suivant" taille={18} />
             </button>
             <button className="carte-methode" onClick={() => setMethode('main')}>
               <span className="carte-methode-rond">
@@ -88,6 +89,7 @@ export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tags
               </span>
               <b>{t('ajouter.choixMainTitre')}</b>
               <em>{t('ajouter.choixMainTexte')}</em>
+              <Icone nom="suivant" taille={18} />
             </button>
             <button className="carte-methode" onClick={() => setMethode('ia')}>
               <span className="carte-methode-rond">
@@ -95,6 +97,7 @@ export default function AjoutRecette({ onAjouter, onFerme, titresExistants, tags
               </span>
               <b>{t('ajouter.choixIaTitre')}</b>
               <em>{t('ajouter.choixIaTexte')}</em>
+              <Icone nom="suivant" taille={18} />
             </button>
           </div>
         </>
