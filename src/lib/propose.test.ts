@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { proposer, type Historique } from './propose'
+import { grouperTags, proposer, type Historique } from './propose'
 import type { Recipe } from '../types'
 
 const recette = (id: string, temps = 30, tags: string[] = []): Recipe => ({
@@ -36,5 +36,12 @@ assert.equal(proposer([recette('lent', 60), recette('vif', 15)], VIDE, { tempsMa
 const hier: Historique = { derniereFois: { a: Date.now() - 86_400_000 }, verdicts: {} }
 const classe = ids(proposer(CORPUS, hier, { nombre: CORPUS.length })).split(',')
 assert.ok(classe.indexOf('a') > classe.indexOf('b'))
+
+// Les tags se rangent par groupe ; un tag inconnu reste filtrable.
+assert.deepEqual(grouperTags(['four', 'rapide', 'brunch']), [
+  { groupe: 'envie', tags: ['rapide'] },
+  { groupe: 'cuisson', tags: ['four'] },
+  { groupe: 'autres', tags: ['brunch'] },
+])
 
 console.log('ok')

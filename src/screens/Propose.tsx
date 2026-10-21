@@ -1,9 +1,10 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { BasketEntry, Recipe } from '../types'
-import { type Historique, proposer, tousLesTags } from '../lib/propose'
+import { type Historique, grouperTags, proposer, tousLesTags } from '../lib/propose'
 import { estFavorite } from '../lib/favoris'
 import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
+import { nomTag } from '../lib/traduireRecette'
 import { formatMinutes } from '../lib/duree'
 import { mesurer } from '../lib/mesure'
 import { vibrer } from '../lib/haptique'
@@ -60,11 +61,12 @@ export default function Propose({
   bandeau,
   onVersPanier,
 }: Props) {
-  const { t } = useLangue()
+  const { t, langue } = useLangue()
   const [recherche, setRecherche] = useState('')
   const [tempsMax, setTempsMax] = useState<number | null>(null)
   const [favorisSeuls, setFavorisSeuls] = useState(false)
   const [tags, setTags] = useState<string[]>([])
+  const [filtresOuverts, setFiltresOuverts] = useState(false)
   /**
    * L'ajout d'une recette vit ici, dans la page où l'on regarde son
    * catalogue — c'est là qu'on se rend compte qu'il manque un plat.
@@ -168,6 +170,7 @@ export default function Propose({
   // `Set` répond sans reparcourir le panier, trois fois par carte.
   const idsPanier = useMemo(() => new Set(basket.map((e) => e.recipeId)), [basket])
   const tagsConnus = useMemo(() => tousLesTags(recipes), [recipes])
+  const groupesTags = useMemo(() => grouperTags(tagsConnus), [tagsConnus])
 
   /**
    * La dernière carte touchée, seule autorisée à jouer l'animation
@@ -307,25 +310,33 @@ export default function Propose({
 
       <div className="corps-propose">
         {bandeau}
-        {/* Les filtres restent sous les yeux, en une rangée qui défile du
-            pouce : repliés dans un tiroir, personne ne les ouvrait, et
-            dépliés en nuage ils repoussaient la grille sous la ligne de
-            flottaison. Une seule ligne règle les deux. Sur desktop, la même
-            liste devient une colonne fixe à gauche de la grille. */}
-        <div className="filtres" data-tour="filtres-propose">
+        {/* Les filtres passent à la ligne au lieu de défiler : la rangée
+            qu'on faisait glisser du pouce cachait la moitié des choix hors
+            champ, et un glissement mal parti ouvrait une fiche. Le temps
+            est un sélecteur à quatre cases — un seul choix à la fois, tout
+            visible d'un coup. Les tags, trop nombreux pour tenir à l'écran
+            sans repousser la grille, sont rangés par groupe dans un panneau
+            qu'on déplie ; ceux qui sont actifs restent visibles replié.
+            Sur desktop, le panneau est toujours ouvert dans la colonne. */}
+        <div className="filtres" data-tour="filtres-propose" data-ouvert={filtresOuverts ? 'true' : 'false'}>
           <p className="filtres-titre">
             {t('propose.filtres')}
             {nombreFiltres > 0 && <em>{nombreFiltres}</em>}
           </p>
-          <div className="puces puces-defilantes" role="group" aria-label={t('propose.filtres')}>
-            {/* En tête de rangée, avec le compte : un filtre actif peut être
-                hors champ, au bout de la rangée — celle-ci dit qu'il existe
-                et le retire d'un doigt. */}
-            {nombreFiltres > 0 && (
-              <button className="puce puce-effacer" onClick={toutEffacer}>
-                <Icone nom="fermer" taille={14} /> {t('propose.toutEffacer')} <em>{nombreFiltres}</em>
+          <div className="segments-temps" role="radiogroup" aria-label={t('propose.temps')}>
+            <Icone nom="minuteur" taille={16} />
+            {[null, ...TEMPS].map((mn) => (
+              <button
+                key={mn ?? 'tous'}
+                role="radio"
+                aria-checked={tempsMax === mn}
+                onClick={() => setTempsMax(mn)}
+              >
+                {mn === null ? t('propose.tempsTous') : t('propose.minutes', { n: mn })}
               </button>
-            )}
+            ))}
+          </div>
+          <div className="puces filtres-rapides">
             {/* La catégorie tient dans une puce, au milieu des autres
                 filtres : c'est une façon de plus de trancher dans le même
                 catalogue, pas un cinquième onglet — les favoris restent des
@@ -337,25 +348,45 @@ export default function Propose({
             >
               <Icone nom="coeur" taille={14} /> {t('propose.favoris')}
             </button>
-            {TEMPS.map((mn) => (
-              <button
-                key={mn}
-                className="puce puce-temps"
-                aria-pressed={tempsMax === mn}
-                onClick={() => setTempsMax(tempsMax === mn ? null : mn)}
-              >
-                <Icone nom="minuteur" taille={14} /> {t('propose.minutesMax', { n: mn })}
+            {!filtresOuverts &&
+              tags.map((tag) => (
+                <button key={tag} className="puce puce-active" aria-pressed="true" onClick={() => basculerTag(tag)}>
+                  {nomTag(tag, langue)} <Icone nom="fermer" taille={12} />
+                </button>
+              ))}
+            <button
+              className="puce puce-plus"
+              aria-expanded={filtresOuverts}
+              onClick={() => setFiltresOuverts(!filtresOuverts)}
+            >
+              {filtresOuverts ? t('propose.moinsDeFiltres') : t('propose.plusDeFiltres')}
+              <Icone nom="suivant" taille={14} />
+            </button>
+            {nombreFiltres > 0 && (
+              <button className="puce puce-effacer" onClick={toutEffacer}>
+                <Icone nom="fermer" taille={14} /> {t('propose.toutEffacer')} <em>{nombreFiltres}</em>
               </button>
-            ))}
-            {tagsConnus.map((tag) => (
-              <button
-                key={tag}
-                className="puce"
-                aria-pressed={tags.includes(tag)}
-                onClick={() => basculerTag(tag)}
-              >
-                {tag}
-              </button>
+            )}
+          </div>
+          <div className="filtres-groupes">
+            {groupesTags.map(({ groupe, tags: duGroupe }) => (
+              <div key={groupe} className="filtres-groupe" role="group" aria-labelledby={`groupe-${groupe}`}>
+                <p className="filtres-groupe-titre" id={`groupe-${groupe}`}>
+                  {t(`propose.groupesTags.${groupe}`)}
+                </p>
+                <div className="puces">
+                  {duGroupe.map((tag) => (
+                    <button
+                      key={tag}
+                      className="puce"
+                      aria-pressed={tags.includes(tag)}
+                      onClick={() => basculerTag(tag)}
+                    >
+                      {nomTag(tag, langue)}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>

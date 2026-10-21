@@ -1,6 +1,7 @@
 {
   "mapo-tofu": {
     "titre": "Mapo tofu",
+    "description": "Silky tofu in a fiery fermented-chilli sauce, with Sichuan pepper that tingles on the tongue.",
     "etapes": [
       "Start the rice. Cut the tofu into 2 cm cubes and set them aside in a bowl of warm water: they will hold together better while cooking.",
       "Chop the garlic, the ginger and the white part of the spring onions. Keep the green for the end.",
@@ -14,6 +15,7 @@
   },
   "falafel-bowl": {
     "titre": "Falafel bowl",
+    "description": "Oven-baked falafel, crisp outside and tender within, over a lemony couscous packed with fresh herbs.",
     "etapes": [
       "Heat the oven to 200 °C.",
       "Blend the drained chickpeas with the onion, the garlic, half the herbs, the cumin and the ground coriander. The texture should stay coarse, not smooth.",
@@ -25,6 +27,7 @@
   },
   "bowl-quinoa-legumes-rotis": {
     "titre": "Quinoa & roast vegetable bowl",
+    "description": "Roast squash, crispy chickpeas and kale on quinoa, finished with a lemony tahini drizzle.",
     "etapes": [
       "Heat the oven to 210 °C.",
       "Cut the red kuri squash into 3 cm cubes, toss with the chickpeas — well drained and dried — the oil, the cumin and the paprika.",
@@ -37,6 +40,7 @@
   },
   "patate-douce-farcie": {
     "titre": "Stuffed sweet potato",
+    "description": "A melting baked sweet potato split open and piled with spiced chickpeas and tahini yoghurt.",
     "etapes": [
       "Heat the oven to 200 °C. Prick the sweet potatoes with a fork and bake them whole 45 min, until a knife goes through without resistance.",
       "Halfway through, add the chickpeas to the tray, drained, oiled and tossed with the spices.",
@@ -47,6 +51,7 @@
   },
   "dahl-lentilles-corail": {
     "titre": "Red lentil dhal",
+    "description": "Red lentils simmered with coconut milk and spices until creamy. Gentle, warming and comforting.",
     "etapes": [
       "Slice the onion, chop the garlic, the ginger and the chilli.",
       "Fry the onion 5 min over medium heat until it turns translucent.",
@@ -58,6 +63,7 @@
   },
   "curry-pois-chiches-epinards": {
     "titre": "Chickpea & spinach curry",
+    "description": "A speedy curry where spinach wilts into a gingery tomato and coconut sauce.",
     "etapes": [
       "Start the rice.",
       "Fry the sliced onion 5 min, then add garlic, ginger and the spices except the garam masala.",
@@ -69,6 +75,7 @@
   },
   "tacos-poulet-avocat": {
     "titre": "Chicken & avocado tacos",
+    "description": "Tortillas filled with golden chicken, smashed avocado and lime-pickled red onion. Eat with your hands.",
     "etapes": [
       "Cut the chicken into strips, toss with the spices, the paprika, the oil and the juice of one lime. Marinate 10 min.",
       "Meanwhile, make the pico de gallo: cherry tomatoes quartered, half the red onion finely diced, coriander, lime juice.",
@@ -80,6 +87,7 @@
   },
   "poelee-asiatique-nouilles": {
     "titre": "Asian noodle stir-fry",
+    "description": "Stir-fried noodles, crunchy vegetables and chickpeas in a garlic-ginger sauce: a full meal in one wok.",
     "etapes": [
       "Cook the noodles as the packet says, rinse them under cold water and set aside.",
       "Break the broccoli into small florets and cut the carrots into thin batons.",
@@ -91,6 +99,7 @@
   },
   "riz-saute-oeuf": {
     "titre": "Egg fried rice",
+    "description": "The best fate for yesterday's rice: tossed over high heat with egg, carrot and spring onion.",
     "etapes": [
       "The rice must be cold, ideally cooked the day before: warm, it clumps and won't fry.",
       "Cut the carrot into small dice, chop the garlic, slice the spring onions.",
@@ -102,6 +111,7 @@
   },
   "gratin-chou-fleur-jambon": {
     "titre": "Cauliflower & ham gratin",
+    "description": "Cauliflower and ham under a cheesy béchamel that bubbles and crisps at the edges of the dish.",
     "etapes": [
       "Break the cauliflower into florets and cook them 10 min in boiling salted water: a knife should go in easily but the floret should stay whole.",
       "Heat the oven to 200 °C.",
@@ -113,6 +123,7 @@
   },
   "soupe-chou-fleur-lait": {
     "titre": "Cauliflower soup with milk",
+    "description": "A smooth, gentle soup, ready in twenty minutes from next to nothing.",
     "etapes": [
       "Break the cauliflower into florets and cook them 12 min in boiling salted water.",
       "Heat the milk without letting it boil.",
@@ -122,6 +133,7 @@
   },
   "rouleaux-riz-jambon": {
     "titre": "Ham rice paper rolls",
+    "description": "Fresh rice-paper rolls with ham, crunchy vegetables and mint, rolled in fifteen minutes with no cooking.",
     "etapes": [
       "Cut the bell pepper and carrot into very thin batons, cut the ham into strips.",
       "Soak a sheet of rice paper 30 seconds in warm water: it should stay slightly firm, it will finish softening on the worktop.",
@@ -131,6 +143,7 @@
   },
   "salade-mediterraneenne": {
     "titre": "Full Mediterranean salad",
+    "description": "A big store-cupboard salad of pulses, tuna, olives and lemon. Filling, fresh and no cooking.",
     "etapes": [
       "Rinse and drain everything tinned — that's the difference between a fresh salad and a briny one.",
       "Slice the hearts of palm into rounds.",
@@ -141,6 +154,7 @@
   },
   "pates-thon-legumineuses": {
     "titre": "Pasta with tuna and pulses",
+    "description": "Pasta in a tomato and tuna sauce, bulked out with chickpeas and peas to keep you full.",
     "etapes": [
       "Start the pasta in a big pan of well-salted water.",
       "Fry the crushed garlic 30 seconds in the oil, then pour in the tomatoes. Reduce 10 min.",
@@ -151,6 +165,7 @@
   },
   "one-pot-mediterraneen": {
     "titre": "Mediterranean one-pot",
+    "description": "Everything cooks in one pan: the pasta soaks up the tomato sauce, and there's only one pot to wash.",
     "etapes": [
       "Fry the sliced onion and the garlic 5 min in a large sauté pan.",
       "Add the tomatoes and 700 ml of salted water, bring to the boil.",
@@ -162,6 +177,7 @@
   },
   "pates-citron-parmesan": {
     "titre": "Lemon & parmesan pasta",
+    "description": "Creamy pasta with lemon zest and parmesan. Simple, bright and ready in twenty minutes.",
     "etapes": [
       "Bring a large pan of well-salted water to the boil and cook the pasta in it.",
       "Meanwhile, grate the parmesan and zest the lemon.",
@@ -173,6 +189,7 @@
   },
   "salade-pates-estivale": {
     "titre": "Summer pasta salad",
+    "description": "Pasta, cherry tomatoes, mozzarella and basil: the make-ahead salad for warm evenings.",
     "etapes": [
       "Bring a large pan of salted water to the boil and cook the short pasta as the packet says, until it stays firm to the bite.",
       "Drain and rinse immediately under cold water to stop the cooking and stop it clumping as it cools.",
@@ -185,6 +202,7 @@
   },
   "poke-bowl-saumon-avocat": {
     "titre": "Salmon avocado poke bowl",
+    "description": "Marinated raw salmon on seasoned rice with avocado, edamame and cucumber. Fresh and colourful.",
     "etapes": [
       "Cook the sushi rice as the packet says, then season it while still hot with the rice vinegar and a pinch of salt. Let it cool to lukewarm.",
       "Cut the fresh salmon into 1.5 cm cubes.",
@@ -196,6 +214,7 @@
   },
   "chili-sin-carne": {
     "titre": "Chilli sin carne",
+    "description": "Kidney beans, sweetcorn and peppers simmered in a spicy tomato sauce. A chilli that holds its own.",
     "etapes": [
       "Start the white rice.",
       "Slice the onion, chop the garlic and the fresh chilli, dice the bell peppers.",
@@ -208,6 +227,7 @@
   },
   "curry-vert-thai-poulet": {
     "titre": "Thai green chicken curry",
+    "description": "Chicken and aubergine in green-curry coconut milk, lifted with basil and lime.",
     "etapes": [
       "Start the white rice.",
       "Cut the chicken breast into pieces, the aubergine into cubes and the bell pepper into strips.",
@@ -220,6 +240,7 @@
   },
   "ratatouille-four-oeuf-poche": {
     "titre": "Oven ratatouille & baked egg",
+    "description": "Sun-ripened vegetables slow-roasted, with eggs baked on top until the yolks are just runny.",
     "etapes": [
       "Heat the oven to 200 °C.",
       "Cut the aubergine, the courgettes, the bell peppers and the tomatoes into even pieces of about 2 cm.",
@@ -232,6 +253,7 @@
   },
   "quiche-courgette-chevre": {
     "titre": "Courgette & goat cheese quiche",
+    "description": "A tender quiche pairing courgette with goat cheese. As good warm as it is cold the next day.",
     "etapes": [
       "Heat the oven to 190 °C.",
       "Unroll the shortcrust pastry into a tart tin and prick it with a fork.",
@@ -243,6 +265,7 @@
   },
   "couscous-poulet-legumes": {
     "titre": "Chicken & vegetable couscous",
+    "description": "Chicken, vegetables and chickpeas simmered in a fragrant broth, served over fluffy couscous.",
     "etapes": [
       "Peel and cut the carrots into chunks, the courgettes into thick batons, slice the onions.",
       "Brown the chicken thighs in the olive oil 5 min on all sides.",
@@ -255,6 +278,7 @@
   },
   "risotto-champignons": {
     "titre": "Mushroom risotto",
+    "description": "A creamy mushroom risotto finished with parmesan. It asks you to stir, and repays you for it.",
     "etapes": [
       "Dissolve the stock cube in 1 l of hot water, keep it warm.",
       "Slice the onion and the garlic, slice the button mushrooms.",
@@ -266,6 +290,7 @@
   },
   "poulet-basquaise": {
     "titre": "Basque chicken",
+    "description": "Chicken braised with peppers, tomatoes and soft onions. A south-west French classic, served with rice.",
     "etapes": [
       "Start the white rice.",
       "Cut the bell peppers into strips, slice the onions and the garlic.",
@@ -277,6 +302,7 @@
   },
   "soupe-miso-tofu": {
     "titre": "Miso soup with tofu",
+    "description": "A light miso broth with cubes of tofu and seaweed. Warms you up in fifteen minutes.",
     "etapes": [
       "Heat 600 ml of water without letting it boil.",
       "Rehydrate the wakame seaweed 5 min in a bowl of cold water, drain.",
@@ -287,6 +313,7 @@
   },
   "burger-maison": {
     "titre": "Homemade burger",
+    "description": "A juicy patty, melted cheddar and crisp salad in a toasted bun. Better than the drive-through.",
     "etapes": [
       "Slice the tomato and the red onion into rounds, wash the green salad.",
       "Salt the beef patties and cook them in the olive oil 3 min a side, adding the cheddar at the end so it melts.",
@@ -297,6 +324,7 @@
   },
   "pizza-margherita-maison": {
     "titre": "Homemade margherita pizza",
+    "description": "Tomato, mozzarella, basil: the simplest pizza, and often the best, made at home.",
     "etapes": [
       "Heat the oven to 240 °C, as hot as it goes.",
       "Roll the pizza dough out on a tray, spread with salted chopped tomatoes.",
@@ -307,6 +335,7 @@
   },
   "tartiflette": {
     "titre": "Tartiflette",
+    "description": "Potatoes, bacon and onions under a whole reblochon that melts and browns. For winter nights.",
     "etapes": [
       "Cook the potatoes 20 min in boiling water, until a knife goes in easily, then peel and slice them into rounds.",
       "Heat the oven to 200 °C.",
@@ -318,6 +347,7 @@
   },
   "shakshuka": {
     "titre": "Shakshuka",
+    "description": "Eggs poached in a spiced tomato and pepper sauce, served in the pan with bread for mopping.",
     "etapes": [
       "Slice the onion, the garlic and the bell pepper.",
       "Fry the onion and the pepper 5 min in the olive oil.",
@@ -329,6 +359,7 @@
   },
   "gyoza-porc": {
     "titre": "Pork gyoza",
+    "description": "Pork and cabbage dumplings, crisp underneath and steamed on top. A little folding, a lot of joy.",
     "etapes": [
       "Slice the chinese cabbage very finely, salt it and let it drain 10 min then squeeze out the water.",
       "Mix the minced pork, the cabbage, the sliced spring onion, the grated fresh ginger and garlic, the soy sauce and the sesame oil.",
@@ -339,6 +370,7 @@
   },
   "buddha-bowl-tofu": {
     "titre": "Crispy tofu buddha bowl",
+    "description": "Oven-crisped tofu, quinoa, vegetables and avocado: a complete, colourful bowl.",
     "etapes": [
       "Heat the oven to 200 °C. Cook the quinoa as the packet says.",
       "Cut the firm tofu into cubes, coat with cornflour and olive oil.",
@@ -349,6 +381,7 @@
   },
   "saumon-teriyaki-riz": {
     "titre": "Teriyaki salmon & rice",
+    "description": "A salmon fillet glazed in glossy, sweet-salty teriyaki, with rice and broccoli.",
     "etapes": [
       "Start the white rice.",
       "Steam the broccoli 8 min.",
@@ -359,6 +392,7 @@
   },
   "tagine-agneau-abricots": {
     "titre": "Lamb & apricot tagine",
+    "description": "Lamb slow-cooked with apricots and warm spices until it falls apart under a fork.",
     "etapes": [
       "Cut the lamb shoulder into large cubes, slice the onions and the garlic.",
       "Brown the meat in the olive oil 8 min on all sides, set aside.",
@@ -370,6 +404,7 @@
   },
   "pad-thai-poulet": {
     "titre": "Chicken pad thai",
+    "description": "Rice noodles stir-fried with chicken, egg and bean sprouts, with the sweet-sour tang of tamarind and lime.",
     "etapes": [
       "Soak the rice noodles in hot water 10 min as the packet says, drain.",
       "Cut the chicken breast into strips, chop the garlic.",
@@ -381,6 +416,7 @@
   },
   "lasagnes-legumes": {
     "titre": "Vegetable lasagne",
+    "description": "Layers of courgette, aubergine and tomato sauce under a golden béchamel. Generous and meat-free.",
     "etapes": [
       "Dice the courgette and the aubergine, slice the onion and the garlic.",
       "Fry the onion and the garlic in the olive oil 3 min, add courgette and aubergine, cook 10 min.",
@@ -392,6 +428,7 @@
   },
   "boeuf-bourguignon": {
     "titre": "Beef bourguignon",
+    "description": "Beef braised for hours in red wine with bacon, carrots and mushrooms. Even better reheated.",
     "etapes": [
       "Cut the meat into large 4 cm cubes and pat them dry: a wet surface doesn't colour, it boils.",
       "Sear the cubes in two batches in a very hot casserole, 5 min a batch, until deep brown all over. Set aside.",
@@ -405,6 +442,7 @@
   },
   "blanquette-de-veau": {
     "titre": "Veal blanquette",
+    "description": "Tender veal in a creamy, lemony white sauce with carrots and mushrooms. A proper Sunday dish.",
     "etapes": [
       "Put the veal in a casserole, cover with cold water, bring to a bare simmer and skim off the grey foam for 5 min: that is what keeps the broth clear.",
       "Add the carrots in chunks, the leeks, the onion and the bouquet garni. Cook covered 1 h, never at a hard boil.",
@@ -418,6 +456,7 @@
   },
   "coq-au-vin": {
     "titre": "Coq au vin",
+    "description": "Chicken slowly braised in red wine with bacon and baby onions. Deep and reassuring.",
     "etapes": [
       "Salt and pepper the thighs, brown them skin side down 8 min in the casserole, then 4 min on the other side. Set aside.",
       "Pour off half the fat, sweat the sliced onions, the carrots in rounds and the bacon lardons 8 min.",
@@ -430,6 +469,7 @@
   },
   "pot-au-feu": {
     "titre": "Pot-au-feu",
+    "description": "Beef and vegetables simmered gently in a big pot of broth: drink the broth, then eat the rest.",
     "etapes": [
       "Put the meat in a large stockpot, cover generously with cold water and bring gently to a simmer.",
       "Skim carefully for 10 min, until the surface stays clean.",
@@ -441,6 +481,7 @@
   },
   "navarin-agneau": {
     "titre": "Spring lamb navarin",
+    "description": "A lamb stew with new vegetables, turnips, carrots and peas. Spring in a casserole.",
     "etapes": [
       "Cut the lamb into 5 cm pieces, sear them over high heat in the casserole 6 min until well coloured.",
       "Dust with sugar and let it caramelise 1 min: that is what gives a navarin its colour.",
@@ -452,6 +493,7 @@
   },
   "daube-provencale": {
     "titre": "Provençal daube",
+    "description": "Wine-marinated beef braised with olives and orange zest. The scent of Provence in winter.",
     "etapes": [
       "The day before if you can: marinate the cubed meat with the wine, the carrots in rounds, the onions and the bouquet garni, in the fridge.",
       "Drain the meat keeping the marinade, pat it dry and brown it in two batches, 5 min a batch.",
@@ -463,6 +505,7 @@
   },
   "cassoulet-maison": {
     "titre": "Homemade cassoulet",
+    "description": "White beans, duck confit and Toulouse sausage, slowly baked under a crust. Hearty and unapologetic.",
     "etapes": [
       "Soak the beans the day before, then cook them 45 min in simmering water with the smoked pork belly, the onion, the carrot and the bouquet garni.",
       "Brown the sausages 8 min in a pan, set aside. Warm the duck legs 5 min to shed their set fat.",
@@ -474,6 +517,7 @@
   },
   "choucroute-garnie": {
     "titre": "Choucroute garnie",
+    "description": "Fermented cabbage braised with sausages, smoked bacon and potatoes. Alsace on a plate.",
     "etapes": [
       "Rinse the sauerkraut under cold water and squeeze it hard between your hands: that is what sets its acidity.",
       "Sweat the sliced onions in a casserole 5 min, without colouring them.",
@@ -485,6 +529,7 @@
   },
   "petit-sale-lentilles": {
     "titre": "Salt pork with lentils",
+    "description": "Green lentils simmered with smoked pork belly and sausage, soaking up all their flavour.",
     "etapes": [
       "Blanch the smoked pork belly 10 min in boiling water to draw out the salt, then cut it into thick lardons.",
       "Fry the onion, the shallots and the carrots in rounds 6 min in the casserole.",
@@ -496,6 +541,7 @@
   },
   "boeuf-carottes": {
     "titre": "Beef with carrots",
+    "description": "Melting beef and carrots softened in their own juices. Simple, slow and comforting.",
     "etapes": [
       "Cut the meat into cubes, brown it in small batches 5 min a batch in the casserole.",
       "Set the meat aside, fry the sliced onions 6 min in the pan juices.",
@@ -507,6 +553,7 @@
   },
   "poulet-chasseur": {
     "titre": "Chicken chasseur",
+    "description": "Chicken braised with mushrooms, shallots and tomato, finished with a touch of cream. A bistro classic.",
     "etapes": [
       "Brown the seasoned thighs 10 min on both sides in a sauté pan. Set aside.",
       "Sweat the chopped shallots 3 min, add the sliced mushrooms and turn the heat up 6 min to drive off their water.",
@@ -517,6 +564,7 @@
   },
   "lapin-moutarde": {
     "titre": "Rabbit in mustard sauce",
+    "description": "Tender rabbit in a creamy mustard sauce with just the right bite.",
     "etapes": [
       "Coat the rabbit pieces generously with mustard and leave them 15 min at room temperature.",
       "Flour them lightly and brown them 8 min in butter and oil in a casserole, gently: mustard burns fast.",
@@ -528,6 +576,7 @@
   },
   "poulet-roti-pommes-de-terre": {
     "titre": "Roast chicken and potatoes",
+    "description": "A whole chicken with crackling skin, and potatoes that roast golden in its juices.",
     "etapes": [
       "Heat the oven to 200 °C. Take the chicken out of the fridge 20 min ahead: a chilled bird cooks dry on the outside before it is done at the centre.",
       "Slide the soft butter under the skin of the breasts, salt and pepper all over, inside too.",
@@ -539,6 +588,7 @@
   },
   "hachis-parmentier": {
     "titre": "Hachis parmentier",
+    "description": "Savoury mince under a golden crust of homemade mash. The school-dinner dish we still love.",
     "etapes": [
       "Cook the peeled potatoes 25 min in salted water, until a knife goes through without effort.",
       "Meanwhile, fry the chopped onions 6 min, add the meat and press it with a spoon so it cooks in grains, 8 min.",
@@ -550,6 +600,7 @@
   },
   "tomates-farcies": {
     "titre": "Stuffed tomatoes",
+    "description": "Tomatoes stuffed with herby meat and roasted on a bed of rice that drinks up their juices.",
     "etapes": [
       "Cut a lid off the tomatoes, hollow them out with a teaspoon keeping the pulp. Salt the inside and turn them upside down for 10 min to drain.",
       "Soak the sandwich bread in the milk, then squeeze it out.",
@@ -561,6 +612,7 @@
   },
   "escalope-veau-creme": {
     "titre": "Veal escalope in cream sauce",
+    "description": "A golden veal escalope in creamy mushroom sauce, with pasta. Ready in half an hour.",
     "etapes": [
       "Start the pasta water. Flour the escalopes lightly, salt and pepper.",
       "Sear them 3 min a side in the hot butter, then keep them warm under a sheet of foil.",
@@ -572,6 +624,7 @@
   },
   "cordon-bleu-maison": {
     "titre": "Homemade cordon bleu",
+    "description": "Breaded chicken hiding ham and melted comté. The homemade version, crisp and generous.",
     "etapes": [
       "Butterfly each chicken breast and flatten it between two sheets of baking paper to 1 cm thick.",
       "Salt, pepper, lay on a slice of ham and of comté, close it up pressing the edges well.",
@@ -583,6 +636,7 @@
   },
   "steak-frites": {
     "titre": "Homemade steak and chips",
+    "description": "A perfectly seared steak with golden homemade chips. The bistro staple, at home.",
     "etapes": [
       "Cut the potatoes into one-centimetre batons, rinse them under cold water then dry them thoroughly in a tea towel.",
       "First fry: drop the chips 7 min into oil at 150 °C, they should stay pale and floppy. Drain them and let them rest.",
@@ -594,6 +648,7 @@
   },
   "cote-porc-charcutiere": {
     "titre": "Pork chops charcutière",
+    "description": "Golden pork chops in a tangy sauce of shallots, gherkins and mustard.",
     "etapes": [
       "Cook the potatoes in their skins 25 min in salted water.",
       "Sear the seasoned chops 4 min a side in the butter and oil, then keep them warm.",
@@ -605,6 +660,7 @@
   },
   "roti-porc-pommes-terre": {
     "titre": "Pork roast with potatoes",
+    "description": "A pork roast browned in the oven, surrounded by soft potatoes and sweet onions.",
     "etapes": [
       "Heat the oven to 200 °C. Brush the roast with mustard, salt, pepper, scatter with thyme.",
       "Colour it 8 min on all sides in an ovenproof casserole.",
@@ -616,6 +672,7 @@
   },
   "saucisse-puree": {
     "titre": "Sausages and homemade mash",
+    "description": "Well-browned sausages with buttery homemade mash. Comfort, plain and simple.",
     "etapes": [
       "Cook the potatoes, peeled and cut into large pieces, 25 min in salted water from cold.",
       "Prick the sausages, brown them 15 min over medium heat in a pan with a little water: the water cooks them through, the pan colours them once it has evaporated.",
@@ -626,6 +683,7 @@
   },
   "boudin-noir-pommes": {
     "titre": "Black pudding with apples",
+    "description": "Pan-fried black pudding with caramelised apples: sweet and savoury in balance.",
     "etapes": [
       "Cook the potatoes 25 min in salted water, then mash them roughly with a fork and a knob of butter.",
       "Cut the apples into thick wedges without peeling them and slice the onion.",
@@ -636,6 +694,7 @@
   },
   "magret-canard-pommes": {
     "titre": "Duck breast with apples",
+    "description": "Crisp-skinned duck breast, pink in the middle, with apples pan-fried in its juices.",
     "etapes": [
       "Score the skin of the duck breasts in a criss-cross without cutting into the flesh, salt.",
       "Lay them skin down in a cold pan, turn the heat to medium and let the fat render 8 min. Pour the fat off twice along the way.",
@@ -647,6 +706,7 @@
   },
   "gigot-agneau-flageolets": {
     "titre": "Leg of lamb with flageolet beans",
+    "description": "A garlic-studded roast leg of lamb, tender and pink, with flageolet beans simmered in its juices.",
     "etapes": [
       "Take the lamb out 1 h ahead. Heat the oven to 220 °C.",
       "Stud the meat with four garlic cloves in slivers, rub with oil, salt, pepper, scatter with thyme.",
@@ -658,6 +718,7 @@
   },
   "moules-marinieres": {
     "titre": "Moules marinières",
+    "description": "Mussels steamed open in white wine, shallot and parsley. Mop up the broth to the last drop.",
     "etapes": [
       "Sort the mussels under cold water: throw out the broken ones and any that stay open when tapped on the sink.",
       "Cut the potatoes into chips and give them a first fry, 7 min at 150 °C.",
@@ -670,6 +731,7 @@
   },
   "cabillaud-provencale": {
     "titre": "Cod loin provençale",
+    "description": "A pearly cod loin baked on tomatoes, olives and lemon. Light and full of sunshine.",
     "etapes": [
       "Heat the oven to 200 °C. Fry the sliced onion 5 min in the oil.",
       "Add the garlic, the diced tomatoes and the herbs, let it stew down 10 min over high heat: the sauce should thicken, not swim.",
@@ -681,6 +743,7 @@
   },
   "papillote-saumon-legumes": {
     "titre": "Salmon en papillote with vegetables",
+    "description": "Salmon and vegetables steam together in a parcel, opened at the table in a puff of fragrant steam.",
     "etapes": [
       "Heat the oven to 200 °C. Peel the courgettes and the carrots into thin ribbons: cut thick, they would stay raw.",
       "Lay out four large sheets of baking paper. Divide the vegetables in the centre, then the sliced shallots.",
@@ -692,6 +755,7 @@
   },
   "truite-amandes": {
     "titre": "Trout with almonds",
+    "description": "Trout browned in butter, scattered with toasted almonds and a squeeze of lemon.",
     "etapes": [
       "Cook the potatoes in salted water 25 min.",
       "Pat the trout dry, salt them inside and out, then flour them lightly, tapping off the excess.",
@@ -702,6 +766,7 @@
   },
   "saumon-creme-ciboulette": {
     "titre": "Salmon with cream and chives",
+    "description": "Pan-fried salmon in a light chive cream sauce, with rice. Gentle and quick.",
     "etapes": [
       "Start the rice. Cut the salmon into large 3 cm cubes, salt and pepper.",
       "Sweat the chopped shallots 3 min in butter in a sauté pan.",
@@ -713,6 +778,7 @@
   },
   "cabillaud-meuniere": {
     "titre": "Cod meunière",
+    "description": "Floured cod browned in nutty butter with lemon and parsley. Simplicity that never fails.",
     "etapes": [
       "Cook the green beans 8 min in boiling salted water, then drain them and fry them 2 min in oil.",
       "Pat the pieces of fish dry, salt and pepper them and pass them through the flour just before cooking — too early and the flour goes soggy and sticks.",
@@ -723,6 +789,7 @@
   },
   "gambas-ail-persil": {
     "titre": "Prawns with garlic and parsley",
+    "description": "Prawns seared hot with garlic and parsley, with bread to mop up the butter.",
     "etapes": [
       "Peel the prawns keeping the tails, and pull out the black vein with a knife along the back.",
       "Chop the garlic finely and infuse it 2 min over low heat in the olive oil: over high heat it turns bitter.",
@@ -733,6 +800,7 @@
   },
   "saint-jacques-poelees": {
     "titre": "Pan-seared scallops with cream",
+    "description": "Scallops seared golden in a minute, on creamy melted leeks. A dish for special occasions.",
     "etapes": [
       "Slice the leeks into thin rounds and melt them 12 min covered in 20 g of butter, with two spoonfuls of water.",
       "Pat the scallops dry one by one: the slightest moisture makes them boil instead of colour.",
@@ -744,6 +812,7 @@
   },
   "gratin-dauphinois": {
     "titre": "Gratin dauphinois",
+    "description": "Thin potato slices slow-baked in garlicky cream, meltingly soft beneath a golden skin.",
     "etapes": [
       "Heat the oven to 160 °C. Rub a gratin dish with a cut garlic clove, then butter it generously.",
       "Peel the potatoes and slice them 3 mm thick. Whatever you do, don't rinse them: their starch is what binds the gratin.",
@@ -755,6 +824,7 @@
   },
   "quiche-lorraine": {
     "titre": "Quiche lorraine",
+    "description": "The real thing: bacon, eggs and cream in a crisp pastry case. Serve warm with a green salad.",
     "etapes": [
       "Heat the oven to 190 °C. Roll the pastry into a tin, prick it with a fork and cover it with baking paper weighed down with dried pulses.",
       "Blind bake 12 min: without this step the base stays pale and soggy under the custard.",
@@ -766,6 +836,7 @@
   },
   "croque-monsieur": {
     "titre": "Croque-monsieur",
+    "description": "Ham and comté between slices of bread, grilled until the cheese stretches.",
     "etapes": [
       "Make the béchamel: melt the butter, add the flour, stir 2 min, then pour in the hot milk little by little, whisking.",
       "Let it thicken 4 min over low heat, season with salt, pepper and nutmeg. It should coat the spoon.",
@@ -777,6 +848,7 @@
   },
   "omelette-fines-herbes": {
     "titre": "Herb omelette",
+    "description": "A soft, just-set omelette with fresh herbs, ready in ten minutes. Dinner when the fridge is empty.",
     "etapes": [
       "Beat the eggs with a fork, just enough to mix whites and yolks: over-beaten, they make a rubbery omelette.",
       "Add the chopped herbs, salt, pepper.",
@@ -788,6 +860,7 @@
   },
   "oeufs-cocotte": {
     "titre": "Baked eggs with cream",
+    "description": "Eggs baked in cream with mushrooms and comté, and toast soldiers for the yolk.",
     "etapes": [
       "Heat the oven to 180 °C and heat a pan of water for the bain-marie.",
       "Fry the shallot and the sliced mushrooms 6 min in butter, until their water has completely gone.",
@@ -799,6 +872,7 @@
   },
   "oeufs-meurette": {
     "titre": "Œufs en meurette",
+    "description": "Eggs poached in a red-wine sauce with bacon and mushrooms, on toast. Burgundy in miniature.",
     "etapes": [
       "Fry the bacon lardons, the shallots and the mushrooms 8 min in butter in a sauté pan.",
       "Dust with flour, stir, then pour in the red wine with the garlic and the bouquet garni. Reduce 20 min over medium heat, until the sauce coats the spoon.",
@@ -810,6 +884,7 @@
   },
   "piperade": {
     "titre": "Piperade",
+    "description": "Melted peppers and tomatoes with soft scrambled eggs and cured ham. The Basque Country in colour.",
     "etapes": [
       "Slice the bell peppers into thin strips and the onions into half-moons.",
       "Melt them 20 min over low heat in the oil, covered: piperade is made with patience, not high heat.",
@@ -821,6 +896,7 @@
   },
   "endives-jambon": {
     "titre": "Chicory with ham",
+    "description": "Chicory wrapped in ham under a golden béchamel that softens its bitterness.",
     "etapes": [
       "Cut out the bitter cone at the base of each chicory head with a sharp knife.",
       "Cook them 20 min in boiling salted water with the lemon juice and the sugar, then drain and press them firmly: a waterlogged chicory drowns the gratin.",
@@ -832,6 +908,7 @@
   },
   "gratin-courgettes": {
     "titre": "Courgette and rice gratin",
+    "description": "Soft courgettes and rice bound with eggs and cream, under a cheese crust. Courgette at its best.",
     "etapes": [
       "Cook the rice 10 min in boiling salted water, drain it: it will finish cooking in the gratin.",
       "Coarsely grate the courgettes, salt them and let them drain 10 min in a colander, then squeeze them out by the handful.",
@@ -843,6 +920,7 @@
   },
   "gratin-pates-jambon": {
     "titre": "Pasta and ham gratin",
+    "description": "Pasta with ham and mushrooms in béchamel under a cheesy crust. Kids ask for seconds.",
     "etapes": [
       "Cook the pasta 2 min less than the stated time: it finishes in the oven and would otherwise turn to mush.",
       "Fry the sliced mushrooms 6 min over high heat, then set them aside.",
@@ -854,6 +932,7 @@
   },
   "tarte-poireaux-lardons": {
     "titre": "Leek and bacon tart",
+    "description": "A tender leek and bacon tart set with cream. A weekend favourite.",
     "etapes": [
       "Split the leeks in four lengthways and rinse them under water: the grit hides between the leaves.",
       "Slice them and melt them 20 min covered with the butter and two spoonfuls of water, over low heat.",
@@ -865,6 +944,7 @@
   },
   "flammekueche": {
     "titre": "Flammekueche",
+    "description": "Wafer-thin dough with cream, onions and bacon, baked in a very hot oven. Tear and share.",
     "etapes": [
       "Heat the oven as hot as it goes, 250 °C if possible, with the tray inside: a tarte flambée is won on the heat from below.",
       "Mix the fromage blanc and the cream, season with salt, pepper and nutmeg.",
@@ -876,6 +956,7 @@
   },
   "pissaladiere": {
     "titre": "Pissaladière",
+    "description": "Slow-cooked sweet onions on a bread base with anchovies and black olives. The Niçois aperitif.",
     "etapes": [
       "Slice the onions into thin half-moons — the only real work in this recipe.",
       "Stew them 45 min over very low heat in the oil, covered, with the thyme, the garlic and the sugar. They should turn golden and soft without ever colouring hard.",
@@ -887,6 +968,7 @@
   },
   "tarte-tomate-moutarde": {
     "titre": "Tomato and mustard tart",
+    "description": "Tomato slices over a layer of mustard and cheese, on crisp puff pastry.",
     "etapes": [
       "Heat the oven to 200 °C. Slice the tomatoes 5 mm thick, salt them and let them drain 15 min on kitchen paper.",
       "Roll the pastry into the tin, prick it all over with a fork.",
@@ -898,6 +980,7 @@
   },
   "souffle-fromage": {
     "titre": "Cheese soufflé",
+    "description": "A soufflé that rises tall and golden, with a trembling comté centre. Serve fast before it sinks.",
     "etapes": [
       "Heat the oven to 190 °C. Butter a soufflé dish with vertical brush strokes: the soufflé climbs along the streaks.",
       "Make a roux with the butter and the flour, then pour in the hot milk, whisking. Let it thicken 5 min — it's a tight béchamel.",
@@ -909,6 +992,7 @@
   },
   "galette-complete": {
     "titre": "Buckwheat galette complète",
+    "description": "A crisp buckwheat galette filled with ham, melted cheese and a runny-yolked egg.",
     "etapes": [
       "Mix the buckwheat flour, 1 teaspoon of salt, an egg and 60 cl of water. Whisk to a smooth, loose batter.",
       "Rest the batter 30 min: without a rest, the galette tears at the first touch of the spatula.",
@@ -920,6 +1004,7 @@
   },
   "camembert-roti": {
     "titre": "Oven-baked camembert",
+    "description": "A whole camembert baked with garlic until molten, for dipping bread and potatoes.",
     "etapes": [
       "Cook the potatoes in their skins 25 min in salted water.",
       "Heat the oven to 180 °C. Take the camembert out of its wrapping and put it back in its wooden box, without the lid.",
@@ -931,6 +1016,7 @@
   },
   "cake-jambon-olives": {
     "titre": "Ham and olive loaf",
+    "description": "A soft savoury loaf with ham and olives, perfect sliced for drinks or a picnic.",
     "etapes": [
       "Heat the oven to 180 °C and line a loaf tin with baking paper.",
       "Beat the eggs, add the oil and the warm milk, then the flour mixed with the baking powder. Stop working the batter as soon as it comes together.",
@@ -942,6 +1028,7 @@
   },
   "pates-carbonara": {
     "titre": "Pasta carbonara",
+    "description": "Proper carbonara: eggs, parmesan and bacon, no cream. A silky sauce in twenty minutes.",
     "etapes": [
       "Bring a large pan of salted water to the boil and start the pasta.",
       "Fry the bacon lardons 6 min over medium heat in a drizzle of oil, until golden and crisp.",
@@ -953,6 +1040,7 @@
   },
   "pates-bolognaise": {
     "titre": "Pasta bolognese",
+    "description": "A meat sauce simmered slowly with carrot and celery until deep and mellow.",
     "etapes": [
       "Chop carrot, onion and celery very finely, and melt them 10 min in the oil over low heat.",
       "Add the meat, break it up with a spoon and colour it 8 min over high heat — it should brown, not boil in its juices.",
@@ -964,6 +1052,7 @@
   },
   "salade-nicoise": {
     "titre": "Salade niçoise",
+    "description": "Tomatoes, eggs, tuna, olives and anchovies on crisp leaves. A Nice summer in a bowl.",
     "etapes": [
       "Cook the eggs 9 min in boiling water, then cool them straight away under cold water to stop the cooking and make them easier to peel.",
       "Cook the green beans 8 min in salted water, refresh them so they keep their colour.",
@@ -975,6 +1064,7 @@
   },
   "salade-chevre-chaud": {
     "titre": "Warm goat cheese salad",
+    "description": "Toasts of melting goat cheese on a salad with walnuts and cherry tomatoes. A salad that counts as dinner.",
     "etapes": [
       "Heat the oven grill. Cut the baguette into eight thick slices.",
       "Slice the goat cheese log into eight rounds and lay one on each slice of bread.",
@@ -986,6 +1076,7 @@
   },
   "salade-lyonnaise": {
     "titre": "Salade lyonnaise",
+    "description": "Leaves, bacon, croutons and a poached egg that runs over everything. A Lyon bistro in a bowl.",
     "etapes": [
       "Fry the bacon lardons 6 min in a dry pan, add the diced baguette to the rendered fat and brown it 3 min. Set aside.",
       "Deglaze the pan with 2 spoonfuls of vinegar, scrape up the juices and keep that liquid.",
@@ -997,6 +1088,7 @@
   },
   "celeri-remoulade": {
     "titre": "Celeriac remoulade",
+    "description": "Grated celeriac in a creamy mustard dressing. The bistro starter, crunchy and fresh.",
     "etapes": [
       "Peel the celeriac with a knife: a peeler slips on its uneven skin.",
       "Grate it into thick strands and pour the lemon juice over at once, or it turns black within minutes.",
@@ -1007,6 +1099,7 @@
   },
   "carottes-rapees": {
     "titre": "Grated carrots with orange",
+    "description": "Grated carrots brightened with orange and lemon juice. Fresh, sweet and crunchy.",
     "etapes": [
       "Plump the raisins 10 min in a bowl of warm water.",
       "Peel and grate the carrots, on the coarse side so they stay crunchy.",
@@ -1017,6 +1110,7 @@
   },
   "poireaux-vinaigrette": {
     "titre": "Leeks vinaigrette",
+    "description": "Tender leeks dressed with shallot vinaigrette and a scattering of grated egg.",
     "etapes": [
       "Cook the eggs 9 min in boiling water, cool them and chop them finely.",
       "Clean the leeks, keep only the white and a little tender green, and tie them into a bundle so they hold their shape.",
@@ -1028,6 +1122,7 @@
   },
   "oeufs-mimosa": {
     "titre": "Œufs mimosa",
+    "description": "Hard-boiled eggs filled with yolk and mayonnaise. The starter at every family table.",
     "etapes": [
       "Cook the eggs 10 min in boiling water, then plunge them into iced water: they peel without tearing the white.",
       "Cut them in half lengthways and lift out the yolks.",
@@ -1038,6 +1133,7 @@
   },
   "tartare-saumon": {
     "titre": "Salmon and avocado tartare",
+    "description": "Hand-diced raw salmon with avocado, lime and chives. Fresh, with no cooking at all.",
     "etapes": [
       "Put the salmon in the freezer for 15 min: really cold, it cuts cleanly instead of squashing.",
       "Take off the skin and the bones, then cut it into 5 mm cubes with a knife — never in a blender.",
@@ -1049,6 +1145,7 @@
   },
   "avocat-crevettes": {
     "titre": "Prawn-filled avocado",
+    "description": "Avocado halves filled with prawns in cocktail sauce. An eighties classic that still works.",
     "etapes": [
       "Mix the mayonnaise, the ketchup, a few drops of lemon juice, salt and pepper: that's the cocktail sauce.",
       "Peel the prawns and cut them in half if they are large.",
@@ -1059,6 +1156,7 @@
   },
   "soupe-oignon-gratinee": {
     "titre": "French onion soup",
+    "description": "Slowly caramelised onions in broth, under a crouton blanketed in bubbling comté.",
     "etapes": [
       "Slice the onions into thin slivers.",
       "Melt them 30 min over low heat in the butter with the sugar, stirring now and then: they should turn golden brown — that is all the colour and all the flavour of the soup.",
@@ -1070,6 +1168,7 @@
   },
   "potage-poireaux-pommes-terre": {
     "titre": "Leek and potato soup",
+    "description": "A gentle soup of leeks and potatoes with a swirl of cream and chives.",
     "etapes": [
       "Split and wash the leeks, slice them into rounds, white and tender green alike.",
       "Sweat them 8 min in butter with the sliced onion, without colouring.",
@@ -1081,6 +1180,7 @@
   },
   "veloute-potimarron": {
     "titre": "Red kuri squash velouté",
+    "description": "A vivid orange velouté with a chestnut-like sweetness, topped with crushed walnuts for crunch.",
     "etapes": [
       "Wash the squash and cut it into large cubes without peeling it: the skin turns tender as it cooks and gives the velouté its colour.",
       "Fry the sliced onion and carrot 6 min in the oil.",
@@ -1092,6 +1192,7 @@
   },
   "soupe-legumes-hiver": {
     "titre": "Winter vegetable soup",
+    "description": "A big pot of winter vegetables, blended or chunky. It warms you up and keeps well.",
     "etapes": [
       "Peel and cut all the vegetables into even 2 cm pieces — even, they finish cooking together.",
       "Sweat the onion and the leek 8 min in the oil at the bottom of a large stockpot.",
@@ -1103,6 +1204,7 @@
   },
   "salade-lentilles": {
     "titre": "Lentil salad with shallots",
+    "description": "Warm lentils in shallot vinaigrette with carrot and hard-boiled egg. Simple and nourishing.",
     "etapes": [
       "Rinse the lentils and cook them 25 min in three times their volume of cold water with the bouquet garni and the whole carrot. Salt only at the end.",
       "Cook the eggs 9 min in boiling water and cool them.",
@@ -1114,6 +1216,7 @@
   },
   "taboule-menthe": {
     "titre": "Mint tabbouleh",
+    "description": "Lots of herbs, a little couscous, tomato and lemon: a fresh tabbouleh that smells of mint.",
     "etapes": [
       "Tip the couscous into a bowl with the lemon juice, the oil and 20 cl of cold water.",
       "Let it swell 15 min covered, forking it through twice — that is what stops it setting into blocks.",
@@ -1124,6 +1227,7 @@
   },
   "crepes-sucrees": {
     "titre": "Sweet crêpes",
+    "description": "Thin golden crêpes to fill with sugar, jam or chocolate. For tea time or dessert.",
     "etapes": [
       "Melt the butter and let it cool to lukewarm.",
       "Tip the flour into a bowl, make a well, break the eggs into it and whisk out from the centre.",
@@ -1135,6 +1239,7 @@
   },
   "gateau-yaourt": {
     "titre": "Yoghurt cake",
+    "description": "The first cake everyone learns: everything is measured with the yoghurt pot. Always moist.",
     "etapes": [
       "Heat the oven to 180 °C and butter a round cake tin.",
       "Tip the yoghurt into a bowl and keep the empty pot: it is the measure when you have no scales.",
@@ -1146,6 +1251,7 @@
   },
   "mousse-chocolat": {
     "titre": "Chocolate mousse",
+    "description": "An airy dark-chocolate mousse made from just eggs and chocolate. Best made the day before.",
     "etapes": [
       "Melt the chocolate, broken into pieces, with the butter over a bain-marie, stirring until perfectly smooth.",
       "Separate the whites from the yolks. Stir the yolks one at a time into the warm chocolate — if it is too hot, they cook.",
@@ -1157,6 +1263,7 @@
   },
   "fondant-chocolat": {
     "titre": "Chocolate fondant",
+    "description": "A dense, melting chocolate cake with a barely set centre. Ready in half an hour.",
     "etapes": [
       "Heat the oven to 180 °C. Butter a tin and dust it with cocoa rather than flour.",
       "Melt the chocolate and the butter over a bain-marie, then let it cool 5 min.",
@@ -1168,6 +1275,7 @@
   },
   "tarte-pommes": {
     "titre": "Apple tart",
+    "description": "Apples fanned over crisp pastry, baked until golden and caramelised.",
     "etapes": [
       "Heat the oven to 190 °C. Roll the pastry into the tin and prick it with a fork.",
       "Dust the base with a spoonful of flour mixed with a little sugar: it will soak up the juice from the apples.",
@@ -1179,6 +1287,7 @@
   },
   "crumble-pommes": {
     "titre": "Apple crumble",
+    "description": "Soft apples under a crunchy, buttery crumble. Even better with a scoop of ice cream.",
     "etapes": [
       "Heat the oven to 190 °C. Peel the apples and cut them into large cubes.",
       "Toss them with the lemon juice and the cinnamon, then spread them in a gratin dish.",
@@ -1190,6 +1299,7 @@
   },
   "clafoutis-cerises": {
     "titre": "Cherry clafoutis",
+    "description": "Whole cherries baked in a golden custard batter. The taste of early summer.",
     "etapes": [
       "Heat the oven to 180 °C. Butter a dish and dust it with a spoonful of sugar.",
       "Wash the cherries and pull off the stalks. Leave the stones in: they perfume the batter as it bakes, but warn your guests.",
@@ -1201,6 +1311,7 @@
   },
   "riz-au-lait": {
     "titre": "Rice pudding",
+    "description": "Rice cooked gently in vanilla milk until creamy. A grandmother's dessert.",
     "etapes": [
       "Blanch the rice 3 min in boiling water then drain it: that removes the excess surface starch and stops it catching.",
       "Bring the milk to a bare simmer with the vanilla, the salt and the butter.",
@@ -1212,6 +1323,7 @@
   },
   "ile-flottante": {
     "titre": "Île flottante",
+    "description": "Poached meringue clouds floating on vanilla custard, under a thread of caramel.",
     "etapes": [
       "Separate the whites from the yolks. Heat the milk with the vanilla without letting it boil.",
       "Whisk the yolks with 80 g of sugar until they pale.",
@@ -1223,6 +1335,7 @@
   },
   "creme-brulee": {
     "titre": "Crème brûlée",
+    "description": "A smooth vanilla custard under a thin sheet of caramelised sugar that cracks under the spoon.",
     "etapes": [
       "Heat the oven to 100 °C. Heat the cream and the milk with the vanilla, without boiling, then let it infuse 10 min.",
       "Whisk the egg yolks with the sugar, without frothing: bubbles would leave a foam on the surface of the ramekins.",
@@ -1234,6 +1347,7 @@
   },
   "far-breton": {
     "titre": "Far breton with prunes",
+    "description": "A dense, soft Breton custard cake studded with prunes. Rustic and generous.",
     "etapes": [
       "Soak the prunes 20 min in warm water, then drain them.",
       "Heat the oven to 200 °C and generously butter a deep-sided dish.",
@@ -1245,6 +1359,7 @@
   },
   "pain-perdu": {
     "titre": "French toast",
+    "description": "Stale bread soaked in milk and egg, fried in butter and sugared. Nothing goes to waste.",
     "etapes": [
       "Use stale bread: fresh, it soaks through too fast and falls apart in the pan.",
       "Beat the eggs with the milk, half the sugar and the vanilla sugar in a shallow dish.",
@@ -1255,6 +1370,7 @@
   },
   "madeleines": {
     "titre": "Madeleines",
+    "description": "Little lemon cakes with their golden hump. Dip them in tea while still warm.",
     "etapes": [
       "Melt the butter and let it cool to lukewarm.",
       "Whisk the eggs with the sugar, the honey, the lemon zest and the salt until the mixture is foamy, 3 min.",
@@ -1266,6 +1382,7 @@
   },
   "quatre-quarts": {
     "titre": "Quatre-quarts pound cake",
+    "description": "Equal weights of butter, sugar, flour and eggs: the simplest, richest Breton cake.",
     "etapes": [
       "Heat the oven to 170 °C and line a loaf tin.",
       "Weigh the eggs: that weight gives you the weight of the butter, the sugar and the flour. That is the whole principle of the cake.",
@@ -1277,6 +1394,7 @@
   },
   "tarte-citron-meringuee": {
     "titre": "Lemon meringue tart",
+    "description": "Tangy lemon curd in crisp pastry under golden meringue. Sharp and sweet in balance.",
     "etapes": [
       "Heat the oven to 190 °C. Roll out the pastry, prick it, cover it with weighted paper and blind bake 20 min, until golden.",
       "Squeeze the lemons and zest two of them.",
@@ -1289,6 +1407,7 @@
   },
   "curry-rouge-crevettes": {
     "titre": "Thai red prawn curry",
+    "description": "Prawns and green beans in a red coconut curry, fragrant with makrut lime and Thai basil.",
     "etapes": [
       "Start the jasmine rice.",
       "Heat the thick part of the coconut milk 3 min in a wok, until the oil separates and glistens on the surface.",
@@ -1301,6 +1420,7 @@
   },
   "massaman-poulet": {
     "titre": "Chicken massaman curry",
+    "description": "A mild, fragrant curry with soft potatoes and tamarind. The most comforting of Thai curries.",
     "etapes": [
       "Brown the chicken pieces 8 min in the wok, then set them aside.",
       "Fry the massaman paste 2 min in the thick part of the coconut milk, until it smells fragrant.",
@@ -1312,6 +1432,7 @@
   },
   "tom-yum-crevettes": {
     "titre": "Tom yum with prawns",
+    "description": "A clear, sour and spicy soup with lemongrass and galangal. It wakes you right up.",
     "etapes": [
       "Peel the prawns, keeping the heads and shells.",
       "Fry the shells 3 min in a dry pan, cover with 1.2 l of water and simmer 15 min, then strain: this broth is the whole difference from a soup made with water.",
@@ -1323,6 +1444,7 @@
   },
   "tom-kha-kai": {
     "titre": "Tom kha kai",
+    "description": "Chicken soup in coconut milk scented with galangal and lime. Gentle, tangy and soothing.",
     "etapes": [
       "Bring 50 cl of water to a simmer with the stock, the sliced galangal, the crushed lemongrass and the kaffir lime leaves. Let it infuse 10 min.",
       "Pour in the coconut milk and hold it just below boiling — boiled, coconut splits and goes grainy.",
@@ -1334,6 +1456,7 @@
   },
   "som-tam": {
     "titre": "Som tam, green papaya salad",
+    "description": "Green papaya pounded in a mortar: hot, sour and crunchy. The great street-food classic.",
     "etapes": [
       "Peel the green papaya and grate it into long strands on the coarse side, or cut it into fine strips with a knife. Do the same with the carrot.",
       "Pound the garlic and the chillies in a mortar, coarsely.",
@@ -1345,6 +1468,7 @@
   },
   "larb-gai": {
     "titre": "Larb gai, minced chicken salad",
+    "description": "Minced chicken with lime, mint and chilli, eaten wrapped in lettuce leaves.",
     "etapes": [
       "Toast the 2 spoonfuls of jasmine rice in a dry pan 5 min, until golden brown, then grind it to a coarse powder in a mortar. That is what gives larb its texture and its nutty perfume.",
       "Cook the minced chicken 6 min in a pan with 3 spoonfuls of water, pressing it with the spatula so it stays in grains. No fat: larb is not a stir-fry.",
@@ -1356,6 +1480,7 @@
   },
   "pad-krapow-porc": {
     "titre": "Pad krapow, pork with Thai basil",
+    "description": "Pork stir-fried with holy basil and chilli, over rice with a crispy fried egg.",
     "etapes": [
       "Start the jasmine rice.",
       "Pound the garlic and the chillies together in a mortar, to a rough paste.",
@@ -1368,6 +1493,7 @@
   },
   "pad-see-ew": {
     "titre": "Pad see ew",
+    "description": "Wide rice noodles stir-fried in sweet soy with chicken and Chinese greens, smoky from the wok.",
     "etapes": [
       "Soak the wide rice noodles as their packet says, until supple but still firm. Drain them and oil them lightly so they don't stick.",
       "Slice the chicken into strips and toss it with a spoonful of soy sauce.",
@@ -1379,6 +1505,7 @@
   },
   "khao-pad": {
     "titre": "Khao pad, Thai fried rice",
+    "description": "Thai fried rice with chicken and egg, served with tomato, lime and fresh cucumber.",
     "etapes": [
       "Cook the rice the day before if you can and let it cool in the fridge: warm, damp rice turns to mush in the wok.",
       "Heat the wok over maximum heat, sear the diced chicken 4 min, then the garlic and the onion 1 min.",
@@ -1390,6 +1517,7 @@
   },
   "satay-poulet": {
     "titre": "Satay skewers with peanut sauce",
+    "description": "Chicken skewers marinated in curry and coconut, grilled and dipped in peanut sauce.",
     "etapes": [
       "Cut the chicken into long strips and toss them with half the coconut milk, the turmeric, the ground coriander and a spoonful of fish sauce. Marinate 20 min.",
       "Start the jasmine rice.",
@@ -1401,6 +1529,7 @@
   },
   "curry-jaune-poulet": {
     "titre": "Yellow curry with chicken and potatoes",
+    "description": "A mild turmeric-yellow curry with chicken and soft potatoes. A perfect first curry.",
     "etapes": [
       "Fry the yellow curry paste and the turmeric 2 min in the hot oil, until the aroma rises.",
       "Add the chicken pieces and coat them 3 min.",
@@ -1412,6 +1541,7 @@
   },
   "yam-woon-sen": {
     "titre": "Yam woon sen, glass noodle salad",
+    "description": "Glass noodles tossed with prawns and pork in a lime, chilli and fish-sauce dressing.",
     "etapes": [
       "Soak the glass noodles 8 min in hot water, then drain them and cut them with scissors into manageable lengths.",
       "Poach the minced pork 3 min in a pan of simmering water, breaking it up, then the prawns 2 min. Drain it all.",
@@ -1423,6 +1553,7 @@
   },
   "poisson-vapeur-citron-vert": {
     "titre": "Steamed fish with lime",
+    "description": "Steamed fish doused in a bright sauce of garlic, chilli and lime.",
     "etapes": [
       "Start the jasmine rice. Set up a steamer basket over a pan of boiling water.",
       "Line the basket with chinese cabbage and lengths of crushed lemongrass, lay the fish on top and score it twice across the top.",
@@ -1434,6 +1565,7 @@
   },
   "khai-jiao": {
     "titre": "Khai jiao, Thai omelette",
+    "description": "A puffy, crisp-edged Thai omelette fried in oil and served over rice. Ready in ten minutes.",
     "etapes": [
       "Start the rice.",
       "Beat the eggs hard with a fork with the fish sauce, a squeeze of lime and the chopped spring onions, until the mixture is foamy: the beaten-in air is what makes the omelette puff.",
@@ -1445,6 +1577,7 @@
   },
   "boeuf-basilic-thai": {
     "titre": "Beef stir-fried with Thai basil",
+    "description": "Strips of beef seared in the wok with peppers, chilli and Thai basil. Fast and fragrant.",
     "etapes": [
       "Start the rice. Slice the beef into thin strips across the grain — that is what keeps it tender.",
       "Mix the oyster sauce, the soy sauce, the fish sauce and the sugar in a bowl: the stir-fry will go too fast to measure along the way.",
@@ -1456,6 +1589,7 @@
   },
   "gai-yang": {
     "titre": "Gai yang, Thai grilled chicken",
+    "description": "Chicken marinated in lemongrass and coriander, grilled until caramelised. With sticky rice.",
     "etapes": [
       "Pound the garlic, the coriander roots and stalks, the sliced lemongrass and the pepper into a rough paste.",
       "Mix in the fish sauce, the soy sauce, the palm sugar and the turmeric.",
@@ -1467,6 +1601,7 @@
   },
   "pad-pak-legumes": {
     "titre": "Pad pak, wok-fried vegetables",
+    "description": "Crunchy vegetables and tofu flash-fried in a garlic sauce. Light and full of colour.",
     "etapes": [
       "Start the rice. Cut every vegetable before you light the wok: once it is going, a stir-fry leaves no time to chop anything.",
       "Drain and press the tofu, cut it into cubes and brown it 6 min on all sides. Set aside.",
@@ -1478,6 +1613,7 @@
   },
   "soupe-nouilles-poulet-thai": {
     "titre": "Chicken noodle soup",
+    "description": "A clear ginger broth with rice noodles and chicken, topped with fresh herbs and bean sprouts.",
     "etapes": [
       "Bring 1.5 l of water to a simmer with the stock cubes, the sliced ginger and the crushed garlic. Let it infuse 15 min.",
       "Poach the chicken breasts 12 min in this broth, over very low heat, then lift them out and shred them by hand.",
@@ -1489,6 +1625,7 @@
   },
   "riz-gluant-mangue": {
     "titre": "Mango sticky rice",
+    "description": "Sticky rice in sweet-salty coconut milk with slices of ripe mango. The quintessential Thai dessert.",
     "etapes": [
       "Rinse the sticky rice until the water runs clear, then soak it at least 3 h, overnight if you can. Without soaking, it stays hard at the centre.",
       "Steam it 25 min in a cloth, until the grains are translucent and sticky.",
@@ -1500,6 +1637,7 @@
   },
   "aioli-provencal": {
     "titre": "Provençal aïoli",
+    "description": "Cod, steamed vegetables and eggs around a big bowl of garlic aïoli. A Provençal feast for sharing.",
     "etapes": [
       "Cook the eggs 10 min in gently simmering water, lowering them into the already hot water, then cool them under cold water and peel them.",
       "Make the aïoli: crush the de-germed garlic with a pinch of salt to a paste, add 1 egg yolk (from an extra raw egg, or from a mashed hard-boiled egg) and the mustard.",

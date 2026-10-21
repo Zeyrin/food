@@ -2,6 +2,7 @@
   {
     "id": "mapo-tofu",
     "titre": "Mapo tofu",
+    "description": "Du tofu fondant dans une sauce rouge au piment fermenté, relevée de poivre du Sichuan qui fourmille sur la langue.",
     "temps": 30,
     "portions": 2,
     "tags": [
@@ -102,6 +103,7 @@
   {
     "id": "falafel-bowl",
     "titre": "Falafel bowl",
+    "description": "Des falafels cuits au four, croustillants dehors et tendres dedans, sur une semoule aux herbes fraîches et citron.",
     "temps": 40,
     "portions": 2,
     "tags": [
@@ -224,6 +226,7 @@
   {
     "id": "bowl-quinoa-legumes-rotis",
     "titre": "Bowl quinoa & légumes rôtis",
+    "description": "Potimarron rôti, pois chiches grillés et kale sur un lit de quinoa, nappés d'une sauce tahini citronnée.",
     "temps": 40,
     "portions": 2,
     "tags": [
@@ -322,6 +325,7 @@
   {
     "id": "patate-douce-farcie",
     "titre": "Patate douce farcie",
+    "description": "Une patate douce fondante ouverte en deux, garnie de pois chiches épicés et d'un yaourt au tahini.",
     "temps": 55,
     "portions": 2,
     "tags": [
@@ -413,6 +417,7 @@
   {
     "id": "dahl-lentilles-corail",
     "titre": "Dahl de lentilles corail",
+    "description": "Des lentilles corail mijotées au lait de coco et aux épices jusqu'à devenir crémeuses. Doux, chaud, réconfortant.",
     "temps": 35,
     "portions": 4,
     "tags": [
@@ -531,6 +536,7 @@
   {
     "id": "curry-pois-chiches-epinards",
     "titre": "Curry pois chiches & épinards",
+    "description": "Un curry express où les épinards fondent dans une sauce tomate-coco parfumée au gingembre.",
     "temps": 30,
     "portions": 2,
     "tags": [
@@ -649,6 +655,7 @@
   {
     "id": "tacos-poulet-avocat",
     "titre": "Tacos poulet-avocat",
+    "description": "Des tortillas garnies de poulet doré, d'avocat écrasé et d'oignon rouge au citron vert. On mange avec les doigts.",
     "temps": 30,
     "portions": 3,
     "tags": [
@@ -746,6 +753,7 @@
   {
     "id": "poelee-asiatique-nouilles",
     "titre": "Poêlée asiatique complète",
+    "description": "Nouilles sautées, légumes croquants et pois chiches dans une sauce gingembre-ail : un plat complet en un seul wok.",
     "temps": 25,
     "portions": 2,
     "tags": [
@@ -826,6 +834,7 @@
   {
     "id": "riz-saute-oeuf",
     "titre": "Riz sauté à l'œuf",
+    "description": "Le meilleur sort pour le riz de la veille : sauté à feu vif avec œuf, carotte et oignon nouveau.",
     "temps": 15,
     "portions": 2,
     "tags": [
@@ -893,6 +902,7 @@
   {
     "id": "gratin-chou-fleur-jambon",
     "titre": "Gratin chou-fleur & jambon",
+    "description": "Du chou-fleur et du jambon sous une béchamel gratinée, qui dore et fait des croûtes au bord du plat.",
     "temps": 50,
     "portions": 4,
     "tags": [
@@ -958,6 +968,7 @@
   {
     "id": "soupe-chou-fleur-lait",
     "titre": "Soupe de chou-fleur au lait",
+    "description": "Une soupe veloutée et toute douce, prête en vingt minutes avec presque rien.",
     "temps": 20,
     "portions": 2,
     "tags": [
@@ -1005,6 +1016,7 @@
   {
     "id": "rouleaux-riz-jambon",
     "titre": "Rouleaux de riz au jambon",
+    "description": "Des rouleaux frais au jambon, crudités croquantes et menthe, roulés en un quart d'heure sans allumer le feu.",
     "temps": 15,
     "portions": 2,
     "tags": [
@@ -1062,6 +1074,7 @@
   {
     "id": "salade-mediterraneenne",
     "titre": "Salade méditerranéenne complète",
+    "description": "Une grande salade de placard : légumineuses, thon, olives et citron. Copieuse, fraîche, sans cuisson.",
     "temps": 15,
     "portions": 2,
     "tags": [
@@ -1145,6 +1158,7 @@
   {
     "id": "pates-thon-legumineuses",
     "titre": "Pâtes au thon et légumineuses",
+    "description": "Des pâtes à la sauce tomate-thon, enrichies de pois chiches et de petits pois pour tenir au corps.",
     "temps": 20,
     "portions": 2,
     "tags": [
@@ -1227,6 +1241,7 @@
   {
     "id": "one-pot-mediterraneen",
     "titre": "One-pot méditerranéen",
+    "description": "Tout cuit ensemble dans la même casserole : les pâtes boivent la sauce tomate, et il n'y a qu'un plat à laver.",
     "temps": 25,
     "portions": 4,
     "tags": [
@@ -1329,6 +1344,7 @@
   {
     "id": "pates-citron-parmesan",
     "titre": "Pâtes citron & parmesan",
+    "description": "Des pâtes crémeuses au zeste de citron et au parmesan. Simple, lumineux, prêt en vingt minutes.",
     "temps": 20,
     "portions": 2,
     "tags": [
@@ -1395,6 +1411,7 @@
   {
     "id": "salade-pates-estivale",
     "titre": "Salade de pâtes estivale",
+    "description": "Pâtes, tomates cerises, mozzarella et basilic : la salade qui se prépare d'avance pour les soirs chauds.",
     "temps": 25,
     "portions": 4,
     "tags": [
@@ -1488,6 +1505,7 @@
   {
     "id": "poke-bowl-saumon-avocat",
     "titre": "Poke bowl saumon avocat",
+    "description": "Du saumon cru mariné sur un riz vinaigré, avec avocat, edamame et concombre. Frais et coloré.",
     "temps": 30,
     "portions": 2,
     "tags": [
@@ -1580,6 +1598,7 @@
   {
     "id": "chili-sin-carne",
     "titre": "Chili sin carne",
+    "description": "Haricots rouges, maïs et poivron mijotés dans une sauce tomate pimentée. Le chili qui n'a rien à envier à l'original.",
     "temps": 40,
     "portions": 4,
     "tags": [
@@ -1693,6 +1712,7 @@
   {
     "id": "curry-vert-thai-poulet",
     "titre": "Curry vert thaï au poulet",
+    "description": "Poulet et aubergine dans un lait de coco au curry vert, relevé de basilic et de citron vert.",
     "temps": 30,
     "portions": 3,
     "tags": [
@@ -1786,6 +1806,7 @@
   {
     "id": "ratatouille-four-oeuf-poche",
     "titre": "Ratatouille au four & œuf poché",
+    "description": "Les légumes du soleil confits au four, avec un œuf qui cuit dedans jusqu'à ce que le jaune coule encore.",
     "temps": 55,
     "portions": 4,
     "tags": [
@@ -1880,6 +1901,7 @@
   {
     "id": "quiche-courgette-chevre",
     "titre": "Quiche courgette & chèvre",
+    "description": "Une quiche fondante où la courgette rencontre le chèvre. Aussi bonne tiède que froide le lendemain.",
     "temps": 50,
     "portions": 4,
     "tags": [
@@ -1959,6 +1981,7 @@
   {
     "id": "couscous-poulet-legumes",
     "titre": "Couscous poulet & légumes",
+    "description": "Poulet, légumes et pois chiches mijotés dans un bouillon parfumé, servis sur une semoule bien gonflée.",
     "temps": 50,
     "portions": 4,
     "tags": [
@@ -2053,6 +2076,7 @@
   {
     "id": "risotto-champignons",
     "titre": "Risotto aux champignons",
+    "description": "Un risotto crémeux aux champignons, monté au parmesan. Il demande de remuer, il le rend bien.",
     "temps": 40,
     "portions": 4,
     "tags": [
@@ -2139,6 +2163,7 @@
   {
     "id": "poulet-basquaise",
     "titre": "Poulet basquaise",
+    "description": "Du poulet mijoté avec poivrons, tomates et oignons fondus. Un classique du Sud-Ouest, servi avec du riz.",
     "temps": 45,
     "portions": 4,
     "tags": [
@@ -2218,6 +2243,7 @@
   {
     "id": "soupe-miso-tofu",
     "titre": "Soupe miso au tofu",
+    "description": "Un bouillon miso léger, des dés de tofu et des algues. Réchauffe en un quart d'heure.",
     "temps": 15,
     "portions": 2,
     "tags": [
@@ -2271,6 +2297,7 @@
   {
     "id": "burger-maison",
     "titre": "Burger maison",
+    "description": "Un steak juteux, du cheddar fondu et des crudités dans un pain toasté. Meilleur que celui du drive.",
     "temps": 25,
     "portions": 2,
     "tags": [
@@ -2362,6 +2389,7 @@
   {
     "id": "pizza-margherita-maison",
     "titre": "Pizza margherita maison",
+    "description": "Tomate, mozzarella, basilic : la pizza la plus simple, et souvent la meilleure, à faire chez soi.",
     "temps": 30,
     "portions": 2,
     "tags": [
@@ -2420,6 +2448,7 @@
   {
     "id": "tartiflette",
     "titre": "Tartiflette",
+    "description": "Pommes de terre, lardons et oignons sous un reblochon qui coule en dorant. Pour les soirs d'hiver.",
     "temps": 55,
     "portions": 4,
     "tags": [
@@ -2479,6 +2508,7 @@
   {
     "id": "shakshuka",
     "titre": "Shakshuka",
+    "description": "Des œufs pochés dans une sauce tomate-poivron épicée, servis dans la poêle avec du pain pour saucer.",
     "temps": 30,
     "portions": 2,
     "tags": [
@@ -2565,6 +2595,7 @@
   {
     "id": "gyoza-porc",
     "titre": "Gyoza au porc",
+    "description": "Des raviolis japonais au porc et au chou, grillés dessous et cuits vapeur dessus. Un peu de pliage, beaucoup de plaisir.",
     "temps": 40,
     "portions": 2,
     "tags": [
@@ -2635,6 +2666,7 @@
   {
     "id": "buddha-bowl-tofu",
     "titre": "Buddha bowl tofu croustillant",
+    "description": "Du tofu croustillant au four, du quinoa, des légumes et de l'avocat : un bol complet et coloré.",
     "temps": 35,
     "portions": 2,
     "tags": [
@@ -2713,6 +2745,7 @@
   {
     "id": "saumon-teriyaki-riz",
     "titre": "Saumon teriyaki & riz",
+    "description": "Un pavé de saumon laqué au teriyaki, brillant et sucré-salé, avec du riz et du brocoli.",
     "temps": 25,
     "portions": 2,
     "tags": [
@@ -2771,6 +2804,7 @@
   {
     "id": "tagine-agneau-abricots",
     "titre": "Tagine d'agneau aux abricots",
+    "description": "De l'agneau confit longuement avec des abricots et des épices douces, jusqu'à se défaire à la fourchette.",
     "temps": 90,
     "portions": 4,
     "tags": [
@@ -2859,6 +2893,7 @@
   {
     "id": "pad-thai-poulet",
     "titre": "Pad thaï au poulet",
+    "description": "Nouilles de riz sautées au poulet, œuf et pousses de soja, avec la touche aigre-douce du tamarin et du citron vert.",
     "temps": 30,
     "portions": 2,
     "tags": [
@@ -2939,6 +2974,7 @@
   {
     "id": "lasagnes-legumes",
     "titre": "Lasagnes aux légumes",
+    "description": "Des couches de courgette, aubergine et sauce tomate sous une béchamel gratinée. Généreuses et sans viande.",
     "temps": 60,
     "portions": 4,
     "tags": [
@@ -3044,6 +3080,7 @@
   {
     "id": "boeuf-bourguignon",
     "titre": "Bœuf bourguignon",
+    "description": "Du bœuf mijoté des heures au vin rouge avec lardons, carottes et champignons. Encore meilleur réchauffé.",
     "temps": 210,
     "portions": 4,
     "tags": [
@@ -3159,6 +3196,7 @@
   {
     "id": "blanquette-de-veau",
     "titre": "Blanquette de veau",
+    "description": "Du veau tendre dans une sauce blanche à la crème et au citron, avec carottes et champignons. Le plat du dimanche.",
     "temps": 105,
     "portions": 4,
     "tags": [
@@ -3271,6 +3309,7 @@
   {
     "id": "coq-au-vin",
     "titre": "Coq au vin",
+    "description": "Du poulet longuement mijoté au vin rouge, avec lardons et petits oignons. Profond, rassurant.",
     "temps": 105,
     "portions": 4,
     "tags": [
@@ -3385,6 +3424,7 @@
   {
     "id": "pot-au-feu",
     "titre": "Pot-au-feu",
+    "description": "Le bœuf et les légumes cuits doucement dans un grand bouillon : on boit le bouillon, puis on mange le reste.",
     "temps": 210,
     "portions": 6,
     "tags": [
@@ -3490,6 +3530,7 @@
   {
     "id": "navarin-agneau",
     "titre": "Navarin d'agneau printanier",
+    "description": "Un ragoût d'agneau aux légumes nouveaux, navets, carottes et petits pois. Le printemps en cocotte.",
     "temps": 105,
     "portions": 4,
     "tags": [
@@ -3608,6 +3649,7 @@
   {
     "id": "daube-provencale",
     "titre": "Daube provençale",
+    "description": "Du bœuf mariné au vin et mijoté avec olives et zeste d'orange. Le parfum de la Provence en hiver.",
     "temps": 195,
     "portions": 6,
     "tags": [
@@ -3713,6 +3755,7 @@
   {
     "id": "cassoulet-maison",
     "titre": "Cassoulet maison",
+    "description": "Haricots blancs, confit de canard et saucisse de Toulouse, gratinés lentement au four. Copieux et sans excuse.",
     "temps": 135,
     "portions": 6,
     "tags": [
@@ -3817,6 +3860,7 @@
   {
     "id": "choucroute-garnie",
     "titre": "Choucroute garnie",
+    "description": "Du chou fermenté braisé avec saucisses, lard fumé et pommes de terre. L'Alsace dans l'assiette.",
     "temps": 105,
     "portions": 6,
     "tags": [
@@ -3916,6 +3960,7 @@
   {
     "id": "petit-sale-lentilles",
     "titre": "Petit salé aux lentilles",
+    "description": "Des lentilles vertes qui mijotent avec le lard fumé et la saucisse et en prennent tout le goût.",
     "temps": 75,
     "portions": 4,
     "tags": [
@@ -4015,6 +4060,7 @@
   {
     "id": "boeuf-carottes",
     "titre": "Bœuf aux carottes",
+    "description": "Du bœuf fondant et des carottes confites dans leur jus. Simple, lent, réconfortant.",
     "temps": 150,
     "portions": 4,
     "tags": [
@@ -4109,6 +4155,7 @@
   {
     "id": "poulet-chasseur",
     "titre": "Poulet chasseur",
+    "description": "Du poulet mijoté aux champignons, échalotes et tomate, avec une touche de crème. Un classique de bistrot.",
     "temps": 60,
     "portions": 4,
     "tags": [
@@ -4220,6 +4267,7 @@
   {
     "id": "lapin-moutarde",
     "titre": "Lapin à la moutarde",
+    "description": "Du lapin tendre dans une sauce crémeuse à la moutarde qui pique juste ce qu'il faut.",
     "temps": 75,
     "portions": 4,
     "tags": [
@@ -4315,6 +4363,7 @@
   {
     "id": "poulet-roti-pommes-de-terre",
     "titre": "Poulet rôti et pommes de terre",
+    "description": "Un poulet entier à la peau croustillante, et des pommes de terre qui dorent dans son jus.",
     "temps": 90,
     "portions": 4,
     "tags": [
@@ -4396,6 +4445,7 @@
   {
     "id": "hachis-parmentier",
     "titre": "Hachis parmentier",
+    "description": "Viande hachée mijotée sous une purée maison gratinée. Le plat de cantine qu'on aime encore.",
     "temps": 70,
     "portions": 4,
     "tags": [
@@ -4500,6 +4550,7 @@
   {
     "id": "tomates-farcies",
     "titre": "Tomates farcies",
+    "description": "Des tomates garnies de chair parfumée, rôties au four sur un lit de riz qui boit leur jus.",
     "temps": 75,
     "portions": 4,
     "tags": [
@@ -4603,6 +4654,7 @@
   {
     "id": "escalope-veau-creme",
     "titre": "Escalope de veau à la crème",
+    "description": "Une escalope dorée nappée d'une sauce crème aux champignons, avec des pâtes. Prête en une demi-heure.",
     "temps": 30,
     "portions": 4,
     "tags": [
@@ -4702,6 +4754,7 @@
   {
     "id": "cordon-bleu-maison",
     "titre": "Cordon-bleu maison",
+    "description": "Du poulet pané qui cache du jambon et du comté fondu. La version maison, croustillante et généreuse.",
     "temps": 35,
     "portions": 4,
     "tags": [
@@ -4788,6 +4841,7 @@
   {
     "id": "steak-frites",
     "titre": "Steak frites maison",
+    "description": "Un steak saisi à point et des frites maison dorées. L'éternel du bistrot, à la maison.",
     "temps": 45,
     "portions": 4,
     "tags": [
@@ -4861,6 +4915,7 @@
   {
     "id": "cote-porc-charcutiere",
     "titre": "Côtes de porc charcutière",
+    "description": "Des côtes de porc dorées, nappées d'une sauce à l'échalote, aux cornichons et à la moutarde.",
     "temps": 35,
     "portions": 4,
     "tags": [
@@ -4963,6 +5018,7 @@
   {
     "id": "roti-porc-pommes-terre",
     "titre": "Rôti de porc aux pommes de terre",
+    "description": "Un rôti de porc doré au four, entouré de pommes de terre fondantes et d'oignons confits.",
     "temps": 85,
     "portions": 6,
     "tags": [
@@ -5051,6 +5107,7 @@
   {
     "id": "saucisse-puree",
     "titre": "Saucisses et purée maison",
+    "description": "Des saucisses bien dorées et une purée maison au beurre. Le réconfort, sans détour.",
     "temps": 40,
     "portions": 4,
     "tags": [
@@ -5130,6 +5187,7 @@
   {
     "id": "boudin-noir-pommes",
     "titre": "Boudin noir aux pommes",
+    "description": "Du boudin poêlé avec des pommes caramélisées : le salé et le sucré se répondent.",
     "temps": 30,
     "portions": 4,
     "tags": [
@@ -5209,6 +5267,7 @@
   {
     "id": "magret-canard-pommes",
     "titre": "Magret de canard aux pommes",
+    "description": "Un magret à la peau croustillante, rosé à cœur, avec des pommes poêlées au jus.",
     "temps": 35,
     "portions": 4,
     "tags": [
@@ -5289,6 +5348,7 @@
   {
     "id": "gigot-agneau-flageolets",
     "titre": "Gigot d'agneau aux flageolets",
+    "description": "Un gigot rôti à l'ail, tendre et rosé, avec des flageolets qui mijotent dans son jus.",
     "temps": 105,
     "portions": 6,
     "tags": [
@@ -5382,6 +5442,7 @@
   {
     "id": "moules-marinieres",
     "titre": "Moules marinières",
+    "description": "Des moules ouvertes au vin blanc, échalote et persil. On sauce le jus jusqu'à la dernière goutte.",
     "temps": 30,
     "portions": 4,
     "tags": [
@@ -5463,6 +5524,7 @@
   {
     "id": "cabillaud-provencale",
     "titre": "Dos de cabillaud à la provençale",
+    "description": "Un dos de cabillaud nacré cuit au four sur des tomates, olives et citron. Léger et plein de soleil.",
     "temps": 35,
     "portions": 4,
     "tags": [
@@ -5563,6 +5625,7 @@
   {
     "id": "papillote-saumon-legumes",
     "titre": "Papillote de saumon aux légumes",
+    "description": "Le saumon et ses légumes cuisent ensemble dans leur papillote : on l'ouvre à table, dans un nuage de vapeur.",
     "temps": 30,
     "portions": 4,
     "tags": [
@@ -5649,6 +5712,7 @@
   {
     "id": "truite-amandes",
     "titre": "Truite aux amandes",
+    "description": "Une truite dorée au beurre, couverte d'amandes grillées et d'un trait de citron.",
     "temps": 25,
     "portions": 4,
     "tags": [
@@ -5728,6 +5792,7 @@
   {
     "id": "saumon-creme-ciboulette",
     "titre": "Saumon à la crème et à la ciboulette",
+    "description": "Du saumon poêlé dans une sauce crème légère à la ciboulette, avec du riz. Doux et rapide.",
     "temps": 25,
     "portions": 4,
     "tags": [
@@ -5820,6 +5885,7 @@
   {
     "id": "cabillaud-meuniere",
     "titre": "Cabillaud meunière",
+    "description": "Du cabillaud fariné doré au beurre noisette, avec citron et persil. La simplicité qui marche toujours.",
     "temps": 25,
     "portions": 4,
     "tags": [
@@ -5899,6 +5965,7 @@
   {
     "id": "gambas-ail-persil",
     "titre": "Gambas à l'ail et au persil",
+    "description": "Des crevettes saisies à feu vif dans l'ail et le persil, avec du pain pour saucer le beurre.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -5977,6 +6044,7 @@
   {
     "id": "saint-jacques-poelees",
     "titre": "Saint-Jacques poêlées à la crème",
+    "description": "Des Saint-Jacques dorées en une minute, sur une fondue de poireaux à la crème. Le plat des grandes occasions.",
     "temps": 25,
     "portions": 4,
     "tags": [
@@ -6063,6 +6131,7 @@
   {
     "id": "gratin-dauphinois",
     "titre": "Gratin dauphinois",
+    "description": "De fines tranches de pommes de terre cuites lentement dans la crème à l'ail, fondantes sous une peau dorée.",
     "temps": 90,
     "portions": 6,
     "tags": [
@@ -6137,6 +6206,7 @@
   {
     "id": "quiche-lorraine",
     "titre": "Quiche lorraine",
+    "description": "La vraie : lardons, œufs et crème dans une pâte croustillante. Tiède avec une salade verte.",
     "temps": 60,
     "portions": 6,
     "tags": [
@@ -6215,6 +6285,7 @@
   {
     "id": "croque-monsieur",
     "titre": "Croque-monsieur",
+    "description": "Jambon et comté entre deux tranches de pain de mie, gratinés jusqu'à ce que le fromage file.",
     "temps": 25,
     "portions": 4,
     "tags": [
@@ -6296,6 +6367,7 @@
   {
     "id": "omelette-fines-herbes",
     "titre": "Omelette aux fines herbes",
+    "description": "Une omelette baveuse aux herbes fraîches, prête en dix minutes. Le dîner quand le frigo est vide.",
     "temps": 15,
     "portions": 2,
     "tags": [
@@ -6377,6 +6449,7 @@
   {
     "id": "oeufs-cocotte",
     "titre": "Œufs cocotte à la crème",
+    "description": "Des œufs cuits au four dans la crème, avec champignons et comté, et des mouillettes pour le jaune.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -6462,6 +6535,7 @@
   {
     "id": "oeufs-meurette",
     "titre": "Œufs en meurette",
+    "description": "Des œufs pochés dans une sauce au vin rouge, lardons et champignons, sur du pain grillé. La Bourgogne en petit.",
     "temps": 40,
     "portions": 4,
     "tags": [
@@ -6567,6 +6641,7 @@
   {
     "id": "piperade",
     "titre": "Piperade",
+    "description": "Poivrons et tomates fondus avec des œufs brouillés et du jambon cru. Le Pays basque, en couleurs.",
     "temps": 40,
     "portions": 4,
     "tags": [
@@ -6653,6 +6728,7 @@
   {
     "id": "endives-jambon",
     "titre": "Endives au jambon",
+    "description": "Des endives roulées dans le jambon, sous une béchamel gratinée qui adoucit leur amertume.",
     "temps": 55,
     "portions": 4,
     "tags": [
@@ -6746,6 +6822,7 @@
   {
     "id": "gratin-courgettes",
     "titre": "Gratin de courgettes au riz",
+    "description": "Courgettes fondantes et riz liés par les œufs et la crème, gratinés au fromage. La courgette qu'on aime.",
     "temps": 60,
     "portions": 4,
     "tags": [
@@ -6844,6 +6921,7 @@
   {
     "id": "gratin-pates-jambon",
     "titre": "Gratin de pâtes au jambon",
+    "description": "Des pâtes au jambon et aux champignons dans une béchamel, sous une croûte de fromage. Les enfants en redemandent.",
     "temps": 45,
     "portions": 4,
     "tags": [
@@ -6937,6 +7015,7 @@
   {
     "id": "tarte-poireaux-lardons",
     "titre": "Tarte aux poireaux et lardons",
+    "description": "Une tarte fondante aux poireaux et lardons, liée à la crème. Le salé du week-end.",
     "temps": 65,
     "portions": 6,
     "tags": [
@@ -7022,6 +7101,7 @@
   {
     "id": "flammekueche",
     "titre": "Flammekueche",
+    "description": "Une pâte très fine, de la crème, des oignons et des lardons, cuite à four très chaud. À partager à la main.",
     "temps": 35,
     "portions": 4,
     "tags": [
@@ -7101,6 +7181,7 @@
   {
     "id": "pissaladiere",
     "titre": "Pissaladière",
+    "description": "Des oignons confits longuement sur une pâte, avec anchois et olives noires. L'apéro niçois.",
     "temps": 75,
     "portions": 6,
     "tags": [
@@ -7187,6 +7268,7 @@
   {
     "id": "tarte-tomate-moutarde",
     "titre": "Tarte à la tomate et à la moutarde",
+    "description": "Des tranches de tomate sur une couche de moutarde et de fromage, dans une pâte feuilletée croustillante.",
     "temps": 45,
     "portions": 4,
     "tags": [
@@ -7262,6 +7344,7 @@
   {
     "id": "souffle-fromage",
     "titre": "Soufflé au fromage",
+    "description": "Un soufflé qui monte haut et doré, au cœur tremblant et au comté. On le sert vite, avant qu'il ne retombe.",
     "temps": 55,
     "portions": 4,
     "tags": [
@@ -7337,6 +7420,7 @@
   {
     "id": "galette-complete",
     "titre": "Galette complète au sarrasin",
+    "description": "Une galette de sarrasin croustillante, garnie de jambon, de fromage fondu et d'un œuf au jaune coulant.",
     "temps": 40,
     "portions": 4,
     "tags": [
@@ -7422,6 +7506,7 @@
   {
     "id": "camembert-roti",
     "titre": "Camembert rôti au four",
+    "description": "Un camembert entier rôti à l'ail, coulant à cœur, dans lequel on trempe pain et pommes de terre.",
     "temps": 30,
     "portions": 4,
     "tags": [
@@ -7502,6 +7587,7 @@
   {
     "id": "cake-jambon-olives",
     "titre": "Cake au jambon et aux olives",
+    "description": "Un cake salé moelleux au jambon et aux olives, parfait en tranches pour l'apéro ou le pique-nique.",
     "temps": 60,
     "portions": 6,
     "tags": [
@@ -7588,6 +7674,7 @@
   {
     "id": "pates-carbonara",
     "titre": "Pâtes à la carbonara",
+    "description": "La vraie carbonara : œufs, parmesan et lardons, sans crème. Une sauce soyeuse en vingt minutes.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -7654,6 +7741,7 @@
   {
     "id": "pates-bolognaise",
     "titre": "Pâtes à la bolognaise",
+    "description": "Une sauce à la viande mijotée longtemps avec carotte et céleri, jusqu'à devenir profonde et douce.",
     "temps": 90,
     "portions": 4,
     "tags": [
@@ -7770,6 +7858,7 @@
   {
     "id": "salade-nicoise",
     "titre": "Salade niçoise",
+    "description": "Tomates, œufs, thon, olives et anchois sur un lit de salade. L'été de Nice dans un saladier.",
     "temps": 25,
     "portions": 4,
     "tags": [
@@ -7880,6 +7969,7 @@
   {
     "id": "salade-chevre-chaud",
     "titre": "Salade de chèvre chaud",
+    "description": "Des toasts de chèvre fondant sur une salade aux noix et tomates cerises. La salade qui tient lieu de dîner.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -7974,6 +8064,7 @@
   {
     "id": "salade-lyonnaise",
     "titre": "Salade lyonnaise",
+    "description": "Salade, lardons, croûtons et un œuf poché qui coule sur le tout. Un bouchon lyonnais dans un bol.",
     "temps": 25,
     "portions": 4,
     "tags": [
@@ -8066,6 +8157,7 @@
   {
     "id": "celeri-remoulade",
     "titre": "Céleri rémoulade",
+    "description": "Du céleri-rave râpé dans une sauce crémeuse à la moutarde. L'entrée de bistrot, croquante et fraîche.",
     "temps": 15,
     "portions": 4,
     "tags": [
@@ -8139,6 +8231,7 @@
   {
     "id": "carottes-rapees",
     "titre": "Carottes râpées à l'orange",
+    "description": "Des carottes râpées réveillées par le jus d'orange et le citron. Fraîches, sucrées, croquantes.",
     "temps": 15,
     "portions": 4,
     "tags": [
@@ -8220,6 +8313,7 @@
   {
     "id": "poireaux-vinaigrette",
     "titre": "Poireaux vinaigrette",
+    "description": "Des poireaux fondants nappés d'une vinaigrette à l'échalote et d'œuf mimosa.",
     "temps": 30,
     "portions": 4,
     "tags": [
@@ -8300,6 +8394,7 @@
   {
     "id": "oeufs-mimosa",
     "titre": "Œufs mimosa",
+    "description": "Des œufs durs garnis de jaune à la mayonnaise. L'entrée de toutes les tablées familiales.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -8380,6 +8475,7 @@
   {
     "id": "tartare-saumon",
     "titre": "Tartare de saumon à l'avocat",
+    "description": "Du saumon cru taillé au couteau, avec avocat, citron vert et ciboulette. Frais, sans aucune cuisson.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -8466,6 +8562,7 @@
   {
     "id": "avocat-crevettes",
     "titre": "Avocat aux crevettes",
+    "description": "Des demi-avocats garnis de crevettes en sauce cocktail. Un retour réussi des années 80.",
     "temps": 15,
     "portions": 4,
     "tags": [
@@ -8545,6 +8642,7 @@
   {
     "id": "soupe-oignon-gratinee",
     "titre": "Soupe à l'oignon gratinée",
+    "description": "Des oignons caramélisés longuement dans un bouillon, sous un croûton couvert de comté gratiné.",
     "temps": 60,
     "portions": 4,
     "tags": [
@@ -8641,6 +8739,7 @@
   {
     "id": "potage-poireaux-pommes-terre",
     "titre": "Potage poireaux pommes de terre",
+    "description": "Un potage tout doux de poireaux et pommes de terre, avec un trait de crème et de la ciboulette.",
     "temps": 40,
     "portions": 4,
     "tags": [
@@ -8722,6 +8821,7 @@
   {
     "id": "veloute-potimarron",
     "titre": "Velouté de potimarron",
+    "description": "Un velouté orange au goût de châtaigne, avec quelques noix concassées pour le croquant.",
     "temps": 40,
     "portions": 4,
     "tags": [
@@ -8810,6 +8910,7 @@
   {
     "id": "soupe-legumes-hiver",
     "titre": "Soupe de légumes d'hiver",
+    "description": "Une grande marmite de légumes d'hiver, mixée ou en morceaux. Ça réchauffe et ça se garde.",
     "temps": 50,
     "portions": 6,
     "tags": [
@@ -8909,6 +9010,7 @@
   {
     "id": "salade-lentilles",
     "titre": "Salade de lentilles à l'échalote",
+    "description": "Des lentilles tièdes à la vinaigrette d'échalote, avec carotte et œuf dur. Simple et nourrissant.",
     "temps": 40,
     "portions": 4,
     "tags": [
@@ -9003,6 +9105,7 @@
   {
     "id": "taboule-menthe",
     "titre": "Taboulé à la menthe",
+    "description": "Beaucoup d'herbes, un peu de semoule, tomate et citron : un taboulé frais qui sent la menthe.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -9088,6 +9191,7 @@
   {
     "id": "crepes-sucrees",
     "titre": "Crêpes sucrées",
+    "description": "Des crêpes fines et dorées, à garnir de sucre, de confiture ou de chocolat. Pour le goûter ou le dessert.",
     "temps": 45,
     "portions": 6,
     "tags": [
@@ -9162,6 +9266,7 @@
   {
     "id": "gateau-yaourt",
     "titre": "Gâteau au yaourt",
+    "description": "Le premier gâteau qu'on apprend : on mesure tout avec le pot de yaourt. Moelleux à coup sûr.",
     "temps": 45,
     "portions": 6,
     "tags": [
@@ -9245,6 +9350,7 @@
   {
     "id": "mousse-chocolat",
     "titre": "Mousse au chocolat",
+    "description": "Une mousse aérienne au chocolat noir, avec seulement des œufs et du chocolat. À préparer la veille.",
     "temps": 20,
     "portions": 6,
     "tags": [
@@ -9299,6 +9405,7 @@
   {
     "id": "fondant-chocolat",
     "titre": "Fondant au chocolat",
+    "description": "Un gâteau au chocolat dense et fondant, au cœur à peine cuit. Prêt en une demi-heure.",
     "temps": 30,
     "portions": 6,
     "tags": [
@@ -9368,6 +9475,7 @@
   {
     "id": "tarte-pommes",
     "titre": "Tarte aux pommes",
+    "description": "Des pommes en rosace sur une pâte croustillante, dorées et caramélisées au four.",
     "temps": 60,
     "portions": 6,
     "tags": [
@@ -9443,6 +9551,7 @@
   {
     "id": "crumble-pommes",
     "titre": "Crumble aux pommes",
+    "description": "Des pommes fondantes sous une croûte sablée et croquante. Encore meilleur avec une boule de glace.",
     "temps": 45,
     "portions": 6,
     "tags": [
@@ -9519,6 +9628,7 @@
   {
     "id": "clafoutis-cerises",
     "titre": "Clafoutis aux cerises",
+    "description": "Des cerises entières prises dans une pâte flan dorée. Le dessert du début de l'été.",
     "temps": 55,
     "portions": 6,
     "tags": [
@@ -9593,6 +9703,7 @@
   {
     "id": "riz-au-lait",
     "titre": "Riz au lait",
+    "description": "Du riz cuit doucement dans le lait vanillé jusqu'à devenir crémeux. Le dessert de grand-mère.",
     "temps": 45,
     "portions": 4,
     "tags": [
@@ -9661,6 +9772,7 @@
   {
     "id": "ile-flottante",
     "titre": "Île flottante",
+    "description": "Des blancs en neige pochés qui flottent sur une crème anglaise, sous un filet de caramel.",
     "temps": 35,
     "portions": 4,
     "tags": [
@@ -9721,6 +9833,7 @@
   {
     "id": "creme-brulee",
     "titre": "Crème brûlée",
+    "description": "Une crème vanillée onctueuse sous une fine couche de sucre caramélisé qui craque sous la cuillère.",
     "temps": 60,
     "portions": 6,
     "tags": [
@@ -9781,6 +9894,7 @@
   {
     "id": "far-breton",
     "titre": "Far breton aux pruneaux",
+    "description": "Un flan breton dense et moelleux, constellé de pruneaux. Rustique et généreux.",
     "temps": 60,
     "portions": 6,
     "tags": [
@@ -9856,6 +9970,7 @@
   {
     "id": "pain-perdu",
     "titre": "Pain perdu",
+    "description": "Du pain rassis trempé dans le lait et l'œuf, doré au beurre et sucré. Rien ne se perd.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -9924,6 +10039,7 @@
   {
     "id": "madeleines",
     "titre": "Madeleines",
+    "description": "Des petits gâteaux au citron avec leur bosse dorée. À tremper encore tièdes dans le thé.",
     "temps": 35,
     "portions": 6,
     "tags": [
@@ -9999,6 +10115,7 @@
   {
     "id": "quatre-quarts",
     "titre": "Quatre-quarts",
+    "description": "Autant de beurre, de sucre, de farine que d'œufs : le gâteau breton le plus simple et le plus fondant.",
     "temps": 60,
     "portions": 6,
     "tags": [
@@ -10068,6 +10185,7 @@
   {
     "id": "tarte-citron-meringuee",
     "titre": "Tarte au citron meringuée",
+    "description": "Une crème au citron acidulée sur une pâte sablée, sous une meringue dorée. L'équilibre acide-sucré.",
     "temps": 75,
     "portions": 8,
     "tags": [
@@ -10143,6 +10261,7 @@
   {
     "id": "curry-rouge-crevettes",
     "titre": "Curry rouge thaï aux crevettes",
+    "description": "Des crevettes et des haricots verts dans un curry rouge au lait de coco, parfumé au combava et au basilic thaï.",
     "temps": 30,
     "portions": 4,
     "tags": [
@@ -10242,6 +10361,7 @@
   {
     "id": "massaman-poulet",
     "titre": "Curry massaman au poulet",
+    "description": "Un curry doux et parfumé, aux pommes de terre fondantes et au tamarin. Le plus réconfortant des currys thaïs.",
     "temps": 60,
     "portions": 4,
     "tags": [
@@ -10341,6 +10461,7 @@
   {
     "id": "tom-yum-crevettes",
     "titre": "Tom yum aux crevettes",
+    "description": "Une soupe claire, acide et piquante, à la citronnelle et au galanga. Ça réveille.",
     "temps": 30,
     "portions": 4,
     "tags": [
@@ -10443,6 +10564,7 @@
   {
     "id": "tom-kha-kai",
     "titre": "Tom kha kai",
+    "description": "Une soupe de poulet au lait de coco, parfumée au galanga et au citron vert. Douce, acidulée, enveloppante.",
     "temps": 30,
     "portions": 4,
     "tags": [
@@ -10540,6 +10662,7 @@
   {
     "id": "som-tam",
     "titre": "Som tam, salade de papaye verte",
+    "description": "Une salade de papaye verte pilée au mortier, piquante, acide et croquante. Le grand classique de rue.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -10626,6 +10749,7 @@
   {
     "id": "larb-gai",
     "titre": "Larb gai, salade de poulet hachée",
+    "description": "Du poulet haché au citron vert, à la menthe et au piment, à manger dans des feuilles de salade.",
     "temps": 25,
     "portions": 4,
     "tags": [
@@ -10723,6 +10847,7 @@
   {
     "id": "pad-krapow-porc",
     "titre": "Pad krapow, porc au basilic thaï",
+    "description": "Du porc sauté au basilic sacré et au piment, sur du riz avec un œuf au plat croustillant.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -10822,6 +10947,7 @@
   {
     "id": "pad-see-ew",
     "titre": "Pad see ew",
+    "description": "De larges nouilles de riz sautées à la sauce soja sucrée, avec poulet et chou chinois, légèrement fumées par le wok.",
     "temps": 25,
     "portions": 4,
     "tags": [
@@ -10921,6 +11047,7 @@
   {
     "id": "khao-pad",
     "titre": "Khao pad, riz sauté thaï",
+    "description": "Le riz sauté thaï, au poulet et à l'œuf, avec tomate, citron vert et concombre frais à côté.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -11032,6 +11159,7 @@
   {
     "id": "satay-poulet",
     "titre": "Brochettes satay et sauce cacahuète",
+    "description": "Des brochettes de poulet marinées au curry et au coco, grillées et trempées dans une sauce cacahuète.",
     "temps": 35,
     "portions": 4,
     "tags": [
@@ -11131,6 +11259,7 @@
   {
     "id": "curry-jaune-poulet",
     "titre": "Curry jaune au poulet et pommes de terre",
+    "description": "Un curry jaune doux au curcuma, avec poulet et pommes de terre fondantes. Idéal pour débuter avec les currys.",
     "temps": 45,
     "portions": 4,
     "tags": [
@@ -11235,6 +11364,7 @@
   {
     "id": "yam-woon-sen",
     "titre": "Yam woon sen, salade de vermicelles",
+    "description": "Des vermicelles translucides en salade avec crevettes et porc, assaisonnés citron vert, piment et nuoc-mâm.",
     "temps": 25,
     "portions": 4,
     "tags": [
@@ -11344,6 +11474,7 @@
   {
     "id": "poisson-vapeur-citron-vert",
     "titre": "Poisson vapeur au citron vert",
+    "description": "Un poisson cuit à la vapeur, arrosé d'une sauce vive à l'ail, au piment et au citron vert.",
     "temps": 30,
     "portions": 4,
     "tags": [
@@ -11435,6 +11566,7 @@
   {
     "id": "khai-jiao",
     "titre": "Khai jiao, omelette thaïe",
+    "description": "Une omelette thaïe gonflée et croustillante, frite à l'huile, servie sur du riz. Prête en dix minutes.",
     "temps": 15,
     "portions": 2,
     "tags": [
@@ -11508,6 +11640,7 @@
   {
     "id": "boeuf-basilic-thai",
     "titre": "Bœuf sauté au basilic thaï",
+    "description": "Des lamelles de bœuf saisies au wok avec poivron, piment et basilic thaï. Rapide et parfumé.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -11606,6 +11739,7 @@
   {
     "id": "gai-yang",
     "titre": "Gai yang, poulet grillé thaï",
+    "description": "Du poulet mariné à la citronnelle et à la coriandre, grillé jusqu'à caraméliser. Avec du riz gluant.",
     "temps": 45,
     "portions": 4,
     "tags": [
@@ -11704,6 +11838,7 @@
   {
     "id": "pad-pak-legumes",
     "titre": "Pad pak, légumes sautés au wok",
+    "description": "Des légumes croquants et du tofu sautés vite au wok dans une sauce à l'ail. Léger et plein de couleurs.",
     "temps": 20,
     "portions": 4,
     "tags": [
@@ -11809,6 +11944,7 @@
   {
     "id": "soupe-nouilles-poulet-thai",
     "titre": "Soupe de nouilles au poulet",
+    "description": "Un bouillon clair au gingembre, des nouilles de riz et du poulet, avec herbes fraîches et pousses de soja.",
     "temps": 35,
     "portions": 4,
     "tags": [
@@ -11921,6 +12057,7 @@
   {
     "id": "riz-gluant-mangue",
     "titre": "Riz gluant à la mangue",
+    "description": "Du riz gluant au lait de coco sucré-salé, avec des tranches de mangue bien mûre. Le dessert thaï par excellence.",
     "temps": 50,
     "portions": 4,
     "tags": [
@@ -11987,6 +12124,7 @@
   {
     "id": "aioli-provencal",
     "titre": "Aïoli provençal",
+    "description": "Du cabillaud, des légumes vapeur et des œufs, autour d'un grand bol d'aïoli à l'ail. Le repas provençal à partager.",
     "temps": 50,
     "portions": 4,
     "tags": [
