@@ -2845,47 +2845,106 @@ h3.entete-section {
   }
 }
 
-/* Filtres de l'écran Proposer. Sur téléphone, une seule rangée qui
-   défile du pouce et déborde jusqu'aux bords de l'écran : la puce coupée
-   au bord droit dit qu'il y en a d'autres, sans flèche ni libellé. Le
-   masque estompe les deux extrémités pour que la coupe se lise comme une
-   suite, pas comme un défaut de mise en page. */
+/* Filtres de l'écran Proposer. Rien ne défile : le temps tient dans un
+   sélecteur à quatre cases, les puces passent à la ligne, et les tags
+   attendent dans un panneau qu'on déplie — rangés par groupe pour qu'on
+   lise « Cuisine » puis trois mots, pas vingt mots en vrac. */
 .filtres {
-  margin: 4px -20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 4px 0 16px;
 }
 
 .filtres-titre {
   display: none;
 }
 
-.puces-defilantes {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity;
-  scroll-padding-inline: 20px;
-  margin: 0;
-  /* De la place pour le rebond d'appui (scale) et l'ombre des puces, que
-     `overflow` rognerait sinon. */
-  padding: 4px 20px 8px;
-  scrollbar-width: none;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 28px), transparent);
-  mask-image: linear-gradient(to right, transparent, #000 16px, #000 calc(100% - 28px), transparent);
+.segments-temps {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 3px 3px 12px;
+  border-radius: 999px;
+  background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet);
+  color: var(--encre-douce);
 }
 
-.puces-defilantes::-webkit-scrollbar {
-  display: none;
+.segments-temps > svg {
+  flex: none;
+  margin-right: 4px;
 }
 
-.puces-defilantes .puce {
-  scroll-snap-align: start;
+.segments-temps button {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--encre-douce);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
   white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--court2) var(--standard), color var(--court2) var(--standard);
 }
 
-.puce-temps {
+.segments-temps button[aria-checked='true'] {
+  background: var(--accent-doux);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.filtres .puces {
+  margin: 0;
+}
+
+.puce-active,
+.puce-plus {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+}
+
+.puce-plus svg {
+  transform: rotate(90deg);
+  transition: transform var(--court3) var(--standard);
+}
+
+.puce-plus[aria-expanded='true'] svg {
+  transform: rotate(-90deg);
+}
+
+.filtres[data-ouvert='false'] .filtres-groupes {
+  display: none;
+}
+
+.filtres-groupes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--rayon);
+  background: var(--carte-basse);
+  box-shadow: inset 0 0 0 1px var(--filet);
+}
+
+.filtres-groupe-titre {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--encre-douce);
+}
+
+.filtres-groupe .puce {
+  min-height: 36px;
+  padding: 0 14px;
 }
 
 .puce-effacer em,
@@ -6026,7 +6085,7 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
 
   .corps-propose {
     display: grid;
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 248px 1fr;
     align-items: start;
     gap: 32px;
     margin-top: 24px;
@@ -6040,29 +6099,53 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
     border-radius: var(--rayon);
     background: var(--carte-basse);
     box-shadow: inset 0 0 0 1px var(--filet), var(--ombre-plate);
+    /* La colonne peut dépasser la hauteur de l'écran une fois tous les
+       groupes dépliés : elle défile alors pour elle-même. */
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
   }
 
   .corps-propose .filtres-titre {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin: 0 0 12px;
+    margin: 0;
     font-weight: 700;
   }
 
-  .corps-propose .puces {
-    flex-direction: column;
-    overflow: visible;
-    gap: 6px;
-    padding: 0;
-    -webkit-mask-image: none;
-    mask-image: none;
+  .corps-propose .segments-temps {
+    padding-left: 3px;
+    background: var(--carte-haute);
   }
 
-  .corps-propose .puce {
-    width: 100%;
-    justify-content: flex-start;
-    text-align: left;
+  .corps-propose .segments-temps > svg {
+    display: none;
+  }
+
+  .corps-propose .segments-temps button {
+    min-height: 32px;
+    padding: 0;
+    font-size: 13px;
+  }
+
+  /* Dans la colonne, tout est déjà sous les yeux : pas de panneau à
+     déplier, ni de rappel des tags actifs. */
+  .corps-propose .puce-plus,
+  .corps-propose .puce-active {
+    display: none;
+  }
+
+  .corps-propose .filtres[data-ouvert] .filtres-groupes {
+    display: flex;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .corps-propose .filtres-groupe .puce {
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 13px;
   }
 
   .grille-recettes {
