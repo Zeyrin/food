@@ -53,6 +53,7 @@ import BandeauMiseAJour from './components/BandeauMiseAJour'
 import InvitationMaison, { type EtatInvitation } from './components/InvitationMaison'
 import MenuRecu from './components/MenuRecu'
 import { ajouterMenu, lireMenu, type MenuRecu as Menu } from './lib/menuPartage'
+import { lirePartage } from './lib/partageRecu'
 import { lireInvitation, type Invitation } from './lib/invitation'
 import BandeauIntegre from './components/BandeauIntegre'
 import PanneauMinuteurs from './components/PanneauMinuteurs'
@@ -354,6 +355,10 @@ export default function App() {
   // Un menu reçu par lien (`#/m/…`, voir lib/menuPartage.ts), en attente
   // du geste qui le met dans le panier.
   const [menuRecu, setMenuRecu] = useState<Menu | null>(null)
+  // Une recette partagée vers FFFood depuis une autre app (voir
+  // lib/partageRecu.ts) : l'adresse, ou une chaîne vide quand le partage
+  // n'en contenait pas. Elle vit le temps que la section d'ajout reste ouverte.
+  const [lienPartage, setLienPartage] = useState<string | null>(null)
   const [prenom, setPrenom] = useState('')
   const [etatListe, setEtatListe] = useState<ListState>(ETAT_VIDE)
   const [recipes, setRecipes] = useState<Recipe[]>([])
@@ -424,6 +429,16 @@ export default function App() {
         setHistorique(await lireHistorique())
         setPrenom(await lirePrenom())
         const invite = lireInvitation(location.hash)
+        const partage = lirePartage(location.pathname, location.search)
+        if (partage) {
+          // `/partage/` n'est qu'une porte d'entrée : on revient à l'adresse
+          // de l'app, sans la requête — un rechargement ne doit pas relancer
+          // l'import.
+          history.replaceState(history.state, '', '/')
+          setLienPartage(partage.url ?? '')
+          setAjoutOuvert(true)
+          mesurer('partage_recu', { adresse: partage.url ? 1 : 0 })
+        }
         const menu = lireMenu(location.hash)
         if (menu) {
           // Comme une invitation : lu une fois, puis retour à l'adresse de
@@ -929,7 +944,9 @@ export default function App() {
   // choisir un plat, alors que le bandeau du menu en propose déjà cinq.
   // Accepter le menu fait ce que la visite apprend (un panier, donc une
   // liste) et la clôt ; la refuser la laisse se jouer normalement.
-  const visiteEnCours = !onboardingVu && estOnglet && platsMenu.length === 0
+  // Même chose pour une recette partagée depuis une autre app : la visite
+  // couvrirait l'import qu'on vient de demander.
+  const visiteEnCours = !onboardingVu && estOnglet && platsMenu.length === 0 && lienPartage === null
 
   return (
     <div
@@ -1036,7 +1053,11 @@ export default function App() {
               }}
               onAjouterRecette={ajouter}
               ajoutOuvert={ajoutOuvert}
-              onAjoutOuvert={setAjoutOuvert}
+              onAjoutOuvert={(ouvert) => {
+                setAjoutOuvert(ouvert)
+                if (!ouvert) setLienPartage(null)
+              }}
+              lienPartage={lienPartage}
               onVersPanier={() => changerOnglet('panier')}
               // Pas pendant la visite guidée : elle mesure la position du
               // premier plat, et un bandeau qui s'insère au-dessus la

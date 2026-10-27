@@ -554,6 +554,20 @@ function pageMenu() {
   })
 }
 
+/**
+ * `/partage/` : là où le téléphone envoie ce qu'on partage vers FFFood
+ * (`share_target` du manifeste, intent Android). L'app telle quelle, la
+ * requête fait le reste (voir src/lib/partageRecu.ts). Sans ce fichier,
+ * un téléphone qui n'a pas encore le service worker recevrait un 404 de
+ * Vercel ; l'app Android, elle, sert ses fichiers locaux et le trouve ici.
+ */
+function pagePartage() {
+  const html = readFileSync(join(dist, 'index.html'), 'utf8')
+  const motif = /<meta name="robots" content="[^"]*" \/>/
+  if (!motif.test(html)) throw new Error(`Page /partage/ : balise introuvable dans index.html (${motif})`)
+  return html.replace(motif, '<meta name="robots" content="noindex, nofollow" />')
+}
+
 // --- Écriture ---------------------------------------------------------------
 
 function ecrire(chemin, contenu) {
@@ -568,5 +582,6 @@ ecrire('404.html', page404())
 ecrire('sitemap.xml', sitemap())
 ecrire('rejoindre/index.html', pageRejoindre())
 ecrire('menu/index.html', pageMenu())
+ecrire('partage/index.html', pagePartage())
 
-console.log(`Prérendu : ${recipes.length} recettes + l'index, la page 404, les pages d'invitation et de menu, et le sitemap.`)
+console.log(`Prérendu : ${recipes.length} recettes + l'index, la page 404, les pages d'invitation, de menu et de partage, et le sitemap.`)
