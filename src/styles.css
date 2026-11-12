@@ -7136,3 +7136,128 @@ button.vignette-mini-bouton:active {
   padding-top: 0;
   border-top: 0;
 }
+
+/* --- FFFood+ : l'offre (components/Paywall.tsx) ----------------------
+   Une feuille qui monte du bas sur téléphone, une carte centrée sur
+   tablette et ordinateur. Le prix et les conditions restent lisibles
+   sans défiler sur un iPhone SE : c'est ce que la revue regarde. */
+.voile-offre {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgb(0 0 0 / 0.45);
+}
+.feuille-offre {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  max-height: 100dvh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 28px 20px calc(20px + env(safe-area-inset-bottom));
+  background: var(--papier);
+  color: var(--encre);
+  border-radius: var(--rayon-grand) var(--rayon-grand) 0 0;
+}
+@media (min-width: 640px) {
+  .voile-offre { align-items: center; padding: 24px; }
+  .feuille-offre { border-radius: var(--rayon-grand); max-height: calc(100dvh - 48px); }
+}
+.fermer-offre {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--carte-basse);
+  color: var(--encre);
+}
+.offre-marque {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  font-family: var(--affichage);
+  font-weight: 700;
+  color: var(--accent);
+}
+.feuille-offre h2 {
+  margin: 0 48px 16px 0;
+  font-family: var(--affichage);
+  font-size: 24px;
+  line-height: 1.2;
+}
+.offre-avantages {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.offre-avantages li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  border-radius: var(--rayon-petit);
+  background: var(--carte);
+}
+.offre-avantages li > svg { flex: none; margin-top: 2px; color: var(--accent); }
+.offre-avantages p { margin: 4px 0 0; color: var(--encre-douce); font-size: 15px; line-height: 1.4; }
+.offre-gratuit { margin: 0 0 16px; font-size: 14px; color: var(--encre-douce); }
+.offre-formules { display: grid; gap: 8px; margin-bottom: 14px; }
+.offre-formule {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 12px;
+  align-items: center;
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 16px;
+  text-align: left;
+  border: 2px solid var(--trait);
+  border-radius: var(--rayon-petit);
+  background: var(--carte);
+  color: var(--encre);
+  font: inherit;
+}
+.offre-formule.choisie { border-color: var(--accent); background: var(--carte-basse); }
+.offre-formule-nom { font-weight: 700; display: flex; gap: 8px; align-items: center; }
+.offre-formule-prix { font-weight: 700; }
+.offre-formule-essai { grid-column: 1 / -1; font-size: 14px; color: var(--encre-douce); }
+.offre-economie {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 13px;
+  background: var(--accent-doux);
+  color: var(--accent);
+}
+.offre-conditions { margin: 12px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--encre-douce); }
+.offre-message { margin-top: 12px; }
+.offre-attente { text-align: center; }
+.offre-liens {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 18px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+.offre-liens a { color: var(--accent); }
+/* Téléphone : resserré pour que le bouton d'achat tienne à l'écran
+   sous les formules, sans défiler. */
+@media (max-width: 639px) {
+  .feuille-offre { padding-top: 22px; }
+  .feuille-offre h2 { font-size: 21px; margin-bottom: 12px; }
+  .offre-avantages { gap: 8px; }
+  .offre-avantages li { padding: 10px 12px; }
+  .offre-avantages p { font-size: 14px; }
+  .offre-gratuit { font-size: 13px; margin-bottom: 12px; }
+}

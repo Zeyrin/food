@@ -7,11 +7,76 @@ const CLE_LANGUE = 'fffood:langue'
 export type Dico = { [cle: string]: string | Dico | Dico[] }
 
 const fr: Dico = {
+  plus: {
+    titre: 'Votre cuisine, votre maison',
+    fermer: "Fermer l'offre",
+    raison: {
+      recettes: 'Ajouter vos recettes fait partie de FFFood+',
+      foyer: 'Inviter quelqu\'un dans la maison fait partie de FFFood+',
+    },
+    avantage: {
+      recettes: {
+        titre: 'Vos propres recettes',
+        texte:
+          "Ajoutez-en autant que vous voulez, depuis un lien, une IA ou à la main. Elles rejoignent le catalogue, le panier et la liste comme les autres.",
+      },
+      foyer: {
+        titre: 'Le foyer partagé',
+        texte:
+          "Invitez qui fait les courses avec vous : une seule liste, cochée en direct sur chaque téléphone. Les personnes invitées rejoignent gratuitement.",
+      },
+    },
+    toujoursGratuit:
+      'Toujours gratuit, sans abonnement : les 137 recettes du catalogue, le panier, la liste de courses, la cuisson pas à pas et les minuteurs.',
+    chargement: 'Chargement des formules…',
+    indisponible: "Les formules n'ont pas pu être chargées depuis le store. Vérifiez la connexion.",
+    reessayer: 'Réessayer',
+    formules: 'Formules',
+    formule: { annuelle: 'Annuel', mensuelle: 'Mensuel', autre: 'Abonnement' },
+    economie: '−{{pct}} %',
+    periode: { DAY: '/ jour', WEEK: '/ semaine', MONTH: '/ mois', YEAR: '/ an' },
+    duree: { DAY: '{{n}} jours', WEEK: '{{n}} semaine(s)', MONTH: '{{n}} mois', YEAR: '{{n}} an(s)' },
+    essaiInclus: '{{duree}} gratuits pour commencer',
+    commencerEssai: "Essayer gratuitement {{duree}}",
+    sAbonner: "S'abonner — {{prix}}",
+    achatEnCours: 'Paiement en cours…',
+    conditionsEssai:
+      "Gratuit pendant {{duree}}, puis {{prix}}, prélevé sur votre compte du store à la fin de l'essai. Résiliez avant la fin de l'essai pour ne rien payer.",
+    conditions: '{{prix}}, prélevé sur votre compte du store à la confirmation.',
+    resiliation:
+      "L'abonnement se renouvelle automatiquement sauf résiliation au moins 24 h avant la fin de la période en cours. Gérez-le ou résiliez-le à tout moment dans les réglages de votre compte App Store ou Google Play.",
+    enAttente: "Achat en attente d'approbation. FFFood+ s'activera dès qu'il sera validé.",
+    erreurAchat: "L'achat n'a pas abouti. Rien n'a été prélevé ; vous pouvez réessayer.",
+    rienARestaurer: 'Aucun abonnement actif trouvé sur ce compte du store.',
+    erreurRestauration: 'La restauration a échoué. Vérifiez la connexion et réessayez.',
+    restaurer: 'Restaurer mes achats',
+    restaurationEnCours: 'Restauration…',
+    cgu: "Conditions d'utilisation",
+    confidentialite: 'Confidentialité',
+  },
   foyer: {
     sessionImpossible:
       "Impossible d'ouvrir une session avec le serveur. Si vous administrez ce site : activez les connexions anonymes dans Supabase (Authentication → Providers → Anonymous sign-ins).",
   },
   reglages: {
+    plusTitre: 'FFFood+',
+    plusActif: 'Votre abonnement FFFood+ est actif : vos recettes et le foyer partagé sont ouverts. Merci !',
+    plusInactif: 'Ajoutez vos propres recettes et invitez qui partage la maison.',
+    plusVoirOffre: "Voir l'offre FFFood+",
+    plusGerer: 'Gérer mon abonnement',
+    codeReserve: 'Partager la maison avec quelqu\'un fait partie de FFFood+.',
+    conditionsTitre: "Conditions d'utilisation",
+    conditionsTexte: "Ce que l'app fait, ce que couvre FFFood+ et comment résilier.",
+    conditionsLien: 'Lire les conditions',
+    effacerTitre: 'Effacer mes données',
+    effacerTexte:
+      "Retire cet appareil du foyer, efface du serveur les données du foyer si vous en êtes le dernier membre, et remet l'app à zéro. Un abonnement FFFood+ n'est pas résilié pour autant : il se gère dans votre compte App Store ou Google Play.",
+    effacerBouton: 'Effacer mes données…',
+    effacerConfirmation:
+      "Tout effacer ? La liste, le panier, les recettes ajoutées et l'historique disparaissent de cet appareil, et du serveur si personne d'autre n'est dans le foyer. C'est définitif.",
+    effacerConfirmer: 'Tout effacer',
+    effacerEnCours: 'Effacement…',
+    effacerErreur: "L'effacement sur le serveur a échoué : rien n'a été retiré. Vérifiez la connexion et réessayez.",
     donneesTitre:
       "Données & vie privée",
     donneesTexte:
@@ -678,11 +743,76 @@ const fr: Dico = {
 }
 
 const en: Dico = {
+  plus: {
+    titre: 'Your kitchen, your household',
+    fermer: 'Close the offer',
+    raison: {
+      recettes: 'Adding your own recipes is part of FFFood+',
+      foyer: 'Inviting someone into your household is part of FFFood+',
+    },
+    avantage: {
+      recettes: {
+        titre: 'Your own recipes',
+        texte:
+          'Add as many as you like, from a link, an AI or by hand. They join the catalogue, the basket and the list like all the others.',
+      },
+      foyer: {
+        titre: 'Shared household',
+        texte:
+          'Invite whoever shops with you: one list, ticked off live on every phone. People you invite join for free.',
+      },
+    },
+    toujoursGratuit:
+      'Always free, no subscription: the 137 catalogue recipes, the basket, the shopping list, step-by-step cooking and timers.',
+    chargement: 'Loading plans…',
+    indisponible: 'Plans could not be loaded from the store. Check your connection.',
+    reessayer: 'Try again',
+    formules: 'Plans',
+    formule: { annuelle: 'Yearly', mensuelle: 'Monthly', autre: 'Subscription' },
+    economie: '−{{pct}}%',
+    periode: { DAY: '/ day', WEEK: '/ week', MONTH: '/ month', YEAR: '/ year' },
+    duree: { DAY: '{{n}} days', WEEK: '{{n}} week(s)', MONTH: '{{n}} month(s)', YEAR: '{{n}} year(s)' },
+    essaiInclus: '{{duree}} free to start',
+    commencerEssai: 'Try free for {{duree}}',
+    sAbonner: 'Subscribe — {{prix}}',
+    achatEnCours: 'Processing payment…',
+    conditionsEssai:
+      'Free for {{duree}}, then {{prix}}, charged to your store account when the trial ends. Cancel before the trial ends to pay nothing.',
+    conditions: '{{prix}}, charged to your store account on confirmation.',
+    resiliation:
+      'The subscription renews automatically unless cancelled at least 24 hours before the end of the current period. Manage or cancel it anytime in your App Store or Google Play account settings.',
+    enAttente: 'Purchase awaiting approval. FFFood+ will turn on as soon as it is approved.',
+    erreurAchat: 'The purchase did not go through. Nothing was charged; you can try again.',
+    rienARestaurer: 'No active subscription found on this store account.',
+    erreurRestauration: 'Restore failed. Check your connection and try again.',
+    restaurer: 'Restore purchases',
+    restaurationEnCours: 'Restoring…',
+    cgu: 'Terms of use',
+    confidentialite: 'Privacy',
+  },
   foyer: {
     sessionImpossible:
       "Could not open a session with the server. If you administer this site: enable anonymous sign-ins in Supabase (Authentication → Providers → Anonymous sign-ins).",
   },
   reglages: {
+    plusTitre: 'FFFood+',
+    plusActif: 'Your FFFood+ subscription is active: your recipes and the shared household are unlocked. Thank you!',
+    plusInactif: 'Add your own recipes and invite whoever shares your home.',
+    plusVoirOffre: 'See the FFFood+ offer',
+    plusGerer: 'Manage my subscription',
+    codeReserve: 'Sharing your household with someone is part of FFFood+.',
+    conditionsTitre: 'Terms of use',
+    conditionsTexte: 'What the app does, what FFFood+ covers, and how to cancel.',
+    conditionsLien: 'Read the terms',
+    effacerTitre: 'Delete my data',
+    effacerTexte:
+      'Removes this device from the household, deletes the household data from the server if you are its last member, and resets the app. An FFFood+ subscription is not cancelled by this: manage it in your App Store or Google Play account.',
+    effacerBouton: 'Delete my data…',
+    effacerConfirmation:
+      'Delete everything? The list, basket, added recipes and history are removed from this device, and from the server if nobody else is in the household. This cannot be undone.',
+    effacerConfirmer: 'Delete everything',
+    effacerEnCours: 'Deleting…',
+    effacerErreur: 'Deleting from the server failed: nothing was removed. Check your connection and try again.',
     donneesTitre:
       "Data & privacy",
     donneesTexte:

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>FFFood — conditions d'utilisation</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fond: #fff8ef;
+        --carte: #fffdfa;
+        --encre: #241f1a;
+        --encre-douce: #6d6358;
+        --accent: #385e16;
+        --trait: #e5dccd;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fond: #17150f;
+          --carte: #211e17;
+          --encre: #f2ece1;
+          --encre-douce: #a89e90;
+          --accent: #a6d47e;
+          --trait: #38332a;
+        }
+      }
+      body {
+        margin: 0;
+        padding: 32px 20px 64px;
+        background: var(--fond);
+        color: var(--encre);
+        font: 16px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+      main { max-width: 760px; margin: 0 auto; }
+      h1 { font-size: 28px; margin: 0 0 8px; }
+      h2 { font-size: 20px; margin: 40px 0 8px; }
+      p { color: var(--encre-douce); margin: 0 0 16px; }
+      a { color: var(--accent); text-underline-offset: 3px; }
+      .cadre {
+        background: var(--carte);
+        border: 1px solid var(--trait);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      table { border-collapse: collapse; width: 100%; font-size: 15px; }
+      th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--trait); vertical-align: top; }
+      thead th { color: var(--encre-douce); font-weight: 600; white-space: nowrap; }
+      tbody th { font-weight: 600; }
+      tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+
+      /* Quatre colonnes sur la largeur d'un téléphone donnent des mots
+         coupés à la syllabe : chaque ligne devient un bloc, l'en-tête de
+         colonne passe devant la valeur. */
+      @media (max-width: 560px) {
+        thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+        tbody tr { display: block; padding: 12px 14px; border-bottom: 1px solid var(--trait); }
+        tbody tr:last-child { border-bottom: 0; }
+        tbody th, tbody td { display: block; padding: 0; border: 0; }
+        tbody th { font-size: 16px; margin-bottom: 4px; }
+        tbody td { color: var(--encre-douce); }
+        tbody td::before { content: attr(data-libelle) ' : '; }
+      }
+    </style>
+    <style>
+      /* La feuille reprise de credits.html préfixe chaque valeur par le
+         libellé de sa colonne sur mobile (`content: attr(data-libelle)`).
+         Ici les tableaux n'ont que deux colonnes, dont la première est déjà
+         l'intitulé : sans cet attribut, la règle n'affichait qu'un « : »
+         orphelin devant chaque ligne. */
+      tbody td::before { content: none; }
+      tbody td { color: var(--encre-douce); }
+
+      ul { color: var(--encre-douce); margin: 0 0 16px; padding-left: 22px; }
+      li { margin-bottom: 8px; }
+      strong { color: var(--encre); }
+      .pied { margin-top: 40px; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Conditions d'utilisation</h1>
+      <p>
+        Ces conditions s'appliquent à FFFood, sur le site www.fffood.fr et dans
+        les apps iPhone, iPad et Android. En utilisant l'app, vous les acceptez.
+      </p>
+
+      <h2>Ce que fait FFFood</h2>
+      <p>
+        FFFood aide un foyer à choisir ses repas de la semaine, à en tirer une
+        liste de courses rangée par rayon, et à cuisiner pas à pas. Le catalogue
+        de recettes, le panier, la liste, la cuisson et les minuteurs sont
+        gratuits et le restent.
+      </p>
+
+      <h2>FFFood+</h2>
+      <p>FFFood+ est un abonnement facultatif, proposé dans les apps des stores. Il ouvre&nbsp;:</p>
+      <ul>
+        <li><strong>vos propres recettes</strong> — en ajouter depuis un lien, une IA ou à la main&nbsp;;</li>
+        <li>
+          <strong>le foyer partagé</strong> — inviter quelqu'un par lien ou par
+          code, pour tenir la même liste à plusieurs. Rejoindre un foyer est
+          gratuit.
+        </li>
+      </ul>
+      <p>
+        Le prix, la devise et la période (mensuelle ou annuelle) sont affichés
+        dans l'app avant l'achat, tels que fixés par l'App Store ou Google Play
+        pour votre pays. Un essai gratuit peut être proposé&nbsp;; sa durée est
+        affichée avant de commencer.
+      </p>
+
+      <h2>Paiement, renouvellement, résiliation</h2>
+      <ul>
+        <li>Le paiement est prélevé sur votre compte App Store ou Google Play à la confirmation de l'achat, ou à la fin de l'essai gratuit.</li>
+        <li>L'abonnement se renouvelle automatiquement, au même prix et pour la même durée, sauf résiliation au moins 24&nbsp;heures avant la fin de la période en cours.</li>
+        <li>Vous gérez et résiliez l'abonnement dans les réglages de votre compte App Store ou Google Play. La résiliation prend effet à la fin de la période déjà payée.</li>
+        <li>Les remboursements suivent les règles d'Apple ou de Google, qui encaissent le paiement.</li>
+        <li>« Restaurer mes achats » retrouve un abonnement actif sur un nouvel appareil connecté au même compte du store.</li>
+      </ul>
+      <p>
+        Pour l'App Store, le
+        <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">contrat de licence standard d'Apple</a>
+        s'applique en complément de ces conditions.
+      </p>
+
+      <h2>Vos recettes et votre foyer</h2>
+      <p>
+        Les recettes que vous ajoutez restent les vôtres&nbsp;; vous vous engagez à
+        ne pas y mettre de contenu illégal ou appartenant à autrui sans droit.
+        Toute personne qui a le lien ou le code d'un foyer y a accès&nbsp;: ne le
+        partagez qu'avec des personnes de confiance (voir
+        <a href="/donnees.html#lien">Données &amp; vie privée</a>).
+      </p>
+
+      <h2>Données</h2>
+      <p>
+        Ce que l'app garde, partage et mesure est décrit dans
+        <a href="/donnees.html">Données &amp; vie privée</a>. Vous pouvez tout
+        supprimer depuis <strong>Réglages → Effacer mes données</strong>.
+      </p>
+
+      <h2>Responsabilité</h2>
+      <p>
+        Les recettes sont données à titre indicatif&nbsp;: vérifiez les allergènes,
+        les cuissons et la fraîcheur des produits. L'app est fournie telle quelle,
+        et peut évoluer.
+      </p>
+
+      <p class="pied">Dernière mise à jour&nbsp;: novembre 2026.</p>
+    </main>
+  </body>
+</html>

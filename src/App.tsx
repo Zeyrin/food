@@ -61,6 +61,7 @@ import { ecouterClicNotification } from './lib/minuteurs'
 import { NATIF, ecouterClicNotificationNative } from './lib/natif'
 import { useMagasins } from './hooks/useMagasins'
 import Reglages from './screens/Reglages'
+import { usePlus } from './hooks/usePlus'
 import Profil from './screens/Profil'
 import Logo from './components/Logo'
 import Icone from './components/Icone'
@@ -268,10 +269,18 @@ export default function App() {
    * changer d'onglet et la déplier du même geste.
    */
   const [ajoutOuvert, setAjoutOuvert] = useState(false)
+  // Ajouter ses recettes est l'un des deux gestes de FFFood+ (voir usePlus).
+  const { exiger } = usePlus()
   const ouvrirAjout = useCallback(() => {
-    setAjoutOuvert(true)
-    changerOnglet('propose')
-  }, [changerOnglet])
+    exiger('recettes', () => {
+      setAjoutOuvert(true)
+      changerOnglet('propose')
+    })
+  }, [changerOnglet, exiger])
+  const basculerAjout = useCallback(
+    (ouvert: boolean) => (ouvert ? exiger('recettes', () => setAjoutOuvert(true)) : setAjoutOuvert(false)),
+    [exiger],
+  )
 
   // Bascule d'onglet sans empiler d'entrée d'historique — utilisée par
   // la visite guidée pour amener le bon écran derrière chaque repère.
@@ -1036,7 +1045,7 @@ export default function App() {
               }}
               onAjouterRecette={ajouter}
               ajoutOuvert={ajoutOuvert}
-              onAjoutOuvert={setAjoutOuvert}
+              onAjoutOuvert={basculerAjout}
               onVersPanier={() => changerOnglet('panier')}
               // Pas pendant la visite guidée : elle mesure la position du
               // premier plat, et un bandeau qui s'insère au-dessus la
