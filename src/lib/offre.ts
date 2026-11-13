@@ -36,8 +36,14 @@ export function uniteDePeriode(iso: string | null): Unite | null {
   return ({ D: 'DAY', W: 'WEEK', M: 'MONTH', Y: 'YEAR' } as const)[m[2] as 'D' | 'W' | 'M' | 'Y']
 }
 
-/** Clé i18n de la période facturée : « / mois », « / an »… */
+/** L'option à vie : un achat unique, sans renouvellement. */
+export function estAVie(formule: Formule): boolean {
+  return formule.packageType === 'LIFETIME'
+}
+
+/** Clé i18n de la période facturée : « / mois », « / an », « une fois »… */
 export function clePeriode(formule: Formule): string {
+  if (estAVie(formule)) return 'plus.periode.LIFETIME'
   const u =
     uniteDePeriode(formule.product.subscriptionPeriod) ??
     (formule.packageType === 'ANNUAL' ? 'YEAR' : formule.packageType === 'MONTHLY' ? 'MONTH' : null)

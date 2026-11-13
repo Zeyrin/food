@@ -3,7 +3,7 @@ import type { PurchasesPackage } from '@revenuecat/purchases-capacitor'
 import { acheter, chargerFormules, restaurer } from '../lib/abonnement'
 import { useLangue } from '../lib/i18n'
 import { mesurer } from '../lib/mesure'
-import { AVANTAGES, clePeriode, economieAnnuelle, essaiGratuit, type Avantage, type Formule } from '../lib/offre'
+import { AVANTAGES, clePeriode, economieAnnuelle, essaiGratuit, estAVie, type Avantage, type Formule } from '../lib/offre'
 import { pageSite } from '../lib/plateforme'
 import Icone from './Icone'
 
@@ -151,7 +151,7 @@ export default function Paywall({ raison, onFermer, onAbonne }: Props) {
                     disabled={!!enCours}
                   >
                     <span className="offre-formule-nom">
-                      {t(`plus.formule.${f.packageType === 'ANNUAL' ? 'annuelle' : f.packageType === 'MONTHLY' ? 'mensuelle' : 'autre'}`)}
+                      {t(`plus.formule.${f.packageType === 'ANNUAL' ? 'annuelle' : f.packageType === 'MONTHLY' ? 'mensuelle' : f.packageType === 'LIFETIME' ? 'aVie' : 'autre'}`)}
                       {f === annuel && economie !== null && (
                         <span className="offre-economie">{t('plus.economie', { pct: economie })}</span>
                       )}
@@ -168,15 +168,21 @@ export default function Paywall({ raison, onFermer, onAbonne }: Props) {
                 ? t('plus.achatEnCours')
                 : essai
                   ? t('plus.commencerEssai', { duree: dureeEssai(essai) })
-                  : t('plus.sAbonner', { prix: prixPeriode(formule!) })}
+                  : estAVie(formule as Formule)
+                    ? t('plus.acheterAVie', { prix: formule!.product.priceString })
+                    : t('plus.sAbonner', { prix: prixPeriode(formule!) })}
             </button>
 
             {/* Ce qui sera prélevé, et quand : la phrase que la revue cherche. */}
             <p className="offre-conditions">
-              {essai
-                ? t('plus.conditionsEssai', { duree: dureeEssai(essai), prix: prixPeriode(formule!) })
-                : t('plus.conditions', { prix: prixPeriode(formule!) })}{' '}
-              {t('plus.resiliation')}
+              {/* L'achat à vie ne se renouvelle pas : ne pas parler de résiliation. */}
+              {estAVie(formule as Formule)
+                ? t('plus.conditionsAVie', { prix: formule!.product.priceString })
+                : (essai
+                    ? t('plus.conditionsEssai', { duree: dureeEssai(essai), prix: prixPeriode(formule!) })
+                    : t('plus.conditions', { prix: prixPeriode(formule!) })) +
+                  ' ' +
+                  t('plus.resiliation')}
             </p>
           </>
         )}

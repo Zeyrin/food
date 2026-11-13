@@ -56,16 +56,21 @@ paywall et tout est ouvert** (builds de dev, APK de debug).
 ### Mise en place (une fois)
 
 1. **App Store Connect** → l'app `fr.fffood.app` → Abonnements : un groupe
-   « FFFood+ » avec deux produits, `fffood_plus_annuel` (1 an, essai gratuit
-   7 jours conseillé) et `fffood_plus_mensuel` (1 mois). Signer le contrat
+   « FFFood+ » avec deux produits, `fffood_plus_annuel` (1 an, **24,99 €**,
+   essai gratuit de 7 jours) et `fffood_plus_mensuel` (1 mois, **3,99 €**).
+   En option, l'achat à vie : un produit *non consommable* `fffood_plus_a_vie`
+   (**59,99 €**), hors du groupe d'abonnements. Signer le contrat
    « Paid Apps » et remplir les infos bancaires et fiscales, sinon les produits
    ne se chargent pas.
 2. **Play Console** → Monétiser → Abonnements : les deux mêmes produits, avec
-   un forfait de base chacun (et l'essai sur l'annuel).
+   un forfait de base chacun (et l'essai sur l'annuel) ; l'achat à vie en
+   *produit intégré* (Monétiser → Produits intégrés), même identifiant.
 3. **RevenueCat** : un projet, une app iOS et une app Android (avec la clé
    d'API App Store Connect et le compte de service Google), un *entitlement*
    **`plus`** auquel on rattache les quatre produits, et une *offering*
-   « default » marquée *current* avec les paquets **Annual** et **Monthly**.
+   « default » marquée *current* avec les paquets **Annual** et **Monthly**,
+   et **Lifetime** si l'achat à vie est proposé (le paywall l'affiche alors en
+   troisième, sans texte de renouvellement).
 4. Les clés SDK publiques (`appl_…`, `goog_…`) dans `.env`
    (`VITE_REVENUECAT_IOS_KEY`, `VITE_REVENUECAT_ANDROID_KEY`) et dans les
    secrets du dépôt, avec `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` que le

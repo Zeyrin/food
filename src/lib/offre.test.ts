@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { clePeriode, economieAnnuelle, essaiGratuit, uniteDePeriode, type Formule } from './offre'
+import { clePeriode, economieAnnuelle, essaiGratuit, estAVie, uniteDePeriode, type Formule } from './offre'
 
 const formule = (f: Partial<Formule['product']> & { packageType?: string }): Formule => ({
   packageType: f.packageType ?? 'CUSTOM',
@@ -33,10 +33,16 @@ assert.deepEqual(
 )
 assert.equal(essaiGratuit(formule({})), null)
 
-// 19,99 €/an contre 2,99 €/mois × 12 = 35,88 € : 44 % d'économie, arrondi vers le bas.
-const annuel = formule({ price: 19.99, subscriptionPeriod: 'P1Y' })
-const mensuel = formule({ price: 2.99, subscriptionPeriod: 'P1M' })
-assert.equal(economieAnnuelle(annuel, mensuel), 44)
+// 24,99 €/an contre 3,99 €/mois × 12 = 47,88 € : 47 % d'économie, arrondi vers le bas.
+const annuel = formule({ price: 24.99, subscriptionPeriod: 'P1Y' })
+const mensuel = formule({ price: 3.99, subscriptionPeriod: 'P1M' })
+assert.equal(economieAnnuelle(annuel, mensuel), 47)
 // Pas d'économie annoncée quand il n'y en a pas, ni entre deux devises.
-assert.equal(economieAnnuelle(formule({ price: 40, subscriptionPeriod: 'P1Y' }), mensuel), null)
-assert.equal(economieAnnuelle(formule({ price: 19.99, subscriptionPeriod: 'P1Y', currencyCode: 'USD' }), mensuel), null)
+assert.equal(economieAnnuelle(formule({ price: 50, subscriptionPeriod: 'P1Y' }), mensuel), null)
+assert.equal(economieAnnuelle(formule({ price: 24.99, subscriptionPeriod: 'P1Y', currencyCode: 'USD' }), mensuel), null)
+
+// L'option à vie : payée une fois, jamais présentée comme une période.
+const aVie = formule({ packageType: 'LIFETIME', price: 59.99 })
+assert.equal(estAVie(aVie), true)
+assert.equal(estAVie(annuel), false)
+assert.equal(clePeriode(aVie), 'plus.periode.LIFETIME')
