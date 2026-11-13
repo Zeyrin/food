@@ -11,6 +11,7 @@ on:
       - 'ios/**'
       - 'capacitor.config.ts'
       - 'src/lib/natif.ts'
+      - 'src/lib/abonnement.ts'
       - '.github/workflows/mobile.yml'
 
 jobs:
@@ -31,6 +32,13 @@ jobs:
           java-version: 21
       - run: npm ci
       - run: npm run build
+        env:
+          # Clés publiques (livrées dans le bundle) : en secrets pour ne pas
+          # les recopier à la main. Sans RevenueCat, l'app sort sans paywall.
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_REVENUECAT_IOS_KEY: ${{ secrets.VITE_REVENUECAT_IOS_KEY }}
+          VITE_REVENUECAT_ANDROID_KEY: ${{ secrets.VITE_REVENUECAT_ANDROID_KEY }}
       - run: npx cap sync android
 
       # Sans secrets, on sort un APK de debug à installer à la main. Avec
@@ -71,6 +79,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          # Clés publiques (livrées dans le bundle) : en secrets pour ne pas
+          # les recopier à la main. Sans RevenueCat, l'app sort sans paywall.
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_REVENUECAT_IOS_KEY: ${{ secrets.VITE_REVENUECAT_IOS_KEY }}
+          VITE_REVENUECAT_ANDROID_KEY: ${{ secrets.VITE_REVENUECAT_ANDROID_KEY }}
       - run: npx cap sync ios
 
       # Une compilation pour simulateur, sans signature : elle prouve que
