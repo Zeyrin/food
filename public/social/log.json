@@ -183,5 +183,110 @@
   "date": "2026-11-22",
   "recette": "soupe-miso-tofu",
   "theme": "miso pas bouilli"
+ },
+ {
+  "date": "2026-11-26",
+  "recette": "shakshuka",
+  "theme": "couvrir pour cuire le blanc"
+ },
+ {
+  "date": "2026-11-27",
+  "recette": "risotto-champignons",
+  "theme": "bouillon chaud"
+ },
+ {
+  "date": "2026-11-28",
+  "recette": "pizza-margherita-maison",
+  "theme": "égoutter la mozzarella"
+ },
+ {
+  "date": "2026-11-29",
+  "recette": "burger-maison",
+  "theme": "creux au centre du steak"
+ },
+ {
+  "date": "2026-11-30",
+  "recette": "tartiflette",
+  "theme": "reblochon croûte en haut"
+ },
+ {
+  "date": "2026-12-01",
+  "recette": "saumon-teriyaki-riz",
+  "theme": "sauce teriyaki à la fin"
+ },
+ {
+  "date": "2026-12-02",
+  "recette": "curry-vert-thai-poulet",
+  "theme": "basilic hors du feu"
+ },
+ {
+  "date": "2026-12-03",
+  "recette": "poke-bowl-saumon-avocat",
+  "theme": "vinaigrer le riz chaud"
+ },
+ {
+  "date": "2026-12-04",
+  "recette": "lasagnes-legumes",
+  "theme": "feuilles sans précuisson"
+ },
+ {
+  "date": "2026-12-05",
+  "recette": "falafel-bowl",
+  "theme": "température de l'huile"
+ },
+ {
+  "date": "2026-12-06",
+  "recette": "chili-sin-carne",
+  "theme": "meilleur le lendemain"
+ },
+ {
+  "date": "2026-12-07",
+  "recette": "couscous-poulet-legumes",
+  "theme": "légumes par étapes"
+ },
+ {
+  "date": "2026-12-08",
+  "recette": "mapo-tofu",
+  "theme": "blanchir le tofu"
+ },
+ {
+  "date": "2026-12-09",
+  "recette": "poulet-basquaise",
+  "theme": "ne pas bouger le poulet"
+ },
+ {
+  "date": "2026-12-10",
+  "recette": "quiche-courgette-chevre",
+  "theme": "cuisson à blanc"
+ },
+ {
+  "date": "2026-12-11",
+  "recette": "gratin-chou-fleur-jambon",
+  "theme": "râper son fromage"
+ },
+ {
+  "date": "2026-12-12",
+  "recette": "pates-citron-parmesan",
+  "theme": "parmesan hors du feu"
+ },
+ {
+  "date": "2026-12-13",
+  "recette": "salade-mediterraneenne",
+  "theme": "adoucir l'oignon rouge"
+ },
+ {
+  "date": "2026-12-14",
+  "recette": "bowl-quinoa-legumes-rotis",
+  "theme": "espacer les légumes au four"
+ },
+ {
+  "date": "2026-12-15",
+  "recette": "pates-thon-legumineuses",
+  "theme": "pas d'huile dans l'eau"
+ },
+ {
+  "date": "2026-12-16",
+  "recette": "dahl-lentilles-corail",
+  "theme": "tadka à la fin"
  }
 ]
