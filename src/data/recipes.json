@@ -3191,7 +3191,8 @@
       "Couvrir et laisser mijoter à tout petits bouillons 3 h. La viande est prête quand une fourchette y entre sans résistance.",
       "Faire sauter les champignons à part 5 min à feu vif et les ajouter dans les dix dernières minutes, sinon ils rendent leur eau dans la sauce.",
       "Goûter, saler, poivrer. Meilleur réchauffé le lendemain."
-    ]
+    ],
+    "image": "/plats/boeuf-bourguignon.webp"
   },
   {
     "id": "blanquette-de-veau",
@@ -3304,7 +3305,8 @@
       "Cuire les champignons émincés 5 min dans un peu de bouillon avec un filet de citron.",
       "Hors du feu, délayer le jaune d'œuf dans la crème et l'incorporer à la sauce — elle ne doit plus bouillir après ça, sinon elle tranche.",
       "Remettre viande, légumes et champignons dans la sauce, réchauffer doucement et servir avec le riz."
-    ]
+    ],
+    "image": "/plats/blanquette-de-veau.webp"
   },
   {
     "id": "coq-au-vin",
@@ -3419,7 +3421,8 @@
       "Couvrir et laisser mijoter 1 h à feu doux.",
       "Faire revenir les champignons au beurre 5 min à part et les ajouter en fin de cuisson.",
       "Sortir le poulet, faire réduire la sauce à découvert 10 min si elle est trop liquide, puis rectifier l'assaisonnement."
-    ]
+    ],
+    "image": "/plats/coq-au-vin.webp"
   },
   {
     "id": "pot-au-feu",
@@ -3525,7 +3528,8 @@
       "Ajouter carottes, navets et poireaux ficelés en botte, poursuivre 45 min.",
       "Cuire les pommes de terre à part dans une louche de bouillon 25 min : dans le faitout elles le troubleraient.",
       "Servir la viande tranchée entourée de ses légumes, avec moutarde et cornichons. Le bouillon se boit en premier service, dans un bol."
-    ]
+    ],
+    "image": "/plats/pot-au-feu.webp"
   },
   {
     "id": "navarin-agneau",
@@ -3644,7 +3648,8 @@
       "Ajouter le bouquet garni, couvrir et laisser mijoter 45 min.",
       "Ajouter carottes, navets et pommes de terre coupés en gros morceaux, poursuivre 30 min à découvert.",
       "Jeter les petits pois 5 min avant la fin. Rectifier sel et poivre."
-    ]
+    ],
+    "image": "/plats/navarin-agneau.webp"
   },
   {
     "id": "daube-provencale",
@@ -3750,7 +3755,8 @@
       "Verser la marinade filtrée, les tomates concassées, l'ail écrasé et un large ruban de zeste d'orange.",
       "Couvrir et laisser mijoter 3 h à feu très doux — un frémissement à peine visible.",
       "Ajouter les olives dans le dernier quart d'heure. Servir avec des pâtes courtes ou des pommes vapeur."
-    ]
+    ],
+    "image": "/plats/daube-provencale.webp"
   },
   {
     "id": "cassoulet-maison",
@@ -3855,7 +3861,8 @@
       "Mélanger les haricots égouttés à cette sauce, mouiller avec 50 cl de leur eau de cuisson et le bouillon.",
       "Dans un plat à four profond, alterner haricots, morceaux de viande et haricots. Le liquide doit affleurer sans noyer.",
       "Enfourner 1 h à 150 °C. Crever la croûte à la cuillère trois ou quatre fois pendant la cuisson : c'est ce qui l'épaissit."
-    ]
+    ],
+    "image": "/plats/cassoulet-maison.webp"
   },
   {
     "id": "choucroute-garnie",
@@ -3955,7 +3962,8 @@
       "Verser le vin blanc et 25 cl d'eau, ajouter les baies de genièvre et le bouquet garni. Couvrir.",
       "Laisser cuire 1 h à feu doux. Ajouter les saucisses et les pommes de terre pelées, poursuivre 30 min.",
       "Servir dans le plat, viandes tranchées sur le dessus, moutarde à part."
-    ]
+    ],
+    "image": "/plats/choucroute-garnie.webp"
   },
   {
     "id": "petit-sale-lentilles",
@@ -4055,7 +4063,8 @@
       "Porter à frémissement et laisser cuire 30 min à couvert.",
       "Ajouter les saucisses piquées à la fourchette, poursuivre 15 min.",
       "Saler en fin de cuisson, poivrer, et servir avec la moutarde."
-    ]
+    ],
+    "image": "/plats/petit-sale-lentilles.webp"
   },
   {
     "id": "boeuf-carottes",
@@ -4150,7 +4159,8 @@
       "Remettre la viande, ajouter les carottes en gros tronçons, l'ail, le concentré, le bouquet garni et le bouillon avec 30 cl d'eau.",
       "Couvrir et laisser mijoter 2 h à feu très doux. Les carottes doivent se défaire à peine.",
       "Découvrir 15 min en fin de cuisson pour réduire la sauce, puis rectifier l'assaisonnement."
-    ]
+    ],
+    "image": "/plats/boeuf-carottes.webp"
   },
   {
     "id": "poulet-chasseur",
@@ -4262,7 +4272,8 @@
       "Saupoudrer de farine, déglacer au vin blanc, laisser réduire 3 min.",
       "Ajouter les tomates concassées, l'ail et l'estragon, remettre le poulet et laisser mijoter 30 min à couvert.",
       "Ajouter la crème, laisser 5 min à découvert, puis parsemer de persil."
-    ]
+    ],
+    "image": "/plats/poulet-chasseur.webp"
   },
   {
     "id": "lapin-moutarde",
@@ -4358,7 +4369,8 @@
       "Déglacer au vin blanc, ajouter le thym, couvrir et laisser mijoter 35 min.",
       "Sortir les morceaux, verser la crème dans la cocotte et faire réduire 5 min à feu vif.",
       "Remettre le lapin dans la sauce, poivrer généreusement et servir avec des pâtes fraîches."
-    ]
+    ],
+    "image": "/plats/lapin-moutarde.webp"
   },
   {
     "id": "poulet-roti-pommes-de-terre",
@@ -4440,7 +4452,8 @@
       "Poser le poulet sur le côté dans un grand plat, entouré des pommes de terre en quartiers, de l'ail en chemise et de l'huile.",
       "Enfourner 25 min, retourner sur l'autre côté 25 min, puis finir 25 min sur le dos pour dorer la poitrine.",
       "Vérifier la cuisson en piquant la cuisse : le jus doit sortir clair. Laisser reposer 10 min avant de découper, sinon le jus part dans le plat."
-    ]
+    ],
+    "image": "/plats/poulet-roti-pommes-de-terre.webp"
   },
   {
     "id": "hachis-parmentier",
@@ -4545,7 +4558,8 @@
       "Écraser les pommes de terre, incorporer le lait chaud, le beurre et la muscade. Ne pas mixer, la purée deviendrait élastique.",
       "Étaler la viande dans un plat, couvrir de purée, rayer à la fourchette et parsemer de fromage râpé.",
       "Enfourner 25 min à 200 °C, jusqu'à ce que les crêtes soient dorées."
-    ]
+    ],
+    "image": "/plats/hachis-parmentier.webp"
   },
   {
     "id": "tomates-farcies",
@@ -4649,7 +4663,8 @@
       "Garnir les tomates sans tasser, remettre les chapeaux.",
       "Répartir le riz cru et la pulpe hachée au fond du plat avec un verre d'eau : il cuira dans le jus des tomates.",
       "Enfourner 55 min à 180 °C. Arroser une fois à mi-cuisson."
-    ]
+    ],
+    "image": "/plats/tomates-farcies.webp"
   },
   {
     "id": "escalope-veau-creme",
@@ -4749,7 +4764,8 @@
       "Déglacer au vin blanc, laisser réduire de moitié 3 min.",
       "Verser la crème, laisser épaissir 4 min, remettre les escalopes une minute pour les réchauffer.",
       "Parsemer de persil et servir sur les pâtes égouttées."
-    ]
+    ],
+    "image": "/plats/escalope-veau-creme.webp"
   },
   {
     "id": "cordon-bleu-maison",
@@ -4836,7 +4852,8 @@
       "Cuire les haricots verts 8 min à l'eau bouillante salée.",
       "Faire dorer les cordons-bleus 5 min par face à feu moyen dans l'huile — trop vif, la panure brûle avant que le poulet soit cuit.",
       "Égoutter sur du papier absorbant et servir aussitôt."
-    ]
+    ],
+    "image": "/plats/cordon-bleu-maison.webp"
   },
   {
     "id": "steak-frites",
@@ -4910,7 +4927,8 @@
       "Saisir les steaks 2 min par face dans une poêle très chaude avec le beurre, en arrosant. Les laisser reposer 5 min sur une assiette chaude.",
       "Seconde cuisson des frites : 3 min à 180 °C, jusqu'à ce qu'elles soient dorées et croustillantes. Saler à la sortie.",
       "Servir avec la salade assaisonnée et la moutarde."
-    ]
+    ],
+    "image": "/plats/steak-frites.webp"
   },
   {
     "id": "cote-porc-charcutiere",
@@ -5013,7 +5031,8 @@
       "Déglacer au vin blanc, ajouter le bouillon délayé dans 15 cl d'eau, laisser réduire 5 min.",
       "Hors du feu, incorporer la moutarde et les cornichons en rondelles : la moutarde bouillie devient amère.",
       "Napper les côtes de sauce et servir avec les pommes de terre."
-    ]
+    ],
+    "image": "/plats/cote-porc-charcutiere.webp"
   },
   {
     "id": "roti-porc-pommes-terre",
@@ -5102,7 +5121,8 @@
       "Verser le bouillon délayé dans 20 cl d'eau chaude au fond du plat.",
       "Enfourner 1 h en retournant les pommes de terre à mi-cuisson.",
       "Laisser reposer la viande 10 min avant de la trancher, couverte d'aluminium."
-    ]
+    ],
+    "image": "/plats/roti-porc-pommes-terre.webp"
   },
   {
     "id": "saucisse-puree",
@@ -5182,7 +5202,8 @@
       "Faire fondre les oignons émincés 12 min à feu doux dans un peu d'huile, jusqu'à ce qu'ils soient blonds et fondants.",
       "Égoutter les pommes de terre, les écraser au presse-purée, incorporer le beurre puis le lait chaud petit à petit.",
       "Assaisonner de sel, poivre et muscade. Servir les saucisses sur la purée, coiffées d'oignons."
-    ]
+    ],
+    "image": "/plats/saucisse-puree.webp"
   },
   {
     "id": "boudin-noir-pommes",
@@ -5262,7 +5283,8 @@
       "Les faire revenir au beurre 10 min avec le sucre roux, jusqu'à ce que les pommes soient dorées mais entières.",
       "Piquer le boudin et le poser dans une poêle chaude, 5 min par face à feu moyen. Ne pas le percer davantage, il se viderait.",
       "Déglacer les pommes d'un filet de vinaigre hors du feu et servir aussitôt."
-    ]
+    ],
+    "image": "/plats/boudin-noir-pommes.webp"
   },
   {
     "id": "magret-canard-pommes",
@@ -5343,7 +5365,8 @@
       "Faire sauter les pommes de terre en cubes 15 min dans deux cuillères de graisse de canard récupérée, avec le thym.",
       "Dans la poêle des magrets, faire dorer les quartiers de pomme 6 min avec le miel, puis déglacer au vinaigre balsamique.",
       "Trancher les magrets en biais et servir nappé du jus."
-    ]
+    ],
+    "image": "/plats/magret-canard-pommes.webp"
   },
   {
     "id": "gigot-agneau-flageolets",
@@ -5437,7 +5460,8 @@
       "Faire revenir les échalotes et l'ail restant 5 min au beurre, ajouter les flageolets égouttés et le bouillon délayé dans 15 cl d'eau.",
       "Laisser mijoter 20 min à couvert, puis parsemer de persil.",
       "Laisser reposer le gigot 15 min avant de le trancher, et récupérer le jus du plat pour arroser les flageolets."
-    ]
+    ],
+    "image": "/plats/gigot-agneau-flageolets.webp"
   },
   {
     "id": "moules-marinieres",
@@ -5519,7 +5543,8 @@
       "Jeter les moules d'un coup, couvrir et laisser 5 min à feu vif en secouant le faitout une fois : elles sont prêtes dès qu'elles sont toutes ouvertes.",
       "Cuire les frites une seconde fois 3 min à 180 °C et les saler.",
       "Poivrer les moules, parsemer de persil et servir avec le jus de cuisson dans un bol."
-    ]
+    ],
+    "image": "/plats/moules-marinieres.webp"
   },
   {
     "id": "cabillaud-provencale",
@@ -5620,7 +5645,8 @@
       "Verser la sauce dans un plat, poser les dos de cabillaud dessus, saler et poivrer, arroser d'un filet d'huile.",
       "Enfourner 15 min. Le poisson est cuit quand la chair se sépare en lamelles sous la fourchette.",
       "Servir avec le jus de citron pressé au dernier moment."
-    ]
+    ],
+    "image": "/plats/cabillaud-provencale.webp"
   },
   {
     "id": "papillote-saumon-legumes",
@@ -5707,7 +5733,8 @@
       "Arroser d'un filet d'huile et d'une cuillère de vin blanc, puis fermer les papillotes en repliant les bords deux fois.",
       "Enfourner 15 min : la papillote doit gonfler, c'est le signe que la vapeur travaille.",
       "Ouvrir à table et parsemer de ciboulette ciselée."
-    ]
+    ],
+    "image": "/plats/papillote-saumon-legumes.webp"
   },
   {
     "id": "truite-amandes",
@@ -5787,7 +5814,8 @@
       "Les cuire 5 min par face dans 40 g de beurre mousseux, à feu moyen. Réserver au chaud.",
       "Essuyer la poêle, faire fondre le reste du beurre et y dorer les amandes 2 min en remuant sans arrêt — elles passent du blond au brûlé en quelques secondes.",
       "Hors du feu, ajouter le jus d'un citron et le persil, verser sur les truites et servir avec les pommes vapeur."
-    ]
+    ],
+    "image": "/plats/truite-amandes.webp"
   },
   {
     "id": "saumon-creme-ciboulette",
@@ -5880,7 +5908,8 @@
       "Ajouter la crème et laisser épaissir 4 min à feu doux.",
       "Poser les cubes de saumon dans la sauce, couvrir et laisser 5 min à feu très doux : le saumon doit rester nacré au centre.",
       "Hors du feu, ajouter la ciboulette et un trait de citron. Servir sur le riz."
-    ]
+    ],
+    "image": "/plats/saumon-creme-ciboulette.webp"
   },
   {
     "id": "cabillaud-meuniere",
@@ -5960,7 +5989,8 @@
       "Faire chauffer 40 g de beurre jusqu'à ce qu'il mousse, y déposer le poisson et cuire 4 min sans y toucher.",
       "Retourner délicatement à la spatule, poursuivre 3 min, puis dresser sur les assiettes.",
       "Jeter le beurre cuit, faire fondre le reste jusqu'à ce qu'il sente la noisette, ajouter le jus de citron et le persil hors du feu, et napper aussitôt."
-    ]
+    ],
+    "image": "/plats/cabillaud-meuniere.webp"
   },
   {
     "id": "gambas-ail-persil",
@@ -6039,7 +6069,8 @@
       "Monter le feu, jeter les crevettes et les saisir 2 min par face, jusqu'à ce qu'elles soient roses et fermes.",
       "Déglacer au vin blanc, laisser 1 min, puis ajouter le persil, le piment d'Espelette et le sel.",
       "Arroser de citron et servir immédiatement avec la baguette pour saucer."
-    ]
+    ],
+    "image": "/plats/gambas-ail-persil.webp"
   },
   {
     "id": "saint-jacques-poelees",
@@ -6126,7 +6157,8 @@
       "Faire suer les échalotes dans la même poêle 2 min, déglacer au vin blanc et réduire 3 min.",
       "Ajouter la crème, laisser épaissir 3 min, remettre les noix 30 secondes pour les réchauffer.",
       "Dresser sur la fondue de poireaux et parsemer de ciboulette."
-    ]
+    ],
+    "image": "/plats/saint-jacques-poelees.webp"
   },
   {
     "id": "gratin-dauphinois",
@@ -6201,7 +6233,8 @@
       "Jeter les rondelles dans ce mélange et laisser cuire 10 min à feu doux en remuant délicatement : le gratin partira déjà chaud, il gagnera une demi-heure de four.",
       "Verser dans le plat, égaliser, parsemer de noisettes de beurre.",
       "Enfourner 1 h. Le dessus doit être doré et la pointe d'un couteau traverser sans résistance. Laisser reposer 10 min avant de servir."
-    ]
+    ],
+    "image": "/plats/gratin-dauphinois.webp"
   },
   {
     "id": "quiche-lorraine",
@@ -6280,7 +6313,8 @@
       "Battre les œufs avec la crème et le lait, saler modérément — les lardons et le comté salent déjà —, poivrer, râper la muscade.",
       "Retirer les légumes secs, répartir les lardons et le comté râpé sur le fond, verser l'appareil.",
       "Enfourner 35 min, jusqu'à ce que la quiche soit gonflée et dorée. Elle retombe en refroidissant, c'est normal."
-    ]
+    ],
+    "image": "/plats/quiche-lorraine.webp"
   },
   {
     "id": "croque-monsieur",
@@ -6362,7 +6396,8 @@
       "Sur quatre d'entre elles, poser une tranche de jambon et une couche de comté râpé, puis refermer avec les autres tranches, face béchamel vers l'intérieur.",
       "Napper le dessus du reste de béchamel et du comté restant.",
       "Enfourner 12 min, puis 2 min sous le gril pour que le dessus soit boursouflé et doré."
-    ]
+    ],
+    "image": "/plats/croque-monsieur.webp"
   },
   {
     "id": "omelette-fines-herbes",
@@ -6444,7 +6479,8 @@
       "Faire mousser le beurre dans une poêle à feu moyen, verser les œufs d'un coup.",
       "Ramener les bords vers le centre à la spatule pendant 2 min, jusqu'à ce que le dessus soit encore brillant et crémeux.",
       "Rouler l'omelette sur elle-même et la faire glisser dans l'assiette. Servir avec la salade."
-    ]
+    ],
+    "image": "/plats/omelette-fines-herbes.webp"
   },
   {
     "id": "oeufs-cocotte",
@@ -6530,7 +6566,8 @@
       "Casser un œuf dans chaque ramequin sans crever le jaune, napper du reste de crème, parsemer de comté, saler et poivrer.",
       "Poser les ramequins dans un plat, verser de l'eau chaude à mi-hauteur et enfourner 10 min : le blanc doit être pris, le jaune encore coulant.",
       "Parsemer de ciboulette et servir avec des mouillettes de baguette grillée."
-    ]
+    ],
+    "image": "/plats/oeufs-cocotte.webp"
   },
   {
     "id": "oeufs-meurette",
@@ -6636,7 +6673,8 @@
       "Porter à frémissement une casserole d'eau avec le vinaigre — jamais à gros bouillons, ils déchiquettent le blanc.",
       "Casser chaque œuf dans un bol, le glisser dans l'eau et le pocher 3 min, puis l'égoutter sur du papier absorbant.",
       "Poser un œuf sur chaque croûton, napper de sauce filtrée et poivrer."
-    ]
+    ],
+    "image": "/plats/oeufs-meurette.webp"
   },
   {
     "id": "piperade",
@@ -6723,7 +6761,8 @@
       "Faire griller les tranches de jambon cru 1 min par face dans une poêle sèche, les réserver.",
       "Battre les œufs, les verser dans les légumes et remuer sans arrêt 3 min à feu doux : le mélange doit rester baveux.",
       "Servir aussitôt, avec le jambon cru posé dessus."
-    ]
+    ],
+    "image": "/plats/piperade.webp"
   },
   {
     "id": "endives-jambon",
@@ -6817,7 +6856,8 @@
       "Enrouler chaque endive dans une tranche de jambon et les ranger côte à côte dans un plat beurré.",
       "Napper de béchamel, parsemer de fromage râpé.",
       "Enfourner 25 min à 200 °C, jusqu'à ce que le dessus soit bien doré."
-    ]
+    ],
+    "image": "/plats/endives-jambon.webp"
   },
   {
     "id": "gratin-courgettes",
@@ -6916,7 +6956,8 @@
       "Battre les œufs avec la crème, la muscade, le persil, sel et poivre. Y mélanger le riz et les courgettes.",
       "Verser dans un plat huilé, couvrir de fromage râpé.",
       "Enfourner 35 min à 190 °C. Le gratin doit être pris au centre et doré sur les bords."
-    ]
+    ],
+    "image": "/plats/gratin-courgettes.webp"
   },
   {
     "id": "gratin-pates-jambon",
@@ -7010,7 +7051,8 @@
       "Assaisonner de sel, poivre et muscade, puis ajouter la moitié du fromage râpé hors du feu.",
       "Mélanger pâtes, jambon en lanières, champignons et béchamel, verser dans un plat beurré.",
       "Couvrir du fromage restant et enfourner 20 min à 200 °C, en finissant 3 min sous le gril."
-    ]
+    ],
+    "image": "/plats/gratin-pates-jambon.webp"
   },
   {
     "id": "tarte-poireaux-lardons",
@@ -7096,7 +7138,8 @@
       "Préchauffer le four à 190 °C, étaler la pâte dans le moule et la piquer à la fourchette.",
       "Battre les œufs avec la crème, le sel, le poivre et la muscade.",
       "Répartir poireaux et lardons sur la pâte, verser l'appareil, couvrir de fromage râpé et enfourner 35 min."
-    ]
+    ],
+    "image": "/plats/tarte-poireaux-lardons.webp"
   },
   {
     "id": "flammekueche",
@@ -7176,7 +7219,8 @@
       "Étaler la pâte le plus finement possible sur du papier cuisson, en rectangle.",
       "La couvrir du mélange crémeux en couche mince, puis parsemer d'oignons et de lardons.",
       "Enfourner 12 min sur la plaque brûlante, jusqu'à ce que les bords soient bruns et croustillants. Servir découpée en carrés, tout de suite."
-    ]
+    ],
+    "image": "/plats/flammekueche.webp"
   },
   {
     "id": "pissaladiere",
@@ -7263,7 +7307,8 @@
       "Préchauffer le four à 220 °C et étaler la pâte sur une plaque.",
       "Répartir la compotée d'oignons, disposer les anchois en croisillons et une olive dans chaque losange.",
       "Enfourner 20 min. Se mange tiède plutôt que brûlant."
-    ]
+    ],
+    "image": "/plats/pissaladiere.webp"
   },
   {
     "id": "tarte-tomate-moutarde",
@@ -7339,7 +7384,8 @@
       "Disposer les rondelles de tomates en rosace, en les serrant — elles réduisent beaucoup.",
       "Saler, poivrer, parsemer d'herbes de Provence, du reste de fromage et d'un filet d'huile.",
       "Enfourner 30 min, jusqu'à ce que les bords soient bien feuilletés et dorés."
-    ]
+    ],
+    "image": "/plats/tarte-tomate-moutarde.webp"
   },
   {
     "id": "souffle-fromage",
@@ -7415,7 +7461,8 @@
       "Monter les blancs en neige ferme avec une pincée de sel.",
       "En incorporer un tiers vivement pour détendre l'appareil, puis le reste délicatement à la spatule, en soulevant la masse.",
       "Verser dans le moule, enfourner 30 min sans jamais ouvrir la porte, et servir dans la minute qui suit."
-    ]
+    ],
+    "image": "/plats/souffle-fromage.webp"
   },
   {
     "id": "galette-complete",
@@ -7501,7 +7548,8 @@
       "Retourner la galette, casser un œuf au centre, poser le jambon et le comté râpé autour.",
       "Rabattre les quatre côtés en carré, poursuivre 3 min à couvert pour fondre le fromage tout en gardant le jaune coulant.",
       "Répéter pour les autres galettes et servir avec la salade assaisonnée."
-    ]
+    ],
+    "image": "/plats/galette-complete.webp"
   },
   {
     "id": "camembert-roti",
@@ -7582,7 +7630,8 @@
       "Arroser de miel, parsemer de thym, poivrer.",
       "Enfourner 20 min : le cœur doit être complètement coulant quand on enfonce une cuillère.",
       "Servir au centre de la table avec les pommes de terre, la baguette découpée et la salade."
-    ]
+    ],
+    "image": "/plats/camembert-roti.webp"
   },
   {
     "id": "cake-jambon-olives",
@@ -7669,7 +7718,8 @@
       "Incorporer jambon, olives et fromage râpé à la spatule, poivrer généreusement, saler à peine.",
       "Verser dans le moule et enfourner 45 min. La lame d'un couteau doit ressortir sèche.",
       "Démouler tiède et laisser refroidir sur une grille avant de trancher."
-    ]
+    ],
+    "image": "/plats/cake-jambon-olives.webp"
   },
   {
     "id": "pates-carbonara",
@@ -7736,7 +7786,8 @@
       "Prélever une louche d'eau de cuisson avant d'égoutter les pâtes.",
       "Hors du feu, verser les pâtes brûlantes sur les lardons, ajouter le mélange œufs-parmesan et remuer sans arrêt : la chaleur des pâtes suffit à lier, la poêle sur le feu ferait une omelette.",
       "Détendre avec un peu d'eau de cuisson jusqu'à ce que la sauce nappe, et servir immédiatement."
-    ]
+    ],
+    "image": "/plats/pates-carbonara.webp"
   },
   {
     "id": "pates-bolognaise",
@@ -7853,7 +7904,8 @@
       "Déglacer au vin rouge, laisser évaporer 3 min, puis verser le lait et le laisser être absorbé 5 min : c'est ce qui adoucit l'acidité de la sauce.",
       "Ajouter les tomates concassées et les herbes, saler, poivrer, et laisser mijoter 1 h à découvert, à tout petit feu.",
       "Cuire les pâtes al dente, les mélanger à la sauce dans la casserole avec une louche d'eau de cuisson, et servir avec le parmesan."
-    ]
+    ],
+    "image": "/plats/pates-bolognaise.webp"
   },
   {
     "id": "salade-nicoise",
@@ -7964,7 +8016,8 @@
       "Préparer la vinaigrette : vinaigre, sel, poivre, puis l'huile en fouettant.",
       "Disposer la salade au fond du plat, puis les légumes par tas séparés, le thon émietté, les œufs en quartiers, les olives et les anchois.",
       "Arroser de vinaigrette au dernier moment et parsemer de basilic déchiré à la main."
-    ]
+    ],
+    "image": "/plats/salade-nicoise.webp"
   },
   {
     "id": "salade-chevre-chaud",
@@ -8059,7 +8112,8 @@
       "Passer 5 min sous le gril, jusqu'à ce que le fromage soit doré et boursouflé — surveiller, il passe du blond au noir très vite.",
       "Fouetter la moutarde, le vinaigre, le sel et l'huile, en assaisonner la salade, les tomates cerises coupées en deux et les noix concassées.",
       "Poser deux toasts brûlants sur chaque assiette et servir sans attendre."
-    ]
+    ],
+    "image": "/plats/salade-chevre-chaud.webp"
   },
   {
     "id": "salade-lyonnaise",
@@ -8152,7 +8206,8 @@
       "Casser chaque œuf dans un bol, le glisser dans l'eau frémissante et le pocher 3 min, jusqu'à ce que le blanc soit pris autour d'un jaune resté liquide.",
       "Fouetter la moutarde, l'échalote hachée, le jus de poêle et l'huile pour la vinaigrette.",
       "Dresser la salade assaisonnée, les lardons, les croûtons frottés d'ail, et poser un œuf poché sur chaque assiette. Poivrer."
-    ]
+    ],
+    "image": "/plats/salade-lyonnaise.webp"
   },
   {
     "id": "celeri-remoulade",
@@ -8226,7 +8281,8 @@
       "Mélanger la mayonnaise, la moutarde et la crème fraîche, saler et poivrer.",
       "Incorporer le céleri râpé à la sauce et bien mélanger.",
       "Laisser reposer 10 min au frais avant de servir : le céleri s'assouplit. Parsemer de persil."
-    ]
+    ],
+    "image": "/plats/celeri-remoulade.webp"
   },
   {
     "id": "carottes-rapees",
@@ -8308,7 +8364,8 @@
       "Presser l'orange et le citron, fouetter le jus avec le miel, le sel, le poivre et l'huile.",
       "Mélanger carottes, raisins égouttés et vinaigrette.",
       "Laisser reposer 10 min au frais et parsemer de persil au moment de servir."
-    ]
+    ],
+    "image": "/plats/carottes-rapees.webp"
   },
   {
     "id": "poireaux-vinaigrette",
@@ -8389,7 +8446,8 @@
       "Les égoutter et les presser doucement entre deux assiettes, puis les laisser tiédir — un poireau mouillé dilue la vinaigrette.",
       "Fouetter la moutarde, le vinaigre, le sel et le poivre, puis l'huile en filet, et ajouter l'échalote hachée.",
       "Napper les poireaux tièdes, parsemer d'œuf haché et de persil."
-    ]
+    ],
+    "image": "/plats/poireaux-vinaigrette.webp"
   },
   {
     "id": "oeufs-mimosa",
@@ -8470,7 +8528,8 @@
       "Écraser cinq jaunes à la fourchette avec la mayonnaise, la moutarde, un trait de citron, le sel et le poivre. Garder le sixième pour le décor.",
       "Garnir les blancs de cette farce à la petite cuillère, ou à la poche pour faire joli.",
       "Émietter le jaune restant par-dessus, parsemer de ciboulette et d'une pointe de paprika, et servir sur un lit de salade."
-    ]
+    ],
+    "image": "/plats/oeufs-mimosa.webp"
   },
   {
     "id": "tartare-saumon",
@@ -8557,7 +8616,8 @@
       "Couper les avocats en cubes et les citronner avec le second citron vert.",
       "Dresser en cercle, une couche d'avocat puis une couche de saumon, et réserver 10 min au frais.",
       "Servir avec le pain de campagne grillé."
-    ]
+    ],
+    "image": "/plats/tartare-saumon.webp"
   },
   {
     "id": "avocat-crevettes",
@@ -8734,7 +8794,8 @@
       "Ajouter 1,2 l d'eau, les bouillons et le thym, et laisser mijoter 20 min.",
       "Répartir la soupe dans des bols allant au four, poser deux tranches de baguette grillée sur chacun et couvrir de comté râpé.",
       "Passer 5 min sous le gril, jusqu'à ce que le fromage forme une croûte dorée."
-    ]
+    ],
+    "image": "/plats/soupe-oignon-gratinee.webp"
   },
   {
     "id": "potage-poireaux-pommes-terre",
@@ -8816,7 +8877,8 @@
       "Laisser cuire 25 min à couvert, jusqu'à ce que les pommes de terre s'écrasent à la cuillère.",
       "Mixer, ajouter la crème, rectifier sel et poivre.",
       "Servir avec la ciboulette ciselée. Une pomme de terre de plus mixée au lieu d'une louche d'eau, et le potage devient velouté."
-    ]
+    ],
+    "image": "/plats/potage-poireaux-pommes-terre.webp"
   },
   {
     "id": "veloute-potimarron",
@@ -8905,7 +8967,8 @@
       "Mixer longuement, jusqu'à ce que le velouté soit parfaitement lisse.",
       "Ajouter la crème et la muscade, rectifier l'assaisonnement.",
       "Servir avec les noix concassées et grillées 2 min à la poêle."
-    ]
+    ],
+    "image": "/plats/veloute-potimarron.webp"
   },
   {
     "id": "soupe-legumes-hiver",
@@ -9005,7 +9068,8 @@
       "Laisser cuire 30 min à petits bouillons, en ajoutant la courgette au bout de 15 min.",
       "Mixer entièrement pour un velouté, à moitié pour garder de la mâche, ou pas du tout.",
       "Rectifier l'assaisonnement et parsemer de persil."
-    ]
+    ],
+    "image": "/plats/soupe-legumes-hiver.webp"
   },
   {
     "id": "salade-lentilles",
@@ -9100,7 +9164,8 @@
       "Égoutter les lentilles encore chaudes et les verser dans la vinaigrette : tièdes, elles l'absorbent, froides elles la laissent au fond du saladier.",
       "Ajouter les échalotes hachées, la carotte de cuisson coupée en dés et le persil.",
       "Servir tiède ou froid, avec les œufs en quartiers."
-    ]
+    ],
+    "image": "/plats/salade-lentilles.webp"
   },
   {
     "id": "taboule-menthe",
@@ -9186,7 +9251,8 @@
       "Épépiner les tomates et le concombre, les couper en petits dés et les ajouter à la semoule.",
       "Hacher grossièrement la menthe, le persil et les oignons nouveaux, et les incorporer.",
       "Saler, poivrer, rectifier en citron, et laisser au frais 1 h avant de servir."
-    ]
+    ],
+    "image": "/plats/taboule-menthe.webp"
   },
   {
     "id": "crepes-sucrees",
@@ -9261,7 +9327,8 @@
       "Incorporer le beurre fondu, le sucre, le sucre vanillé et le sel, puis laisser reposer la pâte 30 min.",
       "Chauffer une poêle à feu moyen-vif, la graisser à peine, verser une petite louche et tourner la poêle pour étaler.",
       "Cuire 1 min, retourner dès que les bords se décollent et poursuivre 30 secondes. Servir avec sucre et jus de citron."
-    ]
+    ],
+    "image": "/plats/crepes-sucrees.webp"
   },
   {
     "id": "gateau-yaourt",
@@ -9400,7 +9467,8 @@
       "Incorporer un tiers des blancs vivement pour détendre le chocolat.",
       "Ajouter le reste en trois fois, à la spatule, en soulevant la masse de bas en haut : on mélange le moins possible pour garder l'air.",
       "Répartir en verrines et laisser prendre au moins 3 h au réfrigérateur."
-    ]
+    ],
+    "image": "/plats/mousse-chocolat.webp"
   },
   {
     "id": "fondant-chocolat",
@@ -9470,7 +9538,8 @@
       "Verser le chocolat fondu, mélanger, puis incorporer la farine tamisée.",
       "Enfourner 18 min exactement : le centre doit encore trembler légèrement quand on secoue le moule. Deux minutes de plus et c'est un gâteau, plus un fondant.",
       "Laisser reposer 10 min avant de démouler."
-    ]
+    ],
+    "image": "/plats/fondant-chocolat.webp"
   },
   {
     "id": "tarte-pommes",
@@ -9546,7 +9615,8 @@
       "Étaler la compote sur le fond de tarte.",
       "Trancher finement les deux pommes restantes et les disposer en rosace serrée, saupoudrer de sucre et de cannelle, parsemer du beurre restant.",
       "Enfourner 35 min, puis lustrer au miel tiède à la sortie du four."
-    ]
+    ],
+    "image": "/plats/tarte-pommes.webp"
   },
   {
     "id": "crumble-pommes",
@@ -9623,7 +9693,8 @@
       "Ajouter les amandes effilées aux miettes et en couvrir les pommes, sans tasser.",
       "Enfourner 35 min, jusqu'à ce que le dessus soit doré et que le jus bouillonne sur les bords.",
       "Laisser tiédir 10 min avant de servir."
-    ]
+    ],
+    "image": "/plats/crumble-pommes.webp"
   },
   {
     "id": "clafoutis-cerises",
@@ -9698,7 +9769,8 @@
       "Détendre avec le lait versé en filet, jusqu'à obtenir une pâte fluide comme une pâte à crêpes.",
       "Répartir les cerises dans le plat, verser la pâte dessus.",
       "Enfourner 40 min, jusqu'à ce que le clafoutis soit gonflé et doré. Se mange tiède."
-    ]
+    ],
+    "image": "/plats/clafoutis-cerises.webp"
   },
   {
     "id": "riz-au-lait",
@@ -9767,7 +9839,8 @@
       "Ajouter le sucre seulement à mi-cuisson : ajouté trop tôt, il durcit le grain.",
       "Hors du feu, incorporer la crème. Le mélange doit rester souple, il épaissira en refroidissant.",
       "Servir tiède ou froid, en pots."
-    ]
+    ],
+    "image": "/plats/riz-au-lait.webp"
   },
   {
     "id": "ile-flottante",
@@ -9828,7 +9901,8 @@
       "Filtrer la crème anglaise et la mettre au frais.",
       "Monter les blancs en neige ferme avec le sel et 40 g de sucre, puis les pocher par grosses cuillerées 2 min dans du lait frémissant, en les retournant à mi-parcours.",
       "Faire un caramel blond avec le sucre restant et un peu d'eau. Dresser les blancs sur la crème, napper de caramel et parsemer d'amandes grillées."
-    ]
+    ],
+    "image": "/plats/ile-flottante.webp"
   },
   {
     "id": "creme-brulee",
@@ -9889,7 +9963,8 @@
       "Répartir dans six ramequins plats et enfourner 50 min. La crème doit être prise sur les bords et encore tremblante au centre.",
       "Laisser refroidir puis réserver au moins 3 h au réfrigérateur.",
       "Juste avant de servir, saupoudrer de sucre roux et caraméliser au chalumeau ou 3 min sous un gril brûlant."
-    ]
+    ],
+    "image": "/plats/creme-brulee.webp"
   },
   {
     "id": "far-breton",
@@ -9965,7 +10040,8 @@
       "Incorporer le beurre fondu, verser la pâte dans le plat et répartir les pruneaux.",
       "Enfourner 15 min à 200 °C, puis baisser à 180 °C et poursuivre 35 min.",
       "Le far doit être doré, presque brun par endroits. Il se mange tiède ou froid, jamais chaud."
-    ]
+    ],
+    "image": "/plats/far-breton.webp"
   },
   {
     "id": "pain-perdu",
@@ -10034,7 +10110,8 @@
       "Tremper chaque tranche 20 secondes par face, pas plus.",
       "Faire mousser le beurre dans une poêle à feu moyen et dorer les tranches 3 min de chaque côté.",
       "Mélanger le sucre restant à la cannelle et en saupoudrer les tranches encore chaudes."
-    ]
+    ],
+    "image": "/plats/pain-perdu.webp"
   },
   {
     "id": "madeleines",
@@ -10110,7 +10187,8 @@
       "Réserver la pâte au moins 1 h au réfrigérateur : le choc entre la pâte froide et le four chaud est ce qui crée la bosse.",
       "Préchauffer le four à 220 °C, remplir les moules aux deux tiers.",
       "Enfourner 4 min à 220 °C puis baisser à 180 °C et poursuivre 6 min. Démouler aussitôt."
-    ]
+    ],
+    "image": "/plats/madeleines.webp"
   },
   {
     "id": "quatre-quarts",
@@ -10180,7 +10258,8 @@
       "Ajouter les œufs un à un, en fouettant bien entre chaque, puis la vanille.",
       "Incorporer la farine tamisée avec la levure et le sel, à la spatule et sans insister.",
       "Verser dans le moule et enfourner 50 min. Laisser refroidir avant de trancher, le quatre-quarts est meilleur le lendemain."
-    ]
+    ],
+    "image": "/plats/quatre-quarts.webp"
   },
   {
     "id": "tarte-citron-meringuee",
@@ -10256,7 +10335,8 @@
       "Verser la crème sur le fond refroidi et laisser prendre 1 h au frais.",
       "Monter les 3 blancs restants en neige avec le sel, serrer avec les 100 g de sucre restants jusqu'à une meringue lisse et brillante.",
       "Recouvrir la tarte de meringue en formant des pics, saupoudrer de sucre glace et passer 5 min sous le gril en surveillant."
-    ]
+    ],
+    "image": "/plats/tarte-citron-meringuee.webp"
   },
   {
     "id": "curry-rouge-crevettes",
@@ -10356,7 +10436,8 @@
       "Ajouter les haricots verts en tronçons et le poivron en lanières, laisser frémir 6 min.",
       "Jeter les crevettes et cuire 3 min, pas plus : au-delà elles deviennent caoutchouteuses.",
       "Hors du feu, ajouter le basilic thaï et un trait de citron vert. Servir avec le riz."
-    ]
+    ],
+    "image": "/plats/curry-rouge-crevettes.webp"
   },
   {
     "id": "massaman-poulet",
@@ -10456,7 +10537,8 @@
       "Ajouter les pommes de terre en gros cubes et les oignons en quartiers, couvrir et laisser mijoter 30 min.",
       "Assaisonner avec le nuoc mam, le sucre de palme et le tamarin — le massaman se tient sur l'équilibre salé, sucré, acide, à ajuster à la cuillère.",
       "Ajouter les cacahuètes, poursuivre 5 min et servir avec le riz jasmin."
-    ]
+    ],
+    "image": "/plats/massaman-poulet.webp"
   },
   {
     "id": "tom-yum-crevettes",
@@ -10559,7 +10641,8 @@
       "Ajouter au bouillon la citronnelle, le galanga, les feuilles de combava froissées, les échalotes écrasées et la pâte de curry. Laisser infuser 5 min.",
       "Ajouter les champignons et les tomates cerises, cuire 3 min, puis les crevettes, 2 min.",
       "Hors du feu : nuoc mam, sucre, jus des citrons verts, piments écrasés et coriandre. Ne jamais faire bouillir après le citron, il perdrait son parfum."
-    ]
+    ],
+    "image": "/plats/tom-yum-crevettes.webp"
   },
   {
     "id": "tom-kha-kai",
@@ -10657,7 +10740,8 @@
       "Assaisonner de nuoc mam et de sucre de palme.",
       "Hors du feu, ajouter le jus des citrons verts, les piments écrasés et la coriandre.",
       "Servir tel quel ou avec un bol de riz : les tiges de citronnelle et le galanga se laissent au bord de l'assiette."
-    ]
+    ],
+    "image": "/plats/tom-kha-kai.webp"
   },
   {
     "id": "som-tam",
@@ -10744,7 +10828,8 @@
       "Ajouter les haricots verts coupés en tronçons et les tomates cerises, les écraser légèrement pour qu'elles rendent leur jus.",
       "Ajouter la papaye et la carotte, mélanger en pilant doucement d'une main et en remuant de l'autre : on meurtrit les fibres pour qu'elles boivent la sauce, on ne les réduit pas en purée.",
       "Parsemer de cacahuètes concassées et servir immédiatement, avant que la papaye ne rende son eau."
-    ]
+    ],
+    "image": "/plats/som-tam.webp"
   },
   {
     "id": "larb-gai",
@@ -10842,7 +10927,8 @@
       "Ajouter les échalotes émincées, les oignons nouveaux et la poudre de riz grillé.",
       "Mélanger la menthe et la coriandre ciselées au dernier moment.",
       "Servir tiède avec les feuilles de salade et le concombre en bâtonnets, pour attraper le larb à la main."
-    ]
+    ],
+    "image": "/plats/larb-gai.webp"
   },
   {
     "id": "pad-krapow-porc",
@@ -10942,7 +11028,8 @@
       "Ajouter les haricots verts en petits tronçons, la sauce d'huître, la sauce soja, le nuoc mam et le sucre, sauter 2 min.",
       "Couper le feu et jeter le basilic thaï : la chaleur résiduelle suffit à le flétrir, cuit il perd tout.",
       "Frire les œufs dans le reste d'huile très chaude, bords dentelés et jaune coulant, et en poser un sur chaque assiette de riz."
-    ]
+    ],
+    "image": "/plats/pad-krapow-porc.webp"
   },
   {
     "id": "pad-see-ew",
@@ -11042,7 +11129,8 @@
       "Casser les œufs au centre, les brouiller 30 secondes, ajouter l'ail et le chou chinois coupé en tronçons, sauter 2 min.",
       "Ajouter les nouilles, les sauces et le sucre. Sauter 3 min en retournant à la spatule sans remuer en rond : les nouilles doivent prendre des marques de brûlé, c'est la signature du plat.",
       "Poivrer généreusement et servir avec le vinaigre de riz à part."
-    ]
+    ],
+    "image": "/plats/pad-see-ew.webp"
   },
   {
     "id": "khao-pad",
@@ -11154,7 +11242,8 @@
       "Ajouter le riz froid en l'égrenant à la main, sauter 3 min en pressant les grains contre la paroi.",
       "Assaisonner de nuoc mam, sauce soja et sucre, ajouter les tomates en quartiers et les oignons nouveaux, sauter 1 min.",
       "Servir avec le concombre en rondelles et un quartier de citron vert à presser dessus."
-    ]
+    ],
+    "image": "/plats/khao-pad.webp"
   },
   {
     "id": "satay-poulet",
@@ -11254,7 +11343,8 @@
       "Laisser épaissir 8 min à feu doux en remuant : la sauce doit napper, on la détend d'un peu d'eau si elle serre trop.",
       "Enfiler les lanières sur des brochettes et les griller 3 min par face à la poêle ou au barbecue, jusqu'à ce que les bords caramélisent.",
       "Servir avec la sauce cacahuète, le concombre en rondelles et les citrons verts."
-    ]
+    ],
+    "image": "/plats/satay-poulet.webp"
   },
   {
     "id": "curry-jaune-poulet",
@@ -11359,7 +11449,8 @@
       "Ajouter les pommes de terre en cubes, les carottes en rondelles et l'oignon en quartiers.",
       "Laisser mijoter 30 min à couvert, jusqu'à ce que les pommes de terre soient fondantes.",
       "Assaisonner de nuoc mam et de sucre de palme, ajouter le citron vert et la coriandre hors du feu. Servir avec le riz."
-    ]
+    ],
+    "image": "/plats/curry-jaune-poulet.webp"
   },
   {
     "id": "yam-woon-sen",
@@ -11469,7 +11560,8 @@
       "Mélanger vermicelles tièdes, porc, crevettes, échalotes émincées, céleri en fines tranches et tomates cerises.",
       "Verser la sauce et mélanger à la main : tièdes, les vermicelles l'absorbent.",
       "Ajouter la coriandre et les oignons nouveaux, parsemer de cacahuètes concassées et servir aussitôt."
-    ]
+    ],
+    "image": "/plats/yam-woon-sen.webp"
   },
   {
     "id": "poisson-vapeur-citron-vert",
@@ -11561,7 +11653,8 @@
       "Pendant ce temps, piler l'ail et les piments, puis délayer avec le jus des citrons verts, le nuoc mam, le sucre et 10 cl de bouillon chaud.",
       "Verser cette sauce brûlante sur le poisson à la sortie du panier.",
       "Couvrir de coriandre en bouquets entiers, tiges comprises, et servir avec le riz."
-    ]
+    ],
+    "image": "/plats/poisson-vapeur-citron-vert.webp"
   },
   {
     "id": "khai-jiao",
@@ -11635,7 +11728,8 @@
       "Verser les œufs d'un coup, d'assez haut : ils doivent boursoufler immédiatement sur les bords.",
       "Cuire 2 min, retourner et poursuivre 1 min, jusqu'à ce que l'omelette soit dorée et croustillante.",
       "Égoutter sur du papier absorbant, poser sur le riz, poivrer et servir avec la sriracha."
-    ]
+    ],
+    "image": "/plats/khai-jiao.webp"
   },
   {
     "id": "boeuf-basilic-thai",
@@ -11734,7 +11828,8 @@
       "Jeter l'ail et les piments 20 secondes, puis l'oignon et le poivron en lanières, 2 min à feu maximum.",
       "Remettre le bœuf, verser la sauce, sauter 1 min.",
       "Couper le feu, ajouter le basilic thaï et remuer une fois. Servir immédiatement."
-    ]
+    ],
+    "image": "/plats/boeuf-basilic-thai.webp"
   },
   {
     "id": "gai-yang",
@@ -11833,7 +11928,8 @@
       "Faire tremper le riz gluant 30 min, puis le cuire 25 min à la vapeur dans un linge.",
       "Griller les cuisses 15 min de chaque côté à feu moyen, peau vers le bas d'abord, en les badigeonnant de marinade. À feu trop vif, le sucre brûle avant que la chair soit cuite.",
       "Servir avec le riz gluant, la sriracha allongée d'un peu de jus de citron vert, et le reste de coriandre."
-    ]
+    ],
+    "image": "/plats/gai-yang.webp"
   },
   {
     "id": "pad-pak-legumes",
@@ -11939,7 +12035,8 @@
       "Chauffer le wok à feu maximum, jeter l'ail et le gingembre 20 secondes.",
       "Ajouter carottes et brocoli, sauter 3 min, puis les champignons et le pak choï, 2 min de plus. Les légumes doivent rester croquants.",
       "Verser la sauce, remettre le tofu, laisser napper 1 min et servir sur le riz."
-    ]
+    ],
+    "image": "/plats/pad-pak-legumes.webp"
   },
   {
     "id": "soupe-nouilles-poulet-thai",
@@ -12052,7 +12149,8 @@
       "Faire tremper les nouilles de riz 5 min dans l'eau chaude, puis les plonger 30 secondes dans le bouillon avant de les répartir dans les bols.",
       "Ajouter le poulet effiloché, les pousses de soja et le bouillon brûlant.",
       "Chacun finit son bol : oignons nouveaux, coriandre, cacahuètes concassées, piment séché et citron vert."
-    ]
+    ],
+    "image": "/plats/soupe-nouilles-poulet-thai.webp"
   },
   {
     "id": "riz-gluant-mangue",
@@ -12119,7 +12217,8 @@
       "Verser ce mélange sur le riz chaud, remuer et laisser reposer 20 min à couvert : le riz doit tout absorber.",
       "Faire épaissir le reste du lait de coco avec la fécule délayée, 2 min à feu doux, pour la sauce à napper.",
       "Dresser le riz avec les joues de mangue tranchées, napper de sauce et parsemer de sésame grillé."
-    ]
+    ],
+    "image": "/plats/riz-gluant-mangue.webp"
   },
   {
     "id": "aioli-provencal",
@@ -12235,6 +12334,7 @@
       "Cuire à la vapeur ou à l'eau salée, chacun son temps : pommes de terre 20 min, carottes 15 min, chou-fleur et brocoli 8 min, haricots verts 6 min, courgettes 5 min. Les légumes doivent rester légèrement croquants.",
       "Saler et poivrer les dos de cabillaud, les pocher 8 à 10 min dans une eau frémissante citronnée, ou les cuire à la poêle 4 min par face avec un filet d'huile.",
       "Dresser le poisson, les légumes, les œufs durs coupés en deux et les tomates cerises sur un grand plat, avec l'aïoli à part dans un petit bol."
-    ]
+    ],
+    "image": "/plats/aioli-provencal.webp"
   }
 ]
