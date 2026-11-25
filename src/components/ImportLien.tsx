@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Recipe } from '../types'
 import { useLangue } from '../lib/i18n'
 import { extraireUrl, importerDepuisUrl } from '../lib/importerRecette'
@@ -14,13 +14,15 @@ import FormulaireRecette from './FormulaireRecette'
 interface Props {
   onAjouter: (recette: Recipe) => Promise<void>
   onRetour: () => void
+  /** L'adresse reçue par le menu « Partager » du téléphone : lue tout de suite. */
+  adresseInitiale?: string
   titresExistants: string[]
   tagsConnus: string[]
 }
 
-export default function ImportLien({ onAjouter, onRetour, titresExistants, tagsConnus }: Props) {
+export default function ImportLien({ onAjouter, onRetour, adresseInitiale = '', titresExistants, tagsConnus }: Props) {
   const { t } = useLangue()
-  const [saisie, setSaisie] = useState('')
+  const [saisie, setSaisie] = useState(adresseInitiale)
   const [erreur, setErreur] = useState<string | null>(null)
   const [enCours, setEnCours] = useState(false)
   const [brouillon, setBrouillon] = useState<Recipe | null>(null)
@@ -41,6 +43,17 @@ export default function ImportLien({ onAjouter, onRetour, titresExistants, tagsC
       setEnCours(false)
     }
   }
+
+  // Arrivé par un partage, on a déjà choisi la recette : la lire sans
+  // attendre un second geste. Une fois seulement — le mode strict de React
+  // monte deux fois, et un retour au champ ne doit pas relancer la lecture.
+  const dejaLue = useRef(false)
+  useEffect(() => {
+    if (!adresseInitiale || dejaLue.current) return
+    dejaLue.current = true
+    void importer()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (brouillon) {
     return (

@@ -41,6 +41,14 @@ export default defineConfig({
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
+        // FFFood dans le menu « Partager » du téléphone, une fois l'app
+        // installée : une recette vue ailleurs arrive sur `/partage/`, qui
+        // ouvre l'import par lien (voir src/lib/partageRecu.ts).
+        share_target: {
+          action: '/partage/',
+          method: 'GET',
+          params: { title: 'title', text: 'text', url: 'url' },
+        },
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
