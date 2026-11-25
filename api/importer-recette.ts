@@ -41,18 +41,28 @@ export function adressePrivee(adresse: string): boolean {
 }
 
 async function verifierHote(url: URL): Promise<void> {
-  if (!/^https?:$/.test(url.protocol)) throw new Erreur(400, 'Adresse non valide.')
+  if (!/^https?:$/.test(url.protocol)) throw new Erreur(400, 'Adresse non valide.', 'adresseNonValide')
   const hote = url.hostname.replace(/^\[|\]$/g, '')
   if (hote === 'localhost' || hote.endsWith('.local') || hote.endsWith('.internal')) {
-    throw new Erreur(400, 'Adresse non autorisée.')
+    throw new Erreur(400, 'Adresse non autorisée.', 'adresseInterdite')
   }
   const adresses = isIP(hote) ? [{ address: hote }] : await lookup(hote, { all: true }).catch(() => [])
-  if (adresses.length === 0) throw new Erreur(502, 'Site introuvable.')
-  if (adresses.some((a) => adressePrivee(a.address))) throw new Erreur(400, 'Adresse non autorisée.')
+  if (adresses.length === 0) throw new Erreur(502, 'Site introuvable.', 'siteIntrouvable')
+  if (adresses.some((a) => adressePrivee(a.address))) throw new Erreur(400, 'Adresse non autorisée.', 'adresseInterdite')
 }
 
+/**
+ * `motif` nomme l'erreur pour l'app, qui l'écrit dans la langue de
+ * l'utilisateur (clé `import.serveur.<motif>` du dictionnaire) ; `erreur`
+ * reste le texte français, pour les anciennes versions de l'app.
+ */
 class Erreur extends Error {
-  constructor(readonly code: number, message: string) {
+  constructor(
+    readonly code: number,
+    message: string,
+    readonly motif: string,
+    readonly variables?: Record<string, string | number>,
+  ) {
     super(message)
   }
 }
@@ -70,21 +80,21 @@ async function telecharger(depart: URL): Promise<string> {
         'accept-language': 'fr,en;q=0.8',
       },
     }).catch(() => {
-      throw new Erreur(502, 'Le site ne répond pas.')
+      throw new Erreur(502, 'Le site ne répond pas.', 'siteMuet')
     })
     if (reponse.status >= 300 && reponse.status < 400) {
       const suite = reponse.headers.get('location')
-      if (!suite) throw new Erreur(502, 'Redirection invalide.')
+      if (!suite) throw new Erreur(502, 'Redirection invalide.', 'redirectionInvalide')
       url = new URL(suite, url)
       continue
     }
-    if (!reponse.ok) throw new Erreur(502, `Le site a répondu ${reponse.status}.`)
+    if (!reponse.ok) throw new Erreur(502, `Le site a répondu ${reponse.status}.`, 'statut', { statut: reponse.status })
     if (!/html|xml/i.test(reponse.headers.get('content-type') ?? '')) {
-      throw new Erreur(422, "Cette adresse n'est pas une page web.")
+      throw new Erreur(422, "Cette adresse n'est pas une page web.", 'pasUnePage')
     }
     // Lecture bornée : on s'arrête dès que la limite est franchie.
     const lecteur = reponse.body?.getReader()
-    if (!lecteur) throw new Erreur(502, 'Page vide.')
+    if (!lecteur) throw new Erreur(502, 'Page vide.', 'pageVide')
     const morceaux: Uint8Array[] = []
     let total = 0
     for (;;) {
@@ -93,37 +103,42 @@ async function telecharger(depart: URL): Promise<string> {
       total += value.length
       if (total > TAILLE_MAX) {
         await lecteur.cancel()
-        throw new Erreur(422, 'Page trop volumineuse.')
+        throw new Erreur(422, 'Page trop volumineuse.', 'pageTropLourde')
       }
       morceaux.push(value)
     }
     return new TextDecoder().decode(Buffer.concat(morceaux))
   }
-  throw new Erreur(502, 'Trop de redirections.')
+  throw new Erreur(502, 'Trop de redirections.', 'tropDeRedirections')
 }
 
 export default async function handler(req: Requete, res: Reponse) {
   res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800')
   const brut = Array.isArray(req.query.url) ? req.query.url[0] : req.query.url
   try {
-    if (req.method && req.method !== 'GET') throw new Erreur(405, 'Méthode non autorisée.')
+    if (req.method && req.method !== 'GET') throw new Erreur(405, 'Méthode non autorisée.', 'methode')
     let url: URL
     try {
       url = new URL(brut ?? '')
     } catch {
-      throw new Erreur(400, 'Adresse non valide.')
+      throw new Erreur(400, 'Adresse non valide.', 'adresseNonValide')
     }
     const recette = extraireRecetteJsonLd(await telecharger(url))
     if (!recette) {
       throw new Erreur(
         422,
         "Aucune recette lisible sur cette page. Essayez l'adresse de la recette elle-même, ou ajoutez-la à la main.",
+        'aucuneRecette',
       )
     }
     res.status(200).json(recette)
   } catch (e) {
     res.setHeader('Cache-Control', 'no-store')
     const code = e instanceof Erreur ? e.code : 500
-    res.status(code).json({ erreur: e instanceof Erreur ? e.message : 'Erreur inattendue.' })
+    res.status(code).json(
+      e instanceof Erreur
+        ? { erreur: e.message, motif: e.motif, variables: e.variables }
+        : { erreur: 'Erreur inattendue.', motif: 'inattendu' },
+    )
   }
 }

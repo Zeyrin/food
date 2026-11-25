@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { Recipe } from '../types'
 import corpus from '../data/recipes.json'
 import { etapeEnTexte, formatQuantite, redimensionnerRecette } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
+import { nomIngredient, recetteAffichee } from '../lib/traduireRecette'
 import { formatMinutes } from '../lib/duree'
 import { mesurer } from '../lib/mesure'
 import { emojiIngredient } from '../lib/emojiIngredient'
@@ -58,7 +59,10 @@ export default function DetailRecette({
   onSupprimer,
   onFermer,
 }: Props) {
-  const { t } = useLangue()
+  const { t, langue } = useLangue()
+  /* Ce qu'on lit à l'écran, dans la langue choisie. `recette` reste la
+     source pour tout ce qui sert de clé (teinte, doses, identité). */
+  const vue = useMemo(() => recetteAffichee(recette, langue), [recette, langue])
   /**
    * Confirmation dans la page plutôt qu'un `window.confirm` : la boîte
    * native s'affiche hors du thème de l'app, et son bouton « OK » est
@@ -120,11 +124,11 @@ export default function DetailRecette({
     mesurer('recette_partagee', { partageNatif: NATIF || 'share' in navigator ? 1 : 0 })
     try {
       if (NATIF) {
-        await partagerTexte(recette.titre, url)
+        await partagerTexte(vue.titre, url)
         return
       }
       if (navigator.share) {
-        await navigator.share({ title: recette.titre, url })
+        await navigator.share({ title: vue.titre, url })
         return
       }
       await navigator.clipboard.writeText(url)
@@ -142,7 +146,7 @@ export default function DetailRecette({
           <button className="bouton-rond-discret" onClick={onFermer} aria-label={t('detail.retour')}>
             <Icone nom="precedent" taille={20} />
           </button>
-          <h1>{recette.titre}</h1>
+          <h1>{vue.titre}</h1>
         </div>
       </header>
 
@@ -182,7 +186,7 @@ export default function DetailRecette({
         </div>
       </dl>
 
-      {recette.description && <p className="aide detail-description">{recette.description}</p>}
+      {vue.description && <p className="aide detail-description">{vue.description}</p>}
 
       <div className="reglage-parts">
         <div className="reglage-parts-texte">
@@ -210,9 +214,9 @@ export default function DetailRecette({
             <Icone nom="coeur" taille={13} /> {t('detail.favori')}
           </span>
         )}
-        {recette.tags.map((t) => (
-          <span className="puce-info" key={t}>
-            {t}
+        {vue.tags.map((tag) => (
+          <span className="puce-info" key={tag}>
+            {tag}
           </span>
         ))}
       </div>
@@ -229,14 +233,14 @@ export default function DetailRecette({
           <span className="emoji-ingredient" aria-hidden="true">
             {emojiIngredient(ing.nom, ing.rayon)}
           </span>
-          <span className="nom">{ing.nom}</span>
+          <span className="nom">{nomIngredient(ing.nom, langue)}</span>
           <span className="qte">{formatQuantite(ing)}</span>
         </div>
       ))}
 
       <h2>{t('detail.etapes')}</h2>
       <ol className="apercu-etapes">
-        {recette.etapes.map((etape, i) => (
+        {vue.etapes.map((etape, i) => (
           <li key={i}>{etapeEnTexte(etape)}</li>
         ))}
       </ol>
@@ -256,7 +260,7 @@ export default function DetailRecette({
         )}
         {confirmation ? (
           <div className="bloc-confirmation" role="alertdialog" aria-label={t('detail.supprimerDuCatalogue')}>
-            <p>{t('detail.supprimerConfirmation', { titre: recette.titre })}</p>
+            <p>{t('detail.supprimerConfirmation', { titre: vue.titre })}</p>
             <div className="rangee-boutons">
               <button
                 className="discret"

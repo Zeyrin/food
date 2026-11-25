@@ -1,6 +1,7 @@
 import { useId, useState } from 'react'
 import { RAYONS_ORDONNES, UNITS, type RayonId, type Recipe, type Unit } from '../types'
 import { normaliserTitre } from '../lib/collerRecettes'
+import { nomTag } from '../lib/traduireRecette'
 import { useLangue } from '../lib/i18n'
 import Icone from './Icone'
 
@@ -84,7 +85,7 @@ export default function FormulaireRecette({
   actionsCollantes = false,
   libelleAnnuler,
 }: Props) {
-  const { t } = useLangue()
+  const { t, langue } = useLangue()
   const prefixe = useId()
   const edition = recetteInitiale !== undefined
   const depart = recetteInitiale ?? brouillon
@@ -291,7 +292,7 @@ export default function FormulaireRecette({
               aria-pressed={tags.includes(tag)}
               onClick={() => basculerTag(tag)}
             >
-              {tag}
+              {nomTag(tag, langue)}
             </button>
           ))}
         </div>

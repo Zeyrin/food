@@ -23,7 +23,7 @@ interface Props {
 }
 
 export default function CollageIA({ onAjouter, onFini, onRetour, titresExistants }: Props) {
-  const { t } = useLangue()
+  const { t, langue } = useLangue()
   const [demande, setDemande] = useState('')
   const [texte, setTexte] = useState('')
   const [erreurs, setErreurs] = useState<string[]>([])
@@ -41,7 +41,7 @@ export default function CollageIA({ onAjouter, onFini, onRetour, titresExistants
   const [promptEnClair, setPromptEnClair] = useState<string | null>(null)
 
   const copierPrompt = async () => {
-    const prompt = genererPrompt(demande)
+    const prompt = genererPrompt(demande, langue)
     try {
       await navigator.clipboard.writeText(prompt)
       setPromptEnClair(null)

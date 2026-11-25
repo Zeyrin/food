@@ -1,4 +1,5 @@
 import type { Recipe, RecipeIngredient } from '../types'
+import corpus from '../data/recipes.json'
 import glossaire from '../data/glossaire.en.json'
 import traductions from '../data/recipes.en.json'
 import type { Langue } from './i18n'
@@ -46,6 +47,20 @@ export const nomTag = (tag: string, langue: Langue): string =>
  */
 export const titreRecette = (recette: Recipe, langue: Langue): string =>
   (langue === 'en' ? parId[recette.id]?.titre : undefined) ?? recette.titre
+
+/**
+ * La liste de courses ne garde des plats que leur titre français (les
+ * `origines` d'une ligne, voir lib/aggregate.ts) : pour le traduire, on
+ * repasse par le corpus. Un titre inconnu — une recette du foyer — reste
+ * tel qu'écrit.
+ */
+const idParTitre = new Map((corpus as Recipe[]).map((r) => [r.titre, r.id]))
+
+export const titreDepuisFrancais = (titre: string, langue: Langue): string => {
+  if (langue !== 'en') return titre
+  const id = idParTitre.get(titre)
+  return (id ? parId[id]?.titre : undefined) ?? titre
+}
 
 /**
  * La recette telle qu'on la montre à l'écran. Champ par champ : une
