@@ -52,5 +52,14 @@ export async function importerDepuisUrl(url: string): Promise<Recipe> {
     const corps = (await reponse.json().catch(() => null)) as { erreur?: string } | null
     throw new Error(corps?.erreur ?? traduire('import.erreurServeur'))
   }
-  return brouillonDepuisWeb((await reponse.json()) as RecetteWeb, url)
+  // Une réponse qui n'est pas du JSON (portail Wi-Fi, page d'erreur de
+  // l'hébergeur, délai dépassé) affichait l'erreur JavaScript brute, en
+  // anglais : « Unexpected token '<'… ».
+  let web: RecetteWeb
+  try {
+    web = (await reponse.json()) as RecetteWeb
+  } catch {
+    throw new Error(traduire('import.erreurServeur'))
+  }
+  return brouillonDepuisWeb(web, url)
 }

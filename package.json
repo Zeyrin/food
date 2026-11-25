@@ -14,7 +14,7 @@
     "verifier": "tsx scripts/verifier-invariants.ts",
     "typecheck": "tsc --noEmit",
     "ci": "npm run typecheck && npm test && npm run lint:recipes && npm run lint:guides && npm run verifier && npm run build",
-    "mobile": "npm run build && cap sync",
+    "mobile": "npm run build && node scripts/alleger-natif.mjs && cap sync",
     "mobile:android": "npm run mobile && cap open android",
     "mobile:ios": "npm run mobile && cap open ios",
     "mobile:assets": "node scripts/rasteriser-assets.mjs && capacitor-assets generate --iconBackgroundColor \"#141414\" --iconBackgroundColorDark \"#141414\" --splashBackgroundColor \"#fff8ef\" --splashBackgroundColorDark \"#16150f\" --android --ios"

@@ -245,8 +245,21 @@ export default function App() {
     (cle: Onglet) => {
       if (vueActuelle.type === 'onglet' && vueActuelle.onglet === cle) return
       if (vueActuelle.type === 'onglet') {
-        irVers({ type: 'onglet', onglet: cle })
-        return
+        // Entre onglets, l'historique ne garde qu'un cran : « Proposer »,
+        // puis l'onglet ouvert. Chaque bascule s'empilait, et le bouton
+        // retour d'Android rejouait toutes les bascules avant de quitter.
+        // Comme dans les apps Android à onglets : retour depuis un onglet
+        // ramène à Proposer, et retour depuis Proposer quitte.
+        const dessous = pile[pile.length - 2]
+        if (cle === 'propose' && dessous?.type === 'onglet' && dessous.onglet === 'propose') {
+          reculer()
+          return
+        }
+        if (vueActuelle.onglet === 'propose') {
+          irVers({ type: 'onglet', onglet: cle })
+          return
+        }
+        // Sinon, l'onglet ouvert est remplacé (plus bas), sans nouveau cran.
       }
       // Depuis un écran plein page (détail, ajout, réglages…), le rail
       // desktop reste visible et ses boutons cliquables : basculer
@@ -262,7 +275,7 @@ export default function App() {
         defilerVers(0)
       })
     },
-    [vueActuelle, irVers, avecTransition, defilerVers],
+    [vueActuelle, pile, irVers, reculer, avecTransition, defilerVers],
   )
 
   /**
@@ -296,9 +309,15 @@ export default function App() {
     })
   }, [])
 
-  const [onboardingVu, setOnboardingVu] = useState(
-    () => localStorage.getItem(CLE_ONBOARDING_VU) === '1',
-  )
+  // Stockage refusé (cookies bloqués, certaines vues web) : la lecture lève
+  // une exception, et l'app s'arrêtait à chaque lancement.
+  const [onboardingVu, setOnboardingVu] = useState(() => {
+    try {
+      return localStorage.getItem(CLE_ONBOARDING_VU) === '1'
+    } catch {
+      return false
+    }
+  })
   const terminerOnboarding = useCallback(() => {
     try {
       localStorage.setItem(CLE_ONBOARDING_VU, '1')
@@ -864,6 +883,17 @@ export default function App() {
   // (lecture Supabase, puis temps réel). Sans lui dans les dépendances, la
   // liste reste celle calculée sur un catalogue vide au premier rendu.
   const items = useMemo(() => buildList(basket, recipes), [basket, recipes])
+
+  // Les photos ne sont plus toutes préchargées (voir vite.config.ts) :
+  // celles des plats de la semaine se chargent dès qu'ils entrent au
+  // panier, pour être là en cuisine même sans réseau.
+  useEffect(() => {
+    if (!navigator.onLine) return
+    for (const e of basket) {
+      const image = recipes.find((r) => r.id === e.recipeId)?.image
+      if (image) new Image().src = image
+    }
+  }, [basket, recipes])
 
   // Lecture d'IndexedDB : quelques dizaines de millisecondes en général,
   // beaucoup plus sur un vieux téléphone qui sort de veille. Rendre `null`

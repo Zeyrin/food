@@ -6,6 +6,7 @@ import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
 import { nomTag } from '../lib/traduireRecette'
 import { formatMinutes } from '../lib/duree'
+import { motsRecherche, normaliserTexte } from '../lib/texte'
 import { mesurer } from '../lib/mesure'
 import { vibrer } from '../lib/haptique'
 import { comportementDefilement } from '../lib/mouvement'
@@ -45,11 +46,7 @@ const TEMPS = [20, 30, 45] as const
  */
 let catalogueDejaVu = false
 
-const normaliser = (s: string) =>
-  s
-    .normalize('NFD')
-    .replace(/\p{M}/gu, '')
-    .toLowerCase()
+const normaliser = normaliserTexte
 
 export default function Propose({
   recipes,
@@ -121,20 +118,29 @@ export default function Propose({
 
     const motifs = new Map<string, string>()
     if (recherche.trim()) {
-      const q = normaliser(recherche)
+      // Chaque mot doit se retrouver quelque part dans la recette (titre,
+      // ingrédient ou étiquette), dans n'importe quel ordre : « poulet
+      // curry » trouve « Curry jaune au poulet ».
+      const mots = motsRecherche(recherche)
       liste = liste.filter((r) => {
-        if (normaliser(r.titre).includes(q)) return true
-        const ing = r.ingredients.find((i) => normaliser(i.nom).includes(q))
-        if (ing) {
-          motifs.set(r.id, ing.nom)
-          return true
-        }
-        const tag = r.tags.find((t) => normaliser(t).includes(q))
-        if (tag) {
-          motifs.set(r.id, tag)
-          return true
-        }
-        return false
+        const titre = normaliser(r.titre)
+        let motif: string | undefined
+        const trouve = mots.every((q) => {
+          if (titre.includes(q)) return true
+          const ing = r.ingredients.find((i) => normaliser(i.nom).includes(q))
+          if (ing) {
+            motif ??= ing.nom
+            return true
+          }
+          const tag = r.tags.find((t) => normaliser(t).includes(q))
+          if (tag) {
+            motif ??= tag
+            return true
+          }
+          return false
+        })
+        if (trouve && motif) motifs.set(r.id, motif)
+        return trouve
       })
     }
     return { affichees: liste, motifs }
@@ -531,23 +537,16 @@ const CarteRecette = memo(function CarteRecette({
 }: PropsCarte) {
   const { t } = useLangue()
   return (
+    // Toucher n'importe où sur la carte ouvre la fiche ; au clavier et au
+    // lecteur d'écran, c'est le titre qui est le bouton. La carte entière
+    // était un `role=button` contenant le bouton « + », lui-même dans une
+    // zone `aria-hidden` : VoiceOver et TalkBack ne pouvaient pas ajouter
+    // un plat depuis la grille.
     <div
       className="carte carte-recette"
-      role="button"
-      tabIndex={0}
       data-panier={dansPanier ? 'true' : undefined}
       data-anime={animer ? 'true' : undefined}
       onClick={() => onOuvrir(r.id)}
-      // La barre d'espace ouvre aussi la fiche (un vrai bouton le
-      // ferait), mais seulement si le focus est sur la carte —
-      // sinon elle doublerait le clic du bouton « + » imbriqué.
-      onKeyDown={(e) => {
-        if (e.target !== e.currentTarget) return
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onOuvrir(r.id)
-        }
-      }}
       style={
         {
           '--teinte': teinteRecette(r.titre),
@@ -560,14 +559,18 @@ const CarteRecette = memo(function CarteRecette({
         } as React.CSSProperties
       }
     >
-      <div className="vignette" data-sans-photo={r.image ? undefined : 'true'} aria-hidden="true">
-        {!r.image && <VignettePlaceholder recette={r} />}
+      <div className="vignette" data-sans-photo={r.image ? undefined : 'true'}>
+        {!r.image && (
+          <span aria-hidden="true">
+            <VignettePlaceholder recette={r} />
+          </span>
+        )}
         <ImageRecette src={r.image} />
-        <span className="badge-temps">
+        <span className="badge-temps" aria-hidden="true">
           <Icone nom="minuteur" taille={12} /> {formatMinutes(r.temps, t)}
         </span>
         {favorite && (
-          <span className="badge-favori" title={t('propose.favori')}>
+          <span className="badge-favori" title={t('propose.favori')} aria-hidden="true">
             <Icone nom="coeur" taille={14} />
           </span>
         )}
@@ -591,7 +594,19 @@ const CarteRecette = memo(function CarteRecette({
         </button>
       </div>
       <div className="carte-recette-corps">
-        <h3>{r.titre}</h3>
+        <h3>
+          <button
+            type="button"
+            className="carte-recette-titre"
+            onClick={(e) => {
+              e.stopPropagation()
+              onOuvrir(r.id)
+            }}
+          >
+            {r.titre}
+            <span className="lecteur-seul">, {formatMinutes(r.temps, t)}</span>
+          </button>
+        </h3>
         {motif && <p className="motif-recherche">{t('propose.contient', { motif })}</p>}
       </div>
     </div>

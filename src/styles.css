@@ -7149,12 +7149,17 @@ button.vignette-mini-bouton:active {
   align-items: flex-end;
   justify-content: center;
   background: rgb(0 0 0 / 0.45);
+  /* Une feuille plus haute que l'écran montait sous l'encoche, croix
+     comprise : elle s'arrête sous la barre d'état. */
+  padding-top: calc(env(safe-area-inset-top) + 8px);
+  box-sizing: border-box;
 }
 .feuille-offre {
   position: relative;
   width: 100%;
   max-width: 520px;
-  max-height: 100dvh;
+  max-height: calc(100dvh - env(safe-area-inset-top) - 8px);
+  outline: none;
   overflow-y: auto;
   box-sizing: border-box;
   padding: 28px 20px calc(20px + env(safe-area-inset-bottom));
@@ -7260,4 +7265,39 @@ button.vignette-mini-bouton:active {
   .offre-avantages li { padding: 10px 12px; }
   .offre-avantages p { font-size: 14px; }
   .offre-gratuit { font-size: 13px; margin-bottom: 12px; }
+}
+
+/* Le titre d'une carte est son bouton pour le clavier et le lecteur
+   d'écran (voir CarteRecette) ; à l'œil, il reste un titre. */
+.carte-recette-titre {
+  all: unset;
+  display: block;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+.carte-recette-titre:focus-visible {
+  outline: 2px solid var(--accent, currentColor);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.lecteur-seul {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Le bouton d'achat et la phrase de prix collés au bas de la feuille. */
+.offre-action {
+  position: sticky;
+  bottom: calc(-20px - env(safe-area-inset-bottom));
+  margin: 16px -20px 0;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  background: var(--papier);
+  box-shadow: 0 -10px 16px -12px rgb(0 0 0 / 0.25);
+  z-index: 1;
 }

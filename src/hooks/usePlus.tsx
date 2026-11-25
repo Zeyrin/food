@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import Paywall from '../components/Paywall'
 import { ABONNEMENT_ACTIF, plusEnCache, suivrePlus, verifierPlus } from '../lib/abonnement'
 import { mesurer } from '../lib/mesure'
@@ -22,9 +22,14 @@ export function FournisseurPlus({ children }: { children: ReactNode }) {
   const [plus, setPlus] = useState(plusEnCache)
   const [offre, setOffre] = useState<{ raison?: Avantage; ensuite?: () => void } | null>(null)
 
+  // La réponse du store au lancement. Un abonné qui vient de réinstaller
+  // n'a pas encore de cache : sans cette attente, son premier geste payant
+  // ouvrait l'offre au lieu de passer.
+  const verification = useRef<Promise<boolean> | null>(null)
   useEffect(() => {
     if (!ABONNEMENT_ACTIF) return
-    void verifierPlus().then(setPlus)
+    verification.current = verifierPlus()
+    void verification.current.then(setPlus)
     return suivrePlus(setPlus)
   }, [])
 
@@ -36,8 +41,17 @@ export function FournisseurPlus({ children }: { children: ReactNode }) {
   const exiger = useCallback(
     (raison: Avantage, action: () => void) => {
       if (plus) return action()
-      mesurer('offre_vue', { raison })
-      setOffre({ raison, ensuite: action })
+      const montrer = () => {
+        mesurer('offre_vue', { raison })
+        setOffre({ raison, ensuite: action })
+      }
+      const enCours = verification.current
+      if (!enCours) return montrer()
+      // Pas plus d'une seconde et demie d'attente : hors ligne, le store
+      // peut ne jamais répondre.
+      void Promise.race([enCours, new Promise<boolean>((r) => setTimeout(() => r(false), 1500))]).then((ok) =>
+        ok ? action() : montrer(),
+      )
     },
     [plus],
   )

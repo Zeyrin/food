@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { PurchasesPackage } from '@revenuecat/purchases-capacitor'
 import { acheter, chargerFormules, restaurer } from '../lib/abonnement'
 import { useLangue } from '../lib/i18n'
@@ -42,12 +42,40 @@ export default function Paywall({ raison, onFermer, onAbonne }: Props) {
   }
   useEffect(charger, [])
 
-  // Échap ferme, comme les autres feuilles de l'app.
+  const feuille = useRef<HTMLElement>(null)
+
+  // Échap ferme, comme les autres feuilles de l'app ; Tab reste dans la
+  // feuille, et le fond ne défile plus dessous.
   useEffect(() => {
-    const surTouche = (e: KeyboardEvent) => e.key === 'Escape' && !enCours && onFermer()
+    const surTouche = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !enCours) onFermer()
+      if (e.key !== 'Tab' || !feuille.current) return
+      const focusables = feuille.current.querySelectorAll<HTMLElement>('button:not([disabled]), a[href]')
+      const premier = focusables[0]
+      const dernier = focusables[focusables.length - 1]
+      if (!premier || !dernier) return
+      if (e.shiftKey && document.activeElement === premier) {
+        e.preventDefault()
+        dernier.focus()
+      } else if (!e.shiftKey && document.activeElement === dernier) {
+        e.preventDefault()
+        premier.focus()
+      }
+    }
     window.addEventListener('keydown', surTouche)
     return () => window.removeEventListener('keydown', surTouche)
   }, [enCours, onFermer])
+
+  useEffect(() => {
+    const precedent = document.activeElement as HTMLElement | null
+    feuille.current?.focus({ preventScroll: true })
+    const debordement = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = debordement
+      precedent?.focus?.({ preventScroll: true })
+    }
+  }, [])
 
   const formule = formules[choisie]
   const essai = formule ? essaiGratuit(formule as Formule) : null
@@ -69,6 +97,8 @@ export default function Paywall({ raison, onFermer, onAbonne }: Props) {
         onAbonne()
       } else if (resultat === 'en-attente') {
         setMessage(t('plus.enAttente'))
+      } else if (resultat === 'sans-droit') {
+        setMessage(t('plus.sansDroit'))
       }
     } catch {
       setMessage(t('plus.erreurAchat'))
@@ -97,6 +127,8 @@ export default function Paywall({ raison, onFermer, onAbonne }: Props) {
   return (
     <div className="voile-offre" onClick={() => !enCours && onFermer()}>
       <section
+        ref={feuille}
+        tabIndex={-1}
         className="feuille-offre"
         role="dialog"
         aria-modal="true"
@@ -163,27 +195,32 @@ export default function Paywall({ raison, onFermer, onAbonne }: Props) {
               })}
             </div>
 
-            <button className="principal pleine-largeur" onClick={() => void sAbonner()} disabled={!!enCours}>
-              {enCours === 'achat'
-                ? t('plus.achatEnCours')
-                : essai
-                  ? t('plus.commencerEssai', { duree: dureeEssai(essai) })
-                  : estAVie(formule as Formule)
-                    ? t('plus.acheterAVie', { prix: formule!.product.priceString })
-                    : t('plus.sAbonner', { prix: prixPeriode(formule!) })}
-            </button>
+            {/* Le bouton et « ce qui sera prélevé, et quand » restent visibles
+                en bas de la feuille : sur un petit iPhone, ils tombaient sous
+                la ligne de flottaison, là où la revue d'Apple les cherche. */}
+            <div className="offre-action">
+              <button className="principal pleine-largeur" onClick={() => void sAbonner()} disabled={!!enCours}>
+                {enCours === 'achat'
+                  ? t('plus.achatEnCours')
+                  : essai
+                    ? t('plus.commencerEssai', { duree: dureeEssai(essai) })
+                    : estAVie(formule as Formule)
+                      ? t('plus.acheterAVie', { prix: formule!.product.priceString })
+                      : t('plus.sAbonner', { prix: prixPeriode(formule!) })}
+              </button>
 
-            {/* Ce qui sera prélevé, et quand : la phrase que la revue cherche. */}
-            <p className="offre-conditions">
-              {/* L'achat à vie ne se renouvelle pas : ne pas parler de résiliation. */}
-              {estAVie(formule as Formule)
-                ? t('plus.conditionsAVie', { prix: formule!.product.priceString })
-                : (essai
-                    ? t('plus.conditionsEssai', { duree: dureeEssai(essai), prix: prixPeriode(formule!) })
-                    : t('plus.conditions', { prix: prixPeriode(formule!) })) +
-                  ' ' +
-                  t('plus.resiliation')}
-            </p>
+              {/* Ce qui sera prélevé, et quand : la phrase que la revue cherche. */}
+              <p className="offre-conditions">
+                {/* L'achat à vie ne se renouvelle pas : ne pas parler de résiliation. */}
+                {estAVie(formule as Formule)
+                  ? t('plus.conditionsAVie', { prix: formule!.product.priceString })
+                  : (essai
+                      ? t('plus.conditionsEssai', { duree: dureeEssai(essai), prix: prixPeriode(formule!) })
+                      : t('plus.conditions', { prix: prixPeriode(formule!) })) +
+                    ' ' +
+                    t('plus.resiliation')}
+              </p>
+            </div>
           </>
         )}
 
