@@ -185,6 +185,17 @@
   --rayon-grand: 32px;
   --pouce: 56px;
 
+  /* Les zones que le système garde pour lui : barre d'état, encoche,
+     barre de gestes. Dans l'app Android (Capacitor 8, affichage bord à
+     bord imposé depuis Android 15), la WebView passe sous la barre
+     d'état : le plugin SystemBars de Capacitor pose les vraies valeurs
+     dans `--safe-area-inset-*`, plus sûres que `env()` selon la version
+     de la WebView. Ailleurs (iOS, navigateur), `env()` suffit. */
+  --zone-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --zone-right: var(--safe-area-inset-right, env(safe-area-inset-right, 0px));
+  --zone-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  --zone-left: var(--safe-area-inset-left, env(safe-area-inset-left, 0px));
+
   --affichage: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
   --texte: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
 
@@ -263,7 +274,7 @@ body {
 #root {
   max-width: 640px;
   margin: 0 auto;
-  padding: 0 20px calc(96px + env(safe-area-inset-bottom));
+  padding: 0 20px calc(96px + var(--zone-bottom));
 }
 
 /* Plus le corps est gros, plus le blanc entre les lettres paraît large :
@@ -358,7 +369,7 @@ p.aide a {
   justify-content: center;
   width: min(100%, 420px);
   margin: 0 auto;
-  padding: max(32px, env(safe-area-inset-top)) 0 32px;
+  padding: max(32px, var(--zone-top)) 0 32px;
 }
 
 .panne h1 {
@@ -430,7 +441,7 @@ p.aide a {
   flex-direction: column;
   justify-content: center;
   gap: 32px;
-  padding: max(32px, env(safe-area-inset-top)) 0 32px;
+  padding: max(32px, var(--zone-top)) 0 32px;
 }
 
 /* --- Photo hero -----------------------------------------------------------
@@ -442,7 +453,7 @@ p.aide a {
 .accueil-hero {
   position: relative;
   width: 100vw;
-  margin: calc(-1 * max(32px, env(safe-area-inset-top))) calc(50% - 50vw) 0;
+  margin: calc(-1 * max(32px, var(--zone-top))) calc(50% - 50vw) 0;
   /* Haute assez pour porter le bouton d'action sous la promesse, et pas
      plus : le bouton doit tenir dans le premier écran, y compris dans la
      vue web d'Instagram ou de TikTok qui mange le haut et le bas. `svh`
@@ -485,7 +496,7 @@ p.aide a {
 .accueil-hero-corps {
   position: relative;
   width: 100%;
-  padding: 24px 20px max(28px, env(safe-area-inset-bottom) / 2);
+  padding: 24px 20px max(28px, var(--zone-bottom) / 2);
   text-align: center;
   color: #fff;
 }
@@ -901,9 +912,12 @@ button.principal.accueil-hero-cta {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  height: var(--pouce);
+  /* L'en-tête descend sous la barre d'état du téléphone (app native,
+     iPhone à encoche) : son fond flouté la couvre, ses boutons restent
+     dans la zone qu'on peut toucher. */
+  height: calc(var(--pouce) + var(--zone-top));
   margin: 0 -20px;
-  padding: 0 20px;
+  padding: var(--zone-top) 20px 0;
   background: color-mix(in srgb, var(--papier) 82%, transparent);
   -webkit-backdrop-filter: blur(16px) saturate(150%);
   backdrop-filter: blur(16px) saturate(150%);
@@ -974,7 +988,7 @@ html[data-defile='true'] .entete-app {
 
 .bouton-reglages-global {
   position: fixed;
-  top: max(12px, env(safe-area-inset-top));
+  top: calc(12px + var(--zone-top));
   right: 16px;
   z-index: 11;
 }
@@ -982,7 +996,7 @@ html[data-defile='true'] .entete-app {
 /* À gauche du bouton des réglages (40px + 8px d'écart). */
 .bouton-profil-global {
   position: fixed;
-  top: max(12px, env(safe-area-inset-top));
+  top: calc(12px + var(--zone-top));
   right: 64px;
   z-index: 11;
 }
@@ -1003,7 +1017,7 @@ html[data-defile='true'] .entete-app {
   bottom: var(--decalage-barre-outils, 0px);
   z-index: 9;
   margin: 24px -20px 0;
-  padding: 20px 20px max(16px, env(safe-area-inset-bottom));
+  padding: 20px 20px max(16px, var(--zone-bottom));
   background: linear-gradient(to top, var(--papier) 72%, transparent);
 }
 
@@ -1074,7 +1088,7 @@ html[data-defile='true'] .entete-app {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(72px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
+  bottom: calc(72px + var(--zone-bottom) + var(--decalage-barre-outils, 0px));
   z-index: 9;
   padding: 20px 20px 12px;
   background: linear-gradient(to top, var(--papier) 55%, transparent);
@@ -1255,7 +1269,7 @@ nav.onglets {
   /* Le filet dessine l'arête de la barre là où le contenu passe
      dessous ; l'ombre inversée la décolle du papier. */
   box-shadow: inset 0 1px 0 var(--filet), 0 -8px 24px -12px rgb(32 27 12 / 0.35);
-  padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+  padding: 10px 8px calc(10px + var(--zone-bottom));
   z-index: 10;
 }
 
@@ -1994,8 +2008,8 @@ button.carte:active {
 .entete-propose {
   flex-wrap: wrap;
   height: auto;
-  min-height: var(--pouce);
-  padding-top: 10px;
+  min-height: calc(var(--pouce) + var(--zone-top));
+  padding-top: calc(10px + var(--zone-top));
   padding-bottom: 10px;
   /* Sur mobile, la recherche passe sur sa propre ligne (voir
      `.recherche-propose` ci-dessous) sous le titre — un row-gap trop
@@ -2609,7 +2623,7 @@ button.discret.danger {
    Collé sous l'en-tête d'écran, qui fait une hauteur de pouce. */
 .entete-section {
   position: sticky;
-  top: var(--pouce);
+  top: calc(var(--pouce) + var(--zone-top));
   z-index: 8;
   display: flex;
   align-items: center;
@@ -3261,8 +3275,8 @@ button.discret.accent:active:not(:disabled) {
    le bouton réglages fixé dans le même coin haut-droit. */
 .pastille-hors-ligne {
   position: fixed;
-  top: max(12px, env(safe-area-inset-top));
-  left: max(12px, env(safe-area-inset-left));
+  top: calc(12px + var(--zone-top));
+  left: max(12px, var(--zone-left));
   right: 64px;
   z-index: 11;
   display: flex;
@@ -3304,8 +3318,8 @@ button.pastille-synchro:active {
    la même marge à droite pour laisser passer le bouton des réglages. */
 .bandeau-maj {
   position: fixed;
-  top: max(12px, env(safe-area-inset-top));
-  left: max(12px, env(safe-area-inset-left));
+  top: calc(12px + var(--zone-top));
+  left: max(12px, var(--zone-left));
   right: 64px;
   z-index: 11;
   display: flex;
@@ -4359,7 +4373,7 @@ button.carte-panier-bouton .carte-panier-corps {
   z-index: 20;
   display: flex;
   flex-direction: column;
-  padding: max(16px, env(safe-area-inset-top)) 20px max(16px, env(safe-area-inset-bottom));
+  padding: calc(16px + var(--zone-top)) 20px max(16px, var(--zone-bottom));
   background: #201b0c;
   color: #fff8ef;
 }
@@ -4879,7 +4893,7 @@ button.carte-panier-bouton .carte-panier-corps {
   position: fixed;
   left: 12px;
   right: 12px;
-  bottom: calc(80px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
+  bottom: calc(80px + var(--zone-bottom) + var(--decalage-barre-outils, 0px));
   z-index: 9;
   width: auto;
   max-width: 616px;
@@ -4914,11 +4928,11 @@ button.carte-panier-bouton .carte-panier-corps {
 /* Les boutons flottants lui cèdent la place plutôt que de le
    chevaucher — l'attribut est posé sur la racine par App.tsx. */
 [data-minuteur='true'] .bouton-flottant {
-  bottom: calc(168px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
+  bottom: calc(168px + var(--zone-bottom) + var(--decalage-barre-outils, 0px));
 }
 
 [data-minuteur='true'] .action-flottante {
-  bottom: calc(152px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
+  bottom: calc(152px + var(--zone-bottom) + var(--decalage-barre-outils, 0px));
 }
 
 [data-minuteur='true'] .espaceur-action-flottante {
@@ -5004,7 +5018,7 @@ button.carte-panier-bouton .carte-panier-corps {
   bottom: 0;
   max-height: 70vh;
   overflow-y: auto;
-  padding: 16px 20px max(20px, env(safe-area-inset-bottom));
+  padding: 16px 20px max(20px, var(--zone-bottom));
   border-radius: var(--rayon-grand) var(--rayon-grand) 0 0;
   background: #2b2411;
   color: #fff8ef;
@@ -5338,7 +5352,7 @@ button.carte-panier-bouton .carte-panier-corps {
 .bouton-flottant {
   position: fixed;
   right: 20px;
-  bottom: calc(88px + env(safe-area-inset-bottom) + var(--decalage-barre-outils, 0px));
+  bottom: calc(88px + var(--zone-bottom) + var(--decalage-barre-outils, 0px));
   z-index: 8;
   width: 56px;
   height: 56px;
@@ -6039,7 +6053,7 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   }
 
   .bouton-reglages-global {
-    top: max(16px, env(safe-area-inset-top));
+    top: calc(16px + var(--zone-top));
     right: 24px;
   }
 
@@ -6070,7 +6084,7 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
 
   .entete-propose {
     margin: 0 -40px 0 -40px;
-    padding: 0 40px;
+    padding: var(--zone-top) 40px 0;
     gap: 32px;
   }
 
@@ -6198,7 +6212,7 @@ html[data-nav-dir='arriere']::view-transition-new(root) {
   }
 
   [data-minuteur='true'] .bouton-flottant {
-    bottom: calc(112px + env(safe-area-inset-bottom));
+    bottom: calc(112px + var(--zone-bottom));
   }
 
   [data-minuteur='true'] .action-flottante {
@@ -6932,9 +6946,9 @@ html[data-gele='true'] body {
    la demande « rejoindre ? » ne doit pas se perdre sous la grille. */
 .bandeau-invitation {
   position: fixed;
-  top: max(12px, env(safe-area-inset-top));
-  left: max(12px, env(safe-area-inset-left));
-  right: max(12px, env(safe-area-inset-right));
+  top: calc(12px + var(--zone-top));
+  left: max(12px, var(--zone-left));
+  right: max(12px, var(--zone-right));
   z-index: 12;
   max-width: 520px;
   margin: 0 auto;
@@ -7162,7 +7176,7 @@ button.vignette-mini-bouton:active {
   outline: none;
   overflow-y: auto;
   box-sizing: border-box;
-  padding: 28px 20px calc(20px + env(safe-area-inset-bottom));
+  padding: 28px 20px calc(20px + var(--zone-bottom));
   background: var(--papier);
   color: var(--encre);
   border-radius: var(--rayon-grand) var(--rayon-grand) 0 0;

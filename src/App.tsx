@@ -60,7 +60,7 @@ import BandeauIntegre from './components/BandeauIntegre'
 import PanneauMinuteurs from './components/PanneauMinuteurs'
 import { useMinuteurs } from './hooks/useMinuteurs'
 import { ecouterClicNotification } from './lib/minuteurs'
-import { NATIF, ecouterClicNotificationNative } from './lib/natif'
+import { NATIF, ecouterBoutonRetour, ecouterClicNotificationNative } from './lib/natif'
 import { useMagasins } from './hooks/useMagasins'
 import Reglages from './screens/Reglages'
 import { usePlus } from './hooks/usePlus'
@@ -240,6 +240,10 @@ export default function App() {
     window.addEventListener('popstate', surRetour)
     return () => window.removeEventListener('popstate', surRetour)
   }, [avecTransition, defilerVers])
+
+  // Dans l'app Android, le bouton retour du téléphone recule dans la
+  // pile au lieu de fermer l'app (voir `ecouterBoutonRetour`).
+  useEffect(() => (NATIF ? ecouterBoutonRetour() : undefined), [])
 
   const changerOnglet = useCallback(
     (cle: Onglet) => {

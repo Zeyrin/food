@@ -11,6 +11,7 @@
  * - ni `navigator.share` ni le verrou d'écran ne sont garantis.
  */
 import { KeepAwake } from '@capacitor-community/keep-awake'
+import { App as AppNative } from '@capacitor/app'
 import { LocalNotifications } from '@capacitor/local-notifications'
 import { Share } from '@capacitor/share'
 import { traduire } from './i18n'
@@ -126,4 +127,43 @@ export async function fermerNotificationsNatives(): Promise<void> {
   } catch {
     /* rien à fermer */
   }
+}
+
+/* --- Bouton retour Android ----------------------------------------------
+
+   Sans écouteur, le bouton (ou le geste) retour d'Android ferme
+   l'activité : l'app quittait au lieu de revenir à l'écran d'avant.
+   On le rejoue comme le bouton précédent d'un navigateur, dans l'ordre
+   où l'on s'attend à voir les choses se refermer :
+   1. une feuille ouverte par-dessus l'écran (minuteurs, offre, visite) ;
+   2. l'écran précédent de la pile (`history.back()`, que `App.tsx`
+      resynchronise via `popstate`) ;
+   3. depuis le premier écran, l'app passe en arrière-plan, comme le fait
+      Android pour une app de lancement — sans perdre où l'on en était. */
+
+function fermerFeuilleOuverte(): boolean {
+  const voile = document.querySelector<HTMLElement>('.voile-panneau')
+  if (voile) {
+    voile.click()
+    return true
+  }
+  // La feuille d'offre et la visite guidée se ferment à Échap.
+  if (document.querySelector('[role="dialog"][aria-modal="true"]')) {
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    return true
+  }
+  return false
+}
+
+export function ecouterBoutonRetour(): () => void {
+  const abonnement = AppNative.addListener('backButton', () => {
+    if (fermerFeuilleOuverte()) return
+    const profondeur = (history.state as { profondeur?: number } | null)?.profondeur ?? 1
+    if (profondeur > 1) {
+      history.back()
+      return
+    }
+    void AppNative.minimizeApp()
+  })
+  return () => void abonnement.then((a) => a.remove())
 }
