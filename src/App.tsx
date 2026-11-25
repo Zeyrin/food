@@ -25,7 +25,7 @@ import {
 import {
   ajouterRecette,
   ecrireHistoriqueFoyer,
-  ecrireListe,
+  envoyerPatchListe,
   lireHistoriqueFoyer,
   lireListe,
   lireRecettes,
@@ -39,6 +39,7 @@ import {
 } from './lib/sync'
 import { creerFoyerAvecCode, reclamerFoyer, reprendreFoyer, resoudreCode } from './lib/foyer'
 import { mouvementReduit } from './lib/mouvement'
+import { appliquerPatch, diffListe, ecrireAttente, fusionnerPatchs, lireAttente, type PatchListe } from './lib/patchListe'
 import DetailRecette from './screens/DetailRecette'
 import Propose from './screens/Propose'
 import Panier from './screens/Panier'
@@ -588,16 +589,88 @@ export default function App() {
   // un (ligne `listes` créée avant que le panier ne soit partagé), on
   // garde celui d'ici : sinon rejoindre un foyer viderait le panier en
   // cours de constitution.
+  /**
+   * Ce qui n'est pas encore arrivé dans Supabase (voir lib/patchListe.ts) :
+   * `attente` attend le réseau, `enVol` est parti sans réponse encore.
+   * Tout état reçu de l'autre téléphone est réappliqué sous les deux —
+   * sans ça, une case cochée hors ligne disparaissait dès que l'autre
+   * touchait à quoi que ce soit, et ne lui parvenait jamais.
+   */
+  const attente = useRef<PatchListe | null>(null)
+  const enVol = useRef<PatchListe | null>(null)
+  const etatComplet = useRef<ListState>(ETAT_VIDE)
+  etatComplet.current = etatListe
+
+  const appliquerDistant = useCallback((distant: ListState) => {
+    let etat = distant
+    if (enVol.current) etat = appliquerPatch(etat, enVol.current)
+    if (attente.current) etat = appliquerPatch(etat, attente.current)
+    setEtatListe((local) => ({ ...etat, panier: etat.panier ?? local.panier }))
+  }, [])
+
+  const vider = useCallback(async () => {
+    if (!foyer || enVol.current || !attente.current) return
+    const patch = attente.current
+    enVol.current = patch
+    attente.current = null
+    ecrireAttente(foyer, null)
+    const ok = await envoyerPatchListe(foyer, patch, etatComplet.current)
+    enVol.current = null
+    if (!ok) {
+      // Remis devant ce qui a pu s'accumuler pendant l'envoi.
+      attente.current = attente.current ? fusionnerPatchs(patch, attente.current) : patch
+      ecrireAttente(foyer, attente.current)
+    } else if (attente.current) {
+      void vider()
+    }
+  }, [foyer])
+
+  const envoyerListe = useCallback(
+    (patch: PatchListe) => {
+      if (!foyer) return
+      attente.current = fusionnerPatchs(attente.current, patch)
+      ecrireAttente(foyer, attente.current)
+      void vider()
+    },
+    [foyer, vider],
+  )
+
+  /**
+   * Relire ce qui a pu changer pendant qu'on n'écoutait pas. Le temps réel
+   * ne rejoue pas les changements faits pendant que le téléphone dormait
+   * ou que le réseau était coupé : sans cette relecture, on retrouvait en
+   * magasin la liste d'il y a dix minutes.
+   */
+  const relire = useCallback(async () => {
+    if (!foyer) return
+    await vider()
+    const distant = await lireListe(foyer)
+    if (distant) appliquerDistant(distant)
+    const historiqueDistant = await lireHistoriqueFoyer(foyer)
+    if (historiqueDistant) setHistorique(historiqueDistant)
+  }, [foyer, vider, appliquerDistant])
+
   useEffect(() => {
     if (!foyer) return
-    const appliquer = (distant: ListState) =>
-      setEtatListe((local) => ({ ...distant, panier: distant.panier ?? local.panier }))
+    attente.current = lireAttente(foyer)
     // `null` = lecture refusée (voir lib/sync.ts). On ne l'applique pas :
     // écraser la liste locale avec un état vide décocherait tout à
     // l'écran, et la prochaine case cochée publierait ce vide.
-    void lireListe(foyer).then((distant) => distant && appliquer(distant))
-    return suivreListe(foyer, appliquer)
-  }, [foyer])
+    void relire()
+    return suivreListe(foyer, appliquerDistant)
+  }, [foyer, relire, appliquerDistant])
+
+  useEffect(() => {
+    const auRetour = () => {
+      if (document.visibilityState === 'visible' && navigator.onLine) void relire()
+    }
+    document.addEventListener('visibilitychange', auRetour)
+    window.addEventListener('online', auRetour)
+    return () => {
+      document.removeEventListener('visibilitychange', auRetour)
+      window.removeEventListener('online', auRetour)
+    }
+  }, [relire])
 
   // Copie hors ligne du panier : au rayon sans réseau, la liste doit
   // quand même pouvoir se calculer. On n'écrit qu'une fois le local
@@ -714,10 +787,12 @@ export default function App() {
 
   const majListe = useCallback(
     (suivant: ListState) => {
+      const patch = diffListe(etatListe, suivant)
       setEtatListe(suivant)
-      if (foyer) void ecrireListe(foyer, suivant)
+      etatComplet.current = suivant
+      if (patch) envoyerListe(patch)
     },
-    [foyer],
+    [etatListe, envoyerListe],
   )
 
   const majBasket = useCallback(

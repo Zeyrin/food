@@ -2,6 +2,7 @@ import { createClient, type RealtimeChannel } from '@supabase/supabase-js'
 import type { ListState, Recipe } from '../types'
 import { traduire } from './i18n'
 import type { Historique } from './propose'
+import type { PatchListe } from './patchListe'
 import { leverRefusSi, signalerSynchroOk, signalerSynchroRefusee } from './etatSynchro'
 
 const url = import.meta.env.VITE_SUPABASE_URL
@@ -328,17 +329,48 @@ export async function lireListe(foyer: string): Promise<ListState | null> {
 /**
  * L'échec n'interrompt pas l'utilisateur : cocher un produit en rayon
  * ne doit jamais ouvrir une alerte, et la copie locale fait foi le
- * temps que le réseau revienne (l'écran affiche déjà le bandeau « hors
- * ligne »). Mais il est journalisé — sans ça, une policy mal réglée
- * ressemble à une app qui marche et ne synchronise simplement jamais.
+ * temps que le réseau revienne. Mais il est journalisé — sans ça, une
+ * policy mal réglée ressemble à une app qui marche et ne synchronise
+ * simplement jamais.
+ *
+ * On envoie la différence (voir lib/patchListe.ts), fusionnée case par
+ * case par `fusionner_liste` (migration-03) : deux téléphones qui cochent
+ * en même temps ne s'effacent plus. Sur une base où la migration n'a pas
+ * encore été passée, on retombe sur l'ancienne écriture complète.
+ *
+ * Rend `false` quand l'envoi n'est pas parti (réseau coupé, refus) : à
+ * l'appelant de le garder pour plus tard. `true` sans Supabase : il n'y a
+ * rien à attendre.
  */
-export async function ecrireListe(foyer: string, etat: ListState): Promise<void> {
-  if (!supabase || !(await assurerAcces(foyer))) return
-  const { error } = await supabase.from('listes').upsert({ foyer, etat, maj: new Date().toISOString() })
-  if (error) {
-    console.warn(`Écriture de la liste refusée : ${error.message}`)
-    signalerSynchroRefusee(error.message)
-  } else signalerSynchroOk()
+let fusionDisponible = true
+
+export async function envoyerPatchListe(foyer: string, patch: PatchListe, complet: ListState): Promise<boolean> {
+  if (!supabase) return true
+  if (!(await assurerAcces(foyer))) return false
+  let error: { message: string; code?: string } | null = null
+  if (fusionDisponible) {
+    ;({ error } = await supabase.rpc('fusionner_liste', { f: foyer, patch }))
+    // Fonction absente : migration-03 pas encore passée.
+    if (error && (error.code === 'PGRST202' || error.code === '42883')) {
+      fusionDisponible = false
+      error = null
+    } else {
+      if (error) return echecListe(error.message)
+      signalerSynchroOk()
+      return true
+    }
+  }
+  ;({ error } = await supabase.from('listes').upsert({ foyer, etat: complet, maj: new Date().toISOString() }))
+  if (error) return echecListe(error.message)
+  signalerSynchroOk()
+  return true
+}
+
+function echecListe(message: string): false {
+  console.warn(`Écriture de la liste refusée : ${message}`)
+  // Hors ligne, c'est attendu et le bandeau le dit ; l'envoi repartira.
+  if (navigator.onLine) signalerSynchroRefusee(message)
+  return false
 }
 
 export function suivreListe(foyer: string, onChange: (etat: ListState) => void): () => void {
