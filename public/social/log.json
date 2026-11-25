@@ -58,5 +58,130 @@
   "date": "2026-10-28",
   "recette": "gyoza-porc",
   "theme": "cuisson poêle-vapeur"
+ },
+ {
+  "date": "2026-10-29",
+  "recette": "soupe-chou-fleur-lait",
+  "theme": "mixer une soupe chaude"
+ },
+ {
+  "date": "2026-10-30",
+  "recette": "tagine-agneau-abricots",
+  "theme": "collagène / mijotage"
+ },
+ {
+  "date": "2026-10-31",
+  "recette": "curry-pois-chiches-epinards",
+  "theme": "épinards / volume"
+ },
+ {
+  "date": "2026-11-01",
+  "recette": "curry-vert-thai-poulet",
+  "theme": "faire craquer la crème de coco"
+ },
+ {
+  "date": "2026-11-02",
+  "recette": "gratin-chou-fleur-jambon",
+  "theme": "béchamel sans grumeaux"
+ },
+ {
+  "date": "2026-11-03",
+  "recette": "pates-thon-legumineuses",
+  "theme": "sel dans l'eau des pâtes"
+ },
+ {
+  "date": "2026-11-04",
+  "recette": "falafel-bowl",
+  "theme": "pois chiches secs pour falafels"
+ },
+ {
+  "date": "2026-11-05",
+  "recette": "ratatouille-four-oeuf-poche",
+  "theme": "fraîcheur de l'œuf poché"
+ },
+ {
+  "date": "2026-11-06",
+  "recette": "salade-mediterraneenne",
+  "theme": "tomates hors du frigo"
+ },
+ {
+  "date": "2026-11-07",
+  "recette": "poelee-asiatique-nouilles",
+  "theme": "mise en place au wok"
+ },
+ {
+  "date": "2026-11-08",
+  "recette": "poke-bowl-saumon-avocat",
+  "theme": "avocat qui noircit"
+ },
+ {
+  "date": "2026-11-09",
+  "recette": "lasagnes-legumes",
+  "theme": "repos des lasagnes"
+ },
+ {
+  "date": "2026-11-10",
+  "recette": "bowl-quinoa-legumes-rotis",
+  "theme": "rincer le quinoa"
+ },
+ {
+  "date": "2026-11-11",
+  "recette": "mapo-tofu",
+  "theme": "poivre du Sichuan"
+ },
+ {
+  "date": "2026-11-12",
+  "recette": "patate-douce-farcie",
+  "theme": "cuisson lente patate douce"
+ },
+ {
+  "date": "2026-11-13",
+  "recette": "salade-pates-estivale",
+  "theme": "rincer les pâtes pour salade"
+ },
+ {
+  "date": "2026-11-14",
+  "recette": "couscous-poulet-legumes",
+  "theme": "graine de couscous hydratée"
+ },
+ {
+  "date": "2026-11-15",
+  "recette": "rouleaux-riz-jambon",
+  "theme": "feuilles de riz"
+ },
+ {
+  "date": "2026-11-16",
+  "recette": "chili-sin-carne",
+  "theme": "haricots rouges secs crus"
+ },
+ {
+  "date": "2026-11-17",
+  "recette": "buddha-bowl-tofu",
+  "theme": "presser le tofu"
+ },
+ {
+  "date": "2026-11-18",
+  "recette": "poulet-basquaise",
+  "theme": "peler les poivrons"
+ },
+ {
+  "date": "2026-11-19",
+  "recette": "quiche-courgette-chevre",
+  "theme": "courgettes qui rendent de l'eau"
+ },
+ {
+  "date": "2026-11-20",
+  "recette": "one-pot-mediterraneen",
+  "theme": "one-pot pasta / amidon"
+ },
+ {
+  "date": "2026-11-21",
+  "recette": "tacos-poulet-avocat",
+  "theme": "réchauffer les tortillas"
+ },
+ {
+  "date": "2026-11-22",
+  "recette": "soupe-miso-tofu",
+  "theme": "miso pas bouilli"
  }
 ]

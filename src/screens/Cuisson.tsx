@@ -466,12 +466,13 @@ export default function Cuisson({ recette, minuteurs, onOuvrirMinuteurs, onVerdi
     </div>
   )
 
-  return entree ? (
+  // Toujours la même structure, fiche dessous ou non : passer d'un
+  // fragment à la seule `div` remontait tout l'écran de cuisson à la fin
+  // du cercle, et l'étape rejouait son entrée une seconde fois.
+  return (
     <>
-      {apercu(true)}
+      {entree && apercu(true)}
       {focus}
     </>
-  ) : (
-    focus
   )
 }

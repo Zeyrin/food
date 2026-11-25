@@ -83,7 +83,7 @@ export default defineConfig({
         // réseau. Elles n'existent pas hors ligne, et c'est cohérent :
         // ce sont des pages d'arrivée, l'app elle-même reste servie
         // depuis le cache à la racine.
-        navigateFallbackDenylist: [/^\/recette\//],
+        navigateFallbackDenylist: [/^\/recette\//, /^\/guides\//],
       },
     }),
   ],

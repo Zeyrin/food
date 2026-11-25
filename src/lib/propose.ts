@@ -92,3 +92,29 @@ export function cuisineRecemment(historique: Historique, recipeId: string, jours
 export function tousLesTags(recipes: Recipe[]): string[] {
   return [...new Set(recipes.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'fr'))
 }
+
+export type GroupeTags = 'cuisine' | 'plat' | 'envie' | 'cuisson' | 'autres'
+
+/**
+ * Une vingtaine de tags côte à côte, c'est un mur qu'on ne lit pas : on
+ * les range par la question à laquelle ils répondent. Un tag inconnu
+ * (ajouté avec une recette collée) tombe dans « autres » plutôt que de
+ * disparaître des filtres.
+ */
+const GROUPES: Record<Exclude<GroupeTags, 'autres'>, string[]> = {
+  envie: ['rapide', 'léger', 'réconfort', 'végé', 'poisson', 'épicé', 'estival', 'restes'],
+  plat: ['entrée', 'soupe', 'dessert'],
+  cuisine: ['français', 'italien', 'asiatique', 'thaïlandais', 'japonais', 'moyen-orient', 'mexicain'],
+  cuisson: ['une casserole', 'four', 'wok', 'mijoté', 'sans cuisson'],
+}
+
+/** Les tags donnés, rangés par groupe, dans l'ordre des groupes ; les groupes vides sont omis. */
+export function grouperTags(tags: string[]): { groupe: GroupeTags; tags: string[] }[] {
+  const connus = new Set(Object.values(GROUPES).flat())
+  const groupes = (Object.keys(GROUPES) as (keyof typeof GROUPES)[]).map((groupe) => ({
+    groupe: groupe as GroupeTags,
+    tags: GROUPES[groupe].filter((t) => tags.includes(t)),
+  }))
+  groupes.push({ groupe: 'autres', tags: tags.filter((t) => !connus.has(t)) })
+  return groupes.filter((g) => g.tags.length > 0)
+}
