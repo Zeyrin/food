@@ -7,6 +7,7 @@ import { formatQuantite } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { useLangue } from '../lib/i18n'
+import { nomIngredient, titreDepuisFrancais, titreRecette } from '../lib/traduireRecette'
 import { mesurer } from '../lib/mesure'
 import { emojiIngredient } from '../lib/emojiIngredient'
 import { vibrer } from '../lib/haptique'
@@ -58,7 +59,9 @@ export default function Liste({
   foyer,
   prenom,
 }: Props) {
-  const { t } = useLangue()
+  const { t, langue } = useLangue()
+  /** Le nom d'une ligne tel qu'on le lit ; `item.nom` reste la clé. */
+  const nomLigne = (item: ListItem) => nomIngredient(item.nom, langue)
   const invitation = useInviter(foyer, prenom)
 
   /**
@@ -177,7 +180,7 @@ export default function Liste({
         ...rayons.map(({ rayon, items: lignes }) =>
           [
             labelRayon(rayon),
-            ...lignes.map((i) => `- ${i.nom}${estLibre(i) ? '' : ` (${formatQuantite(i)})`}`),
+            ...lignes.map((i) => `- ${nomLigne(i)}${estLibre(i) ? '' : ` (${formatQuantite(i)})`}`),
           ].join('\n'),
         ),
       ]),
@@ -413,7 +416,7 @@ export default function Liste({
                         <span className="tuile-emoji" aria-hidden="true">
                           {emojiIngredient(item.nom, item.rayon)}
                         </span>
-                        <span className="tuile-nom">{item.nom}</span>
+                        <span className="tuile-nom">{nomLigne(item)}</span>
                         <span className="tuile-qte">
                           {deja ? t('liste.chezMoi') : formatQuantite(item)}
                         </span>
@@ -468,9 +471,9 @@ export default function Liste({
         >
           <span className="case">{coche && <Icone nom="coche" taille={18} />}</span>
           <span className="nom-groupe">
-            <span className="nom">{item.nom}</span>
+            <span className="nom">{nomLigne(item)}</span>
             {item.origines.length > 1 && (
-              <span className="nom-partage">{t('liste.pourPlats', { liste: item.origines.join(', ') })}</span>
+              <span className="nom-partage">{t('liste.pourPlats', { liste: item.origines.map((o) => titreDepuisFrancais(o, langue)).join(', ') })}</span>
             )}
           </span>
           {!libre && <span className="qte">{formatQuantite(item)}</span>}
@@ -479,7 +482,7 @@ export default function Liste({
           <button
             className="bouton-suppr"
             onClick={() => retirerItem(item.key.replace('libre|', ''))}
-            aria-label={t('liste.retirer', { nom: item.nom })}
+            aria-label={t('liste.retirer', { nom: nomLigne(item) })}
           >
             <Icone nom="fermer" taille={16} />
           </button>
@@ -656,7 +659,7 @@ export default function Liste({
             <ImageRecette src={prochaineCuisson.image} />
             <div className="carte-prochaine-cuisson-texte">
               <p className="carte-resume-label">{t('liste.prochaineCuisson')}</p>
-              <p className="carte-prochaine-cuisson-titre">{prochaineCuisson.titre}</p>
+              <p className="carte-prochaine-cuisson-titre">{titreRecette(prochaineCuisson, langue)}</p>
             </div>
           </div>
         )}

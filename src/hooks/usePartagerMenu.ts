@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import corpus from '../data/recipes.json'
 import type { BasketEntry, Recipe } from '../types'
 import { useLangue } from '../lib/i18n'
+import { titreRecette } from '../lib/traduireRecette'
 import { lienMenu } from '../lib/menuPartage'
 import { mesurer } from '../lib/mesure'
 import { partagerOuCopier } from '../lib/natif'
@@ -19,7 +20,7 @@ const TITRES_CITES = 4
  * elles n'existent pas chez celui qui reçoit.
  */
 export function usePartagerMenu(basket: BasketEntry[], recipes: Recipe[], prenom: string) {
-  const { t } = useLangue()
+  const { t, langue } = useLangue()
   const [copie, setCopie] = useState(false)
 
   useEffect(() => {
@@ -32,7 +33,9 @@ export function usePartagerMenu(basket: BasketEntry[], recipes: Recipe[], prenom
 
   const partager = async () => {
     if (plats.length === 0) return
-    const titres = plats.map((e) => recipes.find((r) => r.id === e.recipeId)?.titre).filter(Boolean)
+    const titres = plats.map((e) => recipes.find((r) => r.id === e.recipeId))
+      .filter((r): r is Recipe => Boolean(r))
+      .map((r) => titreRecette(r, langue))
     const reste = titres.length - TITRES_CITES
     const cites =
       titres.slice(0, TITRES_CITES).join(', ') + (reste > 0 ? t('menu.etAutres', { n: reste, s: reste > 1 ? 's' : '' }) : '')

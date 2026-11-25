@@ -61,6 +61,7 @@ const fr: Dico = {
   foyer: {
     sessionImpossible:
       "Impossible d'ouvrir une session avec le serveur. Si vous administrez ce site : activez les connexions anonymes dans Supabase (Authentication → Providers → Anonymous sign-ins).",
+    creationImpossible: "La maison n'a pas pu être créée.",
   },
   reglages: {
     plusTitre: 'FFFood+',
@@ -489,6 +490,22 @@ const fr: Dico = {
     aRelire:
       "Recette lue sur la page. Vérifiez les quantités, les unités et les rayons : ils sont déduits du texte et peuvent être à corriger.",
     autreLien: 'Essayer un autre lien',
+    serveur: {
+      adresseNonValide: 'Adresse non valide.',
+      adresseInterdite: 'Adresse non autorisée.',
+      siteIntrouvable: 'Site introuvable.',
+      siteMuet: 'Le site ne répond pas.',
+      redirectionInvalide: 'Redirection invalide.',
+      statut: 'Le site a répondu {{statut}}.',
+      pasUnePage: "Cette adresse n'est pas une page web.",
+      pageVide: 'Page vide.',
+      pageTropLourde: 'Page trop volumineuse.',
+      tropDeRedirections: 'Trop de redirections.',
+      methode: 'Méthode non autorisée.',
+      aucuneRecette:
+        "Aucune recette lisible sur cette page. Essayez l'adresse de la recette elle-même, ou ajoutez-la à la main.",
+      inattendu: 'Erreur inattendue.',
+    },
   },
   profil: {
     titre: 'Mon profil',
@@ -743,6 +760,13 @@ const fr: Dico = {
     ingredientQuantiteInvalide: '{{oi}} : « quantite » doit être un nombre positif.',
     ingredientUniteInvalide: "{{oi}} : « unite » doit être l'une de : {{liste}}.",
     ingredientRayonInvalide: "{{oi}} : « rayon » doit être l'un de : {{liste}}.",
+    imageInvalide:
+      "« image » doit désigner une photo livrée avec l'app (/plats/<nom>.webp). Omettez le champ pour utiliser la vignette.",
+  },
+  miseAJour: {
+    disponible: 'Nouvelle version disponible',
+    plusTard: 'Plus tard',
+    appliquer: 'Mettre à jour',
   },
 }
 
@@ -801,6 +825,7 @@ const en: Dico = {
   foyer: {
     sessionImpossible:
       "Could not open a session with the server. If you administer this site: enable anonymous sign-ins in Supabase (Authentication → Providers → Anonymous sign-ins).",
+    creationImpossible: 'The home could not be created.',
   },
   reglages: {
     plusTitre: 'FFFood+',
@@ -1198,6 +1223,22 @@ const en: Dico = {
     aRelire:
       'Recipe read from the page. Check the amounts, units and aisles: they are guessed from the text and may need fixing.',
     autreLien: 'Try another link',
+    serveur: {
+      adresseNonValide: 'Invalid address.',
+      adresseInterdite: 'This address is not allowed.',
+      siteIntrouvable: 'Site not found.',
+      siteMuet: 'The site is not responding.',
+      redirectionInvalide: 'Invalid redirect.',
+      statut: 'The site answered {{statut}}.',
+      pasUnePage: 'This address is not a web page.',
+      pageVide: 'Empty page.',
+      pageTropLourde: 'Page too large.',
+      tropDeRedirections: 'Too many redirects.',
+      methode: 'Method not allowed.',
+      aucuneRecette:
+        'No readable recipe on this page. Try the address of the recipe itself, or add it by hand.',
+      inattendu: 'Unexpected error.',
+    },
   },
   profil: {
     titre: 'My profile',
@@ -1425,6 +1466,13 @@ const en: Dico = {
     ingredientQuantiteInvalide: '{{oi}}: "quantite" must be a positive number.',
     ingredientUniteInvalide: '{{oi}}: "unite" must be one of: {{liste}}.',
     ingredientRayonInvalide: '{{oi}}: "rayon" must be one of: {{liste}}.',
+    imageInvalide:
+      '"image" must point to a photo shipped with the app (/plats/<name>.webp). Leave the field out to use the thumbnail.',
+  },
+  miseAJour: {
+    disponible: 'New version available',
+    plusTard: 'Later',
+    appliquer: 'Update',
   },
 }
 

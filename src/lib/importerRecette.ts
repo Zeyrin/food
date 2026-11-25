@@ -49,8 +49,18 @@ export async function importerDepuisUrl(url: string): Promise<Recipe> {
     throw new Error(traduire('import.erreurReseau'))
   }
   if (!reponse.ok) {
-    const corps = (await reponse.json().catch(() => null)) as { erreur?: string } | null
-    throw new Error(corps?.erreur ?? traduire('import.erreurServeur'))
+    const corps = (await reponse.json().catch(() => null)) as {
+      erreur?: string
+      motif?: string
+      variables?: Record<string, string | number>
+    } | null
+    // Le serveur nomme l'erreur ; c'est l'app qui l'écrit dans la langue
+    // affichée. Un motif inconnu (serveur plus récent) garde son texte.
+    const cle = corps?.motif ? `import.serveur.${corps.motif}` : null
+    const traduit = cle ? traduire(cle, corps?.variables) : null
+    throw new Error(
+      (traduit && traduit !== cle ? traduit : null) ?? corps?.erreur ?? traduire('import.erreurServeur'),
+    )
   }
   // Une réponse qui n'est pas du JSON (portail Wi-Fi, page d'erreur de
   // l'hébergeur, délai dépassé) affichait l'erreur JavaScript brute, en
