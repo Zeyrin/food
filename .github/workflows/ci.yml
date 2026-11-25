@@ -32,6 +32,9 @@ jobs:
       - name: Corpus de recettes
         run: npm run lint:recipes
 
+      - name: Guides
+        run: npm run lint:guides
+
       - name: Invariants (parité i18n, crédits photo)
         run: npm run verifier
 

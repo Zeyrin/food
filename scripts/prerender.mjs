@@ -21,10 +21,18 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { lireGuides, validerGuides, recettesCitees, rendreCorps, lienMenu } from './guides.mjs'
 
 const racine = join(dirname(fileURLToPath(import.meta.url)), '..')
 const dist = join(racine, 'dist')
 const recipes = JSON.parse(readFileSync(join(racine, 'src/data/recipes.json'), 'utf8'))
+const parId = new Map(recipes.map((r) => [r.id, r]))
+
+const guides = lireGuides()
+{
+  const erreurs = validerGuides(guides, recipes)
+  if (erreurs.length) throw new Error(`Guides invalides :\n${erreurs.join('\n')}`)
+}
 
 /** Doit rester identique au `canonical` de index.html et au sitemap. */
 const SITE = 'https://www.fffood.fr'
@@ -89,6 +97,15 @@ function ligneIngredient(ing) {
   if (ing.unite === 'piece') return `${quantite} ${ing.nom}`
   return `${quantite} ${de(ing.nom)}`
 }
+
+/**
+ * Les étapes du corpus marquent leurs ingrédients entre accolades
+ * (« Lancer le {riz blanc} ») pour que le mode cuisson y accroche la dose.
+ * Ici comme sur la fiche de l'app (`etapeEnTexte`, src/lib/aggregate.ts),
+ * on garde le mot et on retire les accolades : elles s'affichaient telles
+ * quelles sur une vingtaine de pages, et dans le balisage lu par Google.
+ */
+const etapeEnTexte = (texte) => texte.replace(/\{([^{}]+)\}/g, '$1')
 
 // --- Échappement ------------------------------------------------------------
 
@@ -189,7 +206,7 @@ function jsonLd(r) {
     recipeInstructions: r.etapes.map((texte, i) => ({
       '@type': 'HowToStep',
       position: i + 1,
-      text: texte,
+      text: etapeEnTexte(texte),
     })),
   }
   // Le fil d'Ariane remplace l'adresse brute sous le titre du résultat.
@@ -246,10 +263,20 @@ ol.etapes li{margin-bottom:1rem;padding-left:.25rem}
 ul.liens{list-style:none;padding:0;margin:0;display:grid;gap:.5rem}
 ul.liens a{display:block;background:var(--carte);border:1px solid var(--trait);border-radius:16px;padding:.75rem 1rem;text-decoration:none;color:var(--encre)}
 ul.liens .q{display:block;color:var(--encre-douce);font-size:.9rem}
+article h2{margin-top:2.25rem}
+article h3{font-family:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:1.1rem;margin:1.75rem 0 .5rem}
+article ul,article ol{padding-left:1.3rem}
+article li{margin-bottom:.4rem}
+a.carte{display:grid;grid-template-columns:7.5rem 1fr;gap:1rem;align-items:center;background:var(--carte);border:1px solid var(--trait);border-radius:20px;padding:.6rem;margin:1.25rem 0;text-decoration:none;color:var(--encre)}
+a.carte img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:14px;background:var(--carte-basse)}
+a.carte b{display:block;font-family:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;font-size:1.05rem;line-height:1.25}
+a.carte .q{display:block;color:var(--encre-douce);font-size:.9rem;margin-top:.15rem}
+a.carte .d{display:block;font-size:.92rem;line-height:1.45;margin-top:.3rem}
+nav.site{display:flex;gap:1rem}
 footer{max-width:44rem;margin:0 auto;padding:3rem 1.25rem;color:var(--encre-douce);font-size:.9rem}
 `.trim()
 
-function page({ titre, desc, url, image, imageTaille, largeImage, corps, jsonld, robots = 'index, follow' }) {
+function page({ titre, desc, url, image, imageTaille, largeImage, corps, jsonld, robots = 'index, follow', ogType = 'article' }) {
   return `<!doctype html>
 <html lang="fr">
 <head>
@@ -261,7 +288,7 @@ function page({ titre, desc, url, image, imageTaille, largeImage, corps, jsonld,
 <meta name="robots" content="${robots}">
 ${url ? `<link rel="canonical" href="${esc(url)}">` : ''}
 <link rel="preload" href="/fonts/hanken-400.woff2" as="font" type="font/woff2" crossorigin>
-<meta property="og:type" content="article">
+<meta property="og:type" content="${ogType}">
 <meta property="og:site_name" content="FFFood">
 <meta property="og:locale" content="fr_FR">
 ${url ? `<meta property="og:url" content="${esc(url)}">` : ''}
@@ -284,13 +311,13 @@ ${ANALYTICS}
 <body>
 <header class="site">
   <a class="marque" href="/">FFFood</a>
-  <a href="/recette/">Toutes les recettes</a>
+  <nav class="site"><a href="/recette/">Recettes</a><a href="/guides/">Guides</a></nav>
 </header>
 ${corps}
 <footer>
   <p>FFFood — les repas de la semaine, la liste de courses et le mode cuisson.
   Sans compte, gratuit, utilisable hors ligne en magasin.</p>
-  <p><a href="/credits.html">Crédits photo</a></p>
+  <p><a href="/recette/">Toutes les recettes</a> · <a href="/guides/">Guides</a> · <a href="/credits.html">Crédits photo</a></p>
 </footer>
 </body>
 </html>
@@ -351,8 +378,14 @@ function hachage(texte) {
 
 const VOISINES = calculerVoisines()
 
+/** Pour chaque recette, les guides qui la citent : le lien retour. */
+const GUIDES_PAR_RECETTE = new Map()
+for (const g of guides)
+  for (const id of recettesCitees(g)) GUIDES_PAR_RECETTE.set(id, [...(GUIDES_PAR_RECETTE.get(id) ?? []), g])
+
 function pageRecette(r) {
   const proches = VOISINES.get(r.id)
+  const citee = GUIDES_PAR_RECETTE.get(r.id) ?? []
   const corps = `<main>
   ${r.image ? `<img class="plat" src="${esc(r.image)}" width="800" height="600" alt="${esc(r.titre)}">` : ''}
   <h1>${esc(r.titre)}</h1>
@@ -376,7 +409,7 @@ ${r.ingredients
 
   <h2>Préparation</h2>
   <ol class="etapes">
-${r.etapes.map((e) => `    <li>${esc(e)}</li>`).join('\n')}
+${r.etapes.map((e) => `    <li>${esc(etapeEnTexte(e))}</li>`).join('\n')}
   </ol>
 
   <a class="cta" href="/#/r/${esc(r.id)}">Ouvrir ${esc(r.titre)} dans FFFood
@@ -392,6 +425,14 @@ ${proches
       `    <li><a href="/recette/${esc(a.id)}/">${esc(a.titre)}<span class="q">${a.temps} min · ${esc(a.tags.slice(0, 2).join(', '))}</span></a></li>`,
   )
   .join('\n')}
+  </ul>`
+    : ''
+}${
+  citee.length > 0
+    ? `
+  <h2>Ce plat dans nos guides</h2>
+  <ul class="liens">
+${citee.map((g) => `    <li><a href="/guides/${esc(g.slug)}/">${esc(g.titre)}</a></li>`).join('\n')}
   </ul>`
     : ''
 }
@@ -417,7 +458,8 @@ function pageIndex() {
   const tries = [...recipes].sort((a, b) => a.titre.localeCompare(b.titre, 'fr'))
   const corps = `<main>
   <h1>Toutes les recettes</h1>
-  <p class="meta">${tries.length} recettes, écrites à la main. Ingrédients, quantités et étapes.</p>
+  <p class="meta">${tries.length} recettes, écrites à la main. Ingrédients, quantités et étapes.
+  En panne d'idées ? Les <a href="/guides/">guides</a> composent des menus avec.</p>
   <ul class="liens">
 ${tries
   .map(
@@ -468,6 +510,128 @@ function page404() {
   })
 }
 
+// --- Guides -----------------------------------------------------------------
+
+const urlGuide = (g) => `${SITE}/guides/${g.slug}/`
+
+/** « 24 novembre 2026 » : la date lisible sous le titre. */
+const dateLisible = (iso) =>
+  new Date(`${iso}T12:00:00Z`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+
+/** La carte d'un plat dans le fil d'un guide : on doit pouvoir choisir sans cliquer. */
+function carteRecette(id) {
+  const r = parId.get(id)
+  return `<a class="carte" href="/recette/${esc(r.id)}/">${
+    r.image ? `<img src="${esc(r.image)}" width="800" height="600" alt="${esc(r.titre)}" loading="lazy">` : '<span></span>'
+  }<span><b>${esc(r.titre)}</b><span class="q">${r.temps} min · ${r.portions} pers.</span><span class="d">${esc(r.description)}</span></span></a>`
+}
+
+function boutonMenu(g) {
+  const n = g.menu.length
+  return `<a class="cta" href="${esc(lienMenu(SITE, g.menu))}">Mettre ces ${n} plats dans mon panier FFFood
+    <span>La liste de courses se fait toute seule, triée par rayon. Gratuit, sans compte.</span></a>`
+}
+
+function jsonLdGuide(g) {
+  const ids = recettesCitees(g)
+  const image = ids.map((id) => parId.get(id)).find((r) => r.image)
+  const article = {
+    '@type': 'Article',
+    headline: g.titre,
+    description: g.description,
+    url: urlGuide(g),
+    mainEntityOfPage: urlGuide(g),
+    inLanguage: 'fr-FR',
+    datePublished: g.publie,
+    dateModified: g.misAJour,
+    ...(image ? { image: [urlImage(image)] } : {}),
+    author: { '@type': 'Organization', name: 'FFFood', url: `${SITE}/` },
+    publisher: { '@type': 'Organization', name: 'FFFood', logo: { '@type': 'ImageObject', url: `${SITE}/icon-512.png` } },
+  }
+  // Les recettes du guide, dans l'ordre : c'est la liste que Google peut
+  // afficher en carrousel sous le résultat.
+  const liste = {
+    '@type': 'ItemList',
+    itemListElement: ids.map((id, i) => ({ '@type': 'ListItem', position: i + 1, url: urlRecette(parId.get(id)) })),
+  }
+  const ariane = {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'FFFood', item: `${SITE}/` },
+      { '@type': 'ListItem', position: 2, name: 'Guides', item: `${SITE}/guides/` },
+      { '@type': 'ListItem', position: 3, name: g.titre, item: urlGuide(g) },
+    ],
+  }
+  return JSON.stringify({ '@context': 'https://schema.org', '@graph': [article, liste, ariane] }).replace(/</g, '\\u003c')
+}
+
+function pageGuide(g) {
+  const autres = guides.filter((x) => x !== g).slice(0, 4)
+  const ids = recettesCitees(g)
+  const image = ids.map((id) => parId.get(id)).find((r) => r.image)
+  const corps = `<main>
+<article>
+  <h1>${esc(g.titre)}</h1>
+  <p class="meta">${
+    g.misAJour !== g.publie ? `Mis à jour le ${dateLisible(g.misAJour)}` : `Publié le ${dateLisible(g.publie)}`
+  } · ${ids.length} recettes</p>
+${rendreCorps(g.corps, { carte: carteRecette, boutonMenu: () => boutonMenu(g) })}
+</article>
+${
+  g.menu.length === 0
+    ? `<a class="cta" href="/">Planifier mes repas avec FFFood
+    <span>Choisissez les plats de la semaine, la liste de courses se fait toute seule. Gratuit, sans compte.</span></a>`
+    : /\{\{menu\}\}$/.test(g.corps.trim())
+      ? ''
+      : boutonMenu(g)
+}
+${
+  autres.length
+    ? `
+  <h2>D'autres guides</h2>
+  <ul class="liens">
+${autres.map((a) => `    <li><a href="/guides/${esc(a.slug)}/">${esc(a.titre)}</a></li>`).join('\n')}
+  </ul>`
+    : ''
+}
+</main>`
+  return page({
+    titre: g.titreSeo,
+    desc: g.description,
+    url: urlGuide(g),
+    image: image ? urlImage(image) : `${SITE}/og.jpg`,
+    imageTaille: image ? TAILLE_PHOTO : TAILLE_AFFICHE,
+    largeImage: true,
+    corps,
+    jsonld: jsonLdGuide(g),
+  })
+}
+
+function pageIndexGuides() {
+  const corps = `<main>
+  <h1>Guides</h1>
+  <p class="meta">Des menus et des idées de repas composés avec les recettes du catalogue,
+  pour les soirs où la question « on mange quoi ? » n'a pas encore de réponse.</p>
+  <ul class="liens">
+${guides
+  .map((g) => `    <li><a href="/guides/${esc(g.slug)}/">${esc(g.titre)}<span class="q">${esc(g.description)}</span></a></li>`)
+  .join('\n')}
+  </ul>
+  <a class="cta" href="/recette/">Voir toutes les recettes</a>
+</main>`
+  return page({
+    titre: 'Guides : menus de la semaine et idées repas | FFFood',
+    desc: 'Menus de la semaine, idées de dîners rapides et repas pas chers, composés avec des recettes testées. Liste de courses en un clic.',
+    url: `${SITE}/guides/`,
+    image: `${SITE}/og.jpg`,
+    imageTaille: TAILLE_AFFICHE,
+    largeImage: true,
+    corps,
+    jsonld: null,
+    ogType: 'website',
+  })
+}
+
 // --- Sitemap ----------------------------------------------------------------
 
 /**
@@ -479,6 +643,8 @@ function sitemap() {
   const urls = [
     { loc: `${SITE}/`, priority: '1.0' },
     { loc: `${SITE}/recette/`, priority: '0.8' },
+    { loc: `${SITE}/guides/`, priority: '0.8' },
+    ...guides.map((g) => ({ loc: urlGuide(g), priority: '0.7', lastmod: g.misAJour })),
     ...recipes.map((r) => ({ loc: urlRecette(r), priority: '0.6' })),
   ]
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -486,7 +652,7 @@ function sitemap() {
 ${urls
   .map(
     (u) =>
-      `  <url>\n    <loc>${u.loc}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`,
+      `  <url>\n    <loc>${u.loc}</loc>\n${u.lastmod ? `    <lastmod>${u.lastmod}</lastmod>\n` : ''}    <changefreq>weekly</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`,
   )
   .join('\n')}
 </urlset>
@@ -564,9 +730,13 @@ function ecrire(chemin, contenu) {
 
 for (const r of recipes) ecrire(`recette/${r.id}/index.html`, pageRecette(r))
 ecrire('recette/index.html', pageIndex())
+for (const g of guides) ecrire(`guides/${g.slug}/index.html`, pageGuide(g))
+ecrire('guides/index.html', pageIndexGuides())
 ecrire('404.html', page404())
 ecrire('sitemap.xml', sitemap())
 ecrire('rejoindre/index.html', pageRejoindre())
 ecrire('menu/index.html', pageMenu())
 
-console.log(`Prérendu : ${recipes.length} recettes + l'index, la page 404, les pages d'invitation et de menu, et le sitemap.`)
+console.log(
+  `Prérendu : ${recipes.length} recettes, ${guides.length} guides, les deux index, la page 404, les pages d'invitation et de menu, et le sitemap.`,
+)
