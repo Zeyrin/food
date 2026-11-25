@@ -263,22 +263,22 @@ export default function Liste({
     </form>
   )
 
-  const boutonAjout = (
-    <button
-      className="bouton-flottant"
-      onClick={() => setSaisie((p) => (p === null ? '' : null))}
-      aria-expanded={saisie !== null}
-      aria-label={saisie === null ? t('liste.ajouterArticle') : t('liste.fermerAjout')}
-    >
-      <Icone nom={saisie === null ? 'plus' : 'fermer'} taille={24} />
-    </button>
-  )
+  // Dans la page plutôt que flottant : le bouton rond fixé en bas à droite
+  // recouvrait la colonne des quantités en magasin (« Citron 1 » devenait
+  // « Citron »), et sur la liste vide il n'avait aucun libellé visible.
+  const boutonAjout =
+    saisie === null ? (
+      <button className="discret pleine-largeur bouton-ajout-article" onClick={() => setSaisie('')}>
+        <Icone nom="plus" taille={18} /> {t('liste.ajouterArticle')}
+      </button>
+    ) : null
 
   if (tousLesItems.length === 0) {
     return (
       <>
         {entete}
         <div className="corps-liste">
+          {boutonAjout}
           {composeur}
           {/* Un état vide dit pourquoi il l'est et mène à la suite : la
               liste naît du panier, le bouton y conduit. */}
@@ -289,7 +289,6 @@ export default function Liste({
             </button>
           </div>
         </div>
-        {boutonAjout}
       </>
     )
   }
@@ -496,6 +495,7 @@ export default function Liste({
       {entete}
       <div className="corps-liste">
         {bascule}
+        {boutonAjout}
         {composeur}
 
         {/* Un seul bandeau compact au lieu de deux tuiles et d'un bouton :
@@ -672,14 +672,7 @@ export default function Liste({
             <Icone nom="marmite" taille={18} /> {t('liste.cuisson')}
           </button>
         </div>
-
-        {/* Sans cet espaceur, le bouton flottant "Ajouter un article"
-            (fixe, coin bas-droit) chevauche "Commencer à cuisiner" une
-            fois la liste scrollée jusqu'en bas. */}
-        <div className="espaceur-action-flottante" aria-hidden="true" />
       </div>
-
-      {boutonAjout}
     </>
   )
 }

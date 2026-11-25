@@ -28,6 +28,9 @@ function toBase(quantite: number, unite: Unit): { quantite: number; unite: Unit 
  * c'est voulu : « 200 g de tomates » et « 1 boîte de tomates »
  * ne s'additionnent pas.
  */
+/** Au-delà, ce n'est plus un repas de foyer : la liste n'aurait plus de sens. */
+export const PORTIONS_MAX = 50
+
 export function buildList(
   basket: BasketEntry[],
   recipes: Recipe[],

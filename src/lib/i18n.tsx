@@ -43,6 +43,8 @@ const fr: Dico = {
     conditionsAVie:
       "{{prix}}, payé une seule fois sur votre compte du store. Pas d'abonnement : rien ne se renouvelle, FFFood+ reste ouvert sur ce compte.",
     achatEnCours: 'Paiement en cours…',
+    resumeEssai: 'Gratuit {{duree}}, puis {{prix}}. Résiliable à tout moment.',
+    resumePrix: '{{prix}}. Résiliable à tout moment.',
     conditionsEssai:
       "Gratuit pendant {{duree}}, puis {{prix}}, prélevé sur votre compte du store à la fin de l'essai. Résiliez avant la fin de l'essai pour ne rien payer.",
     conditions: '{{prix}}, prélevé sur votre compte du store à la confirmation.',
@@ -655,6 +657,7 @@ const fr: Dico = {
   app: {
     profil: 'Mon profil',
     synchroRefusee: 'Synchro bloquée',
+    ficheIntrouvable: "Cette recette n'est plus dans le catalogue de la maison.",
     chargement: 'Chargement…',
     reglages: 'Réglages',
     horsLigne: 'Hors ligne — vos changements se synchroniseront au retour du réseau',
@@ -807,6 +810,8 @@ const en: Dico = {
     conditionsAVie:
       '{{prix}}, paid once to your store account. No subscription: nothing renews, FFFood+ stays unlocked on this account.',
     achatEnCours: 'Processing payment…',
+    resumeEssai: 'Free for {{duree}}, then {{prix}}. Cancel anytime.',
+    resumePrix: '{{prix}}. Cancel anytime.',
     conditionsEssai:
       'Free for {{duree}}, then {{prix}}, charged to your store account when the trial ends. Cancel before the trial ends to pay nothing.',
     conditions: '{{prix}}, charged to your store account on confirmation.',
@@ -1381,6 +1386,7 @@ const en: Dico = {
   app: {
     profil: 'My profile',
     synchroRefusee: 'Sync blocked',
+    ficheIntrouvable: 'This recipe is no longer in the household catalogue.',
     chargement: 'Loading…',
     reglages: 'Settings',
     horsLigne: 'Offline — your changes will sync when the network is back',

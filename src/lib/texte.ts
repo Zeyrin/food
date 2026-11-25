@@ -24,3 +24,16 @@ export function motsRecherche(saisie: string): string[] {
     .split(/[\s,;]+/)
     .filter((m) => m.length > 0)
 }
+
+/**
+ * `mot` commence un mot de `texte` (tous deux normalisés) : « oeuf » trouve
+ * « oeufs brouillés » et « blanc d'oeuf », mais plus « boeuf ».
+ */
+export function commenceUnMot(texte: string, mot: string): boolean {
+  let i = texte.indexOf(mot)
+  while (i !== -1) {
+    if (i === 0 || !/\p{L}/u.test(texte[i - 1]!)) return true
+    i = texte.indexOf(mot, i + 1)
+  }
+  return false
+}

@@ -60,7 +60,7 @@ import BandeauIntegre from './components/BandeauIntegre'
 import PanneauMinuteurs from './components/PanneauMinuteurs'
 import { useMinuteurs } from './hooks/useMinuteurs'
 import { ecouterClicNotification } from './lib/minuteurs'
-import { NATIF, ecouterBoutonRetour, ecouterClicNotificationNative } from './lib/natif'
+import { NATIF, ecouterBoutonRetour, ecouterClicNotificationNative, suivreTailleTexteSysteme } from './lib/natif'
 import { useMagasins } from './hooks/useMagasins'
 import Reglages from './screens/Reglages'
 import { usePlus } from './hooks/usePlus'
@@ -245,6 +245,15 @@ export default function App() {
   // pile au lieu de fermer l'app (voir `ecouterBoutonRetour`).
   useEffect(() => (NATIF ? ecouterBoutonRetour() : undefined), [])
 
+  // iOS : la taille de texte choisie dans les réglages du téléphone.
+  useEffect(() => {
+    if (!NATIF) return
+    void suivreTailleTexteSysteme()
+    const auRetour = () => document.visibilityState === 'visible' && void suivreTailleTexteSysteme()
+    document.addEventListener('visibilitychange', auRetour)
+    return () => document.removeEventListener('visibilitychange', auRetour)
+  }, [])
+
   const changerOnglet = useCallback(
     (cle: Onglet) => {
       if (vueActuelle.type === 'onglet' && vueActuelle.onglet === cle) return
@@ -403,6 +412,11 @@ export default function App() {
   const catalogueConfirme = foyer !== null && catalogueDe === foyer
   const enLigne = useEnLigne()
   const { etat: etatSynchro } = useEtatSynchro()
+  // L'en-tête s'agrandit pour loger la pastille « hors ligne » ou « synchro
+  // bloquée » (styles.css) au lieu de la laisser recouvrir le titre.
+  useEffect(() => {
+    document.documentElement.dataset.horsLigne = !enLigne || etatSynchro === 'refuse' ? 'true' : 'false'
+  }, [enLigne, etatSynchro])
 
   // Le service worker garde l'app utilisable hors ligne, mais fige la
   // version installée : sans ce qui suit, un déploiement ne se voyait
@@ -777,14 +791,25 @@ export default function App() {
     if (!recipeId) return
     // Une recette absente de l'amorce peut encore arriver avec le
     // catalogue du foyer : on n'abandonne qu'une fois celui-ci reçu.
-    if (!catalogueConfirme && !recipes.some((r) => r.id === recipeId)) return
+    // Sans Supabase, le corpus embarqué est le catalogue définitif.
+    if (supabase && !catalogueConfirme && !recipes.some((r) => r.id === recipeId)) return
     detailOuvertDepuisUrl.current = true
     history.replaceState(history.state, '', location.pathname + location.search)
     if (recipes.some((r) => r.id === recipeId)) {
       mesurer('fiche_ouverte', { source: 'lien' })
       irVers({ type: 'detail', recipeId })
+    } else {
+      // Recette supprimée par le foyer, ou lien abîmé : on le dit, plutôt
+      // que d'atterrir sur le catalogue sans un mot.
+      setFicheIntrouvable(true)
     }
   }, [recipes, catalogueConfirme, irVers])
+  const [ficheIntrouvable, setFicheIntrouvable] = useState(false)
+  useEffect(() => {
+    if (!ficheIntrouvable) return
+    const minuterie = setTimeout(() => setFicheIntrouvable(false), 6000)
+    return () => clearTimeout(minuterie)
+  }, [ficheIntrouvable])
 
   // L'historique suit le même chemin que la liste : il vit dans le
   // foyer. Le local sert d'amorce hors ligne et de repli tant que
@@ -1114,6 +1139,12 @@ export default function App() {
             <Icone nom="alerte" taille={16} /> {t('app.synchroRefusee')}
           </button>
         )
+      )}
+
+      {ficheIntrouvable && (
+        <p className="avis-flottant" role="status" onClick={() => setFicheIntrouvable(false)}>
+          {t('app.ficheIntrouvable')}
+        </p>
       )}
 
       {/* La visite guidée est modale et couvre l'écran : le bandeau y

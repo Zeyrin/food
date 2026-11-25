@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { motsRecherche, normaliserTexte } from './texte'
+import { commenceUnMot, motsRecherche, normaliserTexte } from './texte'
 import { buildList } from './aggregate'
 import type { Recipe } from '../types'
 
@@ -27,3 +27,7 @@ const liste = buildList(
 )
 assert.equal(liste.length, 1)
 assert.equal(liste[0]!.quantite, 4)
+
+assert.equal(commenceUnMot('blanc d\'oeuf', 'oeuf'), true)
+assert.equal(commenceUnMot('boeuf aux carottes', 'oeuf'), false)
+assert.equal(commenceUnMot('creme fraiche', 'fraich'), true)

@@ -195,9 +195,9 @@ export default function Paywall({ raison, onFermer, onAbonne }: Props) {
               })}
             </div>
 
-            {/* Le bouton et « ce qui sera prélevé, et quand » restent visibles
-                en bas de la feuille : sur un petit iPhone, ils tombaient sous
-                la ligne de flottaison, là où la revue d'Apple les cherche. */}
+            {/* Le bouton et le prix en une ligne restent visibles en bas de
+                la feuille : sur un petit iPhone, ils tombaient sous la ligne
+                de flottaison. Le détail complet suit, dans le défilement. */}
             <div className="offre-action">
               <button className="principal pleine-largeur" onClick={() => void sAbonner()} disabled={!!enCours}>
                 {enCours === 'achat'
@@ -208,19 +208,26 @@ export default function Paywall({ raison, onFermer, onAbonne }: Props) {
                       ? t('plus.acheterAVie', { prix: formule!.product.priceString })
                       : t('plus.sAbonner', { prix: prixPeriode(formule!) })}
               </button>
-
-              {/* Ce qui sera prélevé, et quand : la phrase que la revue cherche. */}
-              <p className="offre-conditions">
-                {/* L'achat à vie ne se renouvelle pas : ne pas parler de résiliation. */}
-                {estAVie(formule as Formule)
-                  ? t('plus.conditionsAVie', { prix: formule!.product.priceString })
-                  : (essai
-                      ? t('plus.conditionsEssai', { duree: dureeEssai(essai), prix: prixPeriode(formule!) })
-                      : t('plus.conditions', { prix: prixPeriode(formule!) })) +
-                    ' ' +
-                    t('plus.resiliation')}
-              </p>
+              {!estAVie(formule as Formule) && (
+                <p className="offre-resume">
+                  {essai
+                    ? t('plus.resumeEssai', { duree: dureeEssai(essai), prix: prixPeriode(formule!) })
+                    : t('plus.resumePrix', { prix: prixPeriode(formule!) })}
+                </p>
+              )}
             </div>
+
+            {/* Ce qui sera prélevé, et quand : la phrase que la revue cherche. */}
+            <p className="offre-conditions">
+              {/* L'achat à vie ne se renouvelle pas : ne pas parler de résiliation. */}
+              {estAVie(formule as Formule)
+                ? t('plus.conditionsAVie', { prix: formule!.product.priceString })
+                : (essai
+                    ? t('plus.conditionsEssai', { duree: dureeEssai(essai), prix: prixPeriode(formule!) })
+                    : t('plus.conditions', { prix: prixPeriode(formule!) })) +
+                  ' ' +
+                  t('plus.resiliation')}
+            </p>
           </>
         )}
 

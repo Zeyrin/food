@@ -6,7 +6,7 @@ import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
 import { nomIngredient, nomTag, titreRecette } from '../lib/traduireRecette'
 import { formatMinutes } from '../lib/duree'
-import { motsRecherche, normaliserTexte } from '../lib/texte'
+import { commenceUnMot, motsRecherche, normaliserTexte } from '../lib/texte'
 import { mesurer } from '../lib/mesure'
 import { vibrer } from '../lib/haptique'
 import { comportementDefilement } from '../lib/mouvement'
@@ -128,15 +128,15 @@ export default function Propose({
         const titres = [normaliser(r.titre), normaliser(titreRecette(r, langue))]
         let motif: string | undefined
         const trouve = mots.every((q) => {
-          if (titres.some((x) => x.includes(q))) return true
+          if (titres.some((x) => commenceUnMot(x, q))) return true
           const ing = r.ingredients.find(
-            (i) => normaliser(i.nom).includes(q) || normaliser(nomIngredient(i.nom, langue)).includes(q),
+            (i) => commenceUnMot(normaliser(i.nom), q) || commenceUnMot(normaliser(nomIngredient(i.nom, langue)), q),
           )
           if (ing) {
             motif ??= nomIngredient(ing.nom, langue)
             return true
           }
-          const tag = r.tags.find((t) => normaliser(t).includes(q) || normaliser(nomTag(t, langue)).includes(q))
+          const tag = r.tags.find((t) => commenceUnMot(normaliser(t), q) || commenceUnMot(normaliser(nomTag(t, langue)), q))
           if (tag) {
             motif ??= nomTag(tag, langue)
             return true

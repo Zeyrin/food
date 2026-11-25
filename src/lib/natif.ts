@@ -14,6 +14,8 @@ import { KeepAwake } from '@capacitor-community/keep-awake'
 import { App as AppNative } from '@capacitor/app'
 import { LocalNotifications } from '@capacitor/local-notifications'
 import { Share } from '@capacitor/share'
+import { TextZoom } from '@capacitor/text-zoom'
+import { Capacitor } from '@capacitor/core'
 import { traduire } from './i18n'
 import type { Minuteur } from './minuteurs'
 
@@ -166,4 +168,24 @@ export function ecouterBoutonRetour(): () => void {
     void AppNative.minimizeApp()
   })
   return () => void abonnement.then((a) => a.remove())
+}
+
+/* --- Taille du texte du système (iOS) -----------------------------------
+
+   Les tailles de l'app sont en pixels. Android applique de lui-même le
+   réglage « taille de police » du téléphone à la WebView ; iOS non : la
+   taille de texte choisie dans Réglages → Accessibilité ne changeait rien
+   dans l'app. On lit ce réglage et on l'applique comme un zoom du texte,
+   à l'ouverture et à chaque retour dans l'app (il a pu changer entre-temps). */
+
+export async function suivreTailleTexteSysteme(): Promise<void> {
+  if (Capacitor.getPlatform() !== 'ios') return
+  try {
+    const { value } = await TextZoom.getPreferred()
+    // Au-delà de 1,6, les écrans à deux colonnes cassent ; le réglage
+    // système plus grand reste servi par le zoom d'accessibilité d'iOS.
+    await TextZoom.set({ value: Math.min(1.6, Math.max(0.85, value)) })
+  } catch {
+    /* plugin absent d'un vieux build : taille par défaut */
+  }
 }
