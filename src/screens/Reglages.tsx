@@ -8,6 +8,9 @@ import { useLangue } from '../lib/i18n'
 import { useEtatSynchro } from '../hooks/useEtatSynchro'
 import { partageActif } from '../lib/sync'
 import { useInviter } from '../hooks/useInviter'
+import { usePlus } from '../hooks/usePlus'
+import { lienGestion, restaurer } from '../lib/abonnement'
+import { effacerMesDonnees } from '../lib/effacement'
 import { mesurer } from '../lib/mesure'
 import type { ConfigMagasins } from '../lib/magasins'
 import { magasinDuRayon } from '../lib/magasins'
@@ -65,6 +68,37 @@ export default function Reglages({
   const [reinitialisation, setReinitialisation] = useState(false)
   const [copie, setCopie] = useState(false)
   const invitation = useInviter(foyer, prenom)
+  const abonnement = usePlus()
+  const [restauration, setRestauration] = useState<'en-cours' | 'rien' | 'erreur' | null>(null)
+  const [effacement, setEffacement] = useState<'confirmer' | 'en-cours' | 'erreur' | null>(null)
+
+  const restaurerAchats = async () => {
+    setRestauration('en-cours')
+    try {
+      const plus = await restaurer()
+      abonnement.definirPlus(plus)
+      if (plus) mesurer('achats_restaures')
+      setRestauration(plus ? null : 'rien')
+    } catch {
+      setRestauration('erreur')
+    }
+  }
+
+  const gererAbonnement = async () => {
+    window.open(await lienGestion(), '_blank', 'noopener')
+  }
+
+  const toutEffacer = async () => {
+    setEffacement('en-cours')
+    try {
+      mesurer('donnees_effacees')
+      await effacerMesDonnees()
+      // Repartir de l'écran d'accueil, comme une app fraîchement installée.
+      location.replace(location.pathname)
+    } catch {
+      setEffacement('erreur')
+    }
+  }
   /**
    * Ce qu'on s'apprête à rejoindre, en attente de confirmation.
    *
@@ -206,7 +240,17 @@ export default function Reglages({
           </>
         )}
 
-        {codeFoyer && (
+        {/* Le code est l'autre porte d'invitation : réservé à FFFood+ comme le lien. */}
+        {codeFoyer && !abonnement.plus && (
+          <div className="carte-code-foyer">
+            <p className="carte-resume-label">{t('reglages.codeAPartager')}</p>
+            <p className="carte-code-foyer-aide">{t('reglages.codeReserve')}</p>
+            <button className="discret carte-code-foyer-copier" onClick={() => abonnement.ouvrirOffre('foyer')}>
+              <Icone nom="etincelle" taille={18} /> {t('reglages.plusVoirOffre')}
+            </button>
+          </div>
+        )}
+        {codeFoyer && abonnement.plus && (
           <div className="carte-code-foyer">
             <p className="carte-resume-label">{t('reglages.codeAPartager')}</p>
             <p className="carte-code-foyer-valeur">{codeFoyer}</p>
@@ -474,6 +518,32 @@ export default function Reglages({
         </button>
       </section>
 
+      {/* L'abonnement n'existe que dans l'app des stores (voir abonnement.ts). */}
+      {abonnement.actif && (
+        <section className="groupe-reglages">
+          <h2>{t('reglages.plusTitre')}</h2>
+          <p className="aide">{abonnement.plus ? t('reglages.plusActif') : t('reglages.plusInactif')}</p>
+          {abonnement.plus ? (
+            <button className="discret suite pleine-largeur" onClick={() => void gererAbonnement()}>
+              <Icone nom="etincelle" taille={18} /> {t('reglages.plusGerer')}
+            </button>
+          ) : (
+            <button className="principal suite pleine-largeur" onClick={() => abonnement.ouvrirOffre()}>
+              <Icone nom="etincelle" taille={18} /> {t('reglages.plusVoirOffre')}
+            </button>
+          )}
+          <button
+            className="lien-discret lien-maj"
+            onClick={() => void restaurerAchats()}
+            disabled={restauration === 'en-cours'}
+          >
+            {restauration === 'en-cours' ? t('plus.restaurationEnCours') : t('plus.restaurer')}
+          </button>
+          {restauration === 'rien' && <p className="aide" role="status">{t('plus.rienARestaurer')}</p>}
+          {restauration === 'erreur' && <p className="aide" role="status">{t('plus.erreurRestauration')}</p>}
+        </section>
+      )}
+
       <section className="groupe-reglages">
         <h2>{t('reglages.aPropos')}</h2>
         <h3 className="titre-secondaire">{t('reglages.versionTitre')}</h3>
@@ -564,6 +634,41 @@ export default function Reglages({
           </a>
           .
         </p>
+
+        <h3 className="titre-secondaire">{t('reglages.conditionsTitre')}</h3>
+        <p className="aide">
+          {t('reglages.conditionsTexte')}{' '}
+          <a href={pageSite('/conditions.html')} target="_blank" rel="noopener noreferrer">
+            {t('reglages.conditionsLien')}
+          </a>
+          .
+        </p>
+
+        {/* Exigé par l'App Store (5.1.1 v) et Google Play : supprimer depuis
+            l'app ce que le serveur garde. Voir supabase/migration-02. */}
+        <h3 className="titre-secondaire">{t('reglages.effacerTitre')}</h3>
+        <p className="aide">{t('reglages.effacerTexte')}</p>
+        {effacement === null ? (
+          <button className="lien-discret lien-maj" onClick={() => setEffacement('confirmer')}>
+            {t('reglages.effacerBouton')}
+          </button>
+        ) : (
+          <div className="bloc-confirmation" role="alertdialog" aria-label={t('reglages.effacerTitre')}>
+            <p>{effacement === 'erreur' ? t('reglages.effacerErreur') : t('reglages.effacerConfirmation')}</p>
+            <div className="rangee-boutons">
+              <button className="discret" onClick={() => setEffacement(null)} disabled={effacement === 'en-cours'}>
+                {t('reglages.annuler')}
+              </button>
+              <button
+                className="discret danger"
+                onClick={() => void toutEffacer()}
+                disabled={effacement === 'en-cours'}
+              >
+                {effacement === 'en-cours' ? t('reglages.effacerEnCours') : t('reglages.effacerConfirmer')}
+              </button>
+            </div>
+          </div>
+        )}
       </section>
     </>
   )

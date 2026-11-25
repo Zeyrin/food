@@ -3,6 +3,7 @@ import { useLangue } from '../lib/i18n'
 import { lienInvitation } from '../lib/invitation'
 import { mesurer } from '../lib/mesure'
 import { partagerOuCopier } from '../lib/natif'
+import { usePlus } from './usePlus'
 
 /**
  * Inviter quelqu'un dans sa maison : la feuille de partage avec une phrase
@@ -13,6 +14,8 @@ import { partagerOuCopier } from '../lib/natif'
 export function useInviter(foyer: string, prenom: string) {
   const { t } = useLangue()
   const [copie, setCopie] = useState(false)
+  // Inviter est l'un des deux gestes de FFFood+ ; rejoindre reste gratuit.
+  const { exiger } = usePlus()
 
   // Le « Lien copié » retombe tout seul, comme le « Copié » du code.
   useEffect(() => {
@@ -21,7 +24,7 @@ export function useInviter(foyer: string, prenom: string) {
     return () => clearTimeout(minuterie)
   }, [copie])
 
-  const inviter = async () => {
+  const envoyer = async () => {
     const lien = lienInvitation(foyer, prenom)
     const texte = prenom.trim()
       ? t('inviter.messageDe', { de: prenom.trim(), lien })
@@ -37,6 +40,8 @@ export function useInviter(foyer: string, prenom: string) {
       window.prompt(t('inviter.copierAMain'), texte)
     }
   }
+
+  const inviter = async () => exiger('foyer', () => void envoyer())
 
   return { inviter, copie }
 }
