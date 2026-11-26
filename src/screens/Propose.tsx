@@ -4,7 +4,7 @@ import { type Historique, grouperTags, proposer, tousLesTags } from '../lib/prop
 import { estFavorite } from '../lib/favoris'
 import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
-import { nomTag } from '../lib/traduireRecette'
+import { nomIngredient, nomTag, titreRecette } from '../lib/traduireRecette'
 import { formatMinutes } from '../lib/duree'
 import { mesurer } from '../lib/mesure'
 import { vibrer } from '../lib/haptique'
@@ -123,22 +123,26 @@ export default function Propose({
     if (recherche.trim()) {
       const q = normaliser(recherche)
       liste = liste.filter((r) => {
-        if (normaliser(r.titre).includes(q)) return true
-        const ing = r.ingredients.find((i) => normaliser(i.nom).includes(q))
+        // On cherche dans la langue affichée, et aussi en français : un
+        // nom de plat ou d'ingrédient se tape parfois tel qu'on le connaît.
+        if (normaliser(r.titre).includes(q) || normaliser(titreRecette(r, langue)).includes(q)) return true
+        const ing = r.ingredients.find(
+          (i) => normaliser(i.nom).includes(q) || normaliser(nomIngredient(i.nom, langue)).includes(q),
+        )
         if (ing) {
-          motifs.set(r.id, ing.nom)
+          motifs.set(r.id, nomIngredient(ing.nom, langue))
           return true
         }
-        const tag = r.tags.find((t) => normaliser(t).includes(q))
+        const tag = r.tags.find((t) => normaliser(t).includes(q) || normaliser(nomTag(t, langue)).includes(q))
         if (tag) {
-          motifs.set(r.id, tag)
+          motifs.set(r.id, nomTag(tag, langue))
           return true
         }
         return false
       })
     }
     return { affichees: liste, motifs }
-  }, [recipes, historique, tempsMax, tags, favorisSeuls, recherche])
+  }, [recipes, historique, tempsMax, tags, favorisSeuls, recherche, langue])
 
   const basculer = (recette: Recipe) => {
     const dedans = basket.some((e) => e.recipeId === recette.id)
@@ -529,7 +533,8 @@ const CarteRecette = memo(function CarteRecette({
   onOuvrir,
   onBasculer,
 }: PropsCarte) {
-  const { t } = useLangue()
+  const { t, langue } = useLangue()
+  const titre = titreRecette(r, langue)
   return (
     <div
       className="carte carte-recette"
@@ -583,15 +588,15 @@ const CarteRecette = memo(function CarteRecette({
           aria-pressed={dansPanier}
           aria-label={
             dansPanier
-              ? t('propose.retirerDuPanier', { titre: r.titre })
-              : t('propose.ajouterAuPanier', { titre: r.titre })
+              ? t('propose.retirerDuPanier', { titre })
+              : t('propose.ajouterAuPanier', { titre })
           }
         >
           <Icone nom={dansPanier ? 'coche' : 'plus'} taille={20} />
         </button>
       </div>
       <div className="carte-recette-corps">
-        <h3>{r.titre}</h3>
+        <h3>{titre}</h3>
         {motif && <p className="motif-recherche">{t('propose.contient', { motif })}</p>}
       </div>
     </div>

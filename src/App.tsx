@@ -1040,7 +1040,10 @@ export default function App() {
       {menuRecu && platsMenu.length > 0 && !visiteEnCours && (
         <MenuRecu
           de={menuRecu.de}
-          titres={platsMenu.map((p) => recipes.find((r) => r.id === p.recipeId)?.titre ?? '')}
+          titres={platsMenu.map((p) => {
+            const r = recipes.find((x) => x.id === p.recipeId)
+            return r ? titreRecette(r, langue) : ''
+          })}
           onAjouter={() => {
             const suivant = ajouterMenu(basket, platsMenu)
             mesurer('menu_ajoute', { plats: platsMenu.length, nouveaux: suivant.length - basket.length })

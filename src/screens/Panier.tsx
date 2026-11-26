@@ -4,6 +4,7 @@ import { teinteRecette } from '../lib/identite'
 import { numeroSemaine } from '../lib/semaine'
 import { cuisineRecemment, type Historique } from '../lib/propose'
 import { useLangue } from '../lib/i18n'
+import { titreRecette } from '../lib/traduireRecette'
 import { formatMinutes } from '../lib/duree'
 import { mesurer } from '../lib/mesure'
 import { usePartagerMenu } from '../hooks/usePartagerMenu'
@@ -39,7 +40,7 @@ export default function Panier({
   onViderPanier,
   prenom,
 }: Props) {
-  const { t } = useLangue()
+  const { t, langue } = useLangue()
   const menu = usePartagerMenu(basket, recipes, prenom)
 
 
@@ -85,7 +86,7 @@ export default function Panier({
 
   const rattrapage = retire && (
     <div className="carte carte-annulation" role="status">
-      <p>{t('panier.retireDuPanier', { titre: byId.get(retire.entree.recipeId)?.titre ?? '' })}</p>
+      <p>{t('panier.retireDuPanier', { titre: (() => { const r = byId.get(retire.entree.recipeId); return r ? titreRecette(r, langue) : '' })() })}</p>
       <button className="discret" onClick={annulerRetrait}>
         <Icone nom="precedent" taille={16} /> {t('panier.annuler')}
       </button>
@@ -226,6 +227,7 @@ export default function Panier({
         {basket.map((entree) => {
           const r = byId.get(entree.recipeId)
           if (!r) return null
+          const titre = titreRecette(r, langue)
           return (
             <div className="carte carte-panier" key={entree.recipeId}>
               {/* La photo et le titre ouvrent la fiche, comme une carte du
@@ -247,15 +249,15 @@ export default function Panier({
                     <button
                       className="titre-panier-bouton"
                       onClick={() => onDetail(r.id)}
-                      aria-label={t('panier.ouvrirRecette', { titre: r.titre })}
+                      aria-label={t('panier.ouvrirRecette', { titre })}
                     >
-                      {r.titre}
+                      {titre}
                     </button>
                   </h3>
                   <button
                     className="bouton-rond-discret bouton-retirer"
                     onClick={() => retirer(entree.recipeId)}
-                    aria-label={t('panier.retirerPlat', { titre: r.titre })}
+                    aria-label={t('panier.retirerPlat', { titre })}
                   >
                     <Icone nom="fermer" taille={18} />
                   </button>
@@ -263,14 +265,14 @@ export default function Panier({
                 <div className="compteur">
                   <button
                     onClick={() => setPortions(entree.recipeId, Math.max(1, entree.portions - 1))}
-                    aria-label={t('panier.moinsDeParts', { titre: r.titre })}
+                    aria-label={t('panier.moinsDeParts', { titre })}
                   >
                     <Icone nom="moins" taille={16} />
                   </button>
                   <span>{entree.portions}</span>
                   <button
                     onClick={() => setPortions(entree.recipeId, entree.portions + 1)}
-                    aria-label={t('panier.plusDeParts', { titre: r.titre })}
+                    aria-label={t('panier.plusDeParts', { titre })}
                   >
                     <Icone nom="plus" taille={16} />
                   </button>
