@@ -1,4 +1,5 @@
 import type { BasketEntry, ListItem, Recipe, Unit } from '../types'
+import { normaliserTexte } from './texte'
 import { RAYONS } from '../types'
 import { traduire } from './i18n'
 import { rayonDe } from './rayons'
@@ -27,6 +28,9 @@ function toBase(quantite: number, unite: Unit): { quantite: number; unite: Unit 
  * c'est voulu : « 200 g de tomates » et « 1 boîte de tomates »
  * ne s'additionnent pas.
  */
+/** Au-delà, ce n'est plus un repas de foyer : la liste n'aurait plus de sens. */
+export const PORTIONS_MAX = 50
+
 export function buildList(
   basket: BasketEntry[],
   recipes: Recipe[],
@@ -34,6 +38,9 @@ export function buildList(
 ): ListItem[] {
   const byId = new Map(recipes.map((r) => [r.id, r]))
   const acc = new Map<string, ListItem>()
+  // Regroupe « Oeufs », « œuf » et « Œuf » : la clé de regroupement est le
+  // nom normalisé, la clé affichée reste celle du premier nom rencontré.
+  const parNom = new Map<string, string>()
 
   for (const entry of basket) {
     const recipe = byId.get(entry.recipeId)
@@ -45,7 +52,9 @@ export function buildList(
       if (ing.placard && !options.inclurePlacard) continue
 
       const { quantite, unite } = toBase(ing.quantite * facteur, ing.unite)
-      const key = `${ing.nom}|${unite}`
+      const normal = `${normaliserTexte(ing.nom).replace(/s$/, '')}|${unite}`
+      const key = parNom.get(normal) ?? `${ing.nom}|${unite}`
+      parNom.set(normal, key)
       const existant = acc.get(key)
 
       if (existant) {
@@ -162,7 +171,7 @@ export interface Segment {
   ing?: IngredientCite
 }
 
-const sansAccents = (s: string) => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
+const sansAccents = (s: string) => normaliserTexte(s)
 
 /** Mots de liaison : ni porteurs de sens dans un nom d'ingrédient, ni
  *  obstacle quand ils séparent deux de ses mots (« huile d'olive »). */

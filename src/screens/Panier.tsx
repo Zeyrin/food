@@ -1,3 +1,4 @@
+import { PORTIONS_MAX } from '../lib/aggregate'
 import { useEffect, useState } from 'react'
 import type { BasketEntry, Recipe } from '../types'
 import { teinteRecette } from '../lib/identite'
@@ -271,7 +272,8 @@ export default function Panier({
                   </button>
                   <span>{entree.portions}</span>
                   <button
-                    onClick={() => setPortions(entree.recipeId, entree.portions + 1)}
+                    onClick={() => setPortions(entree.recipeId, Math.min(PORTIONS_MAX, entree.portions + 1))}
+                    disabled={entree.portions >= PORTIONS_MAX}
                     aria-label={t('panier.plusDeParts', { titre })}
                   >
                     <Icone nom="plus" taille={16} />

@@ -77,7 +77,9 @@ paywall et tout est ouvert** (builds de dev, APK de debug).
    workflow Mobile passe maintenant au build.
 5. **Supabase** : exécuter `supabase/migration-02-effacement.sql` dans le SQL
    Editor (fonction `effacer_mes_donnees`, utilisée par Réglages → Effacer mes
-   données).
+   données), puis `supabase/migration-03-fusion-liste.sql` (fonction
+   `fusionner_liste` : deux téléphones qui cochent en même temps ne
+   s'effacent plus ; sans elle, l'app retombe sur l'ancienne écriture).
 
 Les prix affichés viennent toujours du store (devise, taxes du pays) : on les
 change dans les consoles, jamais dans le code.

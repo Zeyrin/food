@@ -27,7 +27,7 @@ const fr: Dico = {
       },
     },
     toujoursGratuit:
-      'Toujours gratuit, sans abonnement : les 137 recettes du catalogue, le panier, la liste de courses, la cuisson pas à pas et les minuteurs.',
+      'Toujours gratuit, sans abonnement : toutes les recettes du catalogue, le panier, la liste de courses, la cuisson pas à pas et les minuteurs.',
     chargement: 'Chargement des formules…',
     indisponible: "Les formules n'ont pas pu être chargées depuis le store. Vérifiez la connexion.",
     reessayer: 'Réessayer',
@@ -43,12 +43,15 @@ const fr: Dico = {
     conditionsAVie:
       "{{prix}}, payé une seule fois sur votre compte du store. Pas d'abonnement : rien ne se renouvelle, FFFood+ reste ouvert sur ce compte.",
     achatEnCours: 'Paiement en cours…',
+    resumeEssai: 'Gratuit {{duree}}, puis {{prix}}. Résiliable à tout moment.',
+    resumePrix: '{{prix}}. Résiliable à tout moment.',
     conditionsEssai:
       "Gratuit pendant {{duree}}, puis {{prix}}, prélevé sur votre compte du store à la fin de l'essai. Résiliez avant la fin de l'essai pour ne rien payer.",
     conditions: '{{prix}}, prélevé sur votre compte du store à la confirmation.',
     resiliation:
       "L'abonnement se renouvelle automatiquement sauf résiliation au moins 24 h avant la fin de la période en cours. Gérez-le ou résiliez-le à tout moment dans les réglages de votre compte App Store ou Google Play.",
     enAttente: "Achat en attente d'approbation. FFFood+ s'activera dès qu'il sera validé.",
+    sansDroit: "Le paiement est passé, mais FFFood+ ne s'est pas encore activé. Touchez « Restaurer mes achats » dans un instant.",
     erreurAchat: "L'achat n'a pas abouti. Rien n'a été prélevé ; vous pouvez réessayer.",
     rienARestaurer: 'Aucun abonnement actif trouvé sur ce compte du store.',
     erreurRestauration: 'La restauration a échoué. Vérifiez la connexion et réessayez.',
@@ -654,6 +657,7 @@ const fr: Dico = {
   app: {
     profil: 'Mon profil',
     synchroRefusee: 'Synchro bloquée',
+    ficheIntrouvable: "Cette recette n'est plus dans le catalogue de la maison.",
     chargement: 'Chargement…',
     reglages: 'Réglages',
     horsLigne: 'Hors ligne — vos changements se synchroniseront au retour du réseau',
@@ -677,7 +681,7 @@ const fr: Dico = {
     {
       titre: 'Puis on cuisine',
       texte:
-        'Étape par étape, minuteurs compris. Pour tout partager à deux, votre code de maison est dans le menu ☰.',
+        "Étape par étape, minuteurs compris. Pour tout partager à deux, invitez quelqu'un depuis le menu ☰.",
     },
   ],
   rayons: {
@@ -790,7 +794,7 @@ const en: Dico = {
       },
     },
     toujoursGratuit:
-      'Always free, no subscription: the 137 catalogue recipes, the basket, the shopping list, step-by-step cooking and timers.',
+      'Always free, no subscription: every recipe in the catalogue, the basket, the shopping list, step-by-step cooking and timers.',
     chargement: 'Loading plans…',
     indisponible: 'Plans could not be loaded from the store. Check your connection.',
     reessayer: 'Try again',
@@ -806,12 +810,15 @@ const en: Dico = {
     conditionsAVie:
       '{{prix}}, paid once to your store account. No subscription: nothing renews, FFFood+ stays unlocked on this account.',
     achatEnCours: 'Processing payment…',
+    resumeEssai: 'Free for {{duree}}, then {{prix}}. Cancel anytime.',
+    resumePrix: '{{prix}}. Cancel anytime.',
     conditionsEssai:
       'Free for {{duree}}, then {{prix}}, charged to your store account when the trial ends. Cancel before the trial ends to pay nothing.',
     conditions: '{{prix}}, charged to your store account on confirmation.',
     resiliation:
       'The subscription renews automatically unless cancelled at least 24 hours before the end of the current period. Manage or cancel it anytime in your App Store or Google Play account settings.',
     enAttente: 'Purchase awaiting approval. FFFood+ will turn on as soon as it is approved.',
+    sansDroit: 'The payment went through, but FFFood+ has not turned on yet. Tap "Restore purchases" in a moment.',
     erreurAchat: 'The purchase did not go through. Nothing was charged; you can try again.',
     rienARestaurer: 'No active subscription found on this store account.',
     erreurRestauration: 'Restore failed. Check your connection and try again.',
@@ -1379,6 +1386,7 @@ const en: Dico = {
   app: {
     profil: 'My profile',
     synchroRefusee: 'Sync blocked',
+    ficheIntrouvable: 'This recipe is no longer in the household catalogue.',
     chargement: 'Loading…',
     reglages: 'Settings',
     horsLigne: 'Offline — your changes will sync when the network is back',
@@ -1400,7 +1408,7 @@ const en: Dico = {
     },
     {
       titre: 'Then you cook',
-      texte: 'Step by step, timers included. To share it all with someone, your household code is in the ☰ menu.',
+      texte: 'Step by step, timers included. To share it all with someone, invite them from the ☰ menu.',
     },
   ],
   rayons: {

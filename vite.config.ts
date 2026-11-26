@@ -69,6 +69,24 @@ export default defineConfig({
         // l'étaient pas. Plus de `ttf` non plus : les fontes ne sont
         // livrées qu'en WOFF2 (voir l'en-tête de styles.css).
         globPatterns: ['**/*.{js,css,html,png,svg,webp,woff2}'],
+        // Mais plus toutes d'un coup : la première visite téléchargeait
+        // 9,6 Mo en tâche de fond, dont 8,2 Mo de photos — lourd pour
+        // quelqu'un qui arrive d'Instagram en 4G. Les photos se gardent
+        // désormais à mesure qu'on les voit (cache ci-dessous) : celles du
+        // panier et des fiches ouvertes restent là hors ligne, les autres
+        // retombent sur la vignette teintée. Les visuels des réseaux
+        // sociaux, eux, n'ont rien à faire dans l'app.
+        globIgnores: ['plats/**', 'social/**'],
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith('/plats/'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'photos-plats',
+              expiration: { maxEntries: 400, maxAgeSeconds: 60 * 60 * 24 * 365 },
+            },
+          },
+        ],
         // Workbox génère le service worker de A à Z : le seul endroit où
         // poser du code à nous est cet import. Il apporte le
         // `notificationclick` qui ramène dans l'app quand on touche

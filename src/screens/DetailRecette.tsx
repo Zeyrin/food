@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Recipe } from '../types'
 import corpus from '../data/recipes.json'
-import { etapeEnTexte, formatQuantite, redimensionnerRecette } from '../lib/aggregate'
+import { PORTIONS_MAX, etapeEnTexte, formatQuantite, redimensionnerRecette } from '../lib/aggregate'
 import { teinteRecette } from '../lib/identite'
 import { useLangue } from '../lib/i18n'
 import { nomIngredient, recetteAffichee } from '../lib/traduireRecette'
@@ -105,7 +105,7 @@ export default function DetailRecette({
   useEffect(() => setChoix(portions), [portions])
 
   const changerParts = (n: number) => {
-    const parts = Math.max(1, n)
+    const parts = Math.min(PORTIONS_MAX, Math.max(1, n))
     setChoix(parts)
     if (dansPanier) onPortions(parts)
   }
@@ -202,7 +202,11 @@ export default function DetailRecette({
             <Icone nom="moins" taille={16} />
           </button>
           <span aria-live="polite">{choix}</span>
-          <button onClick={() => changerParts(choix + 1)} aria-label={t('detail.plusDeParts')}>
+          <button
+            onClick={() => changerParts(choix + 1)}
+            disabled={choix >= PORTIONS_MAX}
+            aria-label={t('detail.plusDeParts')}
+          >
             <Icone nom="plus" taille={16} />
           </button>
         </div>

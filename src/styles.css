@@ -1262,7 +1262,9 @@ nav.onglets {
   display: flex;
   justify-content: space-around;
   gap: 4px;
-  background: color-mix(in srgb, var(--papier) 88%, transparent);
+  /* Presque opaque : à 88 %, le texte qui défilait dessous restait lisible
+     entre les icônes et brouillait leurs libellés. */
+  background: color-mix(in srgb, var(--papier) 96%, transparent);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   backdrop-filter: blur(20px) saturate(160%);
   border-radius: 24px 24px 0 0;
@@ -2416,6 +2418,11 @@ button.discret.danger {
 }
 
 .lien-discret {
+  /* 44 px de haut : un lien seul sur sa ligne est une cible à part entière
+     (il faisait 21 px, sous le minimum de 24 px des WCAG). */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   padding: 0;
   border: 0;
   background: none;
@@ -3273,18 +3280,23 @@ button.discret.accent:active:not(:disabled) {
    Bords ancrés au viewport (pas un centrage par transform à largeur
    de contenu) : sur mobile étroit, un centrage aurait pu chevaucher
    le bouton réglages fixé dans le même coin haut-droit. */
+/* Sous la rangée du titre, dans le fond de l'en-tête qui s'agrandit pour
+   lui faire place : posée par-dessus, elle cachait le titre de l'écran et
+   le bouton du profil. */
 .pastille-hors-ligne {
   position: fixed;
-  top: calc(12px + var(--zone-top));
+  top: calc(var(--pouce) + var(--zone-top));
   left: max(12px, var(--zone-left));
-  right: 64px;
+  right: max(12px, var(--zone-right));
+  max-width: 600px;
+  margin-inline: auto !important;
   z-index: 11;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   margin: 0;
-  padding: 10px 16px;
+  padding: 6px 14px;
   border-radius: 999px;
   background: var(--terracotta-doux);
   color: var(--brique);
@@ -7163,12 +7175,17 @@ button.vignette-mini-bouton:active {
   align-items: flex-end;
   justify-content: center;
   background: rgb(0 0 0 / 0.45);
+  /* Une feuille plus haute que l'écran montait sous l'encoche, croix
+     comprise : elle s'arrête sous la barre d'état. */
+  padding-top: calc(var(--zone-top) + 8px);
+  box-sizing: border-box;
 }
 .feuille-offre {
   position: relative;
   width: 100%;
   max-width: 520px;
-  max-height: 100dvh;
+  max-height: calc(100dvh - var(--zone-top) - 8px);
+  outline: none;
   overflow-y: auto;
   box-sizing: border-box;
   padding: 28px 20px calc(20px + var(--zone-bottom));
@@ -7256,8 +7273,15 @@ button.vignette-mini-bouton:active {
 .offre-conditions { margin: 12px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--encre-douce); }
 .offre-message { margin-top: 12px; }
 .offre-attente { text-align: center; }
+.offre-resume {
+  margin: 8px 0 0;
+  font-size: 13px;
+  text-align: center;
+  color: var(--encre-douce);
+}
 .offre-liens {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px 18px;
@@ -7274,4 +7298,86 @@ button.vignette-mini-bouton:active {
   .offre-avantages li { padding: 10px 12px; }
   .offre-avantages p { font-size: 14px; }
   .offre-gratuit { font-size: 13px; margin-bottom: 12px; }
+}
+
+/* Le titre d'une carte est son bouton pour le clavier et le lecteur
+   d'écran (voir CarteRecette) ; à l'œil, il reste un titre. */
+.carte-recette-titre {
+  all: unset;
+  display: block;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+.carte-recette-titre:focus-visible {
+  outline: 2px solid var(--accent, currentColor);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.lecteur-seul {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Le bouton d'achat et la phrase de prix collés au bas de la feuille. */
+.offre-action {
+  position: sticky;
+  bottom: calc(-20px - var(--zone-bottom));
+  margin: 16px -20px 0;
+  padding: 12px 20px calc(12px + var(--zone-bottom));
+  background: var(--papier);
+  box-shadow: 0 -10px 16px -12px rgb(0 0 0 / 0.25);
+  z-index: 1;
+}
+
+html[data-hors-ligne='true'] .entete-app {
+  height: calc(var(--pouce) + var(--zone-top) + 56px);
+  padding-bottom: 56px;
+}
+
+.bouton-ajout-article {
+  margin: 12px 0;
+}
+
+/* Lien seul sous le bouton d'accueil : zone de toucher agrandie sans
+   bouger la mise en page (il faisait 17 px de haut). */
+.accueil-hero-code {
+  display: inline-block;
+  padding: 12px 10px;
+  margin: -12px -10px;
+}
+
+/* Très petits écrans (320 px, iPhone SE de première génération) : la barre
+   du panier tronquait « 3 plats » en « 3 pl… », et l'éventail des plats
+   recouvrait le titre de l'aperçu de la semaine. */
+@media (max-width: 359px) {
+  .barre-panier-plat:not(:last-child) {
+    display: none;
+  }
+  .pile-plat:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+/* Un avis passager, au-dessus de la barre d'onglets. */
+.avis-flottant {
+  position: fixed;
+  left: max(16px, var(--zone-left));
+  right: max(16px, var(--zone-right));
+  bottom: calc(96px + var(--zone-bottom));
+  z-index: 12;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  border-radius: var(--rayon);
+  background: var(--encre);
+  color: var(--papier);
+  font-size: 14px;
+  text-align: center;
+  box-shadow: var(--ombre);
 }

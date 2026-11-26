@@ -121,12 +121,15 @@ export async function chargerFormules(): Promise<PurchasesPackage[]> {
   return [...paquets].sort((a, b) => rang(a) - rang(b))
 }
 
-export type ResultatAchat = 'achete' | 'annule' | 'en-attente'
+export type ResultatAchat = 'achete' | 'annule' | 'en-attente' | 'sans-droit'
 
 export async function acheter(paquet: PurchasesPackage): Promise<ResultatAchat> {
   try {
     const { customerInfo } = await Purchases.purchasePackage({ aPackage: paquet })
-    return memoriser(aLeDroit(customerInfo)) ? 'achete' : 'en-attente'
+    // Payé mais sans le droit `plus` : ce n'est pas une attente
+    // d'approbation (celle-ci arrive en PAYMENT_PENDING_ERROR) mais un
+    // droit mal relié au produit dans RevenueCat, ou un retard du store.
+    return memoriser(aLeDroit(customerInfo)) ? 'achete' : 'sans-droit'
   } catch (e) {
     const code = (e as { code?: string }).code
     if (code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) return 'annule'
