@@ -32,7 +32,7 @@ priorisera les requêtes où le site apparaît déjà sans être cliqué.
 - [x] que manger ce soir
 - [ ] repas pas cher pour une famille
 - [ ] menu végétarien de la semaine
-- [ ] batch cooking de la semaine
+- [x] batch cooking de la semaine
 - [ ] menu de la semaine pour 2
 - [ ] que faire avec des restes de riz
 - [ ] plat mijoté facile pour le week-end
